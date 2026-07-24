@@ -26,6 +26,10 @@ from .planner import (
     rules_layout,
 )
 from .reference_image_provider import generate_gpt_image2_reference
+from .reference_sdf_bridge import (
+    REFERENCE_SDF_AUDIT_SCHEMA,
+    apply_reference_relation_sdf_repair,
+)
 from .repair import deterministic_repair
 from .scene_graph import build_typed_scene_graph, materialize_scene_graph
 from .validator import footprint, validate_layout
@@ -781,6 +785,91 @@ def run_reference_soft_prior_experiment(args: Any) -> dict[str, Any]:
         guided = projected
         guided_validation = projected_validation
         selected_guided_source = "deterministic_soft_projection"
+    write_json(output_dir / "layout_reference_soft_pre_sdf.json", guided)
+    write_json(
+        output_dir / "validation_reference_soft_pre_sdf.json",
+        guided_validation,
+    )
+
+    relation_sdf_enabled = bool(getattr(args, "relation_sdf_repair", False))
+    relation_sdf_audit: dict[str, Any] = {
+        "schema": REFERENCE_SDF_AUDIT_SCHEMA,
+        "enabled": relation_sdf_enabled,
+        "ok": not relation_sdf_enabled,
+        "status": "disabled",
+    }
+    if relation_sdf_enabled:
+        required_paths = {
+            "binding": getattr(args, "relation_sdf_binding", None),
+            "capability_registry": getattr(
+                args, "relation_sdf_capability_registry", None
+            ),
+            "asset_root": getattr(args, "relation_sdf_asset_root", None),
+        }
+        missing = [
+            name for name, value in required_paths.items() if value is None
+        ]
+        if missing:
+            raise ValueError(
+                "relation SDF repair requires: " + ", ".join(missing)
+            )
+        try:
+            sdf_candidate, relation_sdf_audit, sdf_validation = (
+                apply_reference_relation_sdf_repair(
+                    guided,
+                    prior,
+                    brief,
+                    read_json(
+                        Path(required_paths["binding"]).expanduser().resolve()
+                    ),
+                    capability_registry_path=Path(
+                        required_paths["capability_registry"]
+                    )
+                    .expanduser()
+                    .resolve(),
+                    asset_root=Path(required_paths["asset_root"])
+                    .expanduser()
+                    .resolve(),
+                    cache_dir=output_dir / "relation_sdf_cache",
+                    sparse_point_count=int(
+                        getattr(args, "relation_sdf_sparse_points", 4096)
+                    ),
+                    seed=int(args.seed),
+                    verify_hash=bool(
+                        getattr(args, "relation_sdf_verify_hash", True)
+                    ),
+                )
+            )
+            relation_sdf_audit["enabled"] = True
+            relation_sdf_audit["status"] = (
+                "accepted" if relation_sdf_audit["ok"] else "rejected"
+            )
+            write_json(
+                output_dir / "layout_reference_soft_sdf_candidate.json",
+                sdf_candidate,
+            )
+            write_json(
+                output_dir / "validation_reference_soft_sdf_candidate.json",
+                sdf_validation,
+            )
+            if relation_sdf_audit["ok"]:
+                guided = sdf_candidate
+                guided_validation = sdf_validation
+                selected_guided_source += "+relation_sdf_repair"
+        except (KeyError, RuntimeError, ValueError) as exc:
+            relation_sdf_audit = {
+                "schema": REFERENCE_SDF_AUDIT_SCHEMA,
+                "enabled": True,
+                "ok": False,
+                "status": "rejected",
+                "error_type": exc.__class__.__name__,
+                "error": str(exc),
+                "fallback": "pre_sdf_reference_soft_layout",
+            }
+    write_json(
+        output_dir / "reference_relation_sdf_repair_audit.json",
+        relation_sdf_audit,
+    )
     write_json(output_dir / "soft_projection_audit.json", projection_audit)
     write_json(output_dir / "layout_reference_soft.json", guided)
     write_json(output_dir / "validation_reference_soft.json", guided_validation)
@@ -797,6 +886,7 @@ def run_reference_soft_prior_experiment(args: Any) -> dict[str, Any]:
             invariants["ok"]
             and baseline_validation["ok"]
             and guided_validation["ok"]
+            and bool(relation_sdf_audit["ok"])
         ),
         "branch_role": "isolated_reference_soft_prior_ablation",
         "output_dir": str(output_dir),
@@ -837,6 +927,19 @@ def run_reference_soft_prior_experiment(args: Any) -> dict[str, Any]:
             "validation_ok": bool(guided_validation["ok"]),
             "alignment": guided_alignment,
         },
+        "reference_relation_sdf": {
+            "enabled": relation_sdf_enabled,
+            "status": relation_sdf_audit["status"],
+            "ok": bool(relation_sdf_audit["ok"]),
+            "audit_path": str(
+                output_dir / "reference_relation_sdf_repair_audit.json"
+            ),
+            "authority": (
+                "soft_reference_target_hard_capability_sdf"
+                if relation_sdf_enabled
+                else "disabled"
+            ),
+        },
         "hard_invariants": invariants,
         "outcome": {
             "alignment_comparable": alignment_comparable,
@@ -861,6 +964,7 @@ def run_reference_soft_prior_experiment(args: Any) -> dict[str, Any]:
             "The generated single view has uncertain depth and may omit or duplicate objects.",
             "A lower soft-prior RMSE is not by itself evidence of better final 3D visual quality.",
             "Final claims require equal-asset Blender renders, multi-view scoring, and the same SDF validator for both branches.",
+            "Relation SDF repair is opt-in and currently supports one explicitly bound tucked_under relation.",
         ],
     }
     write_json(output_dir / "reference_soft_prior_ab_report.json", report)
@@ -914,6 +1018,23 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--seed", type=int, default=20260724)
     parser.add_argument("--minimum-observation-confidence", type=float, default=0.75)
     parser.add_argument("--max-free-displacement", type=float, default=0.8)
+    parser.add_argument(
+        "--relation-sdf-repair",
+        action="store_true",
+        help=(
+            "Opt in to capability-bound reference/SDF repair after soft layout "
+            "selection. The default text and reference paths remain unchanged."
+        ),
+    )
+    parser.add_argument("--relation-sdf-binding", type=Path)
+    parser.add_argument("--relation-sdf-capability-registry", type=Path)
+    parser.add_argument("--relation-sdf-asset-root", type=Path)
+    parser.add_argument("--relation-sdf-sparse-points", type=int, default=4096)
+    parser.add_argument(
+        "--relation-sdf-verify-hash",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
     return parser
 
 

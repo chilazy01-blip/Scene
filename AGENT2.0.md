@@ -576,6 +576,16 @@ observation relation graph、三图通用冲突协议或默认主链接入。
   deep-penetrating vertices；fixed scale 与 15° facing 门禁通过。输出：
   `chair_under_desk_reference_guided_search_20260724_v2`。该目标是合成 observation
   contract，尚不是已认证 image2 观测。
+- whole-room 桥接已完成 opt-in 第一版：`reference_sdf_bridge.py` 要求计划中已有 hard
+  `tucked_under`，再通过 `pilot_reference_sdf_binding_v1.json` 显式绑定语义对象与审核
+  desk/chair asset；不会从图像静默创造关系。双物体 accepted observation 从房间坐标转换为
+  desk-local 软目标 `(0.04,-0.40,0), confidence=0.9025`，833 个候选中拒绝 197 个空间外和
+  387 个碰撞位置，选出 local `(0.0375,-0.505,0), yaw=180°`，写回 world
+  `(2.4375,3.055,0), yaw=180°`。166,249 顶点检查为 `valid_under`，最小距离
+  `-0.007066m`、0 个 deep penetration。relation-aware validator 只豁免该审核关系的一次
+  AABB 假碰撞，最终 0 hard violation。输出：
+  `reference_sdf_bridge_study_20260724_v1`。输入 observation 仍为合成 fixture；
+  已认证 image2 端到端运行仍受 `OPENAI_API_KEY` 缺失阻塞。
 
 ### VISION-002：三图融合与冲突处理
 
@@ -670,7 +680,7 @@ observation relation graph、三图通用冲突协议或默认主链接入。
 
 - 状态：`RESOLVED`
 - 方案：以 `instance_groups` 表达资产和布局执行集合，成员仍保持独立实例。
-- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 102 个 V2 无模型 unittest 全部通过，仓库根另有 12 个，skill `scene-instance-group-planning` 校验通过。
+- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 107 个 V2 无模型 unittest 全部通过，仓库根另有 12 个，skill `scene-instance-group-planning` 校验通过。
 - 已知限制：真实左右脚 family 和 Blender 镜像未完成，见 `GROUP-002`。
 
 ## 10. 第一批实验设计
@@ -678,7 +688,7 @@ observation relation graph、三图通用冲突协议或默认主链接入。
 第一批 SDF pilot 不直接跑完整复杂卧室，建立一个可解释的小场景集合：
 
 1. `cup_on_desk`：已完成第一版；验证刚性支撑、零漂浮、禁止穿透、usable support surface 和 proxy 缓存。
-2. `chair_tucked_under_desk`：命名 free-space、正式 typed relation、参考目标引导的粗到细位姿搜索、尺寸锁、chair-facing 和 dense/sparse 最终候选同判均已完成；下一步把 whole-room observation 转为 target-local relation target 并接入普通 repair。
+2. `chair_tucked_under_desk`：命名 free-space、正式 typed relation、参考目标引导的粗到细位姿搜索、尺寸锁、chair-facing、dense/sparse 最终候选同判，以及 whole-room observation 到 target-local 再写回 world 的 opt-in bridge 均已完成；下一步用真实 image2 observation 验证，再设计多关系调度。
 3. `books_in_open_shelf`：验证 solid/free-space/support 三重约束。
 4. `box_in_open_cubby`：验证不同尺寸容纳和格位切换。
 

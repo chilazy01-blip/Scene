@@ -229,6 +229,44 @@ preserving `faces desk`. For `mug supported_by desk`, the image supplies an appr
 location, while `desk.top` determines the valid footprint and contact height. This is the first
 isolated integration target before attempting whole-room SDF repair.
 
+`reference_sdf_bridge.py` implements the next opt-in bridge. It does not create a semantic relation
+from an image: the plan must already contain a hard `tucked_under` relation with a target-local
+`free_space_id`, and `pilot_reference_sdf_binding_v1.json` must explicitly bind both semantic object
+ids to reviewed asset ids. Accepted source/target room observations are converted into a relative
+target-local soft pose; capability yaw remains authoritative because the current image observer
+does not estimate metric orientation. The sparse SDF search selects a legal local pose, the
+all-vertex path checks that selected pose, and only then is it transformed back into room-world
+coordinates.
+
+The ordinary AABB validator still runs. Its floor-collision result may be waived only for the exact
+bound source/target pair when the dense relation check is `valid_under` with zero deep-penetrating
+vertices. Every other boundary, architecture, dimension, facing, relation, walkway, and collision
+violation remains active. Missing observations, relations, asset bindings, hash matches, dimensions,
+or capabilities reject the opt-in stage rather than silently changing the scene.
+
+Opt-in flags:
+
+```bash
+--relation-sdf-repair \
+--relation-sdf-binding \
+  sage/experiments/codex_trellis_scene_v2/capabilities/pilot_reference_sdf_binding_v1.json \
+--relation-sdf-capability-registry \
+  sage/experiments/codex_trellis_scene_v2/capabilities/pilot_desk_chair_v1.json \
+--relation-sdf-asset-root \
+  /data/wsj/main/scene_runs/codex_trellis_v2/assets_curated_v1
+```
+
+The deterministic whole-room bridge smoke is stored at
+`reference_sdf_bridge_study_20260724_v1`. Its two synthetic accepted observations produce local
+soft target `(0.04, -0.40, 0)`, confidence `0.9025`; the text baseline is `(0, -1.08, 0)`. The
+833-candidate search rejects 197 outside-free-space and 387 collision poses, then selects local
+`(0.0375, -0.505, 0), yaw=180 degrees`, which maps to world
+`(2.4375, 3.055, 0), yaw=180 degrees`. The 166,249-vertex check reports `valid_under`, minimum
+signed distance `-0.007066 m`, and zero points beyond the `0.0125 m` penetration tolerance.
+Relation-aware validation waives exactly one pair-specific AABB false positive and finishes with
+zero hard violations. These observations are synthetic contract fixtures, not a claimed image2 API
+measurement.
+
 ## Current scope
 
 Supported room policies:
@@ -664,8 +702,9 @@ sparse result disagrees with the dense reference. The dense path is still not ex
 triangle-triangle collision ground truth: a coarse mesh can have intersecting faces without an
 inside vertex. The default v2 reference target is a synthetic observation contract, not a claimed
 image2 measurement. An actual extracted target can be supplied through `--reference-target-json`.
-The remaining integration gap is converting accepted whole-room observations into target-local
-relation targets and invoking this optimizer from the ordinary repair pipeline.
+The opt-in bridge now covers whole-room observation to target-local conversion and repair invocation
+for one explicitly bound `tucked_under` relation. An authenticated image2 run, multi-relation
+scheduling, and default-pipeline integration remain open.
 
 ## Important outputs
 

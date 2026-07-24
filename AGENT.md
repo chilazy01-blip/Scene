@@ -508,7 +508,7 @@ Codex 最终仍保持 15 个物理对象、吸收 2 个枕头、3 个缺失实�
 
 上述 grounding 缺口的第一版代码已实现。Codex expansion schema 新增 `relation_updates/attribute_updates/component_updates`；本地 `apply_expansion_grounding()` 只接受稳定 baseline ID 和受限关系词表，验证 wall target、hard/soft、support target 与主父级环后才更新 canonical SceneBrief，并把接受/拒绝、覆盖前值、证据写入 `semantic_grounding.json`。`supported_by` 会改主父节点，`against_wall` 会覆盖房间默认墙面并为功能家具刷新入室朝向，`faces` 会形成补充边。布局归一化和 deterministic repair 都会重新求解 target-facing yaw，验证器新增 target-facing 指标和违规。对象级 `appearance_terms_grounded` 可覆盖句级类别扫描，解决 cup/book 同句的 `ceramic` 泄漏；组件更新只能细化已有 deterministic component requirement，不能修改显式数量或凭空创建组件。
 
-V2 无模型 unittest 现为 102 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照、桌下 dense/sparse 分类一致性、命名 free-space、hard `tucked_under` grounding/图验证、参考引导 SDF 搜索、参考图 soft-prior contract/投影和生成器库存对照审计。仓库根另有 12 个 unittest 通过，合计 114 个。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
+V2 无模型 unittest 现为 107 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照、桌下 dense/sparse 分类一致性、命名 free-space、hard `tucked_under` grounding/图验证、参考引导 SDF 搜索、whole-room/target-local 坐标往返、显式资产绑定、关系专属 AABB waiver、参考图 soft-prior contract/投影和生成器库存对照审计。仓库根另有 12 个 unittest 通过，合计 119 个。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
 
 新版 typed-delta grounding 已由用户在普通终端完成真实 `gpt-5.6-sol` plan-only 验收：
 
@@ -579,8 +579,19 @@ desk 注册 `under_desk` 空间、入口方向、允许类别、位姿边界和 
 `-0.001641m` 在 0.0125m voxel tolerance 内且 0 个 deep-penetrating vertices，固定尺寸和
 15° facing 门禁通过。真实输出：
 `/data/wsj/main/scene_runs/codex_trellis_v2/chair_under_desk_reference_guided_search_20260724_v2`。
-默认参考目标是合成 observation contract，不是假称 image2 测量；剩余工作是把 whole-room
-accepted observation 转成 target-local relation target 并调用普通 repair。
+默认参考目标是合成 observation contract，不是假称 image2 测量；下述 bridge 已继续处理
+whole-room accepted observation 到 target-local relation target 和 opt-in repair 的连接。
+
+上述 whole-room 桥接现已完成 opt-in 第一版。`reference_sdf_bridge.py` 不从图片创造关系：
+计划必须已有 hard `tucked_under`，并由 `pilot_reference_sdf_binding_v1.json` 显式绑定语义
+对象和审核 desk/chair asset。真实资产 smoke 将两个合成 accepted room observation 转为
+desk-local 软目标 `(0.04,-0.40,0), confidence=0.9025`；833 个候选中拒绝 197 个空间外和
+387 个 SDF 碰撞位置，选出 local `(0.0375,-0.505,0), yaw=180°`，再写回 world
+`(2.4375,3.055,0), yaw=180°`。166,249 顶点检查为 `valid_under`，最小距离
+`-0.007066m` 且 0 个 deep-penetrating vertices。relation-aware validator 只对该显式绑定
+关系豁免一次 AABB 假碰撞，其他硬门禁全部保留，最终 0 hard violation。输出：
+`/data/wsj/main/scene_runs/codex_trellis_v2/reference_sdf_bridge_study_20260724_v1`。该
+observation 仍是合成 fixture；当前缺少 `OPENAI_API_KEY`，未冒充已认证 image2 端到端证据。
 
 生成参考图作为软布局先验的隔离分支已实现于
 `experiment/reference-soft-layout-prior`，不修改默认文本主链。`reference_soft_prior.py`
@@ -627,8 +638,8 @@ named free-space、坐标系和 dimension policy 定义可行域。运行时先�
 硬门禁。在硬门禁通过的候选中，才最小化 image observation、semantic relation 和最小位姿
 变化软损失。首个隔离接入已给 desk 增加命名 under-desk free-space，并对
 `chair_tucked_under_desk` 完成粗到细 tuck-depth/yaw 搜索与 `faces desk` 门禁；参考图只提供
-目标插入深度和构图方向，不能覆盖碰撞结果。下一步是 whole-room observation 的 target-local
-转换与普通 repair 调用。
+目标插入深度和构图方向，不能覆盖碰撞结果。whole-room observation 的 target-local 转换与
+opt-in repair 调用现已由下述 bridge 覆盖单个显式绑定关系。
 
 ## 8. 仓库与环境
 
@@ -660,7 +671,7 @@ Blender:
 
 1. 继续围绕独立目录 `sage/experiments/codex_trellis_scene_v2` 工作，不改旧主链，也不要覆盖工作树中的已有修改。
 2. 临时缺失资产链已经达到布局测试可用水准，不继续为 Flux/TRELLIS.2 单物体生成做精修或审核入库；后续资产库建立后优先复用审核资产，仅把这条链保留为缺口兜底。
-3. `cup_on_desk` 与桌椅 v2 隔离 pilot 已完成，不要重复。下一步把 accepted whole-room observation 转为 target-local relation target，并以 opt-in 方式调用关系 SDF repair；接入前仍不得直接替换完整 V2 repair。
+3. `cup_on_desk`、桌椅 v2 与单关系 whole-room opt-in bridge 已完成，不要重复。下一步先用真实 image2 accepted observation 重跑相同门禁，再设计多关系顺序/冲突调度；在这些证据前仍不得直接替换完整 V2 repair。
 4. 桌椅语义 contract 稳定后，为一个真正开放的审核书架定义 `solid proxy + containment_volume + support_surface`；必须先验证 voxel fill 不会封死开放柜格，再做 `books_in_open_shelf/box_in_open_cubby`。只有这些案例通过后才评估接入完整 repair。
 5. SDF pilot 之后仍需加入真正的 south-to-north、1.55m、65mm 正面渲染，并对最终 RGB/depth/instance mask 的完整入画和遮挡重新评分；固定 45 度 dollhouse 图不能代替该验收。
 6. 参考图 soft-prior 单 study smoke 已通过安全门槛但证据有限；下一步先做多 Prompt/seed 与等资产 Blender A/B，不把 RMSE 下降表述成最终视觉提升，也暂不并入默认 planner。

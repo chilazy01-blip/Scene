@@ -1,0 +1,14 @@
+{
+  "schema": "codex_trellis_reference_sdf_binding_v1",
+  "purpose": "Explicit semantic-object to reviewed-asset binding for the isolated study chair-under-desk reference/SDF bridge.",
+  "relations": [
+    {
+      "source_object_id": "office_chair",
+      "relation_type": "tucked_under",
+      "target_object_id": "desk",
+      "source_asset_id": "office_chair_black_mesh_001",
+      "target_asset_id": "desk_warm_oak_001",
+      "free_space_id": "under_desk"
+    }
+  ]
+}
