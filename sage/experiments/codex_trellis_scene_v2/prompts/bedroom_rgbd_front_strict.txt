@@ -1,0 +1,27 @@
+Create one clean, well-organized modern bedroom for an indoor RGB-D reconstruction dataset.
+
+Mandatory object instances (every line is required; these are not examples):
+- exactly one bed;
+- exactly two bedside tables, one on each side of the bed;
+- exactly one desk and exactly one office chair positioned as a usable workstation;
+- exactly one wardrobe;
+- exactly two table lamps, one centered on each bedside table;
+- exactly one stack of books and exactly one cup on the desk;
+- exactly two storage boxes placed neatly under the desk or beside the wardrobe;
+- exactly two pillows on the bed;
+- exactly two separate slippers forming one left/right pair beside the bed.
+
+Spatial requirements:
+- keep the bed and its two bedside tables as a centered, approximately symmetric primary group;
+- preserve a clear route from the entry to the bed, desk, and wardrobe;
+- show every required object with complete visible shapes, clear boundaries, minimal occlusion,
+  and an explicit functional relationship to nearby objects;
+- keep surfaces organized and avoid adding decorative clutter beyond the mandatory list.
+
+Camera requirements (strict): use a strict front-facing view from the south side looking north,
+use a centered composition with the camera on the room centerline, keep an eye-level camera at
+about 1.55 m, and use reduced perspective distortion with a moderate telephoto focal length.
+
+Rendering requirements: uniform bright diffuse lighting, stable exposure, no dramatic shadows,
+realistic moderate textures, clean geometry, and an uncluttered RGB-D dataset appearance that is
+friendly to reconstruction, depth estimation, and semantic segmentation.

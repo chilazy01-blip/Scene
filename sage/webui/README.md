@@ -5,8 +5,25 @@
 ## 启动
 
 ```bash
-/data/xy/SAGE_repro/venv/bin/python /home/xy/SAGE/sage/webui/server.py --host 127.0.0.1 --port 8787
+cd /data/wsj/main/scene
+source .env
+"$SAGE_ORCH_PYTHON" -c 'import torch, transformers; print(torch.__version__)'
+"$SAGE_ORCH_PYTHON" sage/webui/server.py --host 127.0.0.1 --port 8787
 ```
+
+WebUI 启动时优先使用 `SAGE_FLOW_PYTHON`，未设置时使用
+`SAGE_ORCH_PYTHON`。参考深度子进程使用 `SAGE_REFERENCE_DEPTH_PY`；本机
+`.env` 将它指向同一个 `tree-sage-flow2` 环境，以确保 `torch` 和
+`transformers` 可用。修改 `.env` 后需要重启 WebUI 才会进入新任务的环境。
+
+本机参考深度模型安装在：
+
+```text
+/data/wsj/models/depth__large_relative
+```
+
+该目录是 `depth-anything/Depth-Anything-V2-Large-hf` 的本地 Transformers
+快照，`.env` 通过 `SAGE_REFERENCE_DEPTH_MODEL` 指向它。
 
 打开：
 
@@ -40,10 +57,11 @@ http://127.0.0.1:8787/
 - `GET /api/jobs/{id}`
 - `POST /api/jobs/{id}/cancel`
 
-默认数据根目录是 `/data/xy/SAGE_runs/webui/`：
+默认数据根目录跟随 `SAGE_DATA_ROOT`，本机为
+`/data/wsj/main/scene_runs/webui/`：
 
-- 任务记录和日志写入 `/data/xy/SAGE_runs/webui/jobs/`
-- 场景输出写入 `/data/xy/SAGE_runs/webui/runs/`
-- image2 单物体图默认提示根目录是 `/data/xy/SAGE_runs/webui/source_images/`
+- 任务记录和日志写入 `/data/wsj/main/scene_runs/webui/jobs/`
+- 场景输出写入 `/data/wsj/main/scene_runs/webui/runs/`
+- image2 单物体图默认提示根目录是 `/data/wsj/main/scene_runs/webui/source_images/`
 
 这些路径可以分别用 `SAGE_WEBUI_DATA_ROOT`、`SAGE_WEBUI_JOBS_DIR`、`SAGE_WEBUI_OUTPUT_ROOT`、`SAGE_WEBUI_ASSET_SOURCE_ROOT` 覆盖。

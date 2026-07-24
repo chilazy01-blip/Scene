@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scene Architecture Planning"
+  short_description: "Plan shells, cameras, dimensions, and composition"
+  default_prompt: "Use $scene-architecture-planning to plan the room shell, camera composition, bounded asset dimensions, finishes, openings, and furniture orientation before layout."

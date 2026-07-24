@@ -1,0 +1,13 @@
+A clean and well-organized modern bedroom, designed for an indoor 3D reconstruction dataset.
+
+The room contains exactly one double bed centered against the north wall. Exactly two sleeping pillows rest naturally at the head of the bed and belong to the bed arrangement; do not add any additional pillows.
+
+Place exactly two matching bedside tables symmetrically on the left and right sides of the bed. Each bedside table supports exactly one table lamp.
+
+Place exactly one desk against the east wall. One ceramic cup and one compact stack of books rest completely on the desktop. Place exactly one office chair directly in front of the desk, facing the desk, with a clear usable gap between them.
+
+Include exactly one wardrobe against the west wall, exactly two closed storage boxes placed side by side on the floor near the wardrobe, and exactly two slippers forming one pair placed neatly near the foot of the bed.
+
+Keep all objects clearly separated and fully recognizable. Do not add decorative clutter or objects beyond the mandatory list. Avoid duplicate furniture, floating objects, and excessive clutter.
+
+Use a strict front-facing, eye-level camera looking from south to north, centered on the bed, with reduced perspective distortion. Use uniform bright diffuse lighting, stable exposure, moderate realistic textures, clean geometry, minimal occlusion, and clear object boundaries. The result should resemble a reconstruction-friendly RGB-D indoor dataset image.

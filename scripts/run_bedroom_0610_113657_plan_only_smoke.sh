@@ -12,10 +12,9 @@ OUTPUT_DIR="${SAGE_OUTPUT_DIR:-/data/xy/SAGE_runs/tree_sage_flow2/bedroom_0610_1
   --pose-reference-image "${EXAMPLE}/reference_0610_113657.png" \
   --scene-graph-file "${EXAMPLE}/scene_graph_augmented_curtains_ceiling_raw_input.json" \
   --output-dir "${OUTPUT_DIR}" \
-  --model "${SAGE_CODEX_MODEL:-gpt-5}" \
+  --model "${SAGE_CODEX_MODEL:-gpt-5.6-sol}" \
   --no-reference-depth \
   --no-mujoco-check \
   --skip-asset-renders \
   --plan-only \
   "$@"
-

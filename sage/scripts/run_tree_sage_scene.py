@@ -60,6 +60,7 @@ DEFAULT_REFERENCE_DEPTH_MODEL = os.environ.get(
     "SAGE_REFERENCE_DEPTH_MODEL",
     "/data/xy/pat3d_stage1_data/models/depth__large_relative",
 )
+DEFAULT_CODEX_MODEL = os.environ.get("SAGE_CODEX_MODEL", "gpt-5.6-sol")
 IMAGE_ONLY_SCENE_PROMPT = (
     "Infer a complete static indoor scene from the attached reference image. "
     "Use the image as the primary source for room type, style, object identities, object counts, sizes, poses, "
@@ -292,6 +293,7 @@ RENDER_POSE_FEEDBACK_MIN_CONFIDENCE = float(os.environ.get("SAGE_RENDER_POSE_FEE
 REFERENCE_POSE_GROUNDING_MIN_CONFIDENCE = float(os.environ.get("SAGE_REFERENCE_POSE_GROUNDING_MIN_CONFIDENCE", "0.62"))
 FINAL_POSE_INSTANCE_MAX_OBJECTS = int(os.environ.get("SAGE_FINAL_POSE_INSTANCE_MAX_OBJECTS", "16"))
 REFERENCE_SCALE_PRIOR_MIN_CONFIDENCE = float(os.environ.get("SAGE_REFERENCE_SCALE_PRIOR_MIN_CONFIDENCE", "0.52"))
+REFERENCE_SCALE_PRIOR_MAX_AXIS_RATIO = float(os.environ.get("SAGE_REFERENCE_SCALE_PRIOR_MAX_AXIS_RATIO", "2.0"))
 REFERENCE_SCALE_GROUP_RATIO_MIN = float(os.environ.get("SAGE_REFERENCE_SCALE_GROUP_RATIO_MIN", "0.72"))
 REFERENCE_SCALE_GROUP_RATIO_MAX = float(os.environ.get("SAGE_REFERENCE_SCALE_GROUP_RATIO_MAX", "1.35"))
 MATTRESS_SURFACE_HEIGHT_FRACTION = float(os.environ.get("SAGE_MATTRESS_SURFACE_HEIGHT_FRACTION", "0.70"))
@@ -411,6 +413,35 @@ def _object_text(obj: dict[str, Any]) -> str:
     return f"{obj.get('id', '')} {obj.get('category', '')} {obj.get('description', '')} {obj.get('asset_prompt', '')}".lower()
 
 
+def _object_dimension_identity_text(obj: dict[str, Any]) -> str:
+    """Return identity-only text for dimension and physical-kind decisions.
+
+    Descriptions and asset prompts frequently contain relational context such as
+    "slipper on the rug near the bed".  Those fields must not turn the slipper
+    into a rug or bed when selecting physical size priors.
+    """
+    semantics = _agent_semantics(obj)
+    return " ".join(
+        str(value or "").strip().lower().replace("_", " ")
+        for value in (
+            obj.get("id"),
+            obj.get("category"),
+            semantics.get("semantic_class"),
+            semantics.get("layout_role"),
+        )
+    )
+
+
+def _is_footwear_object(obj: dict[str, Any]) -> bool:
+    identity = _object_dimension_identity_text(obj)
+    if any(term in identity for term in ("shoe rack", "shoe cabinet", "shoe storage", "boot rack")):
+        return False
+    return any(
+        re.search(rf"\b{re.escape(term)}\b", identity)
+        for term in ("footwear", "slipper", "slippers", "shoe", "shoes", "sandal", "sandals", "sneaker", "sneakers", "boot", "boots")
+    )
+
+
 def _agent_semantics(obj: dict[str, Any]) -> dict[str, Any]:
     semantics = obj.get("agent_semantics")
     return semantics if isinstance(semantics, dict) else {}
@@ -463,9 +494,12 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
 
 
 def _is_floor_wall_against_candidate(obj: dict[str, Any]) -> bool:
-    text = _object_text(obj)
+    text = _object_dimension_identity_text(obj)
     identity_text = f"{obj.get('id', '')} {obj.get('category', '')}".lower()
     semantic = _semantic_class(obj)
+    role = _semantic_layout_role(obj)
+    if semantic in WALL_ATTACHED_SEMANTIC_CLASSES or role in {"wall_branch", "wall_attached_child"}:
+        return False
     if any(keyword in identity_text for keyword in ("window", "wall art", "painting", "picture", "mirror", "clock", "poster")):
         return False
     if any(
@@ -483,20 +517,28 @@ def _is_floor_wall_against_candidate(obj: dict[str, Any]) -> bool:
             "nightstand",
             "bedside table",
             "side table",
+            "desk",
+            "table",
+            "bed",
+            "sofa",
+            "couch",
+            "chair",
             "plant",
             "floor lamp",
         )
     ):
         return True
-    return semantic in {"book_storage", "floor_furniture", "plant", "lighting"}
+    return semantic in {"book_storage", "floor_furniture", "table_anchor", "seating", "plant", "lighting"}
 
 
 def _is_grounded_wall_against_furniture(obj: dict[str, Any]) -> bool:
     """Objects that may touch a wall but remain floor-supported, not wall-mounted slabs."""
-    text = _object_text(obj)
+    text = _object_dimension_identity_text(obj)
     identity_text = f"{obj.get('id', '')} {obj.get('category', '')}".lower().replace("_", " ")
     semantic = _semantic_class(obj)
     role = _semantic_layout_role(obj)
+    if semantic in WALL_ATTACHED_SEMANTIC_CLASSES or role in {"wall_branch", "wall_attached_child"}:
+        return False
     if any(
         keyword in identity_text
         for keyword in (
@@ -620,12 +662,17 @@ def _has_explicit_side_wall_contact_evidence(obj: dict[str, Any]) -> bool:
 
 
 def _default_dimensions(obj: dict[str, Any]) -> dict[str, float]:
-    text = _object_text(obj)
-    dims = None
-    for keywords, values in DIMENSION_RULES:
-        if any(keyword in text for keyword in keywords):
-            dims = values
-            break
+    text = _object_dimension_identity_text(obj)
+    if _is_footwear_object(obj):
+        dims = (0.14, 0.30, 0.08)
+    elif any(phrase in text for phrase in ("floating shelf", "wall shelf", "wall mounted shelf", "wall-mounted shelf")):
+        dims = (0.90, 0.18, 0.08)
+    else:
+        dims = None
+        for keywords, values in DIMENSION_RULES:
+            if any(keyword in text for keyword in keywords):
+                dims = values
+                break
     if dims is None:
         dims = (0.55, 0.45, 0.45)
 
@@ -679,6 +726,56 @@ def _is_wall_attached_object(obj: dict[str, Any]) -> bool:
     return any(keyword in text for keyword in ("window", "wall art", "painting", "picture", "mirror", "clock", "poster"))
 
 
+def _wall_attachment_class(obj: dict[str, Any]) -> str:
+    """Separate wall contact/support semantics from the object's physical geometry."""
+    if _is_grounded_wall_against_furniture(obj):
+        return "floor_against_wall"
+    identity = _object_identity_text(obj)
+    if any(
+        keyword in identity
+        for keyword in (
+            "window",
+            "curtain",
+            "drape",
+            "door",
+            "mirror",
+            "painting",
+            "picture",
+            "poster",
+            "print",
+            "wall art",
+            "framed art",
+            "photo",
+        )
+    ):
+        return "wall_slab"
+    if _is_wall_attached_object(obj):
+        return "wall_fixture_volume"
+    return "free_floor"
+
+
+def _clamp_wall_slab_thickness(obj: dict[str, Any], maximum: float = 0.08) -> bool:
+    """Clamp only true panel-like wall assets; wall contact alone never changes dimensions."""
+    if _wall_attachment_class(obj) != "wall_slab":
+        return False
+    dims = obj.get("dimensions") if isinstance(obj.get("dimensions"), dict) else {}
+    if not dims or "length" not in dims:
+        return False
+    before = float(dims["length"])
+    dims["length"] = min(before, float(maximum))
+    return abs(float(dims["length"]) - before) > 1e-6
+
+
+def _resolved_wall_affinity(obj: dict[str, Any]) -> dict[str, Any]:
+    semantics = _agent_semantics(obj)
+    affinity = semantics.get("wall_affinity") if isinstance(semantics.get("wall_affinity"), dict) else {}
+    return affinity if isinstance(affinity, dict) else {}
+
+
+def _resolved_contact_wall(obj: dict[str, Any]) -> str | None:
+    return _explicit_wall_id(_resolved_wall_affinity(obj).get("contact_wall"))
+
+
 def _is_wall_art_panel_object(obj: dict[str, Any]) -> bool:
     text = _object_identity_text(obj)
     return any(
@@ -730,7 +827,7 @@ def _is_floor_covering(obj: dict[str, Any]) -> bool:
         return False
     if semantic in FLOOR_COVERING_SEMANTIC_CLASSES or role in {"floor_covering", "rug", "carpet", "mat"}:
         return True
-    text = _object_identity_text(obj)
+    text = _object_dimension_identity_text(obj)
     category = str(obj.get("category") or "").strip().lower()
     return category in {"rug", "carpet", "mat"} or any(keyword in text for keyword in ("rug", "carpet", "floor covering"))
 
@@ -981,6 +1078,15 @@ def _dimension_delta_ratio(current: dict[str, float], prior: dict[str, float]) -
         old = max(float(prior.get(key, 0.0) or 0.0), 1e-6)
         ratios.append(abs(cur - old) / max(cur, old))
     return max(ratios) if ratios else 0.0
+
+
+def _dimension_max_axis_ratio(current: dict[str, float], candidate: dict[str, float]) -> float:
+    ratios: list[float] = []
+    for key in ("width", "length", "height"):
+        current_value = max(float(current.get(key, 0.0) or 0.0), 1e-6)
+        candidate_value = max(float(candidate.get(key, 0.0) or 0.0), 1e-6)
+        ratios.append(max(current_value / candidate_value, candidate_value / current_value))
+    return max(ratios) if ratios else 1.0
 
 
 def _scale_prior_source_priority(source: str) -> int:
@@ -2124,6 +2230,8 @@ def _scale_kind(obj: dict[str, Any]) -> str:
         return "tabletop_plant" if supported else "floor_plant"
     if has_word_in(category_text, "lamp"):
         return "table_lamp" if supported or has_phrase_in(category_text, "table lamp", "desk lamp", "bedside lamp") else "lamp"
+    if _is_footwear_object(obj):
+        return "footwear"
 
     wall_attached_context = placement == "attached_to_wall" or support_id in VIRTUAL_WALLS or semantic in {"wall_attached", "hanging"}
     explicit_curtain_panel = (
@@ -2221,6 +2329,18 @@ def _scale_kind(obj: dict[str, Any]) -> str:
         return "mirror"
     if has_phrase_in(identity, "wall art") or has_word_in(identity, "painting", "picture", "poster"):
         return "wall_art"
+
+    # Once an explicit semantic class exists, relational description text must
+    # not replace the object's physical identity.  Keep description fallback
+    # only for legacy graphs that do not provide agent semantics.
+    if semantic in SEATING_SEMANTIC_CLASSES:
+        return "sofa" if has_word_in(identity, "sofa", "couch") else "chair"
+    if semantic in BOOK_STORAGE_SEMANTIC_CLASSES:
+        return "book_storage"
+    if semantic in {"lighting", "floor_lamp"}:
+        return "table_lamp" if supported else ("floor_lamp" if semantic == "floor_lamp" else "lamp")
+    if semantic and semantic not in {"unknown", "other"}:
+        return "generic"
 
     if has_word_in(description, "pillow", "cushion"):
         return "pillow"
@@ -2746,6 +2866,8 @@ def _is_scale_prior_sensitive_object(obj: dict[str, Any]) -> bool:
         return True
     if _is_floor_covering(obj) or _is_hanging_object(obj):
         return True
+    if _is_footwear_object(obj):
+        return True
     if semantic in {
         "bed",
         "storage",
@@ -2808,6 +2930,12 @@ def _scale_prior_bounds_for_object(obj: dict[str, Any], room: dict[str, Any]) ->
     room_length = float(room.get("length", 6.0) or 6.0)
     room_height = float(room.get("height", 2.7) or 2.7)
     kind = _scale_kind(obj)
+    if kind == "footwear" or _is_footwear_object(obj):
+        return {
+            "width": (0.06, 0.28),
+            "length": (0.12, 0.45),
+            "height": (0.015, 0.20),
+        }
     if has_kind_word("pillow", "cushion", "duvet", "comforter", "blanket", "bedding") or "throw pillow" in kind_text:
         return {
             "width": (0.08, min(room_width * 0.35, 1.10)),
@@ -2978,6 +3106,23 @@ def apply_object_scale_priors(
         support_id = str(obj.get("support_id") or "").strip()
         if support_id and support_id not in {"floor"} | VIRTUAL_WALLS:
             bounded, support_notes = _apply_support_scale_bounds(bounded, obj, support_id, object_dims)
+        axis_ratio = _dimension_max_axis_ratio(current_dims, bounded)
+        if (
+            str(entry.get("source") or "") == "reference_scale_estimator"
+            and axis_ratio > REFERENCE_SCALE_PRIOR_MAX_AXIS_RATIO
+        ):
+            report["skipped"].append(
+                {
+                    "id": object_id,
+                    "reason": "excessive_reference_scale_change",
+                    "source": entry.get("source"),
+                    "before": current_dims,
+                    "candidate": bounded,
+                    "max_axis_ratio": round(axis_ratio, 4),
+                    "limit": round(float(REFERENCE_SCALE_PRIOR_MAX_AXIS_RATIO), 4),
+                }
+            )
+            continue
         if _dimension_delta_ratio(current_dims, bounded) < 0.015:
             report["skipped"].append({"id": object_id, "reason": "already_close", "source": entry.get("source")})
             continue
@@ -2997,7 +3142,7 @@ def apply_object_scale_priors(
                 else:
                     _clamp_object_to_room(obj, room)
             else:
-                obj["dimensions"]["length"] = min(float(obj["dimensions"]["length"]), 0.12)
+                _clamp_wall_slab_thickness(obj, 0.12)
         report["applied"].append(
             {
                 "id": object_id,
@@ -6212,6 +6357,186 @@ def _wall_affinity_side_candidate(obj: dict[str, Any], bbox: list[float]) -> tup
     return None, ""
 
 
+def resolve_wall_affinity_candidates(scene_graph: dict[str, Any]) -> dict[str, Any]:
+    """Resolve contact-wall hypotheses without turning image-edge proximity into wall contact."""
+    report: dict[str, Any] = {
+        "schema": "tree_sage_wall_affinity_candidates_v1",
+        "enabled": True,
+        "objects": [],
+        "resolved_count": 0,
+        "ambiguous_count": 0,
+        "ok": True,
+    }
+    objects = {
+        str(obj.get("id")): obj
+        for obj in scene_graph.get("objects", [])
+        if isinstance(obj, dict) and obj.get("id")
+    }
+    relations = [rel for rel in scene_graph.get("relations", []) if isinstance(rel, dict)]
+
+    def new_scores() -> dict[str, dict[str, Any]]:
+        return {
+            wall_id: {"contact_score": 0.0, "near_score": 0.0, "sources": []}
+            for wall_id in sorted(VIRTUAL_WALLS)
+        }
+
+    def add(
+        scores: dict[str, dict[str, Any]],
+        wall_id: str | None,
+        score: float,
+        source: str,
+        *,
+        contact: bool,
+    ) -> None:
+        if wall_id not in VIRTUAL_WALLS:
+            return
+        key = "contact_score" if contact else "near_score"
+        bounded = _clamp(float(score), 0.0, 1.0)
+        scores[wall_id][key] = max(float(scores[wall_id][key]), bounded)
+        scores[wall_id]["sources"].append(
+            {"source": source, "score": round(bounded, 4), "kind": "contact" if contact else "near"}
+        )
+
+    def direct_wall_evidence(obj: dict[str, Any]) -> tuple[str | None, float]:
+        object_id = str(obj.get("id") or "")
+        best_wall: str | None = None
+        best_score = 0.0
+        relation = _semantic_wall_relation(obj)
+        mode = str(relation.get("mode") or "").strip().lower()
+        wall_id = _explicit_wall_id(relation.get("wall_id"))
+        if mode in {"against", "attached", "mounted", "wall_flush"} and wall_id in VIRTUAL_WALLS:
+            best_wall = wall_id
+            best_score = _safe_float(relation.get("confidence"), 0.0)
+        for rel in relations:
+            if str(rel.get("subject") or "") != object_id:
+                continue
+            rel_type = str(rel.get("type") or "")
+            candidate = _explicit_wall_id(rel.get("object"))
+            if rel_type not in (WALL_RELATIONS | {"against_wall"}) or candidate not in VIRTUAL_WALLS:
+                continue
+            confidence = _safe_float(rel.get("confidence"), 0.0)
+            if confidence > best_score:
+                best_wall, best_score = candidate, confidence
+        return best_wall, best_score
+
+    for object_id, obj in objects.items():
+        if _is_floor_covering(obj):
+            continue
+        scores = new_scores()
+        wall_relation = _semantic_wall_relation(obj)
+        relation_mode = str(wall_relation.get("mode") or "").strip().lower()
+        relation_wall = _explicit_wall_id(wall_relation.get("wall_id"))
+        relation_confidence = _safe_float(wall_relation.get("confidence"), 0.0)
+        if relation_mode in {"against", "attached", "mounted", "wall_flush"}:
+            add(scores, relation_wall, relation_confidence, "agent_semantics.wall_relation", contact=True)
+        elif relation_mode == "near":
+            add(scores, relation_wall, relation_confidence, "agent_semantics.wall_relation", contact=False)
+
+        pose_constraints = _semantic_pose_constraints(obj)
+        pose_wall = _explicit_wall_id(pose_constraints.get("wall_id"))
+        pose_confidence = _safe_float(pose_constraints.get("confidence"), 0.0)
+        expected_pose = _semantic_token(pose_constraints.get("expected_pose") or _semantic_pose_expectation(obj))
+        if pose_wall in VIRTUAL_WALLS:
+            add(
+                scores,
+                pose_wall,
+                pose_confidence * (0.95 if expected_pose == "wall_flush" else 0.72),
+                "agent_semantics.pose_constraints",
+                contact=expected_pose == "wall_flush",
+            )
+
+        for rel in relations:
+            if str(rel.get("subject") or "") != object_id:
+                continue
+            rel_type = str(rel.get("type") or "")
+            wall_id = _explicit_wall_id(rel.get("object"))
+            confidence = _safe_float(rel.get("confidence"), 0.0)
+            if rel_type in (WALL_RELATIONS | {"against_wall"}):
+                add(scores, wall_id, confidence, f"relation.{rel_type}", contact=True)
+            elif rel_type == "near" and wall_id in VIRTUAL_WALLS:
+                add(scores, wall_id, confidence, "relation.near", contact=False)
+
+        bbox = _wall_affinity_bbox_for_object(obj)
+        if bbox:
+            bbox_wall, evidence = _wall_affinity_side_candidate(obj, bbox)
+            # In an oblique image, edge proximity says "near this side wall" only.
+            add(scores, bbox_wall, 0.68, f"reference_bbox_near: {evidence}", contact=False)
+
+        if _is_table_anchor_object(obj) or _is_floor_storage_or_table_branch_object(obj):
+            for rel in relations:
+                rel_type = str(rel.get("type") or "")
+                if rel_type not in {"above", "below"}:
+                    continue
+                subject_id = str(rel.get("subject") or "")
+                target_id = str(rel.get("object") or "")
+                if object_id not in {subject_id, target_id}:
+                    continue
+                other_id = target_id if subject_id == object_id else subject_id
+                other = objects.get(other_id)
+                if not other or not _is_wall_attached_object(other):
+                    continue
+                other_wall, other_confidence = direct_wall_evidence(other)
+                relation_confidence = _safe_float(rel.get("confidence"), 0.0)
+                if other_wall in VIRTUAL_WALLS and min(other_confidence, relation_confidence) >= 0.65:
+                    functional_score = min(0.9, (other_confidence + relation_confidence) / 2.0)
+                    add(
+                        scores,
+                        other_wall,
+                        functional_score,
+                        f"functional_vertical_pair:{other_id}:{rel_type}",
+                        contact=True,
+                    )
+
+        ranked = sorted(
+            (
+                {
+                    "wall_id": wall_id,
+                    "contact_score": round(float(item["contact_score"]), 4),
+                    "near_score": round(float(item["near_score"]), 4),
+                    "sources": item["sources"],
+                }
+                for wall_id, item in scores.items()
+                if float(item["contact_score"]) > 0.0 or float(item["near_score"]) > 0.0
+            ),
+            key=lambda item: (float(item["contact_score"]), float(item["near_score"])),
+            reverse=True,
+        )
+        contact_ranked = [item for item in ranked if float(item["contact_score"]) >= 0.55]
+        contact_wall = str(contact_ranked[0]["wall_id"]) if contact_ranked else None
+        contact_score = float(contact_ranked[0]["contact_score"]) if contact_ranked else 0.0
+        runner_up_score = float(contact_ranked[1]["contact_score"]) if len(contact_ranked) > 1 else 0.0
+        margin = contact_score - runner_up_score
+        ambiguous = bool(len(contact_ranked) > 1 and margin < 0.05)
+        near_walls = sorted(
+            {
+                str(item["wall_id"])
+                for item in ranked
+                if str(item["wall_id"]) != contact_wall
+                and (float(item["near_score"]) >= 0.55 or float(item["contact_score"]) >= 0.55)
+            }
+        )
+        affinity = {
+            "support_mode": "floor" if _wall_attachment_class(obj) in {"floor_against_wall", "free_floor"} else "wall",
+            "attachment_class": _wall_attachment_class(obj),
+            "contact_wall": contact_wall,
+            "contact_confidence": round(contact_score, 4),
+            "near_walls": near_walls,
+            "ambiguous": ambiguous,
+            "candidate_margin": round(margin, 4),
+            "candidates": ranked[:3],
+        }
+        semantics = obj.setdefault("agent_semantics", {})
+        semantics["wall_affinity"] = affinity
+        report["objects"].append({"id": object_id, **deepcopy(affinity)})
+        if contact_wall:
+            report["resolved_count"] += 1
+        if ambiguous:
+            report["ambiguous_count"] += 1
+
+    scene_graph["_wall_affinity_candidates"] = report
+    return report
+
+
 def arbitrate_oblique_wall_affinities(
     scene_graph: dict[str, Any],
     view_condition_report: dict[str, Any],
@@ -6761,16 +7086,27 @@ def normalize_wall_pose_constraints(scene_graph: dict[str, Any]) -> dict[str, An
                 if not (candidate["wall_id"] in {"wall_east", "wall_west"} and candidate["relation_type"] == "near")
             ]
 
+        resolved_affinity = _resolved_wall_affinity(obj)
+        resolved_contact_wall = _explicit_wall_id(resolved_affinity.get("contact_wall"))
+        resolved_contact_confidence = _safe_float(resolved_affinity.get("contact_confidence"), 0.0)
         chosen_wall = forced_bedside_wall if forced_bedside_wall in VIRTUAL_WALLS else (
-            relation_wall if relation_wall in VIRTUAL_WALLS else None
+            resolved_contact_wall if resolved_contact_wall in VIRTUAL_WALLS else (
+                relation_wall if relation_wall in VIRTUAL_WALLS else None
+            )
         )
         chosen_source = "bed_branch_wall_pollution_guard" if forced_bedside_wall in VIRTUAL_WALLS else (
-            "agent_semantics.wall_relation" if chosen_wall else ""
+            "wall_affinity_candidates.contact_wall" if resolved_contact_wall in VIRTUAL_WALLS else (
+                "agent_semantics.wall_relation" if chosen_wall else ""
+            )
         )
-        chosen_confidence = max(relation_confidence, 0.68) if forced_bedside_wall in VIRTUAL_WALLS else relation_confidence
+        chosen_confidence = (
+            max(relation_confidence, 0.68)
+            if forced_bedside_wall in VIRTUAL_WALLS
+            else max(resolved_contact_confidence, relation_confidence if resolved_contact_wall == relation_wall else 0.0)
+        )
         if candidates:
             best = candidates[0]
-            if not chosen_wall or float(best["confidence"]) >= relation_confidence + 0.08:
+            if not chosen_wall or float(best["confidence"]) >= chosen_confidence + 0.08:
                 chosen_wall = str(best["wall_id"])
                 chosen_source = f"relation.{best['relation_type']}"
                 chosen_confidence = float(best["confidence"])
@@ -7165,6 +7501,9 @@ def _append_reference_side_wall_clusters(scene_graph: dict[str, Any], report: di
         obj = objects.get(object_id)
         if not obj or not is_layout_member(object_id):
             return False
+        resolved_contact = _resolved_contact_wall(obj)
+        if resolved_contact in VIRTUAL_WALLS and resolved_contact != wall_id:
+            return False
         vote_wall_id, confidence, _evidence = _side_wall_vote_for_cluster_object(obj)
         if vote_wall_id == wall_id and confidence >= 0.55:
             return True
@@ -7209,6 +7548,24 @@ def _append_reference_side_wall_clusters(scene_graph: dict[str, Any], report: di
             continue
         wall_id, score = max(wall_votes.items(), key=lambda item: item[1])
         if score < 1.1:
+            continue
+        conflicting_anchor_contacts = [
+            object_id
+            for object_id in layout_ids
+            if _is_table_anchor_object(objects[object_id])
+            and _resolved_contact_wall(objects[object_id]) in VIRTUAL_WALLS
+            and _resolved_contact_wall(objects[object_id]) != wall_id
+        ]
+        if conflicting_anchor_contacts:
+            report.setdefault("warnings", []).append(
+                {
+                    "type": "side_wall_cluster_rejected_by_contact_wall",
+                    "group_id": group.get("group_id"),
+                    "candidate_wall_id": wall_id,
+                    "conflicting_anchor_ids": conflicting_anchor_contacts,
+                    "reason": "A functional floor anchor has a stronger resolved contact wall; image-side proximity remains a near-wall cue only.",
+                }
+            )
             continue
         local_lateral_order = [
             str(object_id)
@@ -7313,6 +7670,17 @@ def _append_reference_side_wall_clusters(scene_graph: dict[str, Any], report: di
         )
         for object_id in extended_layout_ids:
             obj = objects[object_id]
+            resolved_contact = _resolved_contact_wall(obj)
+            if resolved_contact in VIRTUAL_WALLS and resolved_contact != wall_id:
+                report.setdefault("warnings", []).append(
+                    {
+                        "type": "side_wall_member_preserved_contact_wall",
+                        "id": object_id,
+                        "candidate_wall_id": wall_id,
+                        "resolved_contact_wall": resolved_contact,
+                    }
+                )
+                continue
             if _is_seating_object(obj) and not _is_floor_storage_or_table_branch_object(obj):
                 relation_type = "near"
                 mode = "near"
@@ -7543,6 +7911,17 @@ def apply_reference_consistency_refiner(
         report["side_wall_branches"].append(branch_record)
         for object_id in branch_ids:
             obj = objects[object_id]
+            resolved_contact = _resolved_contact_wall(obj)
+            if resolved_contact in VIRTUAL_WALLS and resolved_contact != "wall_east":
+                report["warnings"].append(
+                    {
+                        "type": "far_right_branch_preserved_contact_wall",
+                        "id": object_id,
+                        "candidate_wall_id": "wall_east",
+                        "resolved_contact_wall": resolved_contact,
+                    }
+                )
+                continue
             if _is_bed_or_sofa_object(obj) or _is_floor_covering(obj):
                 continue
             if _is_wall_attached_object(obj):
@@ -10005,7 +10384,10 @@ def normalize_scene_graph(raw_graph: dict[str, Any], scene_prompt: str, max_obje
             "image_bbox": _normalized_bbox(obj.get("image_bbox") or obj.get("bbox")),
             "priority": str(obj.get("priority") or "furniture"),
         }
-        normalized_obj["dimensions"] = _default_dimensions({**obj, **normalized_obj})
+        agent_dimensions = _validated_dimension_triplet(obj.get("dimensions"))
+        normalized_obj["dimensions"] = agent_dimensions or _default_dimensions({**obj, **normalized_obj})
+        normalized_obj["_dimension_baseline"] = dict(normalized_obj["dimensions"])
+        normalized_obj["_dimension_baseline_source"] = "scene_graph_agent" if agent_dimensions else "category_default"
         normalized_obj["agent_semantics"] = _normalized_agent_semantics(obj)
         objects.append(normalized_obj)
 
@@ -10815,6 +11197,34 @@ def _clamp_floor_object_against_wall(obj: dict[str, Any], room: dict[str, float]
         obj["y"] = float(room["length"]) - length / 2.0 - gap
 
 
+def _nudge_floor_object_near_wall(
+    obj: dict[str, Any],
+    room: dict[str, float],
+    wall_id: str,
+    max_clearance: float = 0.55,
+) -> None:
+    """Honor a soft near-wall cue without turning it into contact or changing orientation."""
+    width, length = _rotated_footprint(obj)
+    clearance = max(0.12, float(max_clearance))
+    if wall_id == "wall_east":
+        distance = float(room["width"]) - (float(obj["x"]) + width / 2.0)
+        if distance > clearance:
+            obj["x"] += distance - clearance
+    elif wall_id == "wall_west":
+        distance = float(obj["x"]) - width / 2.0
+        if distance > clearance:
+            obj["x"] -= distance - clearance
+    elif wall_id == "wall_south":
+        distance = float(obj["y"]) - length / 2.0
+        if distance > clearance:
+            obj["y"] -= distance - clearance
+    elif wall_id == "wall_north":
+        distance = float(room["length"]) - (float(obj["y"]) + length / 2.0)
+        if distance > clearance:
+            obj["y"] += distance - clearance
+    _clamp_object_to_room(obj, room)
+
+
 def _floor_against_wall_pose(wall_id: str, room: dict[str, float], obj: dict[str, Any]) -> tuple[float, float, float, float]:
     dims = obj["dimensions"]
     bbox_center = _bbox_center(obj)
@@ -11001,9 +11411,8 @@ def _apply_spatial_constraints(plan: dict[str, Any], scene_graph: dict[str, Any]
             wall_id = _wall_id(rel.get("object"))
             if str(a.get("placement_type", "floor")) == "floor":
                 if rel_type == "near":
-                    x, y, _z, yaw = _floor_against_wall_pose(wall_id, room, wall_ref)
-                    a["x"], a["y"], a["z"], a["yaw"] = x, y, 0.0, yaw
-                    _clamp_floor_object_against_wall(a, room, wall_id)
+                    a["z"] = 0.0
+                    _nudge_floor_object_near_wall(a, room, wall_id)
                     continue
                 x, y, z, yaw = _wall_pose(wall_id, room, wall_ref)
                 a["x"], a["y"], a["z"], a["yaw"] = x, y, z, yaw
@@ -11210,9 +11619,13 @@ def _is_bed_or_sofa_object(obj: dict[str, Any]) -> bool:
 
 
 def _is_table_or_desk(obj: dict[str, Any]) -> bool:
-    if _has_text(obj, ("lamp", "tablet", "tabletop", "mug", "cup")):
+    # Asset prompts for a real desk commonly mention its "tabletop".  Physical
+    # support classification must use identity fields only, otherwise that
+    # descriptive word suppresses the desk's top support surface.
+    text = _object_dimension_identity_text(obj)
+    if any(keyword in text for keyword in ("lamp", "tablet", "tabletop object", "mug", "cup")):
         return False
-    return _has_text(obj, ("desk", "side table", "coffee table", "dining table", "table"))
+    return any(keyword in text for keyword in ("desk", "side table", "coffee table", "dining table", "table"))
 
 
 def _is_back_to_wall_directional_object(obj: dict[str, Any]) -> bool:
@@ -11995,16 +12408,14 @@ def _apply_agent_pose_constraints(obj: dict[str, Any], objects: dict[str, dict[s
             fixes.append(f"yaw aimed at {facing_target} from pose agent")
 
     wall_id = str(constraints.get("wall_id") or "")
-    if expected_pose == "wall_flush" and wall_id in VIRTUAL_WALLS and (
-        not _is_floor_wall_against_candidate(obj) or _is_wall_door_object(obj)
-    ):
+    if expected_pose == "wall_flush" and wall_id in VIRTUAL_WALLS and not _is_grounded_wall_against_furniture(obj):
         obj["placement_type"] = "attached_to_wall"
         obj["support_id"] = wall_id
         obj["yaw"] = _wall_semantic_yaw(wall_id)
         obj["footprint_yaw_offset_degrees"] = _wall_footprint_offset_for_object(wall_id, obj)
         if _is_wall_flat_visual_asset(obj):
             _set_wall_flat_visual_yaw(obj, wall_id)
-        obj["dimensions"]["length"] = min(float(obj["dimensions"]["length"]), 0.08)
+        _clamp_wall_slab_thickness(obj, 0.08)
         if _apply_wall_door_dimension_prior(obj):
             fixes.append("wall-door tangent width and floor-panel dimensions protected from pose agent")
         _clamp_wall_attached_object(obj, room, wall_id)
@@ -17564,10 +17975,6 @@ def _snap_object_to_registered_support_surface(
         x_upper = max_x - obj_w / 2.0 - edge_margin
         y_lower = min_y + obj_l / 2.0 + edge_margin
         y_upper = max_y - obj_l / 2.0 - edge_margin
-        support_identity = str(support_id).lower().replace("_", " ")
-        preserve_edge_pack = _is_bedside_tabletop_child_candidate(obj) and any(
-            keyword in support_identity for keyword in ("nightstand", "bedside", "side table")
-        )
         obj["x"] = (
             _clamp_surface_axis_preserving_packed_position(
                 float(obj.get("x", 0.0) or 0.0),
@@ -17577,7 +17984,7 @@ def _snap_object_to_registered_support_surface(
                 max_x,
                 float(center[0]),
             )
-            if preserve_edge_pack or x_lower <= x_upper
+            if x_lower <= x_upper
             else float(center[0])
         )
         obj["y"] = (
@@ -17589,7 +17996,7 @@ def _snap_object_to_registered_support_surface(
                 max_y,
                 float(center[1]),
             )
-            if preserve_edge_pack or y_lower <= y_upper
+            if y_lower <= y_upper
             else float(center[1])
         )
         obj["z"] = float(center[2]) + 0.012
@@ -17694,7 +18101,7 @@ def audit_and_repair_object_poses(
                 obj["support_id"] = wall_id
                 obj["yaw"] = _wall_semantic_yaw(wall_id)
                 obj["footprint_yaw_offset_degrees"] = _wall_footprint_offset_for_object(wall_id, obj)
-                obj["dimensions"]["length"] = min(float(obj["dimensions"]["length"]), 0.08)
+                _clamp_wall_slab_thickness(obj, 0.08)
                 _clamp_wall_attached_object(obj, room, wall_id)
 
         elif _is_table_or_desk(obj):
@@ -31460,7 +31867,7 @@ def _pack_side_wall_same_depth_lateral_branch(
         obj["support_id"] = wall_id
         obj["yaw"] = _wall_semantic_yaw(wall_id)
         obj["footprint_yaw_offset_degrees"] = _wall_footprint_offset_for_object(wall_id, obj)
-        obj["dimensions"]["length"] = min(float(obj["dimensions"]["length"]), WALL_ASSET_AXIS_REPAIR_MAX_DEPTH)
+        _clamp_wall_slab_thickness(obj, WALL_ASSET_AXIS_REPAIR_MAX_DEPTH)
         if support:
             obj["y"] = float(support.get("y", target_y) or target_y)
         _clamp_wall_attached_object(obj, room, wall_id)
@@ -32323,7 +32730,7 @@ def _pack_side_wall_branch(
         obj["support_id"] = wall_id
         obj["yaw"] = _wall_semantic_yaw(wall_id)
         obj["footprint_yaw_offset_degrees"] = _wall_footprint_offset_for_object(wall_id, obj)
-        obj["dimensions"]["length"] = min(float(obj["dimensions"]["length"]), WALL_ASSET_AXIS_REPAIR_MAX_DEPTH)
+        _clamp_wall_slab_thickness(obj, WALL_ASSET_AXIS_REPAIR_MAX_DEPTH)
         if support:
             obj["y"] = _clamp(
                 float(support.get("y", 0.0) or 0.0) + 0.25,
@@ -37295,6 +37702,13 @@ def build_plan_from_scene_graph(
             "z": 0.0,
             "yaw": 0.0,
             "dimensions": dims,
+            "_dimension_baseline": dict(
+                _validated_dimension_triplet(meta.get("_dimension_baseline"))
+                or _validated_dimension_triplet(meta.get("dimensions"))
+                or dims
+            ),
+            "_dimension_baseline_source": str(meta.get("_dimension_baseline_source") or "scene_graph"),
+            "wall_attachment_class": _wall_attachment_class(meta),
             "placement_type": "floor",
             "asset_axis_to_z": 2,
             "asset_local_yaw_offset_degrees": 0.0,
@@ -37302,12 +37716,20 @@ def build_plan_from_scene_graph(
             "footprint_yaw_offset_degrees": 0.0,
         }
         if parent.get(meta["id"]) in VIRTUAL_WALLS:
+            wall_id = str(parent[meta["id"]])
             wall_ref = dict(meta)
             wall_ref["dimensions"] = obj["dimensions"]
-            obj["x"], obj["y"], obj["z"], obj["yaw"] = _wall_pose(parent[meta["id"]], room, wall_ref)
-            obj["placement_type"] = "attached_to_wall"
-            obj["support_id"] = parent[meta["id"]]
-            obj["dimensions"]["length"] = min(float(obj["dimensions"]["length"]), 0.08)
+            if _is_grounded_wall_against_furniture(obj):
+                obj["x"], obj["y"], obj["z"], obj["yaw"] = _floor_against_wall_pose(wall_id, room, wall_ref)
+                obj["placement_type"] = "floor"
+                obj["support_id"] = "floor"
+                obj["contact_wall_id"] = wall_id
+                _clamp_floor_object_against_wall(obj, room, wall_id)
+            else:
+                obj["x"], obj["y"], obj["z"], obj["yaw"] = _wall_pose(wall_id, room, wall_ref)
+                obj["placement_type"] = "attached_to_wall"
+                obj["support_id"] = wall_id
+                _clamp_wall_slab_thickness(obj, 0.08)
         elif _is_hanging_object(obj):
             obj["z"] = _clamp(float(room["height"]) - float(obj["dimensions"]["height"]) - 0.22, 1.15, float(room["height"]) - 0.25)
             obj["placement_type"] = "hanging"
@@ -38521,6 +38943,8 @@ def generate_tree_sage_asset(args: argparse.Namespace, obj: dict[str, Any], asse
         steps=args.steps,
         texture_size=args.texture_size,
         decimation_target=args.decimation_target,
+        pipeline_type=args.trellis_pipeline_type,
+        preprocess_image=args.trellis_preprocess_image,
         force=force,
     )
 
@@ -38542,6 +38966,84 @@ def _skip_ground_artifact_cleanup_for_asset(obj: dict[str, Any]) -> bool:
     return "curtain" in category or "drape" in category
 
 
+def _bool_cli_flag(name: str, enabled: bool) -> str:
+    return f"--{name}" if enabled else f"--no-{name}"
+
+
+def _clean_one_tree_sage_asset_subprocess(
+    args: argparse.Namespace,
+    obj: dict[str, Any],
+    source_dir: Path,
+    output_dir: Path,
+    regenerated_raw_dir: Path,
+    *,
+    index: int,
+    force_clean: bool,
+    regenerate_integrated: bool,
+) -> dict[str, Any]:
+    object_id = str(obj.get("id"))
+    worker_dir = output_dir / "_cleanup_worker"
+    object_path = worker_dir / "objects" / f"{object_id}.json"
+    report_path = worker_dir / "reports" / f"{object_id}.json"
+    write_json(object_path, obj)
+    src = source_dir / f"{object_id}.glb"
+    dst = output_dir / f"{object_id}.glb"
+    meta_src = source_dir / f"{object_id}.json"
+    meta_dst = output_dir / f"{object_id}.json"
+    worker_script = Path(__file__).with_name("clean_tree_sage_asset_worker.py")
+    cmd = [
+        sys.executable,
+        str(worker_script),
+        "--object-json",
+        str(object_path),
+        "--source",
+        str(src),
+        "--output",
+        str(dst),
+        "--report",
+        str(report_path),
+        "--regenerated-raw-dir",
+        str(regenerated_raw_dir),
+        "--seed",
+        str(int(args.seed) + 5000 + index),
+        "--trellis-url",
+        str(args.trellis_url),
+        "--asset-timeout",
+        str(float(args.asset_timeout)),
+        "--steps",
+        str(int(args.steps)),
+        "--texture-size",
+        str(int(args.texture_size)),
+        "--decimation-target",
+        str(int(args.decimation_target)),
+        "--trellis-pipeline-type",
+        str(args.trellis_pipeline_type),
+        _bool_cli_flag("trellis-preprocess-image", bool(args.trellis_preprocess_image)),
+        _bool_cli_flag("asset-source-image-required", bool(getattr(args, "asset_source_image_required", False))),
+        _bool_cli_flag("asset-source-image-qa-strict", bool(getattr(args, "asset_source_image_qa_strict", True))),
+    ]
+    if force_clean:
+        cmd.append("--force-clean")
+    if regenerate_integrated:
+        cmd.append("--regenerate-integrated")
+    if meta_src.exists():
+        cmd.extend(["--meta-source", str(meta_src), "--meta-output", str(meta_dst)])
+    if getattr(args, "asset_source_image_dir", None):
+        cmd.extend(["--asset-source-image-dir", str(args.asset_source_image_dir)])
+    timeout = max(float(getattr(args, "asset_cleanup_worker_timeout", 1800.0)), float(args.asset_timeout) + 120.0)
+    proc = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout, check=False)
+    (worker_dir / "logs").mkdir(parents=True, exist_ok=True)
+    (worker_dir / "logs" / f"{object_id}.stdout.txt").write_text(proc.stdout, encoding="utf-8")
+    (worker_dir / "logs" / f"{object_id}.stderr.txt").write_text(proc.stderr, encoding="utf-8")
+    if proc.returncode != 0:
+        raise RuntimeError(
+            f"asset cleanup worker failed for {object_id} with code {proc.returncode}: {proc.stderr[-1000:]}"
+        )
+    if not report_path.exists():
+        raise RuntimeError(f"asset cleanup worker did not write report for {object_id}: {report_path}")
+    return json.loads(report_path.read_text(encoding="utf-8"))
+
+
 def repair_tree_sage_assets_for_scene(
     args: argparse.Namespace,
     plan: dict[str, Any],
@@ -38554,6 +39056,20 @@ def repair_tree_sage_assets_for_scene(
     reports: list[dict[str, Any]] = []
     regenerated_raw_dir = output_dir / "_regenerated_raw"
     for index, obj in enumerate(plan.get("objects", [])):
+        if not _skip_ground_artifact_cleanup_for_asset(obj) and bool(getattr(args, "asset_cleanup_subprocess", True)):
+            report = _clean_one_tree_sage_asset_subprocess(
+                args,
+                obj,
+                source_dir,
+                output_dir,
+                regenerated_raw_dir,
+                index=index,
+                force_clean=force_clean,
+                regenerate_integrated=regenerate_integrated,
+            )
+            reports.append(report)
+            gc.collect()
+            continue
         object_id = str(obj.get("id"))
         src = source_dir / f"{object_id}.glb"
         dst = output_dir / f"{object_id}.glb"
@@ -39212,7 +39728,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--room-layout-file", type=Path)
     parser.add_argument("--room-axis-mode", choices=("auto", "as_is", "swap"), default="auto")
     parser.add_argument("--wall-material-plan", action=argparse.BooleanOptionalAction, default=True)
-    parser.add_argument("--model")
+    parser.add_argument("--model", default=DEFAULT_CODEX_MODEL)
     parser.add_argument("--semantic-agent", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--relation-agent", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--reference-grounding-agent", action=argparse.BooleanOptionalAction, default=True)
@@ -39262,12 +39778,17 @@ def parse_args() -> argparse.Namespace:
         default=Path("/data/xy/tools/blender-4.3.2-linux-x64/4.3/python/bin/python3.11"),
     )
     parser.add_argument("--articraft-provider", default="codex-cli")
-    parser.add_argument("--articraft-model", default="gpt-5.4")
+    parser.add_argument(
+        "--articraft-model",
+        default=os.environ.get("SAGE_ARTICRAFT_MODEL", DEFAULT_CODEX_MODEL),
+    )
     parser.add_argument("--articraft-timeout", type=float, default=900.0)
     parser.add_argument("--articraft-max-cost-usd", type=float, default=0.75)
     parser.add_argument("--articraft-reference-image-mode", choices=["none", "flux"], default="none")
     parser.add_argument("--max-objects", type=int, default=GLOBAL_REFERENCE_PAIR_MAX_OBJECTS)
     parser.add_argument("--clean-assets", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--asset-cleanup-subprocess", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--asset-cleanup-worker-timeout", type=float, default=1800.0)
     parser.add_argument("--force-clean-assets", action="store_true")
     parser.add_argument("--regenerate-integrated-artifacts", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--component-policy-regenerate", action=argparse.BooleanOptionalAction, default=True)
@@ -39785,6 +40306,8 @@ def main() -> None:
             "fix_count": 0,
             "ok": True,
         }
+    wall_affinity_candidate_report = resolve_wall_affinity_candidates(scene_graph)
+    wall_affinity_arbitration_report["candidate_resolution"] = wall_affinity_candidate_report
     reference_consistency_refiner_report = apply_reference_consistency_refiner(
         scene_graph,
         reference_view_condition_report,
@@ -41169,6 +41692,38 @@ def main() -> None:
             "spatial_order_repair_report",
             spatial_order_repair_report,
         )
+    final_pre_write_surface_report = apply_support_surface_registry(plan, support_surface_registry, relation_to_parent)
+    if final_pre_write_surface_report.get("fixes") or final_pre_write_surface_report.get("warnings"):
+        support_surface_application_report.setdefault("fixes", []).extend(
+            f"plan_only_pre_write: {fix}" for fix in final_pre_write_surface_report.get("fixes", [])
+        )
+        support_surface_application_report.setdefault("warnings", []).extend(
+            f"plan_only_pre_write: {warning}" for warning in final_pre_write_surface_report.get("warnings", [])
+        )
+        support_surface_application_report["ok"] = bool(support_surface_application_report.get("ok", True)) and bool(
+            final_pre_write_surface_report.get("ok", True)
+        )
+        _clamp_layout_objects_to_room(plan, cross_constraints, parent)
+        support_surface_registry = build_support_surface_registry(plan, asset_registry)
+        branch_summaries = build_branch_summaries(plan, support_tree, parent, relation_to_parent)
+        reference_alignment_report = build_reference_alignment_report(scene_graph, plan, support_tree, cross_constraints, parent)
+        branch_candidates = build_branch_candidates(
+            plan,
+            support_tree,
+            parent,
+            relation_to_parent,
+            cross_constraints,
+            support_surface_registry,
+            k=args.branch_candidate_k,
+        )
+        aggregate_collision_report = build_aggregate_collision_report(
+            plan,
+            support_tree,
+            parent,
+            relation_to_parent,
+            support_surface_registry,
+            margin=args.aggregate_collision_margin,
+        )
     if args.plan_only and args.mujoco_check:
         mujoco_report = run_flow2_mujoco_check_module(
             plan,
@@ -41441,6 +41996,8 @@ def main() -> None:
         "reference_depth_map_png": reference_depth_report.get("depth_map_png"),
         "wall_affinity_arbitration_enabled": bool(wall_affinity_arbitration_report.get("enabled")),
         "wall_affinity_arbitration_fix_count": int(wall_affinity_arbitration_report.get("fix_count", 0)),
+        "wall_affinity_candidate_resolved_count": int(wall_affinity_candidate_report.get("resolved_count", 0)),
+        "wall_affinity_candidate_ambiguous_count": int(wall_affinity_candidate_report.get("ambiguous_count", 0)),
         "closet_door_panel_assembly_merge_count": int(closet_door_panel_assembly_merge_report.get("merge_count", 0)),
         "wall_pose_constraint_normalization_fix_count": int(wall_pose_constraint_normalization_report.get("fix_count", 0)),
         "reference_consistency_refiner_enabled": bool(reference_consistency_refiner_report.get("enabled")),
@@ -43035,6 +43592,8 @@ def main() -> None:
         summary["reference_depth_map_png"] = reference_depth_report.get("depth_map_png")
         summary["wall_affinity_arbitration_enabled"] = bool(wall_affinity_arbitration_report.get("enabled"))
         summary["wall_affinity_arbitration_fix_count"] = int(wall_affinity_arbitration_report.get("fix_count", 0))
+        summary["wall_affinity_candidate_resolved_count"] = int(wall_affinity_candidate_report.get("resolved_count", 0))
+        summary["wall_affinity_candidate_ambiguous_count"] = int(wall_affinity_candidate_report.get("ambiguous_count", 0))
         summary["wall_pose_constraint_normalization_fix_count"] = int(
             wall_pose_constraint_normalization_report.get("fix_count", 0)
         )

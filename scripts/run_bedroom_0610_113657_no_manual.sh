@@ -29,6 +29,5 @@ fi
   --steps 12 \
   --seed 1700 \
   --blender-bin "${SAGE_BLENDER_BIN:-/data/xy/tools/blender-4.3.2-linux-x64/blender}" \
-  --model "${SAGE_CODEX_MODEL:-gpt-5}" \
+  --model "${SAGE_CODEX_MODEL:-gpt-5.6-sol}" \
   "$@"
-

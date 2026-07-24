@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scene Instance Group Planning"
+  short_description: "Plan matched object sets as typed execution groups"
+  default_prompt: "Use $scene-instance-group-planning to identify paired or matched scene objects and compile safe asset and layout contracts."

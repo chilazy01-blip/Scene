@@ -26,6 +26,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 DEFAULT_BLENDER = "/data/xy/tools/blender-4.3.2-linux-x64/blender"
+DEFAULT_CODEX_MODEL = os.environ.get("SAGE_CODEX_MODEL", "gpt-5.6-sol")
 
 
 OFFICIAL_PROMPTS = {
@@ -223,8 +224,8 @@ def run_codex(scene_prompt: str, output_dir: Path, model: str | None) -> dict[st
         str(response_path),
         request_text,
     ]
-    if model:
-        cmd[2:2] = ["--model", model]
+    resolved_model = model or DEFAULT_CODEX_MODEL
+    cmd[2:2] = ["--model", resolved_model]
     proc = subprocess.run(
         cmd,
         text=True,
@@ -1422,7 +1423,7 @@ def main() -> None:
     parser.add_argument("--prompt")
     parser.add_argument("--prompt-file")
     parser.add_argument("--plan-file")
-    parser.add_argument("--model")
+    parser.add_argument("--model", default=DEFAULT_CODEX_MODEL)
     parser.add_argument("--output-dir", default="/data/xy/SAGE_repro/selfmade_trellis_scene")
     parser.add_argument("--trellis-url", default="http://127.0.0.1:8082")
     parser.add_argument("--trellis-pipeline-type", default="1024_cascade", choices=["512", "1024", "1024_cascade", "1536_cascade"])

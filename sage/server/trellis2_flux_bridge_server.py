@@ -7,6 +7,7 @@ import argparse
 import gc
 import json
 import os
+import re
 import sys
 import threading
 import time
@@ -192,20 +193,23 @@ class Trellis2BridgeRuntime:
 
     def _white_base_prompt_clause(self, input_text: str, attempt: int = 0) -> str:
         text = str(input_text).lower()
+        contains = lambda words: any(
+            re.search(rf"(?<![a-z]){re.escape(word)}(?![a-z])", text) for word in words
+        )
         clauses = [
-            "Do not generate any white base, circular base, oval base, floor disc, display platform, pedestal, plinth, base plate, shadow catcher, or support surface under the object",
-            "The object must be isolated directly on the solid color background; only the real object geometry should be visible",
+            "No display base, floor disc, pedestal, plinth, ground plane, shadow catcher, or support surface",
+            "show only the real object geometry on the solid background",
         ]
-        if any(word in text for word in ("plant", "potted", "pot", "vase")):
-            clauses.append("A plant may have its own pot, but there must be no extra platform, saucer, pedestal, or white disc under the pot")
-        if any(word in text for word in ("cabinet", "dresser", "nightstand", "wardrobe", "chest", "table", "chair", "sofa", "bed")):
-            clauses.append("Furniture legs or the furniture bottom must be visible directly, not standing on any platform or circular display base")
-        if "mirror" in text:
-            clauses.append("For a wall mirror, generate only the mirror and frame; no shelf, stand, platform, wall panel, or base")
-        if any(word in text for word in ("lamp", "lantern", "light")):
-            clauses.append("A lamp may have its own shade, pole, tripod, or built-in base, but no extra white floor disc or product display platform")
+        if contains(("plant", "potted", "pot", "vase")):
+            clauses.append("A real plant pot is allowed, but no extra saucer or platform")
+        if contains(("cabinet", "dresser", "nightstand", "wardrobe", "chest", "table", "chair", "sofa", "bed")):
+            clauses.append("Show furniture legs or bottom directly, without a display base")
+        if contains(("mirror",)):
+            clauses.append("For a mirror, show only its glass and frame, without a wall panel or stand")
+        if contains(("lamp", "lantern", "light")):
+            clauses.append("A built-in lamp base is allowed, but no separate display platform")
         if attempt > 0:
-            clauses.append("STRICT retry: reject product-photo staging props; no white oval under the object, no tabletop, no floor patch, no contact platform")
+            clauses.append("STRICT retry: no staging props, tabletop, floor patch, or contact platform")
         return ". ".join(clauses)
 
     def _compose_flux_prompt(self, input_text: str, background_phrase: str | None = None, attempt: int = 0) -> str:
@@ -213,11 +217,9 @@ class Trellis2BridgeRuntime:
         background = background_phrase or self._flux_background_phrases()[0]
         white_base_clause = self._white_base_prompt_clause(raw, attempt)
         return (
-            f"studio product image of exactly one object, object only, clean 3/4 view, {raw}, "
-            f"full object visible, centered, realistic material details, {background}, "
-            "no extra props, no duplicate objects, no room, no walls, no floor, no ground plane, "
-            "no pedestal, no display stand, no plinth, no base plate, no white platform, "
-            "no table, no contact shadow, no reflection. "
+            f"Exactly one isolated object: {raw} Studio product image, clean 3/4 view, full object "
+            f"visible and centered, realistic materials, {background}. No duplicate object, props, "
+            "room, walls, floor, table, text, or reflections. "
             f"{white_base_clause}"
         )
 
@@ -815,10 +817,18 @@ class Trellis2BridgeRuntime:
             from safetensors.torch import load_file
             import torch
             from torchvision import transforms
-            from transformers_modules.rmbg_2_0.BiRefNet_config import BiRefNetConfig
-            from transformers_modules.rmbg_2_0.birefnet import BiRefNet
 
             model_dir = Path(self.args.rmbg_model)
+            try:
+                from transformers_modules.rmbg_2_0.BiRefNet_config import BiRefNetConfig
+                from transformers_modules.rmbg_2_0.birefnet import BiRefNet
+            except ModuleNotFoundError:
+                model_parent = str(model_dir.parent)
+                if model_parent not in sys.path:
+                    sys.path.insert(0, model_parent)
+                from rmbg_2_0.BiRefNet_config import BiRefNetConfig
+                from rmbg_2_0.birefnet import BiRefNet
+
             print(f"[trellis2] loading RMBG model from {model_dir}", flush=True)
             model = BiRefNet(config=BiRefNetConfig(bb_pretrained=False))
             state = load_file(str(model_dir / "model.safetensors"), device="cpu")

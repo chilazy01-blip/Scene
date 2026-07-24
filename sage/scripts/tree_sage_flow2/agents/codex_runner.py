@@ -10,6 +10,9 @@ from typing import Any
 from tree_sage_flow2.io import extract_json
 
 
+DEFAULT_CODEX_MODEL = os.environ.get("SAGE_CODEX_MODEL", "gpt-5.6-sol")
+
+
 def run_codex_json_agent(
     *,
     agent_name: str,
@@ -59,8 +62,8 @@ def run_codex_json_agent(
         "--",
         prompt_arg if prompt_arg is not None else prompt,
     ]
-    if model:
-        cmd[2:2] = ["--model", model]
+    resolved_model = model or DEFAULT_CODEX_MODEL
+    cmd[2:2] = ["--model", resolved_model]
     proc = subprocess.run(
         cmd,
         text=True,
@@ -74,4 +77,3 @@ def run_codex_json_agent(
     if proc.returncode != 0:
         raise RuntimeError(f"codex {agent_name} failed with code {proc.returncode}: {proc.stderr[-1000:]}")
     return extract_json(response_path.read_text(encoding="utf-8"))
-

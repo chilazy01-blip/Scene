@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 
 TARGET_TYPES = {"MESH", "CURVE", "SURFACE", "META", "FONT"}
@@ -116,30 +116,77 @@ def add_camera(name: str, location: tuple[float, float, float], target: tuple[fl
     return cam_obj
 
 
-def normalize_asset(objects: list[bpy.types.Object]) -> None:
+def axis_to_z_matrix(axis_to_z: int, axis_sign: float = 1.0) -> Matrix:
+    sign = -1.0 if float(axis_sign) < 0.0 else 1.0
+    if axis_to_z == 0:
+        if sign < 0.0:
+            return Matrix(((0.0, 0.0, 1.0, 0.0), (0.0, 1.0, 0.0, 0.0), (-1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0, 1.0)))
+        return Matrix(((0.0, 0.0, -1.0, 0.0), (0.0, 1.0, 0.0, 0.0), (1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0, 1.0)))
+    if axis_to_z == 1:
+        if sign < 0.0:
+            return Matrix(((1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, -1.0, 0.0, 0.0), (0.0, 0.0, 0.0, 1.0)))
+        return Matrix(((1.0, 0.0, 0.0, 0.0), (0.0, 0.0, -1.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 0.0, 1.0)))
+    return Matrix.Identity(4)
+
+
+def normalize_asset(objects: list[bpy.types.Object], obj_plan: dict) -> None:
     mesh_objects = [obj for obj in objects if obj.type in TARGET_TYPES]
     if not mesh_objects:
         raise RuntimeError("Imported asset contains no renderable objects.")
-    min_v, max_v = mesh_bbox_world(mesh_objects)
-    center = (min_v + max_v) * 0.5
-    extents = max_v - min_v
-    max_extent = max(float(extents.x), float(extents.y), float(extents.z), 1e-6)
+    axis_matrix = axis_to_z_matrix(
+        int(obj_plan.get("asset_axis_to_z", 2)),
+        float(obj_plan.get("asset_axis_to_z_sign", 1.0) or 1.0),
+    )
     root = bpy.data.objects.new("AssetRoot", None)
     bpy.context.scene.collection.objects.link(root)
     imported_set = set(objects)
     root_candidates = [obj for obj in objects if obj.parent not in imported_set]
     for obj in root_candidates:
+        world = obj.matrix_world.copy()
         obj.parent = root
-        obj.matrix_parent_inverse = root.matrix_world.inverted()
-    root.location = -center
-    root.scale = (1.35 / max_extent, 1.35 / max_extent, 1.35 / max_extent)
+        obj.matrix_world = world
+    root.matrix_world = axis_matrix
+    bpy.context.view_layer.update()
+    min_v, max_v = mesh_bbox_world(mesh_objects)
+    center = (min_v + max_v) * 0.5
+    extents = max_v - min_v
+    max_extent = max(float(extents.x), float(extents.y), float(extents.z), 1e-6)
+    uniform_scale = 1.35 / max_extent
+    root.matrix_world = (
+        Matrix.Diagonal((uniform_scale, uniform_scale, uniform_scale, 1.0))
+        @ Matrix.Translation((-center.x, -center.y, -center.z))
+        @ axis_matrix
+    )
+    bpy.context.view_layer.update()
+    normalized_min, normalized_max = mesh_bbox_world(mesh_objects)
+    normalized_extents = normalized_max - normalized_min
+    print(
+        json.dumps(
+            {
+                "object_id": obj_plan.get("id"),
+                "axis_to_z": int(obj_plan.get("asset_axis_to_z", 2)),
+                "normalized_extents": [
+                    round(float(normalized_extents.x), 6),
+                    round(float(normalized_extents.y), 6),
+                    round(float(normalized_extents.z), 6),
+                ],
+            }
+        ),
+        flush=True,
+    )
 
 
-def render_asset(asset_path: Path, object_id: str, output_dir: Path, resolution: int) -> dict[str, str]:
+def render_asset(
+    asset_path: Path,
+    obj_plan: dict,
+    output_dir: Path,
+    resolution: int,
+) -> dict[str, str]:
+    object_id = str(obj_plan["id"])
     clear_scene()
     bpy.ops.import_scene.gltf(filepath=str(asset_path))
     imported = list(bpy.context.scene.objects)
-    normalize_asset(imported)
+    normalize_asset(imported, obj_plan)
     setup_world()
     setup_lighting()
     paths: dict[str, str] = {}
@@ -158,9 +205,13 @@ def render_asset(asset_path: Path, object_id: str, output_dir: Path, resolution:
 def main() -> None:
     args = parse_args()
     plan = json.loads(args.plan.read_text(encoding="utf-8"))
-    valid_ids = {str(obj.get("id")) for obj in plan.get("objects", []) if isinstance(obj, dict)}
+    by_id = {
+        str(obj.get("id")): obj
+        for obj in plan.get("objects", [])
+        if isinstance(obj, dict)
+    }
     requested = [item.strip() for item in args.object_ids.split(",") if item.strip()]
-    object_ids = [object_id for object_id in requested if object_id in valid_ids]
+    object_ids = [object_id for object_id in requested if object_id in by_id]
     args.output_dir.mkdir(parents=True, exist_ok=True)
     manifest = {"views": {}, "missing": []}
     for object_id in object_ids:
@@ -168,7 +219,12 @@ def main() -> None:
         if not asset_path.exists():
             manifest["missing"].append(object_id)
             continue
-        manifest["views"][object_id] = render_asset(asset_path, object_id, args.output_dir, args.resolution)
+        manifest["views"][object_id] = render_asset(
+            asset_path,
+            by_id[object_id],
+            args.output_dir,
+            args.resolution,
+        )
     (args.output_dir / "asset_turntable_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(json.dumps(manifest, indent=2), flush=True)
 

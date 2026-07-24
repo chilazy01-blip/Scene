@@ -23,6 +23,12 @@ import numpy as np
 import trimesh
 
 
+DEFAULT_ARTICRAFT_MODEL = os.environ.get(
+    "SAGE_ARTICRAFT_MODEL",
+    os.environ.get("SAGE_CODEX_MODEL", "gpt-5.6-sol"),
+)
+
+
 def read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -354,7 +360,7 @@ def main() -> None:
     parser.add_argument("--articraft-repo", type=Path, default=Path("external/articraft"))
     parser.add_argument("--articraft-python", type=Path)
     parser.add_argument("--articraft-provider", default="codex-cli")
-    parser.add_argument("--articraft-model", default="gpt-5.4")
+    parser.add_argument("--articraft-model", default=DEFAULT_ARTICRAFT_MODEL)
     parser.add_argument("--articraft-command", nargs="+")
     parser.add_argument("--prompt-override")
     parser.add_argument("--reference-image", type=Path)

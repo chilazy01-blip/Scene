@@ -39,6 +39,7 @@ from run_selfmade_trellis_scene import (
 
 
 DEFAULT_BLENDER = os.environ.get("SAGE_BLENDER_BIN", "/data/xy/tools/blender-4.3.2-linux-x64/blender")
+DEFAULT_CODEX_MODEL = os.environ.get("SAGE_CODEX_MODEL", "gpt-5.6-sol")
 
 
 def _copy_plan(plan: dict[str, Any]) -> dict[str, Any]:
@@ -306,8 +307,8 @@ def run_codex_visual_critic(
         "--output-last-message",
         str(response_path),
     ]
-    if model:
-        cmd[2:2] = ["--model", model]
+    resolved_model = model or DEFAULT_CODEX_MODEL
+    cmd[2:2] = ["--model", resolved_model]
     for image_path in image_paths:
         cmd.extend(["--image", str(image_path)])
     cmd.extend(["--", prompt])
@@ -591,7 +592,7 @@ def main() -> None:
     parser.add_argument("--prompt")
     parser.add_argument("--prompt-file")
     parser.add_argument("--plan-file", required=True)
-    parser.add_argument("--model")
+    parser.add_argument("--model", default=DEFAULT_CODEX_MODEL)
     parser.add_argument("--output-dir", default="/data/xy/SAGE_repro/selfmade_trellis_scene_codexloop")
     parser.add_argument("--reuse-asset-dir")
     parser.add_argument("--copy-reused-assets", action=argparse.BooleanOptionalAction, default=False)

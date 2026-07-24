@@ -8,6 +8,7 @@ import re
 import shlex
 import signal
 import subprocess
+import sys
 import time
 import uuid
 from http import HTTPStatus
@@ -22,11 +23,21 @@ STATIC_DIR = WEBUI_DIR / "static"
 WORKSPACE_ROOT = WEBUI_DIR.parents[1]
 FLOW_SCRIPT = Path(os.environ.get("SAGE_FLOW_SCRIPT", str(WORKSPACE_ROOT / "sage" / "scripts" / "run_tree_sage_scene.py"))).expanduser()
 TEXT_FLOW_SCRIPT = Path(os.environ.get("SAGE_TEXT_FLOW_SCRIPT", str(WORKSPACE_ROOT / "sage" / "scripts" / "run_tree_sage_text_scene.py"))).expanduser()
-FLOW_PYTHON = Path(os.environ.get("SAGE_FLOW_PYTHON", "/data/xy/SAGE_repro/venv/bin/python")).expanduser()
-DEFAULT_WEBUI_DATA_ROOT = Path(os.environ.get("SAGE_WEBUI_DATA_ROOT", "/data/xy/SAGE_runs/webui")).resolve()
+FLOW_PYTHON = Path(
+    os.environ.get("SAGE_FLOW_PYTHON")
+    or os.environ.get("SAGE_ORCH_PYTHON")
+    or sys.executable
+).expanduser()
+DEFAULT_SAGE_DATA_ROOT = Path(
+    os.environ.get("SAGE_DATA_ROOT", str(WORKSPACE_ROOT.parent / "scene_runs"))
+).expanduser()
+DEFAULT_WEBUI_DATA_ROOT = Path(
+    os.environ.get("SAGE_WEBUI_DATA_ROOT", str(DEFAULT_SAGE_DATA_ROOT / "webui"))
+).expanduser().resolve()
 JOBS_DIR = Path(os.environ.get("SAGE_WEBUI_JOBS_DIR", str(DEFAULT_WEBUI_DATA_ROOT / "jobs"))).resolve()
 DEFAULT_OUTPUT_ROOT = Path(os.environ.get("SAGE_WEBUI_OUTPUT_ROOT", str(DEFAULT_WEBUI_DATA_ROOT / "runs"))).resolve()
 DEFAULT_ASSET_SOURCE_ROOT = Path(os.environ.get("SAGE_WEBUI_ASSET_SOURCE_ROOT", str(DEFAULT_WEBUI_DATA_ROOT / "source_images"))).resolve()
+DEFAULT_CODEX_MODEL = os.environ.get("SAGE_CODEX_MODEL", "gpt-5.6-sol")
 
 RUNNING_PROCS: dict[str, subprocess.Popen[bytes]] = {}
 
@@ -222,6 +233,8 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
         str(int_payload(payload, "textureSize", 2048, 256, 4096)),
         "--decimation-target",
         str(int_payload(payload, "decimationTarget", 500000, 10000, 1000000)),
+        "--model",
+        DEFAULT_CODEX_MODEL,
     ]
 
     prompt = str(payload.get("prompt") or "").strip()
@@ -376,6 +389,7 @@ def config_payload() -> dict[str, Any]:
             "criticIterations": 3,
             "candidateCount": 3,
             "criticAcceptScore": 0.72,
+            "codexModel": DEFAULT_CODEX_MODEL,
         },
         "databaseHooks": {
             "trellisRigidAssets": {"connected": False, "field": "trellisAssetLibraryDir"},
