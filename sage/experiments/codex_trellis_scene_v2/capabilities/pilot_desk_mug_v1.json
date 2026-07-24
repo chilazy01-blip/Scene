@@ -90,6 +90,7 @@
         }
       ],
       "containment_volumes": [],
+      "free_space_volumes": [],
       "included_components": {}
     },
     {
@@ -132,6 +133,7 @@
       },
       "support_surfaces": [],
       "containment_volumes": [],
+      "free_space_volumes": [],
       "included_components": {}
     }
   ]

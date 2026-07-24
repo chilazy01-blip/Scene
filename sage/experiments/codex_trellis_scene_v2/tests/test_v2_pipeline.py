@@ -38,7 +38,7 @@ from ..policies import (
     detect_explicit_category_counts,
 )
 from ..repair import deterministic_repair
-from ..scene_graph import build_typed_scene_graph
+from ..scene_graph import build_typed_scene_graph, validate_typed_scene_graph
 from ..spatial_constraints import evaluate_spatial_relations
 from ..validator import validate_layout
 
@@ -497,6 +497,114 @@ class SemanticGroundingTest(unittest.TestCase):
         )
         self.assertEqual(mug_spec["appearance_terms"], ["ceramic"])
         self.assertNotIn("ceramic", book_spec["appearance_terms"])
+
+    def test_tucked_under_relation_requires_named_target_free_space(self) -> None:
+        brief = build_baseline_brief("A study with a desk and office chair.")
+        desk = next(obj for obj in brief["objects"] if obj["category"] == "desk")
+        chair = next(
+            obj for obj in brief["objects"] if obj["category"] == "office_chair"
+        )
+        brief["relations"].append(
+            {
+                "source": chair["id"],
+                "type": "tucked_under",
+                "target": desk["id"],
+                "strength": "hard",
+                "parameters": {
+                    "free_space_id": "under_desk",
+                    "reference_frame": "target_local",
+                    "preserve_facing": True,
+                },
+            }
+        )
+        graph = build_typed_scene_graph(brief, plan_architecture(brief))
+        self.assertTrue(graph["validation"]["ok"], graph["validation"])
+        relation = next(
+            edge
+            for edge in graph["relations"]
+            if edge["type"] == "tucked_under"
+        )
+        self.assertEqual(relation["constraint_class"], "free_space")
+        self.assertEqual(relation["strength"], "hard")
+        self.assertEqual(
+            relation["parameters"]["free_space_id"], "under_desk"
+        )
+
+        relation["parameters"].pop("free_space_id")
+        validation = validate_typed_scene_graph(graph)
+        self.assertFalse(validation["ok"])
+        self.assertTrue(
+            any(
+                "requires parameters.free_space_id" in error
+                for error in validation["errors"]
+            )
+        )
+
+    def test_tucked_under_grounding_requires_capability_name_and_becomes_hard(
+        self,
+    ) -> None:
+        brief = build_baseline_brief("A study with a desk and office chair.")
+        desk = next(obj for obj in brief["objects"] if obj["category"] == "desk")
+        chair = next(
+            obj for obj in brief["objects"] if obj["category"] == "office_chair"
+        )
+        report = apply_expansion_grounding(
+            brief,
+            {
+                "relation_updates": [
+                    {
+                        "source": chair["id"],
+                        "type": "tucked_under",
+                        "target": desk["id"],
+                        "strength": "soft",
+                        "parameters": {"free_space_id": "under_desk"},
+                        "source_evidence": "chair tucked under desk",
+                    }
+                ]
+            },
+        )
+        self.assertEqual(report["accepted_count"], 1)
+        relation = next(
+            edge
+            for edge in brief["relations"]
+            if isinstance(edge, dict) and edge.get("type") == "tucked_under"
+        )
+        self.assertEqual(relation["strength"], "hard")
+        self.assertEqual(
+            relation["parameters"]["reference_frame"], "target_local"
+        )
+
+        rejected_brief = build_baseline_brief(
+            "A study with a desk and office chair."
+        )
+        rejected_desk = next(
+            obj for obj in rejected_brief["objects"] if obj["category"] == "desk"
+        )
+        rejected_chair = next(
+            obj
+            for obj in rejected_brief["objects"]
+            if obj["category"] == "office_chair"
+        )
+        rejected = apply_expansion_grounding(
+            rejected_brief,
+            {
+                "relation_updates": [
+                    {
+                        "source": rejected_chair["id"],
+                        "type": "tucked_under",
+                        "target": rejected_desk["id"],
+                        "strength": "hard",
+                        "parameters": {},
+                    }
+                ]
+            },
+        )
+        self.assertEqual(rejected["accepted_count"], 0)
+        self.assertEqual(rejected["rejected_count"], 1)
+        self.assertIn(
+            "requires parameters.free_space_id",
+            rejected["rejected"][0]["reason"],
+        )
 
     def test_explicit_user_viewpoint_can_override_locked_role_frame(self) -> None:
         prompt = (

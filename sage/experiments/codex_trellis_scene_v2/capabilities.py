@@ -20,6 +20,7 @@ SUPPORTED_DIMENSION_POLICIES = {
 SUPPORTED_PROXY_TYPES = {"voxel_sdf"}
 SUPPORTED_SUPPORT_SHAPES = {"planar_rectangle"}
 SUPPORTED_CONTAINMENT_SHAPES = {"box"}
+SUPPORTED_FREE_SPACE_SHAPES = {"box"}
 
 
 def _positive_dimensions(value: Any) -> dict[str, float] | None:
@@ -190,6 +191,99 @@ def _validate_containment_volumes(
                 errors.append(f"{prefix} lies outside canonical dimensions")
 
 
+def _validate_free_space_volumes(
+    capability: dict[str, Any],
+    dimensions: dict[str, float] | None,
+    errors: list[str],
+) -> None:
+    volumes = capability.get("free_space_volumes", [])
+    if not isinstance(volumes, list):
+        errors.append("free_space_volumes must be a list")
+        return
+    seen: set[str] = set()
+    for index, volume in enumerate(volumes):
+        prefix = f"free_space_volumes[{index}]"
+        if not isinstance(volume, dict):
+            errors.append(f"{prefix} must be an object")
+            continue
+        volume_id = str(volume.get("id") or "")
+        if not volume_id:
+            errors.append(f"{prefix}.id must be non-empty")
+        elif volume_id in seen:
+            errors.append(f"duplicate free-space volume id: {volume_id}")
+        seen.add(volume_id)
+        if volume.get("shape") not in SUPPORTED_FREE_SPACE_SHAPES:
+            errors.append(f"{prefix}.shape must be box")
+        minimum = _vector(volume.get("min_m"), 3)
+        maximum = _vector(volume.get("max_m"), 3)
+        if minimum is None or maximum is None:
+            errors.append(f"{prefix}.min_m and max_m must be 3-vectors")
+        elif any(minimum[axis] >= maximum[axis] for axis in range(3)):
+            errors.append(f"{prefix}.min_m must be smaller than max_m")
+        elif dimensions:
+            lower = (
+                -dimensions["width"] / 2.0,
+                -dimensions["length"] / 2.0,
+                0.0,
+            )
+            upper = (
+                dimensions["width"] / 2.0,
+                dimensions["length"] / 2.0,
+                dimensions["height"],
+            )
+            if any(
+                minimum[axis] < lower[axis] - 1e-6
+                or maximum[axis] > upper[axis] + 1e-6
+                for axis in range(3)
+            ):
+                errors.append(f"{prefix} lies outside canonical dimensions")
+        allowed = volume.get("allowed_categories")
+        if not isinstance(allowed, list) or not allowed or not all(
+            isinstance(item, str) and item for item in allowed
+        ):
+            errors.append(
+                f"{prefix}.allowed_categories must be a non-empty string list"
+            )
+        entry_axis = _vector(volume.get("entry_axis"), 3)
+        if (
+            entry_axis is None
+            or abs(math.sqrt(sum(item * item for item in entry_axis)) - 1.0)
+            > 1e-4
+        ):
+            errors.append(f"{prefix}.entry_axis must be a unit 3-vector")
+        overlap = float(volume.get("minimum_footprint_overlap", 0.0) or 0.0)
+        if not 0.0 < overlap <= 1.0:
+            errors.append(
+                f"{prefix}.minimum_footprint_overlap must be in (0, 1]"
+            )
+        entry_pose = volume.get("entry_pose")
+        if not isinstance(entry_pose, dict):
+            errors.append(f"{prefix}.entry_pose must be an object")
+            continue
+        bounds = entry_pose.get("translation_bounds_m")
+        if not isinstance(bounds, dict):
+            errors.append(
+                f"{prefix}.entry_pose.translation_bounds_m must be an object"
+            )
+        else:
+            for axis in ("x", "y", "z"):
+                values = _vector(bounds.get(axis), 2)
+                if values is None or values[0] > values[1]:
+                    errors.append(
+                        f"{prefix}.entry_pose.translation_bounds_m.{axis} "
+                        "must be an ordered 2-vector"
+                    )
+        if not isinstance(entry_pose.get("yaw_degrees"), (int, float)):
+            errors.append(f"{prefix}.entry_pose.yaw_degrees must be numeric")
+        tolerance = float(
+            entry_pose.get("yaw_tolerance_degrees", 0.0) or 0.0
+        )
+        if not 0.0 < tolerance <= 180.0:
+            errors.append(
+                f"{prefix}.entry_pose.yaw_tolerance_degrees must be in (0, 180]"
+            )
+
+
 def validate_asset_capability(capability: Any) -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -223,10 +317,11 @@ def validate_asset_capability(capability: Any) -> dict[str, Any]:
     _validate_collision_proxy(capability, errors)
     _validate_support_surfaces(capability, dimensions, errors)
     _validate_containment_volumes(capability, dimensions, errors)
+    _validate_free_space_volumes(capability, dimensions, errors)
 
     if not capability.get("support_surfaces") and not capability.get(
         "containment_volumes"
-    ):
+    ) and not capability.get("free_space_volumes"):
         warnings.append("asset exposes geometry only and has no placement capability")
     return {
         "asset_id": capability.get("asset_id"),
@@ -293,3 +388,23 @@ def capability_index(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
         for asset in registry.get("assets", [])
         if isinstance(asset, dict) and asset.get("asset_id")
     }
+
+
+def free_space_index(capability: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    return {
+        str(volume["id"]): volume
+        for volume in capability.get("free_space_volumes", [])
+        if isinstance(volume, dict) and volume.get("id")
+    }
+
+
+def require_free_space(
+    capability: dict[str, Any], free_space_id: str
+) -> dict[str, Any]:
+    volume = free_space_index(capability).get(str(free_space_id))
+    if volume is None:
+        raise KeyError(
+            f"asset {capability.get('asset_id')} has no free-space capability "
+            f"{free_space_id!r}"
+        )
+    return volume

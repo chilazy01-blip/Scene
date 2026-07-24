@@ -565,8 +565,17 @@ observation relation graph、三图通用冲突协议或默认主链接入。
   的 solid SDF、support surface、containment/named free-space 和 dimension policy
   决定可行域；Prompt/typed relation 与建筑为硬约束。先用 AABB broad phase，再用
   稀疏表面点查询缓存 SDF；只在硬约束和穿透阈值通过的候选中最小化 observation、
-  semantic relation 与 pose-change 软损失。第一接入目标仍是
-  `chair_tucked_under_desk` 的命名 free-space、连续 tuck-depth/yaw 搜索和 facing 保持。
+  semantic relation 与 pose-change 软损失。首个接入目标是
+  `chair_tucked_under_desk` 的命名 free-space、粗到细 tuck-depth/yaw 搜索和 facing 保持。
+- SDF 融合实证：上述第一接入目标已在隔离 pilot 完成。capability schema 新增审核
+  `free_space_volumes`；typed graph 新增 hard `tucked_under`，强制绑定 target-local
+  `free_space_id`。v2 搜索以合成软 observation `(0.04,-0.40,0), yaw=170°, conf=0.85`
+  为目标，在 833 个候选中拒绝 197 个空间外和 377 个 SDF 碰撞候选，选出
+  `(0.0375,-0.53,0), yaw=173.75°`。4,096 点运行代理与 166,249 顶点离线检查同判
+  `valid_under`；dense 最小距离 `-0.001641m`，小于 0.0125m voxel tolerance，0 个
+  deep-penetrating vertices；fixed scale 与 15° facing 门禁通过。输出：
+  `chair_under_desk_reference_guided_search_20260724_v2`。该目标是合成 observation
+  contract，尚不是已认证 image2 观测。
 
 ### VISION-002：三图融合与冲突处理
 
@@ -661,7 +670,7 @@ observation relation graph、三图通用冲突协议或默认主链接入。
 
 - 状态：`RESOLVED`
 - 方案：以 `instance_groups` 表达资产和布局执行集合，成员仍保持独立实例。
-- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 93 个 V2 无模型 unittest 全部通过，skill `scene-instance-group-planning` 校验通过。
+- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 102 个 V2 无模型 unittest 全部通过，仓库根另有 12 个，skill `scene-instance-group-planning` 校验通过。
 - 已知限制：真实左右脚 family 和 Blender 镜像未完成，见 `GROUP-002`。
 
 ## 10. 第一批实验设计
@@ -669,7 +678,7 @@ observation relation graph、三图通用冲突协议或默认主链接入。
 第一批 SDF pilot 不直接跑完整复杂卧室，建立一个可解释的小场景集合：
 
 1. `cup_on_desk`：已完成第一版；验证刚性支撑、零漂浮、禁止穿透、usable support surface 和 proxy 缓存。
-2. `chair_tucked_under_desk`：第一版预设位置分类与 dense/sparse 一致性已完成；下一步验证位姿搜索、命名 free-space、尺寸锁和 chair-facing 保持。
+2. `chair_tucked_under_desk`：命名 free-space、正式 typed relation、参考目标引导的粗到细位姿搜索、尺寸锁、chair-facing 和 dense/sparse 最终候选同判均已完成；下一步把 whole-room observation 转为 target-local relation target 并接入普通 repair。
 3. `books_in_open_shelf`：验证 solid/free-space/support 三重约束。
 4. `box_in_open_cubby`：验证不同尺寸容纳和格位切换。
 

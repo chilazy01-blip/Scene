@@ -35,6 +35,11 @@ RELATION_VOCABULARY: dict[str, dict[str, Any]] = {
         "default_strength": "hard",
         "directed": True,
     },
+    "tucked_under": {
+        "constraint_class": "free_space",
+        "default_strength": "hard",
+        "directed": True,
+    },
     "against_wall": {
         "constraint_class": "contact",
         "default_strength": "hard",
@@ -162,6 +167,7 @@ def _object_source(obj: dict[str, Any]) -> dict[str, Any]:
         "component_requirements",
         "support_surfaces",
         "containment_volumes",
+        "free_space_volumes",
         "facing_constraint",
     )
     return {key: deepcopy(obj[key]) for key in keys if key in obj}
@@ -317,6 +323,21 @@ def validate_typed_scene_graph(graph: dict[str, Any]) -> dict[str, Any]:
             errors.append(f"relation {edge.get('id')} has missing source {source}")
         if target not in known:
             errors.append(f"relation {edge.get('id')} has missing target {target}")
+        if str(edge.get("type") or "") == "tucked_under":
+            parameters = edge.get("parameters")
+            parameters = parameters if isinstance(parameters, dict) else {}
+            if not str(parameters.get("free_space_id") or ""):
+                errors.append(
+                    f"relation {edge.get('id')} requires parameters.free_space_id"
+                )
+            if parameters.get("reference_frame") != "target_local":
+                errors.append(
+                    f"relation {edge.get('id')} requires target_local reference frame"
+                )
+            if edge.get("strength") != "hard":
+                errors.append(
+                    f"relation {edge.get('id')} must be a hard constraint"
+                )
         if str(edge.get("type") or "") == "mirror_symmetric":
             parameters = edge.get("parameters")
             parameters = parameters if isinstance(parameters, dict) else {}
@@ -581,7 +602,7 @@ def build_typed_scene_graph(
         "optimization_contract": {
             "primary_order": "hierarchy.breadth_first_order",
             "broad_phase": "semantic_dimensions_aabb",
-            "narrow_phase": "reserved_for_relation_aware_sdf",
+            "narrow_phase": "optional_capability_bound_relation_aware_sdf",
             "scale_policy": "respect_each_object_dimension_policy",
             "reference_image_required": False,
         },

@@ -227,7 +227,7 @@ capability must expose a named under-desk free-space region; chair sparse surfac
 desk solid SDF, and optimization searches along the desk-front axis with a bounded yaw while
 preserving `faces desk`. For `mug supported_by desk`, the image supplies an approximate top-surface
 location, while `desk.top` determines the valid footprint and contact height. This is the first
-integration target before attempting whole-room SDF repair.
+isolated integration target before attempting whole-room SDF repair.
 
 ## Current scope
 
@@ -625,29 +625,47 @@ resolutions and occupy about 55 KB/20 KB. A second run reuses both caches. This 
 vertical translation and is not yet connected to the full V2 repair pipeline. It does not validate
 friction, tipping, mass, soft bodies, articulation, or container free space.
 
-The second isolated pilot checks whether a sparse runtime proxy preserves the conclusion of a much
-denser offline reference for `chair_tucked_under_desk`:
+The second isolated pilot now covers both sparse/dense consistency and a reference-guided
+coarse-to-fine pose search for `chair_tucked_under_desk`:
 
 ```bash
 /data/wsj/anaconda3/envs/tree-sage-flow2/bin/python \
   -m sage.experiments.codex_trellis_scene_v2.under_desk_pilot \
   --asset-root /data/wsj/main/scene_runs/codex_trellis_v2/assets_curated_v1 \
-  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/chair_under_desk_sparse_pilot_20260724_v1
+  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/chair_under_desk_reference_guided_search_20260724_v2
 ```
 
 `capabilities/pilot_desk_chair_v1.json` locks the reviewed desk/chair hashes, coordinate frames,
-canonical dimensions, dimension policies, and collision settings. The offline reference queries
+canonical dimensions, dimension policies, collision settings, and an asset-specific named
+`under_desk` free-space volume. The free-space capability includes its valid box, entry axis,
+allowed category, minimum footprint overlap, translation bounds, target yaw, and yaw tolerance.
+The typed graph now carries hard `chair tucked_under desk` and `chair faces desk` relations; the
+first relation must bind `parameters.free_space_id` in the target-local frame.
+
+The offline reference queries
 all 166,249 normalized chair render-mesh vertices; the runtime path queries a deterministic 4,096
 point surface sample. For `outside`, `tucked`, and `overinserted`, both paths classify the same
 placements as `outside`, `valid_under`, and `collision`. On the current machine, the three SDF
-queries take about 30.5 ms for the dense reference and 1.0 ms for the sparse proxy, an observed
-31x query speedup and 40.6x point reduction. These timings are local observations.
+queries in the final v2 report take about 31.0 ms for the dense reference and 1.1 ms for the sparse
+proxy, an observed 28.3x query speedup and 40.6x point reduction. These timings are local
+observations.
+
+The v2 search uses a soft reference target `(x=0.04, y=-0.40, yaw=170 degrees, confidence=0.85)`.
+That requested depth is geometrically overinserted. A deterministic 0.05/0.025/0.0125 m and
+5/2.5/1.25 degree coarse-to-fine search evaluates 833 unique poses: 197 fail named free-space
+overlap, 377 fail the desk solid-SDF gate, and 259 are hard-valid. It selects
+`(x=0.0375, y=-0.53, yaw=173.75 degrees)`. The sparse runtime proxy and all-vertex offline check
+both classify the selected pose as `valid_under`; the dense minimum signed distance is
+`-0.001641 m`, inside the `0.0125 m` voxel tolerance, with zero deep-penetrating vertices. Chair
+scale remains fixed and facing remains inside the 15-degree capability tolerance.
 
 The agreement gate compares classification, not exact signed-distance values. It fails if any
 sparse result disagrees with the dense reference. The dense path is still not exact
 triangle-triangle collision ground truth: a coarse mesh can have intersecting faces without an
-inside vertex. The main typed graph also does not yet expose a formal `tucked_under` relation or
-named desk free-space capability.
+inside vertex. The default v2 reference target is a synthetic observation contract, not a claimed
+image2 measurement. An actual extracted target can be supplied through `--reference-target-json`.
+The remaining integration gap is converting accepted whole-room observations into target-local
+relation targets and invoking this optimizer from the ordinary repair pipeline.
 
 ## Important outputs
 

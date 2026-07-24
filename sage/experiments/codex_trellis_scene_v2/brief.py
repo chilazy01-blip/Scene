@@ -33,6 +33,7 @@ GROUNDING_RELATION_ALIASES = {
 
 GROUNDING_RELATION_TYPES = {
     "supported_by",
+    "tucked_under",
     "against_wall",
     "faces",
     "left_of",
@@ -646,6 +647,39 @@ def apply_expansion_grounding(
                 }
             )
             source_obj.pop("facing_constraint", None)
+            relations = _remove_conflicting_relations(
+                relations, source, relation_type
+            )
+        elif relation_type == "tucked_under":
+            if target not in objects_by_id or target == source:
+                rejected.append(
+                    {
+                        "update_kind": "relation",
+                        "raw": deepcopy(raw),
+                        "reason": "tucked_under target must be another object",
+                    }
+                )
+                continue
+            free_space_id = str(parameters.get("free_space_id") or "")
+            if not free_space_id:
+                rejected.append(
+                    {
+                        "update_kind": "relation",
+                        "raw": deepcopy(raw),
+                        "reason": "tucked_under requires parameters.free_space_id",
+                    }
+                )
+                continue
+            parameters.update(
+                {
+                    "free_space_id": free_space_id,
+                    "reference_frame": "target_local",
+                    "preserve_facing": bool(
+                        parameters.get("preserve_facing", True)
+                    ),
+                }
+            )
+            strength = "hard"
             relations = _remove_conflicting_relations(
                 relations, source, relation_type
             )
