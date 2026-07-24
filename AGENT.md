@@ -508,7 +508,16 @@ Codex 最终仍保持 15 个物理对象、吸收 2 个枕头、3 个缺失实�
 
 上述 grounding 缺口的第一版代码已实现。Codex expansion schema 新增 `relation_updates/attribute_updates/component_updates`；本地 `apply_expansion_grounding()` 只接受稳定 baseline ID 和受限关系词表，验证 wall target、hard/soft、support target 与主父级环后才更新 canonical SceneBrief，并把接受/拒绝、覆盖前值、证据写入 `semantic_grounding.json`。`supported_by` 会改主父节点，`against_wall` 会覆盖房间默认墙面并为功能家具刷新入室朝向，`faces` 会形成补充边。布局归一化和 deterministic repair 都会重新求解 target-facing yaw，验证器新增 target-facing 指标和违规。对象级 `appearance_terms_grounded` 可覆盖句级类别扫描，解决 cup/book 同句的 `ceramic` 泄漏；组件更新只能细化已有 deterministic component requirement，不能修改显式数量或凭空创建组件。
 
-V2 无模型 unittest 现为 107 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照、桌下 dense/sparse 分类一致性、命名 free-space、hard `tucked_under` grounding/图验证、参考引导 SDF 搜索、whole-room/target-local 坐标往返、显式资产绑定、关系专属 AABB waiver、参考图 soft-prior contract/投影和生成器库存对照审计。仓库根另有 12 个 unittest 通过，合计 119 个。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
+V2 无模型 unittest 现为 108 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照、桌下 dense/sparse 分类一致性、命名 free-space、hard `tucked_under` grounding/图验证与显式文本保真、参考引导 SDF 搜索、whole-room/target-local 坐标往返、显式资产绑定、关系专属 AABB waiver、参考图 soft-prior contract/投影和生成器库存对照审计。仓库根另有 12 个 unittest 通过，合计 120 个。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
+
+桌下文本 grounding 的真实失败已修复。此前 expansion schema 的关系枚举漏掉
+`tucked_under`，导致模型只能把 “tucked under the desk” 近似为 `in_front_of`。schema
+现已加入 `tucked_under/free_space_id/preserve_facing`，并明确禁止该降级；本地另有窄范围
+防御性归一化，只在 source evidence 是原 Prompt 明确片段且类别为审核
+`office_chair -> desk` 时恢复 hard `tucked_under/under_desk`。相同 study Prompt 的真实
+`gpt-5.6-sol` plan-only 复验直接输出正确关系、0 normalization、0 rejected update，typed
+graph 验证通过。输出：
+`/data/wsj/main/scene_runs/codex_trellis_v2/tucked_under_grounding_regression_20260724_v1`。
 
 新版 typed-delta grounding 已由用户在普通终端完成真实 `gpt-5.6-sol` plan-only 验收：
 

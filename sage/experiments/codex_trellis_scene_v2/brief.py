@@ -52,6 +52,10 @@ DEFAULT_SUPPORT_OFFSETS = {
     ("mug", "desk"): [0.38, 0.0],
 }
 
+DEFAULT_TUCKED_UNDER_FREE_SPACES = {
+    ("office_chair", "desk"): "under_desk",
+}
+
 
 ASSET_SHAPE_GUIDANCE = {
     "book_stack": "one compact stack of several closed books with distinct covers and page blocks",
@@ -492,6 +496,27 @@ def _explicit_reference_frame_evidence(evidence: str, original_prompt: str) -> b
     return any(re.search(pattern, evidence) for pattern in patterns)
 
 
+def _explicit_tucked_under_evidence(
+    evidence: str, original_prompt: str
+) -> bool:
+    """Require an exact prompt fragment before upgrading a spatial relation."""
+
+    evidence = " ".join(evidence.lower().split())
+    prompt = " ".join(original_prompt.lower().split())
+    if not evidence or evidence not in prompt:
+        return False
+    patterns = (
+        (
+            r"\b(?:tuck(?:ed|ing)?|push(?:ed|ing)?|slide|slid|sliding|"
+            r"place(?:d|ing)?|store(?:d|ing)?)\b.{0,80}\b(?:under|beneath)\b"
+        ),
+        r"\b(?:under|beneath) (?:the )?(?:desk|table|workstation)\b",
+        r"(?:塞|收|推|滑|放|置).{0,30}(?:桌|台|工作台).{0,8}(?:下|下方|底下)",
+        r"(?:桌|台|工作台)(?:下|下方|底下).{0,30}(?:椅|座椅)",
+    )
+    return any(re.search(pattern, evidence) for pattern in patterns)
+
+
 def _support_cycle(
     objects_by_id: dict[str, dict[str, Any]], source: str, target: str
 ) -> bool:
@@ -586,6 +611,63 @@ def apply_expansion_grounding(
             continue
         source_obj = objects_by_id[source]
         previous: dict[str, Any] = {}
+        target_obj = objects_by_id.get(target)
+        free_space_default = (
+            DEFAULT_TUCKED_UNDER_FREE_SPACES.get(
+                (
+                    str(source_obj.get("category") or ""),
+                    str(target_obj.get("category") or ""),
+                )
+            )
+            if target_obj is not None
+            else None
+        )
+        explicit_tucked_under = _explicit_tucked_under_evidence(
+            evidence, original_prompt
+        )
+        if (
+            relation_type == "in_front_of"
+            and explicit_tucked_under
+            and free_space_default
+        ):
+            requested_type = relation_type
+            requested_parameters = deepcopy(parameters)
+            relation_type = "tucked_under"
+            parameters = {
+                "free_space_id": free_space_default,
+                "reference_frame": "target_local",
+                "preserve_facing": bool(
+                    requested_parameters.get("preserve_facing", True)
+                ),
+            }
+            normalizations.append(
+                {
+                    "kind": "explicit_tucked_under_type_restored",
+                    "source": source,
+                    "target": target,
+                    "requested_type": requested_type,
+                    "effective_type": relation_type,
+                    "free_space_id": free_space_default,
+                    "source_evidence": evidence,
+                }
+            )
+        elif (
+            relation_type == "tucked_under"
+            and explicit_tucked_under
+            and free_space_default
+            and not str(parameters.get("free_space_id") or "")
+        ):
+            parameters["free_space_id"] = free_space_default
+            normalizations.append(
+                {
+                    "kind": "explicit_tucked_under_free_space_inferred",
+                    "source": source,
+                    "target": target,
+                    "effective_type": relation_type,
+                    "free_space_id": free_space_default,
+                    "source_evidence": evidence,
+                }
+            )
         if relation_type == "against_wall":
             target = target if target.endswith("_wall") else f"{target}_wall"
             if target not in WALL_NODE_IDS:
@@ -1175,7 +1257,7 @@ Return only JSON with this shape:
   "relation_updates": [
     {{
       "source": "exact baseline object id",
-      "type": "supported_by|against_wall|faces|left_of|right_of|in_front_of|separated_from|clearance_from|aligned_with|mirror_symmetric",
+      "type": "supported_by|tucked_under|against_wall|faces|left_of|right_of|in_front_of|separated_from|clearance_from|aligned_with|mirror_symmetric",
       "target": "exact object id or north_wall|south_wall|east_wall|west_wall",
       "strength": "hard for explicit user requirements, otherwise soft",
       "parameters": {{
@@ -1189,7 +1271,9 @@ Return only JSON with this shape:
         "target_anchor": "center|front_face|back_face|left_face|right_face",
         "axis": "depth|left_right|x|y",
         "alignment_tolerance": 0.1,
-        "reference_id": "central exact object id for mirror_symmetric"
+        "reference_id": "central exact object id for mirror_symmetric",
+        "free_space_id": "named target-local capability such as under_desk",
+        "preserve_facing": true
       }},
       "source_evidence": "short exact requirement fragment"
     }}
@@ -1280,6 +1364,10 @@ Rules:
 - Emit relation_updates for every explicit support, wall-contact, facing, ordering, or clearance
   relation, including updates that override a room-policy default. `supported_by` changes the
   primary support parent; `faces` and `against_wall` are typed constraint edges.
+- Preserve explicit "tucked under", "pushed under", or "beneath the desk" wording as a hard
+  `tucked_under` relation. For an office chair tucked under a desk, set
+  parameters.free_space_id=`under_desk`, reference_frame=`target_local`, and
+  preserve_facing=true. Never approximate this wording as `in_front_of`.
 - For `in_front_of`, use reference_frame `target_local`. For `left_of` and `right_of`, use
   `target_local` only when the wording is relative to the target object's own orientation;
   otherwise use `room`. `left_of` and `right_of` express ordering only: do not add

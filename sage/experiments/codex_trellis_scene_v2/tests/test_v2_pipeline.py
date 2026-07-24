@@ -606,6 +606,61 @@ class SemanticGroundingTest(unittest.TestCase):
             rejected["rejected"][0]["reason"],
         )
 
+    def test_explicit_tucked_under_is_not_degraded_to_in_front_of(self) -> None:
+        prompt = (
+            "A realistic compact study with exactly one desk and exactly one "
+            "office chair. The single office chair is tucked under the desk "
+            "and faces the desk."
+        )
+        brief = build_baseline_brief(prompt)
+        desk = next(obj for obj in brief["objects"] if obj["category"] == "desk")
+        chair = next(
+            obj for obj in brief["objects"] if obj["category"] == "office_chair"
+        )
+        report = apply_expansion_grounding(
+            brief,
+            {
+                "relation_updates": [
+                    {
+                        "source": chair["id"],
+                        "type": "in_front_of",
+                        "target": desk["id"],
+                        "strength": "hard",
+                        "parameters": {
+                            "reference_frame": "target_local",
+                            "max_gap": 0.2,
+                        },
+                        "source_evidence": "tucked under the desk",
+                    }
+                ]
+            },
+        )
+        tucked = [
+            edge
+            for edge in brief["relations"]
+            if isinstance(edge, dict) and edge.get("type") == "tucked_under"
+        ]
+        self.assertEqual(len(tucked), 1)
+        self.assertEqual(tucked[0]["strength"], "hard")
+        self.assertEqual(
+            tucked[0]["parameters"]["free_space_id"], "under_desk"
+        )
+        self.assertEqual(
+            tucked[0]["parameters"]["reference_frame"], "target_local"
+        )
+        self.assertTrue(tucked[0]["parameters"]["preserve_facing"])
+        self.assertFalse(
+            any(
+                isinstance(edge, dict) and edge.get("type") == "in_front_of"
+                for edge in brief["relations"]
+            )
+        )
+        self.assertEqual(report["normalization_count"], 1)
+        self.assertEqual(
+            report["normalizations"][0]["kind"],
+            "explicit_tucked_under_type_restored",
+        )
+
     def test_explicit_user_viewpoint_can_override_locked_role_frame(self) -> None:
         prompt = (
             "A bedroom. Put the left bedside table on the left from the bed occupant's "

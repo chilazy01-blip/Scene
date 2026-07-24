@@ -586,6 +586,13 @@ observation relation graph、三图通用冲突协议或默认主链接入。
   AABB 假碰撞，最终 0 hard violation。输出：
   `reference_sdf_bridge_study_20260724_v1`。输入 observation 仍为合成 fixture；
   已认证 image2 端到端运行仍受 `OPENAI_API_KEY` 缺失阻塞。
+- 显式桌下文本 grounding 已修复：expansion schema 先前漏掉 `tucked_under`，使模型把
+  “tucked under the desk” 降级为 `in_front_of`。schema 现加入
+  `tucked_under/free_space_id/preserve_facing`；本地仅在 exact prompt evidence 与审核
+  `office_chair -> desk` 类别绑定同时成立时做防御性恢复。相同 study Prompt 的真实
+  `gpt-5.6-sol` plan-only 复验直接产生 hard `tucked_under/under_desk/target_local`，
+  0 normalization、0 rejected update，typed graph 有效。输出：
+  `tucked_under_grounding_regression_20260724_v1`。
 
 ### VISION-002：三图融合与冲突处理
 
@@ -680,7 +687,7 @@ observation relation graph、三图通用冲突协议或默认主链接入。
 
 - 状态：`RESOLVED`
 - 方案：以 `instance_groups` 表达资产和布局执行集合，成员仍保持独立实例。
-- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 107 个 V2 无模型 unittest 全部通过，仓库根另有 12 个，skill `scene-instance-group-planning` 校验通过。
+- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 108 个 V2 无模型 unittest 全部通过，仓库根另有 12 个，skill `scene-instance-group-planning` 校验通过。
 - 已知限制：真实左右脚 family 和 Blender 镜像未完成，见 `GROUP-002`。
 
 ## 10. 第一批实验设计

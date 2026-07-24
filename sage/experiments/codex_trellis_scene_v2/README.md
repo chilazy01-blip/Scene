@@ -76,6 +76,14 @@ The spatial validator independently checks locked side-role assignment and repor
 `side_role_assignment` violation if stable entities are mirrored, without deriving semantics from
 entity-id suffixes.
 
+Explicit `tucked under` wording is preserved as a hard `tucked_under` relation rather than
+approximated as `in_front_of`. The expansion contract asks for the target-local
+`free_space_id=under_desk`; a defensive local normalization restores that relation only when the
+cited evidence is an exact fragment of the original prompt and the reviewed category pair is
+`office_chair -> desk`. It never upgrades generic nearness or front-of wording. The real regression
+run `tucked_under_grounding_regression_20260724_v1` produced the typed relation directly, with zero
+normalizations and zero rejected grounding updates.
+
 Codex may also propose evidence-backed `constraint_scopes` for furniture semantics. These scopes
 are advisory computation views over existing typed relations: local grounding validates exact
 prompt evidence, object ids, domains, member uniqueness, and relation references, but never changes
