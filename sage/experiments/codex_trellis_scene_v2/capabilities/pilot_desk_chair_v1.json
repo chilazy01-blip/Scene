@@ -1,0 +1,132 @@
+{
+  "schema": "codex_trellis_asset_capability_registry_v1",
+  "purpose": "Desk-under-chair dense-reference versus sparse-runtime collision pilot.",
+  "assets": [
+    {
+      "schema": "codex_trellis_asset_capability_v1",
+      "asset_id": "desk_warm_oak_001",
+      "category": "desk",
+      "source_asset": {
+        "sha256": "537301d8c52c229e600cf302a6ff355db5af1c52172cb1e9c3d4f03e9f8fbe6c",
+        "qa_status": "approved"
+      },
+      "coordinate_frame": {
+        "units": "meters",
+        "up_axis": "z",
+        "origin": "footprint_center_base",
+        "source_mesh_up_axis": "y",
+        "source_mesh_up_sign": 1.0,
+        "canonical_dimensions": {
+          "width": 1.4,
+          "length": 0.72,
+          "height": 0.75
+        },
+        "asset_axis_to_z": 2,
+        "asset_axis_to_z_sign": 1.0,
+        "asset_local_yaw_offset_degrees": 0.0
+      },
+      "dimension_policy": {
+        "mode": "axis_scalable",
+        "axis_scale_ranges": {
+          "width": [
+            0.8,
+            1.25
+          ]
+        },
+        "locked_axis_tolerance": 0.06,
+        "enforce_at_assembly": true
+      },
+      "collision_proxy": {
+        "representation": "voxel_sdf",
+        "source_glb": "optimized/desk_warm_oak_001.glb",
+        "voxel_pitch_m": 0.0125,
+        "padding_voxels": 4,
+        "fill_interior": true,
+        "surface_dilation_voxels": 0,
+        "sign_strategy": "filled_voxel_occupancy_edt",
+        "source_requires_watertight": false
+      },
+      "support_surfaces": [
+        {
+          "id": "top",
+          "shape": "planar_rectangle",
+          "center_m": [
+            0.0,
+            0.0,
+            0.75
+          ],
+          "normal": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "u_axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "v_axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "half_extents_m": [
+            0.65,
+            0.30
+          ],
+          "allowed_categories": [
+            "mug",
+            "book_stack",
+            "table_lamp"
+          ],
+          "contact_tolerance_m": 0.0125,
+          "provenance": "reviewed_trimesh_y_up_voxel_top_plateau"
+        }
+      ],
+      "containment_volumes": [],
+      "included_components": {}
+    },
+    {
+      "schema": "codex_trellis_asset_capability_v1",
+      "asset_id": "office_chair_black_mesh_001",
+      "category": "office_chair",
+      "source_asset": {
+        "sha256": "f628eb8b57449c7c9466e8350ec2fae57ae37a02745637dcf262b532e8f22f6d",
+        "qa_status": "approved"
+      },
+      "coordinate_frame": {
+        "units": "meters",
+        "up_axis": "z",
+        "origin": "footprint_center_base",
+        "source_mesh_up_axis": "y",
+        "source_mesh_up_sign": 1.0,
+        "canonical_dimensions": {
+          "width": 0.62,
+          "length": 0.62,
+          "height": 1.05
+        },
+        "asset_axis_to_z": 2,
+        "asset_axis_to_z_sign": 1.0,
+        "asset_local_yaw_offset_degrees": 0.0
+      },
+      "dimension_policy": {
+        "mode": "fixed_physical",
+        "relative_tolerance": 0.08,
+        "enforce_at_assembly": true
+      },
+      "collision_proxy": {
+        "representation": "voxel_sdf",
+        "source_glb": "optimized/office_chair_black_mesh_001.glb",
+        "voxel_pitch_m": 0.01,
+        "padding_voxels": 4,
+        "fill_interior": true,
+        "surface_dilation_voxels": 0,
+        "sign_strategy": "filled_voxel_occupancy_edt",
+        "source_requires_watertight": false
+      },
+      "support_surfaces": [],
+      "containment_volumes": [],
+      "included_components": {}
+    }
+  ]
+}

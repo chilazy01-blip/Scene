@@ -391,15 +391,15 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 | `GRAPH-002` | P0 | RESOLVED | 纯树无法表达多重空间与功能关系 |
 | `GRAPH-003` | P1 | VALIDATING | 关系冲突、来源、置信度和 hard/soft 协议 |
 | `ASSET-001` | P0 | RESOLVED | Prompt 对象与资产内置部件重复 |
-| `ASSET-002` | P0 | OPEN | 资产没有支撑面、柜格和容纳空间元数据 |
-| `ASSET-003` | P1 | OPEN | 缺少适合 SDF 的稳定碰撞代理 |
+| `ASSET-002` | P0 | IMPLEMENTING | 最小 schema、审核桌面 support surface 和 desk/chair collision capability 已落地；命名 free-space 与柜格仍缺失 |
+| `ASSET-003` | P1 | VALIDATING | 非 watertight GLB 的 voxel SDF proxy 与缓存已完成首个真实资产验证 |
 | `GROUP-001` | P1 | RESOLVED | 成对/匹配实例缺少资产与布局执行组 |
 | `GROUP-002` | P2 | OPEN | 审核库缺少可靠的真实 pair family、左右角色和镜像策略 |
-| `SDF-001` | P0 | DESIGN | 尚未建立 broad phase + SDF narrow phase 管线 |
-| `SDF-002` | P0 | OPEN | 有意接触和禁止穿透没有关系感知策略 |
+| `SDF-001` | P0 | IMPLEMENTING | `cup_on_desk` 与桌下 dense/sparse 分类 pilot 已完成，尚未接入位姿搜索和完整 repair |
+| `SDF-002` | P0 | IMPLEMENTING | `supported_by:desk.top` 与桌下禁止穿透已完成隔离 pilot，正式 `tucked_under` contract 尚缺 |
 | `SDF-003` | P0 | OPEN | 包含关系需要 solid/free-space/support 三类约束 |
-| `SDF-004` | P1 | OPEN | SDF 优化可能破坏资产真实尺寸 |
-| `SDF-005` | P1 | OPEN | 高面数和非 watertight GLB 的 SDF 成本与符号稳定性未知 |
+| `SDF-004` | P1 | VALIDATING | 首个 pilot 锁定 fixed scale 并验证尺寸策略保持，尚缺更多策略覆盖 |
+| `SDF-005` | P1 | VALIDATING | desk/mug 构建与缓存、desk/chair dense/sparse 查询已测，尚缺分辨率与多资产压力测试 |
 | `SDF-006` | P1 | OPEN | 碰撞修复可能破坏构图和功能关系 |
 | `VISION-001` | P1 | DESIGN | 参考图应作为证据还是主布局来源 |
 | `VISION-002` | P1 | OPEN | 三类来源图的冲突融合尚未实现 |
@@ -474,30 +474,37 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 
 ### ASSET-002：缺少支撑面与容纳空间
 
-- 状态：`OPEN`
+- 状态：`IMPLEMENTING`
 - 现象：只有总体尺寸，无法说明桌面、搁板、抽屉、柜格等局部可用区域。
-- 计划方案：资产 capability graph 增加 `support_surfaces`、`containment_volumes`、`attachment_slots` 和可见/开合状态。
+- 已完成：新增最小 `codex_trellis_asset_capability_v1` contract、registry validator、`desk_warm_oak_001.top` 审核支撑面和 desk/chair collision capability；schema 同时保留 `containment_volumes` 空列表和组成字段。真实边缘探针中，父 AABB 接受极限边缘杯子位置，而审核 usable support rectangle 正确拒绝。桌椅 pilot 已能用足迹重叠与 SDF 无穿透区分桌外、合理推入和过度推入，但尚未把桌下空间声明为命名 capability。
+- 计划方案：在保持当前 contract 最小化的前提下，为开放书架增加具体 `containment_volumes`、关联 `support_surface_id`、入口方向和开合/可见状态；`attachment_slots` 等到出现真实固定附着 pilot 再加入，不提前扩张 schema。
 - 验收：书可以绑定具体格位与具体搁板，而不是只绑定整个书架。
+- 证据：`capabilities/pilot_desk_mug_v1.json`、`capabilities/pilot_desk_chair_v1.json`、`/data/wsj/main/scene_runs/codex_trellis_v2/cup_on_desk_sdf_pilot_20260724_v2` 与 `/data/wsj/main/scene_runs/codex_trellis_v2/chair_under_desk_sparse_pilot_20260724_v1`。
 
 ### ASSET-003：真实 GLB 不一定适合直接构建 SDF
 
-- 状态：`OPEN`
+- 状态：`VALIDATING`
 - 风险：TRELLIS.2 GLB 可能非 watertight、法线异常、多碎片、高面数或带展示底座。
-- 计划方案：生成独立 collision proxy；执行碎片清理、体素化/封闭重建，并缓存 canonical SDF。
+- 已完成：新增 canonical mesh normalization、filled voxel occupancy + EDT signed-distance proxy、压缩 NPZ 缓存、source SHA-256 与坐标系校验。真实 desk/mug 均为非 watertight 且分别含大量 disconnected bodies，但 proxy 内外测试、保存/加载和缓存复用均通过。
+- 关键修正：raw glTF 经 `trimesh` 读取时为 Y-up，不能直接沿用 Blender 导入后的 `asset_axis_to_z=2`；capability 现显式记录 `source_mesh_up_axis=y`，先转 Z-up 再做 canonical normalization。
 - 验收：同一资产重复使用时不重复构建；符号在内部/外部测试点上稳定；代理不会封死需要保留的开放柜格。
+- 当前边界：缓存复用和 desk/mug 符号已验证；开放柜格是否被 fill 错误封死仍未验证，因此不能关闭该问题。
 
 ### SDF-001：缺少 SDF 窄相位优化器
 
-- 状态：`DESIGN`
+- 状态：`IMPLEMENTING`
 - 计划方案：AABB 先筛候选对，SDF 只处理附近物件；按场景图从 architecture/anchor/parent/child 顺序增量优化。
 - 非目标：删除现有 AABB 或使用全场景高分辨率稠密 SDF 替代通道规划。
 - 验收：刚性 pilot 中能正确处理 AABB 无法表达的桌下和书架内部空间。
+- 当前结果：隔离 `cup_on_desk` 已执行 AABB-only、generic mesh SDF、capability-aware SDF 三组对照。桌面中心三者均为 0m 支撑间隙、0 禁止穿透，说明当前审核桌 AABB 顶面本来就正确；capability 没有伪造数值提升。usable-surface 边缘探针则识别出 AABB 假阳性。桌下 pilot 使用真实审核 desk/chair，在 `outside/tucked/overinserted` 三个位置上由 166,249 顶点参考和 4,096 点运行代理得到 3/3 相同分类。
+- 尚缺：杯子仍只优化 `translation_z`；桌椅当前只分类预设位置，尚未执行连续位姿搜索、正式 `tucked_under` typed relation 或完整 layout/repair。
 
 ### SDF-002：缺少关系感知碰撞策略
 
-- 状态：`OPEN`
+- 状态：`IMPLEMENTING`
 - 现象：统一“零接触”会让杯子漂浮；统一“允许重叠”会导致实体穿透。
-- 计划方案：每条关系声明 `allow_contact_with`、`forbid_penetration_with` 和容差。
+- 已完成第一片：`supported_by:desk.top` 允许杯底在 capability contact tolerance 内接触，其他 mug surface sample 继续执行 forbidden-penetration；桌椅 pilot 同时验证合理推入时 0 深度穿透、过度推入时 dense/sparse 均判 collision。报告分别记录 support gap、SDF 距离、穿透点数/比例和分类一致性。
+- 计划方案：把同一 contract 泛化为 relation compiler 输出的 `allow_contact_with`、`forbid_penetration_with` 和容差，不在 optimizer 中硬编码 mug/desk 类别。
 - 验收：杯底接触桌面但不进入桌板；椅子进入桌下但不穿透桌腿。
 
 ### SDF-003：包含关系不能只靠一个总体 SDF
@@ -508,17 +515,19 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 
 ### SDF-004：优化器可能破坏真实尺寸
 
-- 状态：`OPEN`
+- 状态：`VALIDATING`
 - 风险：照搬 SceneThesis 的 scale collision loss 会通过缩小床、椅、柜子来消除碰撞。
 - 计划方案：接入现有尺寸策略；fixed 资产锁尺度，其余资产按声明范围加惩罚或硬限制。
 - 验收：不存在未经策略允许的尺度变化；失败时报告约束不可满足。
+- 当前证据：`cup_on_desk` 只开放 `translation_z`，mug fixed scale 全程保持 `[1,1,1]`，报告 `dimension_policy_preserved=true`。尚未覆盖 axis-scalable/modular 或不可满足场景。
 
 ### SDF-005：构建成本和符号稳定性未知
 
-- 状态：`OPEN`
+- 状态：`VALIDATING`
 - 需要测量：代理生成时间、不同分辨率误差、GPU/CPU 内存、缓存大小、查询吞吐和多实例复用。
 - 计划方案：优先测试 64³/128³ 或 narrow-band/sparse 表示，不预设最终技术。
 - 验收：完整场景成本可控，且不会因非封闭网格产生大面积符号翻转。
+- 当前测量：desk 0.0125m proxy 首次构建约 2.82s、约 55KB；mug 0.004m proxy 约 0.16s、约 20KB。第二次运行两个 proxy 均命中缓存。真实桌椅三个位置的 SDF 查询中，166,249 顶点参考约 30.5ms，4,096 点运行代理约 1.0ms，点数减少 40.588 倍、观测约 31 倍加速且 3/3 分类一致。该数据只覆盖当前资产、位置和 CPU 环境，不能外推为完整场景成本。
 
 ### SDF-006：物理修复可能破坏语义和构图
 
@@ -624,15 +633,15 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 
 - 状态：`RESOLVED`
 - 方案：以 `instance_groups` 表达资产和布局执行集合，成员仍保持独立实例。
-- 验证路径：`bedroom_instance_group_rules_plan_20260723`；71 个 V2 无模型 unittest 全部通过，skill `scene-instance-group-planning` 校验通过。
+- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 84 个 V2 无模型 unittest 全部通过，skill `scene-instance-group-planning` 校验通过。
 - 已知限制：真实左右脚 family 和 Blender 镜像未完成，见 `GROUP-002`。
 
 ## 10. 第一批实验设计
 
 第一批 SDF pilot 不直接跑完整复杂卧室，建立一个可解释的小场景集合：
 
-1. `cup_on_desk`：验证刚性支撑、零漂浮和不穿透桌板。
-2. `chair_tucked_under_desk`：验证 AABB 假阳性与桌腿真实碰撞。
+1. `cup_on_desk`：已完成第一版；验证刚性支撑、零漂浮、禁止穿透、usable support surface 和 proxy 缓存。
+2. `chair_tucked_under_desk`：第一版预设位置分类与 dense/sparse 一致性已完成；下一步验证位姿搜索、命名 free-space、尺寸锁和 chair-facing 保持。
 3. `books_in_open_shelf`：验证 solid/free-space/support 三重约束。
 4. `box_in_open_cubby`：验证不同尺寸容纳和格位切换。
 
@@ -648,7 +657,7 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 - Blender 前后对比渲染。
 - 运行时间和缓存统计。
 
-成功标准不是“损失下降”，而是：视觉关系正确、尺寸策略保持、几何穿透降低、支撑成立，并且结果优于当前 AABB repair。
+成功标准不是“损失下降”，而是：视觉关系正确、尺寸策略保持、几何穿透受控、支撑成立；若 AABB 原结果已经正确，capability/SDF 必须保持无回归，并通过 usable surface、桌下空间或柜格等 AABB 无法表达的案例证明额外精度，不能强求或伪造连续指标提升。
 
 ## 11. SceneThesis 参考资料
 
@@ -673,13 +682,13 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 
 ## 12. 下一步工作顺序
 
-1. 对实例组做一次真实 `gpt-5.6-sol` plan 和可选 Blender GLB 视觉验收；不要把同资产复用误写成真实左右脚完成。
-2. 补齐真正的请求相机渲染和最终 RGB/depth/instance-mask 评分，关闭 `CAMERA-001`。
-3. 定义最小 capability schema：`included_components/support_surfaces/containment_volumes/attachment_slots`，优先开放书架和书桌。
-4. 用审核过的刚性桌、杯子、椅子、开放书架建立小型测试资产集。
-5. 研究 collision proxy 与 SDF 表示，对非 watertight GLB 做可复现预处理。
-6. 完成 `cup_on_desk` 和 `chair_tucked_under_desk`，再进入柜格包含关系。
-7. 对比 AABB-only、AABB+SDF，并记录几何、语义、视觉和性能指标。
+1. 不重复实现 `cup_on_desk`；先以当前报告和缓存作为 SDF 基线，并保留 raw glTF Y-up 与 Blender Z-up 的独立坐标契约。
+2. 基于已完成的 desk/chair dense/sparse 分类，为 typed graph/capability contract 增加最小 `tucked_under`/命名 free-space 表达，并补位姿搜索、尺寸锁和 chair-facing 保持。
+3. 桌椅语义 contract 稳定后，为一个真正开放的审核书架定义 `solid proxy + containment_volume + support_surface`；必须先验证 voxel fill 不会封死开放柜格。
+4. 完成 `books_in_open_shelf` 和 `box_in_open_cubby`，再决定是否把 capability/SDF 接入完整 V2 repair。
+5. 对不同 voxel pitch、缓存命中、查询吞吐和非 watertight 符号稳定性做小型消融；不预设当前 dense EDT grid 是最终表示。
+6. 补齐真正的请求相机渲染和最终 RGB/depth/instance-mask 评分，作为 SDF 前后视觉关系保持门槛。
+7. 对实例组做一次真实 `gpt-5.6-sol` plan 和可选 Blender GLB 视觉验收；不要把同资产复用误写成真实左右脚完成。
 8. SDF pilot 稳定后再接入 observation graph；不要先复制完整 SceneThesis 管线。
 9. 根据资产库需求处理 `GROUP-002`，但不为当前布局占位链投入过多资产精修。
 10. 软体和 articulation 保持 deferred，直到各自重新启动条件满足。

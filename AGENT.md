@@ -507,7 +507,7 @@ Codex 最终仍保持 15 个物理对象、吸收 2 个枕头、3 个缺失实�
 
 上述 grounding 缺口的第一版代码已实现。Codex expansion schema 新增 `relation_updates/attribute_updates/component_updates`；本地 `apply_expansion_grounding()` 只接受稳定 baseline ID 和受限关系词表，验证 wall target、hard/soft、support target 与主父级环后才更新 canonical SceneBrief，并把接受/拒绝、覆盖前值、证据写入 `semantic_grounding.json`。`supported_by` 会改主父节点，`against_wall` 会覆盖房间默认墙面并为功能家具刷新入室朝向，`faces` 会形成补充边。布局归一化和 deterministic repair 都会重新求解 target-facing yaw，验证器新增 target-facing 指标和违规。对象级 `appearance_terms_grounded` 可覆盖句级类别扫描，解决 cup/book 同句的 `ceramic` 泄漏；组件更新只能细化已有 deterministic component requirement，不能修改显式数量或凭空创建组件。
 
-V2 无模型 unittest 现为 71 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束和实例组的互斥成员/资产复用/组级布局。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
+V2 无模型 unittest 现为 84 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照和桌下 dense/sparse 分类一致性。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
 
 新版 typed-delta grounding 已由用户在普通终端完成真实 `gpt-5.6-sol` plan-only 验收：
 
@@ -545,14 +545,39 @@ Validator 已增加 reporting-only `constraint_scope_failures`。它不替换原
 
 本次相机要求也尚未真正验收：layout proxy 记录 south-to-north、1.55m、65mm、centered，但 Blender 仍只输出固定向下 45° dollhouse 两视角，不是提示词要求的严格正面眼平图。front-center 图中前景斗柜被画面裁切，不能把 `composition=0.8901` 解释为最终 RGB 可见性通过；以后必须增加真实请求相机渲染及 RGB/depth/instance-mask 评分。
 
+最小 capability schema 与第一版 relation-aware SDF pilot 已于 2026-07-24 落地，但仍保持在独立实验层，不接完整 V2 repair。新增：
+
+```text
+capability contract/validator:
+  sage/experiments/codex_trellis_scene_v2/capabilities.py
+pilot registry:
+  sage/experiments/codex_trellis_scene_v2/capabilities/pilot_desk_mug_v1.json
+voxel proxy/SDF cache:
+  sage/experiments/codex_trellis_scene_v2/collision_proxy.py
+cup-on-desk comparison:
+  sage/experiments/codex_trellis_scene_v2/sdf_pilot.py
+desk/chair registry and under-desk comparison:
+  sage/experiments/codex_trellis_scene_v2/capabilities/pilot_desk_chair_v1.json
+  sage/experiments/codex_trellis_scene_v2/under_desk_pilot.py
+真实输出：
+  /data/wsj/main/scene_runs/codex_trellis_v2/cup_on_desk_sdf_pilot_20260724_v2
+  /data/wsj/main/scene_runs/codex_trellis_v2/chair_under_desk_sparse_pilot_20260724_v1
+```
+
+真实审核 desk/mug GLB 都不是 watertight；proxy 使用 canonical normalization、filled voxel occupancy + EDT signed distance、source SHA-256 和压缩 NPZ 缓存。关键坐标问题已显式处理：raw glTF 经 `trimesh` 读取为 Y-up，而 Blender 导入后已是 Z-up，不能直接复用 Blender 侧 `asset_axis_to_z=2` 解释 raw mesh。desk 0.0125m proxy 首次构建约 2.82s、约 55KB；mug 0.004m proxy 约 0.16s、约 20KB；第二次均命中缓存。
+
+`cup_on_desk` 对比 AABB-only、generic mesh SDF 和 capability-aware SDF。审核桌中心三者均为 0m 支撑间隙、0 禁止穿透，说明当前 AABB 顶面原本正确，不能虚报 SDF 连续指标提升；但桌面边缘 probe 中总体 AABB 接受极限边缘杯子位置，审核 usable support rectangle 正确拒绝该假阳性。mug fixed scale 保持 `[1,1,1]`。
+
+`chair_tucked_under_desk` 第一版分类 pilot 也已完成：离线参考查询 166,249 个椅子渲染网格顶点，运行代理使用固定 seed 的 4,096 个表面点；`outside/tucked/overinserted` 三个位置分别得到 `outside/valid_under/collision`，两条路径 3/3 同判。点数减少 40.588 倍，本机三次纯查询约从 30.5ms 降至 1.0ms，观测约 31 倍加速；该时间不是跨机器基准。全顶点仍不是严格三角面相交真值，主 typed graph 也尚无正式 `tucked_under` 和命名 free-space capability，因此当前只证明独立几何分类与稀疏代理一致，未完成完整 repair 接入、位姿搜索和 chair-facing 保持。下一步先补齐这层语义 contract，再进入书架 solid/free-space/support。
+
 ## 8. 仓库与环境
 
 - 仓库：`/data/wsj/main/scene`
-- 分支：`main`
-- 当前提交：`ee1765c`
-- `upstream/main` 与本地 `main` 一致，没有漏拉提交。
-- `origin/main` 比本地落后 4 个提交。
-- 工作树包含已跟踪修改和未跟踪实验文件；任何操作都必须保留现有改动。
+- 当前工作分支：`checkpoint/codex-trellis-v2-20260724`
+- 已推送远端检查点：`b7e786cb5659aedb0ec6ac7aeb5404042958ed90`
+- 跟踪分支：`origin/checkpoint/codex-trellis-v2-20260724`
+- 检查点基于 `ee1765c`；`upstream/main` 与该基线一致，`origin/main` 比基线落后 4 个提交。
+- capability/SDF pilot 是检查点之后的新修改，尚未提交；`examples/` 与 `local_models/` 继续保持未跟踪且不得误入提交。
 
 主要环境：
 
@@ -574,10 +599,10 @@ Blender:
 
 1. 继续围绕独立目录 `sage/experiments/codex_trellis_scene_v2` 工作，不改旧主链，也不要覆盖工作树中的已有修改。
 2. 临时缺失资产链已经达到布局测试可用水准，不继续为 Flux/TRELLIS.2 单物体生成做精修或审核入库；后续资产库建立后优先复用审核资产，仅把这条链保留为缺口兜底。
-3. 实例组前两阶段与 rules/plan-only 回归已经完成，不要再重复实现。若下一窗口继续检查拖鞋，先用相同 Prompt 做一次真实 `gpt-5.6-sol` Codex plan，再决定是否值得跑复用资产的 Blender GLB 视觉对比；验收时区分“同一资产避免款式漂移”与“尚未验证真实左右脚几何”。第三阶段 group-first 联合布局、Blender 镜像和真实 pair bundle 继续延期。
-4. 旧 schema、新版 typed-delta grounding 和 cardinal-footprint spatial CSP 的 rules/Codex plan-only 验收均已完成，不要重复。除非先做上述实例组视觉检查，下一主线仍是相机要求的结构化 grounding 与真实请求视角渲染；`faces -> wall` 的 5 个冗余拒绝项只需后续通过 expansion prompt/schema 收敛，不是当前阻塞。
-5. 同时视觉审核 `bed_warm_oak_001` 后再决定是否向 manifest 写入 `included_components: {pillow: 2}`，未经审核继续保留 assumed 状态。现有 CSP 负责语义粗布局；以后再以书架-书、桌-杯、桌-椅等刚性关系设计真实网格 relation-aware SDF narrow phase，处理精细碰撞/接触而不重复表达左右前后语义；参考图关系推断与其他软体物件继续延后。
-6. 完成上述图结构验证后，加入真正的 south-to-north、1.55m、65mm 正面渲染，并对最终 RGB 的完整入画和遮挡重新评分；本轮固定 45 度 dollhouse 图仍不能代替该验收。
+3. `cup_on_desk` 与桌椅 dense/sparse 分类第一版已经完成，不要重复。下一步为 typed graph/capability contract 增加可执行但最小化的 `tucked_under`/命名 free-space 表达，并在独立 pilot 中加入位姿搜索、尺寸锁和 chair-facing 保持；不要直接改完整 V2 repair。
+4. 桌椅语义 contract 稳定后，为一个真正开放的审核书架定义 `solid proxy + containment_volume + support_surface`；必须先验证 voxel fill 不会封死开放柜格，再做 `books_in_open_shelf/box_in_open_cubby`。只有这些案例通过后才评估接入完整 repair。
+5. SDF pilot 之后仍需加入真正的 south-to-north、1.55m、65mm 正面渲染，并对最终 RGB/depth/instance mask 的完整入画和遮挡重新评分；固定 45 度 dollhouse 图不能代替该验收。
+6. 实例组前两阶段与 rules/plan-only 回归已经完成，不要重复实现；真实左右脚 family/镜像仍延期。`bed_warm_oak_001` 未经视觉审核前也不要向 manifest 写入 `included_components: {pillow: 2}`，继续保留 assumed 状态。
 7. `door_white_minimal_001` 的 60k 面优化、独立 manifest、0.9x2.1m 门洞静态 QA 与正式入库已完成，不要重复。若需要第二种门风格，再处理 `door_warm_oak_modern_001`（目标约 70k faces）；胡桃木门只保留为 `front_only` 待修候选。
 8. 当前审核门是静态关闭的门框-门扇组合资产；MuJoCo proxy 不包含建筑门资产，也不作为门候选验收项。铰链开合、`open_angle_degrees`、把手动态净空和门扇碰撞仍留待 articulation manifest 完成后验证。
 9. 设计覆盖 bedroom、living room、kitchen、restroom 和 study 的多 Prompt 测试集，统计硬/软违规、结构核心覆盖、占用率、紧凑度和家具 layout-plan MuJoCo proxy 稳定性；不要把该指标表述为最终 GLB 或建筑铰链物理验证。

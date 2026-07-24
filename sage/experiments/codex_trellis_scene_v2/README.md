@@ -479,6 +479,69 @@ SAGE_TRELLIS_MODEL=/data/wsj/main/scene_runs/codex_trellis_v2/trellis2_primary_l
 
 The overlay contains patched JSON plus a symlink to the original large checkpoint directory, so it does not duplicate model weights or alter `/data/wsj/models/trellis2_primary`.
 
+## Capability-aware SDF pilot
+
+The first isolated rigid-contact pilot keeps the existing semantic-dimension AABB as broad phase,
+builds a cached voxel SDF from the reviewed mesh, and binds the typed
+`mug supported_by desk` relation to the asset-specific `desk.top` capability:
+
+```bash
+cd /data/wsj/main/scene
+
+/data/wsj/anaconda3/envs/tree-sage-flow2/bin/python \
+  -m sage.experiments.codex_trellis_scene_v2.sdf_pilot \
+  --asset-root /data/wsj/main/scene_runs/codex_trellis_v2/assets_curated_v1 \
+  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/cup_on_desk_sdf_pilot_20260724_v2
+```
+
+The minimal registry is
+`capabilities/pilot_desk_mug_v1.json`. It records canonical dimensions, source-mesh coordinate
+frame, dimension policy, voxel-proxy settings, reviewed support surfaces, containment placeholders,
+and source GLB hashes. The source-mesh frame is deliberately separate from Blender assembly
+metadata: raw glTF loaded by `trimesh` is Y-up, while Blender's glTF importer has already converted
+the asset to Z-up before applying `asset_axis_to_z`.
+
+The command compares:
+
+1. semantic parent AABB top;
+2. generic bottom-points-to-parent-SDF contact;
+3. capability-aware `supported_by:top` contact plus forbidden-penetration checks.
+
+For the reviewed desk center, all three correctly produce a 0 m support gap and no forbidden
+penetration; capability-aware SDF therefore matches rather than artificially claiming an
+improvement over the already-correct AABB placement. A separate edge probe demonstrates the
+semantic gain: the overall parent AABB accepts a mug at the extreme edge, while the reviewed usable
+support rectangle rejects it. Fixed mug scale remains `[1, 1, 1]`.
+
+The real non-watertight desk/mug proxies take about 2.82 s/0.16 s to build at their configured
+resolutions and occupy about 55 KB/20 KB. A second run reuses both caches. This pilot only optimizes
+vertical translation and is not yet connected to the full V2 repair pipeline. It does not validate
+friction, tipping, mass, soft bodies, articulation, or container free space.
+
+The second isolated pilot checks whether a sparse runtime proxy preserves the conclusion of a much
+denser offline reference for `chair_tucked_under_desk`:
+
+```bash
+/data/wsj/anaconda3/envs/tree-sage-flow2/bin/python \
+  -m sage.experiments.codex_trellis_scene_v2.under_desk_pilot \
+  --asset-root /data/wsj/main/scene_runs/codex_trellis_v2/assets_curated_v1 \
+  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/chair_under_desk_sparse_pilot_20260724_v1
+```
+
+`capabilities/pilot_desk_chair_v1.json` locks the reviewed desk/chair hashes, coordinate frames,
+canonical dimensions, dimension policies, and collision settings. The offline reference queries
+all 166,249 normalized chair render-mesh vertices; the runtime path queries a deterministic 4,096
+point surface sample. For `outside`, `tucked`, and `overinserted`, both paths classify the same
+placements as `outside`, `valid_under`, and `collision`. On the current machine, the three SDF
+queries take about 30.5 ms for the dense reference and 1.0 ms for the sparse proxy, an observed
+31x query speedup and 40.6x point reduction. These timings are local observations.
+
+The agreement gate compares classification, not exact signed-distance values. It fails if any
+sparse result disagrees with the dense reference. The dense path is still not exact
+triangle-triangle collision ground truth: a coarse mesh can have intersecting faces without an
+inside vertex. The main typed graph also does not yet expose a formal `tucked_under` relation or
+named desk free-space capability.
+
 ## Important outputs
 
 ```text
