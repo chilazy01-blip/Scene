@@ -124,15 +124,19 @@ pipeline stages:
 
 - `capabilities.py`, `collision_proxy.py`, `sdf_pilot.py`, and `under_desk_pilot.py` exercise
   audited support surfaces and relation-aware voxel-SDF queries on real desk/mug/chair assets;
-- `reference_soft_prior.py` compares a text-only plan with an optional FLUX-generated image
+- `reference_soft_prior.py` compares a text-only plan with an optional generated reference image
   observation without changing the ordinary text path.
 
 ## Generated reference as a soft layout prior
 
-`reference_soft_prior.py` generates one fixed south-to-north FLUX.1-schnell view, asks Codex vision
+`reference_soft_prior.py` generates one fixed south-to-north view, asks Codex vision
 for uncertain normalized object-position observations, and validates every observation against the
 exact SceneBrief catalog. Both object-recognition confidence and position confidence must meet the
 threshold. Unknown, duplicate, ambiguous, low-confidence, or out-of-range observations are rejected.
+The experiment now defaults to a direct `gpt-image-2` Image API request. It requires
+`OPENAI_API_KEY` and records the requested model, size, quality, output path, and timing without
+persisting the credential. `flux1-schnell` remains an explicit local provider; there is no silent
+fallback because that would make the A/B provenance false.
 
 The image is not allowed to add/remove/rename/resize objects, alter the frozen architecture, or
 override typed hard relations. A conservative deterministic projection searches a few bounded pose
@@ -175,10 +179,55 @@ cd /data/wsj/main/scene
   --expander rules \
   --baseline-planner codex \
   --model gpt-5.6-sol \
+  --reference-provider gpt-image-2 \
+  --image2-quality medium \
+  --image2-size 1024x1024 \
+  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/reference_soft_prior_image2_example
+```
+
+Explicit local fallback:
+
+```bash
+/data/wsj/anaconda3/envs/tree-sage-flow2/bin/python \
+  -m sage.experiments.codex_trellis_scene_v2.reference_soft_prior \
+  --prompt "A compact study with exactly one desk, one office chair, one bookcase, one cabinet, and one floor lamp." \
+  --room-type study \
+  --reference-provider flux1-schnell \
   --flux-python /data/wsj/anaconda3/envs/simgen/bin/python \
   --flux-model /data/wsj/models/text_to_image__primary \
-  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/reference_soft_prior_example
+  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/reference_soft_prior_flux_fallback
 ```
+
+### Reference observation and SDF fusion contract
+
+The RGB image is never converted into the collision SDF and is never treated as metric geometry.
+It contributes a confidence-weighted `ObservationGraph`: approximate object position, wall side,
+facing, visibility, and pairwise composition. The selected real GLB and its reviewed capability
+provide the metric geometry: normalized solid proxy/SDF, usable support surface, containment or
+named free-space volume, coordinate frame, and scale policy.
+
+After asset resolution, the intended repair order is:
+
+1. preserve explicit prompt/typed relations as hard constraints;
+2. use AABB as broad phase and cached per-asset voxel SDF plus sparse surface samples as narrow phase;
+3. optimize bounded translation and yaw against reference observations, semantic relations,
+   support/containment, visibility, and minimum pose change;
+4. reject any candidate that violates the object catalog, architecture, dimension policy, hard
+   relation, or SDF penetration tolerance;
+5. among hard-valid candidates, prefer the lower confidence-weighted observation loss and retain
+   the text-only pose when no candidate improves it.
+
+In compact form, the soft objective is
+`L = w_img L_observation + w_rel L_semantic + w_pose L_change`, subject to hard SDF/capability,
+architecture, catalog, and dimension constraints. `w_img` is multiplied by recognition, position,
+and view/depth confidence, so an uncertain single-view depth estimate cannot overpower geometry.
+
+For `chair_tucked_under_desk`, the image supplies only the desired tuck depth and facing. The desk
+capability must expose a named under-desk free-space region; chair sparse surface points query the
+desk solid SDF, and optimization searches along the desk-front axis with a bounded yaw while
+preserving `faces desk`. For `mug supported_by desk`, the image supplies an approximate top-surface
+location, while `desk.top` determines the valid footprint and contact height. This is the first
+integration target before attempting whole-room SDF repair.
 
 ## Current scope
 

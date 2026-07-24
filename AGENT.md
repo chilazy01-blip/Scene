@@ -572,8 +572,10 @@ desk/chair registry and under-desk comparison:
 `chair_tucked_under_desk` 第一版分类 pilot 也已完成：离线参考查询 166,249 个椅子渲染网格顶点，运行代理使用固定 seed 的 4,096 个表面点；`outside/tucked/overinserted` 三个位置分别得到 `outside/valid_under/collision`，两条路径 3/3 同判。点数减少 40.588 倍，本机三次纯查询约从 30.5ms 降至 1.0ms，观测约 31 倍加速；该时间不是跨机器基准。全顶点仍不是严格三角面相交真值，主 typed graph 也尚无正式 `tucked_under` 和命名 free-space capability，因此当前只证明独立几何分类与稀疏代理一致，未完成完整 repair 接入、位姿搜索和 chair-facing 保持。下一步先补齐这层语义 contract，再进入书架 solid/free-space/support。
 
 生成参考图作为软布局先验的隔离分支已实现于
-`experiment/reference-soft-layout-prior`，不修改默认文本主链。`flux_reference.py` 使用本地
-FLUX.1-schnell 生成固定 south-to-north 参考图；`reference_soft_prior.py` 只接受 SceneBrief
+`experiment/reference-soft-layout-prior`，不修改默认文本主链。`reference_soft_prior.py`
+现默认通过直接 Image API 请求 `gpt-image-2`；本地 FLUX.1-schnell 仅保留为显式 provider，
+不允许静默回退。当前环境没有 `OPENAI_API_KEY`，因此默认选择、请求 contract 和凭据不落盘
+已由单元测试验证，但已认证 API smoke 尚未执行。观察器只接受 SceneBrief
 中已有对象的高置信位置观察，拒绝未知、重复、低置信和非法坐标。图像不得修改对象集合、
 尺寸、建筑或硬关系。靠墙物件只允许沿原墙切向移动，自由物件有 0.8m 位移上限；每个候选
 必须同时降低 soft-prior RMSE 并通过现有硬验证，原文本布局始终是 fallback。
@@ -606,6 +608,15 @@ Codex 图仍额外生成 5 个小附件和 5 个装饰物，落地灯也未位�
 严格通过”为 false。内置工具未暴露后端模型 ID，不能把本结果标为已验证的 API
 `gpt-image-2`。该结论只有一个 Prompt、每侧一张图，且审计器本身可波动，不能外推为
 统计性模型排名。
+
+参考图与 SDF 的融合边界已确定：RGB 图只产生带置信度的 observation graph，不直接生成
+SDF 或充当度量几何；所选真实 GLB 的 solid proxy/SDF、support surface、containment 或
+named free-space、坐标系和 dimension policy 定义可行域。运行时先做 AABB broad phase，
+再用稀疏表面代理查询缓存 SDF；Prompt、typed hard relations、建筑、对象集合和尺寸策略是
+硬门禁。在硬门禁通过的候选中，才最小化 image observation、semantic relation 和最小位姿
+变化软损失。第一接入目标是给 desk 增加命名 under-desk free-space，并对
+`chair_tucked_under_desk` 做连续 tuck-depth/yaw 搜索，同时保持 `faces desk`；参考图只提供
+目标插入深度和构图方向，不能覆盖碰撞结果。
 
 ## 8. 仓库与环境
 

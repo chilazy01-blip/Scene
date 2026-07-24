@@ -25,6 +25,7 @@ from .planner import (
     codex_layout,
     rules_layout,
 )
+from .reference_image_provider import generate_gpt_image2_reference
 from .repair import deterministic_repair
 from .scene_graph import build_typed_scene_graph, materialize_scene_graph
 from .validator import footprint, validate_layout
@@ -583,7 +584,7 @@ def _repair_plan(plan: dict[str, Any], iterations: int) -> tuple[dict[str, Any],
     return result, validation
 
 
-def _generate_reference_with_subprocess(
+def _generate_flux_reference_with_subprocess(
     prompt_path: Path,
     output_dir: Path,
     *,
@@ -636,6 +637,38 @@ def _generate_reference_with_subprocess(
     return read_json(metadata_path)
 
 
+def _generate_reference(
+    prompt: str,
+    prompt_path: Path,
+    output_dir: Path,
+    args: Any,
+) -> dict[str, Any]:
+    provider = str(args.reference_provider)
+    if provider == "gpt-image-2":
+        generation = generate_gpt_image2_reference(
+            prompt,
+            output_dir / "reference_image.png",
+            model=str(args.image2_model),
+            size=str(args.image2_size),
+            quality=str(args.image2_quality),
+            timeout_seconds=float(args.image2_timeout),
+        )
+        write_json(output_dir / "reference_image_generation.json", generation)
+        return generation
+    if provider == "flux1-schnell":
+        return _generate_flux_reference_with_subprocess(
+            prompt_path,
+            output_dir,
+            flux_python=Path(args.flux_python).expanduser().resolve(),
+            flux_model=Path(args.flux_model).expanduser().resolve(),
+            width=int(args.width),
+            height=int(args.height),
+            steps=int(args.flux_steps),
+            seed=int(args.seed),
+        )
+    raise ValueError(f"unsupported reference provider: {provider}")
+
+
 def run_reference_soft_prior_experiment(args: Any) -> dict[str, Any]:
     output_dir = Path(args.output_dir).expanduser().resolve()
     if output_dir.exists() and any(output_dir.iterdir()):
@@ -666,15 +699,11 @@ def run_reference_soft_prior_experiment(args: Any) -> dict[str, Any]:
     reference_prompt = build_reference_prompt(brief)
     reference_prompt_path = output_dir / "reference_prompt.txt"
     reference_prompt_path.write_text(reference_prompt + "\n", encoding="utf-8")
-    generation = _generate_reference_with_subprocess(
+    generation = _generate_reference(
+        reference_prompt,
         reference_prompt_path,
         output_dir,
-        flux_python=Path(args.flux_python).expanduser().resolve(),
-        flux_model=Path(args.flux_model).expanduser().resolve(),
-        width=int(args.width),
-        height=int(args.height),
-        steps=int(args.flux_steps),
-        seed=int(args.seed),
+        args,
     )
     reference_image = Path(generation["output_path"])
     raw_observation = run_codex_image_json(
@@ -854,6 +883,23 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--expander", choices=("rules", "hybrid", "codex"), default="rules")
     parser.add_argument("--baseline-planner", choices=("rules", "codex"), default="codex")
     parser.add_argument("--repair-iterations", type=int, default=2)
+    parser.add_argument(
+        "--reference-provider",
+        choices=("gpt-image-2", "flux1-schnell"),
+        default="gpt-image-2",
+        help=(
+            "Reference generator. gpt-image-2 is the experiment default; "
+            "FLUX is an explicit local fallback and is never selected silently."
+        ),
+    )
+    parser.add_argument("--image2-model", default="gpt-image-2")
+    parser.add_argument("--image2-size", default="1024x1024")
+    parser.add_argument(
+        "--image2-quality",
+        choices=("low", "medium", "high", "auto"),
+        default="medium",
+    )
+    parser.add_argument("--image2-timeout", type=float, default=300.0)
     parser.add_argument(
         "--flux-python",
         default="/data/wsj/anaconda3/envs/simgen/bin/python",

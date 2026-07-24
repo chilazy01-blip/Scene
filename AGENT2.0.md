@@ -548,6 +548,9 @@ observation relation graph、三图通用冲突协议或默认主链接入。
 - 已完成：实验分支 `experiment/reference-soft-layout-prior` 使用本地 FLUX.1-schnell
   生成固定 south-to-north 图；默认文本布局保持独立。高置信位置只作为 soft loss，
   靠墙物件只沿原墙切向移动，自由物件限制最大位移，任何候选必须通过原硬验证。
+- 当前生成器决策：实验分支已把直接 Image API `gpt-image-2` 设为默认 provider；
+  `flux1-schnell` 仅为显式本地回退，禁止静默回退以免污染模型来源。当前环境没有
+  `OPENAI_API_KEY`，所以默认路径已由单元测试验证，但尚未完成已认证 API smoke。
 - 真实证据：`reference_soft_prior_study_smoke_20260724_v4` 使用 120 词短空间契约；
   生成图仍出现重复椅子和额外柜体，观察器省略无法唯一匹配的 chair。0.75 双阈值后
   接受 4/5 个观察，RMSE `0.678722 -> 0.638185`，对象/尺寸/建筑/关系不变且 0 硬违规。
@@ -558,6 +561,12 @@ observation relation graph、三图通用冲突协议或默认主链接入。
   门窗均通过。Codex 内置工具未暴露后端模型 ID，不能标为已验证 API `gpt-image-2`；
   单样本与审计波动也不支持模型排名。
 - 验收：关闭参考图分支后，文本场景图和 SDF 主链仍能独立运行。
+- SDF 融合边界：参考图只生成带置信度的 observation 目标，不生成碰撞几何。真实 GLB
+  的 solid SDF、support surface、containment/named free-space 和 dimension policy
+  决定可行域；Prompt/typed relation 与建筑为硬约束。先用 AABB broad phase，再用
+  稀疏表面点查询缓存 SDF；只在硬约束和穿透阈值通过的候选中最小化 observation、
+  semantic relation 与 pose-change 软损失。第一接入目标仍是
+  `chair_tucked_under_desk` 的命名 free-space、连续 tuck-depth/yaw 搜索和 facing 保持。
 
 ### VISION-002：三图融合与冲突处理
 
