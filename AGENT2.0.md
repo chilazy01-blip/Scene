@@ -552,6 +552,11 @@ observation relation graph、三图通用冲突协议或默认主链接入。
   生成图仍出现重复椅子和额外柜体，观察器省略无法唯一匹配的 chair。0.75 双阈值后
   接受 4/5 个观察，RMSE `0.678722 -> 0.638185`，对象/尺寸/建筑/关系不变且 0 硬违规。
 - 边界：该 RMSE 只证明遵循了已接受 observation，不证明最终 3D 视觉优于文本布局。
+- 生成器对照：`reference_image_model_compare_study_20260724_v1` 使用同一 120 词 Prompt
+  和同一视觉审计器。FLUX 目标数量 4/5、额外大型家具 4、墙面 0/4；Codex 内置图生
+  目标数量 5/5、额外大型家具 0、墙面 3/4，但仍有 5 个附件和 5 个装饰物。两边关系和
+  门窗均通过。Codex 内置工具未暴露后端模型 ID，不能标为已验证 API `gpt-image-2`；
+  单样本与审计波动也不支持模型排名。
 - 验收：关闭参考图分支后，文本场景图和 SDF 主链仍能独立运行。
 
 ### VISION-002：三图融合与冲突处理
@@ -647,7 +652,7 @@ observation relation graph、三图通用冲突协议或默认主链接入。
 
 - 状态：`RESOLVED`
 - 方案：以 `instance_groups` 表达资产和布局执行集合，成员仍保持独立实例。
-- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 90 个 V2 无模型 unittest 全部通过，skill `scene-instance-group-planning` 校验通过。
+- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 93 个 V2 无模型 unittest 全部通过，skill `scene-instance-group-planning` 校验通过。
 - 已知限制：真实左右脚 family 和 Blender 镜像未完成，见 `GROUP-002`。
 
 ## 10. 第一批实验设计

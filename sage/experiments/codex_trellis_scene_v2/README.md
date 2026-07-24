@@ -150,6 +150,19 @@ only proves that the branch followed its accepted observations; it is not eviden
 3D visual quality. Equal-asset Blender renders, multiple prompts/seeds, and final RGB/depth/mask
 scoring are still required.
 
+`reference_image_compare.py` performs a generator-side smoke comparison with one shared vision
+auditor. It separately reports exact catalog counts, duplicated/missing instances, unexpected
+major furniture, small accessories, decor, preferred-wall adherence, relations, and architecture.
+Major furniture and accessories are intentionally separate: a second chair or independent drawer
+chest is a layout-level failure, while a desk lamp or storage bin is an extra accessory. Books
+stocking an expected bookcase are treated as implied contents rather than dozens of catalog errors.
+The raw audits remain available because the evaluator itself is model-generated and may vary.
+
+The first study comparison used one local FLUX.1-schnell sample and one Codex built-in image
+generation sample with the same 120-word prompt. The built-in tool did not expose its backend model
+id, so the report does not label it as a verified API `gpt-image-2` call. This is a one-sample smoke,
+not a model ranking.
+
 Example:
 
 ```bash

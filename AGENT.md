@@ -508,7 +508,7 @@ Codex 最终仍保持 15 个物理对象、吸收 2 个枕头、3 个缺失实�
 
 上述 grounding 缺口的第一版代码已实现。Codex expansion schema 新增 `relation_updates/attribute_updates/component_updates`；本地 `apply_expansion_grounding()` 只接受稳定 baseline ID 和受限关系词表，验证 wall target、hard/soft、support target 与主父级环后才更新 canonical SceneBrief，并把接受/拒绝、覆盖前值、证据写入 `semantic_grounding.json`。`supported_by` 会改主父节点，`against_wall` 会覆盖房间默认墙面并为功能家具刷新入室朝向，`faces` 会形成补充边。布局归一化和 deterministic repair 都会重新求解 target-facing yaw，验证器新增 target-facing 指标和违规。对象级 `appearance_terms_grounded` 可覆盖句级类别扫描，解决 cup/book 同句的 `ceramic` 泄漏；组件更新只能细化已有 deterministic component requirement，不能修改显式数量或凭空创建组件。
 
-V2 无模型 unittest 现为 90 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照、桌下 dense/sparse 分类一致性和参考图 soft-prior contract/投影。仓库根另有 12 个 unittest 通过，合计 102 个。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
+V2 无模型 unittest 现为 93 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照、桌下 dense/sparse 分类一致性、参考图 soft-prior contract/投影和生成器库存对照审计。仓库根另有 12 个 unittest 通过，合计 105 个。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
 
 新版 typed-delta grounding 已由用户在普通终端完成真实 `gpt-5.6-sol` plan-only 验收：
 
@@ -592,6 +592,20 @@ RMSE 从 `0.678722` 降到 `0.638185`；对象 ID、尺寸、房间、建筑和�
 validation 为 0 硬违规。该结果只证明“高置信图像证据可被安全地软应用”，不证明视觉质量
 优于文本基线；生成图的对象计数服从性仍是明确风险。下一步需做多 Prompt/seed、等资产
 Blender A/B 与 RGB/depth/instance-mask 评分。
+
+同一 120 词 Prompt 的首个参考图生成器对照保存在：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/reference_image_model_compare_study_20260724_v1
+```
+
+统一 `gpt-5.6-sol` 视觉审计结果：FLUX.1-schnell 的目标数量为 4/5，出现 1 把重复椅子和
+3 个独立抽屉柜等 4 个额外大型家具，4 个墙面偏好 0/4；Codex 内置图生为目标数量 5/5、
+额外大型家具 0、墙面 3/4。两者的 `chair faces desk` 与 east-door/north-window 均通过。
+Codex 图仍额外生成 5 个小附件和 5 个装饰物，落地灯也未位于 south wall，因此“全部物件
+严格通过”为 false。内置工具未暴露后端模型 ID，不能把本结果标为已验证的 API
+`gpt-image-2`。该结论只有一个 Prompt、每侧一张图，且审计器本身可波动，不能外推为
+统计性模型排名。
 
 ## 8. 仓库与环境
 
