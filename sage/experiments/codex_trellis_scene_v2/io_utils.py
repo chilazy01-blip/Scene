@@ -97,3 +97,71 @@ def run_codex_json(
     if not response_path.is_file():
         raise RuntimeError(f"Codex stage {stage!r} did not write {response_path}")
     return extract_json(response_path.read_text(encoding="utf-8"))
+
+
+def run_codex_image_json(
+    prompt: str,
+    image_path: Path,
+    output_dir: Path,
+    *,
+    stage: str,
+    model: str,
+    timeout: int = 600,
+) -> dict[str, Any]:
+    """Run one isolated read-only Codex JSON stage with one image attachment."""
+
+    image_path = image_path.expanduser().resolve()
+    if not image_path.is_file():
+        raise FileNotFoundError(image_path)
+    stage_dir = output_dir / "codex" / slugify(stage)
+    stage_dir.mkdir(parents=True, exist_ok=True)
+    request_path = stage_dir / "request.txt"
+    response_path = stage_dir / "response.txt"
+    request_path.write_text(prompt, encoding="utf-8")
+    cmd = [
+        "codex",
+        "exec",
+        "--model",
+        model,
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--disable",
+        "plugins",
+        "--disable",
+        "plugin_sharing",
+        "--disable",
+        "plugin_hooks",
+        "-c",
+        'model_reasoning_effort="low"',
+        "--ephemeral",
+        "--cd",
+        str(Path.cwd()),
+        "--sandbox",
+        "read-only",
+        "--output-last-message",
+        str(response_path),
+        "--image",
+        str(image_path),
+        "--",
+        prompt,
+    ]
+    proc = subprocess.run(
+        cmd,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=int(os.environ.get("SAGE_CODEX_TIMEOUT", str(timeout))),
+        check=False,
+    )
+    (stage_dir / "stdout.txt").write_text(proc.stdout, encoding="utf-8")
+    (stage_dir / "stderr.txt").write_text(proc.stderr, encoding="utf-8")
+    if proc.returncode != 0:
+        raise RuntimeError(
+            f"Codex image stage {stage!r} failed with code {proc.returncode}; "
+            f"see {stage_dir / 'stderr.txt'}"
+        )
+    if not response_path.is_file():
+        raise RuntimeError(
+            f"Codex image stage {stage!r} did not write {response_path}"
+        )
+    return extract_json(response_path.read_text(encoding="utf-8"))

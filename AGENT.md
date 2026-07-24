@@ -1,6 +1,6 @@
 # Scene 当前接续断点
 
-最后更新：2026-07-23
+最后更新：2026-07-24
 
 本文档只保留恢复工作所需的当前结论。不要继续追加逐次终端流水；新结论应替换已过期内容。
 
@@ -19,6 +19,7 @@ sage/experiments/codex_trellis_scene_v2
   -> 结构化 SceneBrief
   -> 门窗墙地板建筑层
   -> 类型化场景图（唯一父节点树 + 补充关系图）
+  -> 可选生成参考图 soft observation（独立 A/B 分支，不覆盖文本事实）
   -> 审核资产优先复用，Flux + TRELLIS.2 只补缺口
   -> Codex 或规则布局
   -> 构图、碰撞、通道与功能朝向验证/修复
@@ -507,7 +508,7 @@ Codex 最终仍保持 15 个物理对象、吸收 2 个枕头、3 个缺失实�
 
 上述 grounding 缺口的第一版代码已实现。Codex expansion schema 新增 `relation_updates/attribute_updates/component_updates`；本地 `apply_expansion_grounding()` 只接受稳定 baseline ID 和受限关系词表，验证 wall target、hard/soft、support target 与主父级环后才更新 canonical SceneBrief，并把接受/拒绝、覆盖前值、证据写入 `semantic_grounding.json`。`supported_by` 会改主父节点，`against_wall` 会覆盖房间默认墙面并为功能家具刷新入室朝向，`faces` 会形成补充边。布局归一化和 deterministic repair 都会重新求解 target-facing yaw，验证器新增 target-facing 指标和违规。对象级 `appearance_terms_grounded` 可覆盖句级类别扫描，解决 cup/book 同句的 `ceramic` 泄漏；组件更新只能细化已有 deterministic component requirement，不能修改显式数量或凭空创建组件。
 
-V2 无模型 unittest 现为 84 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照和桌下 dense/sparse 分类一致性。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
+V2 无模型 unittest 现为 90 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照、桌下 dense/sparse 分类一致性和参考图 soft-prior contract/投影。仓库根另有 12 个 unittest 通过，合计 102 个。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
 
 新版 typed-delta grounding 已由用户在普通终端完成真实 `gpt-5.6-sol` plan-only 验收：
 
@@ -570,14 +571,37 @@ desk/chair registry and under-desk comparison:
 
 `chair_tucked_under_desk` 第一版分类 pilot 也已完成：离线参考查询 166,249 个椅子渲染网格顶点，运行代理使用固定 seed 的 4,096 个表面点；`outside/tucked/overinserted` 三个位置分别得到 `outside/valid_under/collision`，两条路径 3/3 同判。点数减少 40.588 倍，本机三次纯查询约从 30.5ms 降至 1.0ms，观测约 31 倍加速；该时间不是跨机器基准。全顶点仍不是严格三角面相交真值，主 typed graph 也尚无正式 `tucked_under` 和命名 free-space capability，因此当前只证明独立几何分类与稀疏代理一致，未完成完整 repair 接入、位姿搜索和 chair-facing 保持。下一步先补齐这层语义 contract，再进入书架 solid/free-space/support。
 
+生成参考图作为软布局先验的隔离分支已实现于
+`experiment/reference-soft-layout-prior`，不修改默认文本主链。`flux_reference.py` 使用本地
+FLUX.1-schnell 生成固定 south-to-north 参考图；`reference_soft_prior.py` 只接受 SceneBrief
+中已有对象的高置信位置观察，拒绝未知、重复、低置信和非法坐标。图像不得修改对象集合、
+尺寸、建筑或硬关系。靠墙物件只允许沿原墙切向移动，自由物件有 0.8m 位移上限；每个候选
+必须同时降低 soft-prior RMSE 并通过现有硬验证，原文本布局始终是 fallback。
+
+最终真实 smoke：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/reference_soft_prior_study_smoke_20260724_v4
+```
+
+FLUX 提示已从约 1,200 词压缩到 120 词，并把 exact objects、墙面、门窗和关系放在最前，
+降低 T5 256-token 截断关键约束的风险。768x768、4 steps、seed 20260724 的图像生成耗时
+约 17.4s。生成图仍出现两把椅子和额外柜体，观察器主动省略无法唯一匹配的 chair；按
+0.75 双置信阈值最终接受 4/5 个观察。16/16 投影候选通过硬验证，接受 4 次移动，归一化
+RMSE 从 `0.678722` 降到 `0.638185`；对象 ID、尺寸、房间、建筑和关系全部保持，最终
+validation 为 0 硬违规。该结果只证明“高置信图像证据可被安全地软应用”，不证明视觉质量
+优于文本基线；生成图的对象计数服从性仍是明确风险。下一步需做多 Prompt/seed、等资产
+Blender A/B 与 RGB/depth/instance-mask 评分。
+
 ## 8. 仓库与环境
 
 - 仓库：`/data/wsj/main/scene`
-- 当前工作分支：`checkpoint/codex-trellis-v2-20260724`
-- 已推送远端检查点：`b7e786cb5659aedb0ec6ac7aeb5404042958ed90`
-- 跟踪分支：`origin/checkpoint/codex-trellis-v2-20260724`
+- 当前工作分支：`experiment/reference-soft-layout-prior`
+- capability/SDF 本地检查点：`3bf1247`（`checkpoint/codex-trellis-v2-20260724`）
+- 远端 `origin/checkpoint/codex-trellis-v2-20260724` 仍为 `b7e786c`；当前环境缺少 GitHub HTTPS 凭据，`3bf1247` 尚未推送。
+- `origin`：`https://github.com/chilazy01-blip/Scene.git`
 - 检查点基于 `ee1765c`；`upstream/main` 与该基线一致，`origin/main` 比基线落后 4 个提交。
-- capability/SDF pilot 是检查点之后的新修改，尚未提交；`examples/` 与 `local_models/` 继续保持未跟踪且不得误入提交。
+- 参考图 soft-prior 修改位于实验分支；`examples/` 与 `local_models/` 继续保持未跟踪且不得误入提交。
 
 主要环境：
 
@@ -602,12 +626,13 @@ Blender:
 3. `cup_on_desk` 与桌椅 dense/sparse 分类第一版已经完成，不要重复。下一步为 typed graph/capability contract 增加可执行但最小化的 `tucked_under`/命名 free-space 表达，并在独立 pilot 中加入位姿搜索、尺寸锁和 chair-facing 保持；不要直接改完整 V2 repair。
 4. 桌椅语义 contract 稳定后，为一个真正开放的审核书架定义 `solid proxy + containment_volume + support_surface`；必须先验证 voxel fill 不会封死开放柜格，再做 `books_in_open_shelf/box_in_open_cubby`。只有这些案例通过后才评估接入完整 repair。
 5. SDF pilot 之后仍需加入真正的 south-to-north、1.55m、65mm 正面渲染，并对最终 RGB/depth/instance mask 的完整入画和遮挡重新评分；固定 45 度 dollhouse 图不能代替该验收。
-6. 实例组前两阶段与 rules/plan-only 回归已经完成，不要重复实现；真实左右脚 family/镜像仍延期。`bed_warm_oak_001` 未经视觉审核前也不要向 manifest 写入 `included_components: {pillow: 2}`，继续保留 assumed 状态。
-7. `door_white_minimal_001` 的 60k 面优化、独立 manifest、0.9x2.1m 门洞静态 QA 与正式入库已完成，不要重复。若需要第二种门风格，再处理 `door_warm_oak_modern_001`（目标约 70k faces）；胡桃木门只保留为 `front_only` 待修候选。
-8. 当前审核门是静态关闭的门框-门扇组合资产；MuJoCo proxy 不包含建筑门资产，也不作为门候选验收项。铰链开合、`open_angle_degrees`、把手动态净空和门扇碰撞仍留待 articulation manifest 完成后验证。
-9. 设计覆盖 bedroom、living room、kitchen、restroom 和 study 的多 Prompt 测试集，统计硬/软违规、结构核心覆盖、占用率、紧凑度和家具 layout-plan MuJoCo proxy 稳定性；不要把该指标表述为最终 GLB 或建筑铰链物理验证。
-10. 后续在已有功能朝向之上补充柜门/抽屉正面操作净空，以及更一般的 `toward_object` 关系（椅子->桌、沙发->电视）和视觉关系评分，不针对单个 Prompt 手工硬编码。
-11. 在把 RGB-D dataset 风格 Prompt 升级为完整端到端基准前，增加“预布局 -> 目标尺寸请求 -> 资产再选择”的 packed-layout 尺寸优化或自然语言数值尺寸解析，并在 Blender 请求视角完成装配后增加 RGB/depth/instance-mask 可见性与遮挡评分；当前尺寸目标仍来自类别默认/上游显式字段，layout bbox composition 也仍只是前置 proxy。
+6. 参考图 soft-prior 单 study smoke 已通过安全门槛但证据有限；下一步先做多 Prompt/seed 与等资产 Blender A/B，不把 RMSE 下降表述成最终视觉提升，也暂不并入默认 planner。
+7. 实例组前两阶段与 rules/plan-only 回归已经完成，不要重复实现；真实左右脚 family/镜像仍延期。`bed_warm_oak_001` 未经视觉审核前也不要向 manifest 写入 `included_components: {pillow: 2}`，继续保留 assumed 状态。
+8. `door_white_minimal_001` 的 60k 面优化、独立 manifest、0.9x2.1m 门洞静态 QA 与正式入库已完成，不要重复。若需要第二种门风格，再处理 `door_warm_oak_modern_001`（目标约 70k faces）；胡桃木门只保留为 `front_only` 待修候选。
+9. 当前审核门是静态关闭的门框-门扇组合资产；MuJoCo proxy 不包含建筑门资产，也不作为门候选验收项。铰链开合、`open_angle_degrees`、把手动态净空和门扇碰撞仍留待 articulation manifest 完成后验证。
+10. 设计覆盖 bedroom、living room、kitchen、restroom 和 study 的多 Prompt 测试集，统计硬/软违规、结构核心覆盖、占用率、紧凑度和家具 layout-plan MuJoCo proxy 稳定性；不要把该指标表述为最终 GLB 或建筑铰链物理验证。
+11. 后续在已有功能朝向之上补充柜门/抽屉正面操作净空，以及更一般的 `toward_object` 关系（椅子->桌、沙发->电视）和视觉关系评分，不针对单个 Prompt 手工硬编码。
+12. 在把 RGB-D dataset 风格 Prompt 升级为完整端到端基准前，增加“预布局 -> 目标尺寸请求 -> 资产再选择”的 packed-layout 尺寸优化或自然语言数值尺寸解析，并在 Blender 请求视角完成装配后增加 RGB/depth/instance-mask 可见性与遮挡评分；当前尺寸目标仍来自类别默认/上游显式字段，layout bbox composition 也仍只是前置 proxy。
 
 ## 10. 文档维护规则
 

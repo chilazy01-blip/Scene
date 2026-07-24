@@ -118,9 +118,54 @@ target-facing yaw and support snapping. Unresolved relations remain explicit in 
 and validation rather than being silently dropped. Unsatisfied soft relations may trigger local SDK
 search but remain soft and never trigger Codex repair by themselves.
 
-The graph reserves a relation-aware SDF narrow phase, but this version does not generate SDFs or
-infer relations from reference images. Existing AABB/footprint validation remains the active broad
-phase and layout constraint system.
+Existing AABB/footprint validation remains the active broad phase and layout constraint system.
+The capability/SDF work and generated-reference work are isolated pilots rather than default
+pipeline stages:
+
+- `capabilities.py`, `collision_proxy.py`, `sdf_pilot.py`, and `under_desk_pilot.py` exercise
+  audited support surfaces and relation-aware voxel-SDF queries on real desk/mug/chair assets;
+- `reference_soft_prior.py` compares a text-only plan with an optional FLUX-generated image
+  observation without changing the ordinary text path.
+
+## Generated reference as a soft layout prior
+
+`reference_soft_prior.py` generates one fixed south-to-north FLUX.1-schnell view, asks Codex vision
+for uncertain normalized object-position observations, and validates every observation against the
+exact SceneBrief catalog. Both object-recognition confidence and position confidence must meet the
+threshold. Unknown, duplicate, ambiguous, low-confidence, or out-of-range observations are rejected.
+
+The image is not allowed to add/remove/rename/resize objects, alter the frozen architecture, or
+override typed hard relations. A conservative deterministic projection searches a few bounded pose
+candidates:
+
+- wall-associated objects move only tangent to their existing wall;
+- free objects have a configurable maximum displacement;
+- a move is accepted only when reference alignment strictly improves and the ordinary hard
+  validator still passes;
+- the unchanged text-only plan is always the fallback.
+
+The run saves the raw image observation, accepted/rejected soft prior, initial and repaired plans,
+candidate audit, both final layouts, both validations, and one A/B report. A lower soft-prior RMSE
+only proves that the branch followed its accepted observations; it is not evidence of better final
+3D visual quality. Equal-asset Blender renders, multiple prompts/seeds, and final RGB/depth/mask
+scoring are still required.
+
+Example:
+
+```bash
+cd /data/wsj/main/scene
+
+/data/wsj/anaconda3/envs/tree-sage-flow2/bin/python \
+  -m sage.experiments.codex_trellis_scene_v2.reference_soft_prior \
+  --prompt "A compact study with exactly one desk, one office chair, one bookcase, one cabinet, and one floor lamp." \
+  --room-type study \
+  --expander rules \
+  --baseline-planner codex \
+  --model gpt-5.6-sol \
+  --flux-python /data/wsj/anaconda3/envs/simgen/bin/python \
+  --flux-model /data/wsj/models/text_to_image__primary \
+  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/reference_soft_prior_example
+```
 
 ## Current scope
 

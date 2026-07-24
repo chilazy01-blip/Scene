@@ -6,12 +6,12 @@
 
 ## 0. 文档状态
 
-- 文档版本：2.1
+- 文档版本：2.2
 - 最后更新：2026-07-24
 - 工作目录：`/data/wsj/main/scene`
 - 仓库、环境与接续断点：`/data/wsj/main/scene/AGENT.md`
 - 当前实验主线：`sage/experiments/codex_trellis_scene_v2`
-- 当前研究主题：类型化关系执行、成组实例资产/布局、请求相机，以及 capability/SDF 前置准备
+- 当前研究主题：capability/SDF pilot、请求相机，以及生成参考图 soft observation 的隔离验证
 - 当前原则：先解决刚性物件的从属、支撑、包含和紧凑接触；软体、铰链与深层动态物理延后
 
 ### 状态枚举
@@ -369,6 +369,10 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 - 单视图不能确定的 `inside/behind/occluded_by` 保留不确定状态。
 - 参考图分支关闭时，文本主链仍可独立运行。
 
+当前状态：`VALIDATING`（隔离布局位置先验）。已实现固定相机 FLUX 参考图、exact-ID
+观察、对象/位置双置信阈值、拒绝审计和硬约束优先的有界 pose 投影；尚未实现完整
+observation relation graph、三图通用冲突协议或默认主链接入。
+
 ### Phase E：请求相机与渲染后验收
 
 目标：实现真正的 south-to-north、1.55m、65mm 正面眼平渲染，并在最终 RGB/depth/instance mask 上评估完整入画和遮挡。
@@ -401,8 +405,8 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 | `SDF-004` | P1 | VALIDATING | 首个 pilot 锁定 fixed scale 并验证尺寸策略保持，尚缺更多策略覆盖 |
 | `SDF-005` | P1 | VALIDATING | desk/mug 构建与缓存、desk/chair dense/sparse 查询已测，尚缺分辨率与多资产压力测试 |
 | `SDF-006` | P1 | OPEN | 碰撞修复可能破坏构图和功能关系 |
-| `VISION-001` | P1 | DESIGN | 参考图应作为证据还是主布局来源 |
-| `VISION-002` | P1 | OPEN | 三类来源图的冲突融合尚未实现 |
+| `VISION-001` | P1 | VALIDATING | 参考图已作为可选 soft observation 进入隔离 A/B，尚缺多场景视觉验收 |
+| `VISION-002` | P1 | IMPLEMENTING | exact-ID/双置信过滤和 hard-over-soft 已落地，通用三图冲突融合仍缺 |
 | `CAMERA-001` | P1 | OPEN | 请求相机尚未在 Blender 最终渲染中实现 |
 | `SOFT-001` | P3 | DEFERRED | 枕头等软体接触和形变 |
 | `ARTICULATION-001` | P3 | DEFERRED | 门、柜门、抽屉的关节与动态碰撞 |
@@ -538,14 +542,24 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 
 ### VISION-001：参考图的角色
 
-- 状态：`DESIGN`
+- 状态：`VALIDATING`
 - 决策：参考图是 observation graph 的来源，是可选增强分支，不是唯一布局事实。
 - 原因：单图受遮挡、幻觉、深度误差和资产差异影响。
+- 已完成：实验分支 `experiment/reference-soft-layout-prior` 使用本地 FLUX.1-schnell
+  生成固定 south-to-north 图；默认文本布局保持独立。高置信位置只作为 soft loss，
+  靠墙物件只沿原墙切向移动，自由物件限制最大位移，任何候选必须通过原硬验证。
+- 真实证据：`reference_soft_prior_study_smoke_20260724_v4` 使用 120 词短空间契约；
+  生成图仍出现重复椅子和额外柜体，观察器省略无法唯一匹配的 chair。0.75 双阈值后
+  接受 4/5 个观察，RMSE `0.678722 -> 0.638185`，对象/尺寸/建筑/关系不变且 0 硬违规。
+- 边界：该 RMSE 只证明遵循了已接受 observation，不证明最终 3D 视觉优于文本布局。
 - 验收：关闭参考图分支后，文本场景图和 SDF 主链仍能独立运行。
 
 ### VISION-002：三图融合与冲突处理
 
-- 状态：`OPEN`
+- 状态：`IMPLEMENTING`
+- 已完成：观察只允许 exact SceneBrief ID；未知、重复、非法坐标、低对象置信和低位置
+  置信均进入拒绝报告。对象集合、尺寸、建筑和 hard relations 不可被 observation 覆盖；
+  不可安全满足时保留原文本布局。
 - 计划方案：融合 intent、capability、observation；保存每条关系来源和置信度；不静默覆盖冲突。
 - 验收：低置信图像推断不能覆盖显式 Prompt；资产不具备格位时不能假装完成 `inside`。
 
@@ -633,7 +647,7 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 
 - 状态：`RESOLVED`
 - 方案：以 `instance_groups` 表达资产和布局执行集合，成员仍保持独立实例。
-- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 84 个 V2 无模型 unittest 全部通过，skill `scene-instance-group-planning` 校验通过。
+- 验证路径：`bedroom_instance_group_rules_plan_20260723`；当前 90 个 V2 无模型 unittest 全部通过，skill `scene-instance-group-planning` 校验通过。
 - 已知限制：真实左右脚 family 和 Blender 镜像未完成，见 `GROUP-002`。
 
 ## 10. 第一批实验设计
@@ -689,7 +703,7 @@ SceneThesis 会在多方向碰撞时缩小物件。当前项目已有 `fixed_phy
 5. 对不同 voxel pitch、缓存命中、查询吞吐和非 watertight 符号稳定性做小型消融；不预设当前 dense EDT grid 是最终表示。
 6. 补齐真正的请求相机渲染和最终 RGB/depth/instance-mask 评分，作为 SDF 前后视觉关系保持门槛。
 7. 对实例组做一次真实 `gpt-5.6-sol` plan 和可选 Blender GLB 视觉验收；不要把同资产复用误写成真实左右脚完成。
-8. SDF pilot 稳定后再接入 observation graph；不要先复制完整 SceneThesis 管线。
+8. 参考图 soft-prior 已提前在隔离分支完成单个 study 安全 smoke；保持默认主链关闭，先做多 Prompt/seed、等资产 Blender A/B 和最终 RGB/depth/mask 评分，再决定是否扩大 observation graph，不复制完整 SceneThesis 管线。
 9. 根据资产库需求处理 `GROUP-002`，但不为当前布局占位链投入过多资产精修。
 10. 软体和 articulation 保持 deferred，直到各自重新启动条件满足。
 
