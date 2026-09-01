@@ -10,11 +10,13 @@ from .assets import resolve_assets
 from .brief import expand_prompt
 from .constraint_scopes import evaluate_constraint_scope_envelopes
 from .content_chain import content_hash, file_binding
+from .contracts import COORDINATES, stamp_document, validate_document_family, validate_layout_plan
 from .delivery_status import apply_profile_defaults, evaluate_terminal_status
 from .io_utils import read_json, write_json
 from .planner import codex_layout, codex_repair_layout, rules_layout
 from .repair import deterministic_repair
 from .runtime import assemble_with_blender, run_mujoco_proxy, write_preview_svg
+from .runtime_preflight import verify_runtime_lock
 from .scene_render_acceptance import render_and_evaluate_scene
 from .scene_graph import build_typed_scene_graph
 from .stage_dag import StageDAG
@@ -47,6 +49,14 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     output_dir = Path(args.output_dir).expanduser().resolve()
     resume = bool(getattr(args, "resume", False))
     prepare_output_dir(output_dir, bool(args.overwrite), resume=resume)
+    if str(getattr(args, "profile", "development")) == "production":
+        preflight = verify_runtime_lock(
+            Path(args.runtime_lock).expanduser(),
+            verify_model_bytes=bool(getattr(args, "verify_model_bytes", True)),
+        )
+        write_json(output_dir / "runtime_preflight.json", preflight)
+        if not preflight["ok"]:
+            raise RuntimeError("production runtime preflight failed: " + ", ".join(preflight["reasons"]))
     prompt = str(args.prompt or "").strip()
     if args.prompt_file:
         prompt = Path(args.prompt_file).read_text(encoding="utf-8").strip()
@@ -75,6 +85,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     expanded_path = output_dir / "scene_brief_expanded.json"
     if expand_attempt["reused"]:
         brief = read_json(expanded_path)
+        validate_document_family("SceneBrief", brief)
     else:
         brief = expand_prompt(
             prompt,
@@ -86,6 +97,9 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             target_max_objects=args.target_max_scene_objects,
             max_auto_inferred_objects=args.max_auto_inferred_assets,
         )
+        brief["coordinate_contract"] = COORDINATES.as_dict()
+        stamp_document(brief)
+        validate_document_family("SceneBrief", brief)
         write_json(expanded_path, brief)
         dag.commit(
             "expand",
@@ -116,6 +130,9 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             accent_wall_material_override=getattr(args, "accent_wall_material", None),
             window_wall_override=getattr(args, "window_wall", None),
         )
+    brief["coordinate_contract"] = COORDINATES.as_dict()
+    stamp_document(brief)
+    validate_document_family("SceneBrief", brief)
     write_json(
         output_dir / "semantic_grounding.json",
         brief.get("semantic_grounding", {}),
@@ -150,8 +167,15 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     )
     if graph_attempt["reused"]:
         brief = read_json(output_dir / "scene_brief.json")
+        validate_document_family("SceneBrief", brief)
+        validate_document_family("TypedSceneGraph", brief["scene_graph"])
     else:
         brief["scene_graph"] = build_typed_scene_graph(brief, architecture_plan)
+        brief["scene_graph"]["coordinate_contract"] = COORDINATES.as_dict()
+        stamp_document(brief["scene_graph"])
+        stamp_document(brief)
+        validate_document_family("SceneBrief", brief)
+        validate_document_family("TypedSceneGraph", brief["scene_graph"])
     write_json(output_dir / "scene_graph_initial.json", brief["scene_graph"])
     write_json(output_dir / "scene_brief.json", brief)
     if not graph_attempt["reused"]:
@@ -225,8 +249,13 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         },
     )
     brief["scene_graph"] = build_typed_scene_graph(brief, architecture_plan)
+    brief["scene_graph"]["coordinate_contract"] = COORDINATES.as_dict()
+    stamp_document(brief["scene_graph"])
+    stamp_document(brief)
     write_json(output_dir / "scene_graph_resolved.json", brief["scene_graph"])
     write_json(output_dir / "scene_brief_resolved.json", brief)
+    validate_document_family("SceneBrief", brief)
+    validate_document_family("TypedSceneGraph", brief["scene_graph"])
     asset_resolution_path = output_dir / "asset_resolution.json"
     generation_plan_path = output_dir / "missing_asset_generation_plan.json"
     if not asset_plan_attempt["reused"]:
@@ -337,6 +366,10 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                 validation = validate_layout(plan)
                 write_json(output_dir / f"validation_{iteration:02d}_codex.json", validation)
 
+    plan["coordinate_contract"] = COORDINATES.as_dict()
+    stamp_document(plan)
+    validate_layout_plan(plan)
+
     write_json(plan_path, plan)
     if isinstance(plan.get("scene_graph"), dict):
         write_json(output_dir / "scene_graph_final.json", plan["scene_graph"])
@@ -368,9 +401,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     if profile == "production" and not relation_report_path.is_file():
         declared_relations = plan.get("spatial_relations", [])
         declared_relations = declared_relations if isinstance(declared_relations, list) else []
-        write_json(
-            relation_report_path,
-            {
+        relation_document = {
                 "schema": "scene-v2-production-relation-geometry-stage/v1",
                 "ok": not declared_relations,
                 "status": (
@@ -379,9 +410,13 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                     else "required_relation_geometry_certificate_missing"
                 ),
                 "declared_relation_count": len(declared_relations),
-            },
-        )
+            }
+        stamp_document(relation_document)
+        validate_document_family("RelationCertificate", relation_document)
+        write_json(relation_report_path, relation_document)
     if relation_report_path.is_file():
+        relation_document = read_json(relation_report_path)
+        validate_document_family("RelationCertificate", relation_document)
         relation_attempt = dag.begin(
             "relation_geometry",
             inputs={"layout_hash": content_hash(plan)},
@@ -681,9 +716,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             for name, path in hash_inputs.items()
             if path is None or not Path(path).is_file()
         ]
-        write_json(
-            final_hash_audit_path,
-            {
+        final_audit_document = {
                 "schema": "scene-v2-final-hash-audit/v1",
                 "ok": not missing_hash_inputs and bool(
                     isinstance(relation_report, dict) and relation_report.get("ok")
@@ -694,10 +727,13 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                     for name, path in hash_inputs.items()
                     if path is not None and Path(path).is_file()
                 },
-            },
-        )
+            }
+        stamp_document(final_audit_document)
+        validate_document_family("FinalDeliveryAudit", final_audit_document)
+        write_json(final_hash_audit_path, final_audit_document)
     final_hash_audit = read_json(final_hash_audit_path) if final_hash_audit_path.is_file() else None
     if final_hash_audit_path.is_file():
+        validate_document_family("FinalDeliveryAudit", final_hash_audit)
         delivery_attempt = dag.begin(
             "delivery_audit",
             inputs={"audit_hash": content_hash(final_hash_audit)},
@@ -709,6 +745,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                 int(delivery_attempt["attempt"]["attempt"]),
                 outputs={"final_delivery_audit": final_hash_audit_path},
             )
+    validate_document_family("RunManifest", read_json(output_dir / "run_dag.json"))
     stages = {
         "scene_brief": (output_dir / "scene_brief_resolved.json").is_file(),
         "architecture": (output_dir / "architecture_plan.json").is_file(),

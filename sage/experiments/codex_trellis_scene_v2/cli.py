@@ -25,6 +25,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Machine completion contract; only a complete production profile is deliverable.",
     )
     parser.add_argument(
+        "--runtime-lock",
+        type=Path,
+        default=Path(__file__).with_name("runtime_lock.json"),
+    )
+    parser.add_argument(
+        "--verify-model-bytes",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument(
         "--resume",
         action="store_true",
         help=(

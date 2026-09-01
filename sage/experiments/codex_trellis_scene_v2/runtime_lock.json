@@ -1,0 +1,49 @@
+{
+  "schema": "scene-v2-runtime-lock/v1",
+  "release_manifest": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/p004_release_verification_final/release_manifest.json",
+    "binding": {"bytes": 26459, "sha256": "ebde6eba81c0423c7e584b767bbea2d3b161df9ffffe22e543e4b4b5d50dbc40"}
+  },
+  "environments": {
+    "orchestrator": {
+      "executable": "/data/wsj/anaconda3/envs/tree-sage-flow2/bin/python",
+      "python": "3.10.20",
+      "pip_freeze_sha256": "d49b7cd63b10029f698d3c3e4d23b2d5ace1eac4ed8d47175446eb4db55f3dc4",
+      "torch": "2.12.1+cu130",
+      "torch_cuda": "13.0"
+    },
+    "trellis": {
+      "executable": "/data/wsj/anaconda3/envs/trellis2/bin/python",
+      "python": "3.10.20",
+      "pip_freeze_sha256": "041341de14ce0f94a5b51b3029d28500e55c642fcd5ee1c166d244435e582400",
+      "torch": "2.12.1+cu130",
+      "torch_cuda": "13.0"
+    },
+    "research": {
+      "executable": "/data/wsj/anaconda3/envs/simgen/bin/python",
+      "python": "3.10.18",
+      "pip_freeze_sha256": "bd7b4fbcb5148e73fcc4366715d9e2ee6f4d449184a809b588e0829597df5c31"
+    }
+  },
+  "trellis": {
+    "repository": "/data/wsj/main/scene/external/TRELLIS.2",
+    "commit": "75fbf0183001ed9876c8dbb35de6b68552ee08bd",
+    "working_tree_patch_sha256": "f79915a7eaeaa6c1895e3744cf18e74a973f5e47711698168162d766d72b6747"
+  },
+  "model": {"fingerprint": "22cda4b351ab87884530038d64126edd6ed650942c5466b0497c024b7a4ea605"},
+  "blender": {
+    "path": "/data/wsj/tools/blender/blender",
+    "version": "4.3.2",
+    "binding": {"bytes": 149268904, "sha256": "23fa8e83d8152f11246d7172819baa5a00e8e1e706dbc204cc85912db3f368c4"}
+  },
+  "blender_tools": [
+    {
+      "path": "/data/wsj/main/scene/sage/scripts/blender_assemble_sage_scene.py",
+      "binding": {"bytes": 58205, "sha256": "3a77fa87b5b57040db805a707492a63cab13bd073a0052da90544a7fbfc8ed3d"}
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/scripts/blender_render_sage_diagnostics.py",
+      "binding": {"bytes": 26886, "sha256": "a5fa37508b99d12fbd19ee38ba72a0026fd878f26373c279b2ec3a0d5e5180a5"}
+    }
+  ]
+}

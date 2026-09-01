@@ -75,6 +75,8 @@ class StageDAG:
             }
 
     def _save(self) -> None:
+        self.value.pop("content_hash", None)
+        self.value["content_hash"] = content_hash(self.value)
         _atomic_json(self.path, self.value)
 
     def _dependency_outputs(self, stage: str) -> dict[str, str | None]:
