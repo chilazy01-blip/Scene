@@ -46,7 +46,7 @@
 | P003 | 最终交付审计未覆盖全场景既有语义回归 | 已完成 | 高 | target/whole-scene 双门已覆盖 typed graph、实例组、朝向、support、opening、操作净空、关系几何和 GLB 变换 |
 | P004 | 当前成果无法从一个受控代码版本完整复现 | 已完成 | 最高 | 正式源码、外部补丁、模型/环境指纹已冻结，干净检出 CPU、Blender 与最终审计复现通过 |
 | P005 | QA、缓存和恢复证书没有闭合内容哈希链 | 已完成 | 最高 | generation、候选、staged、pilot 与四视图 QA 已形成规范化内容链，任一绑定输入变化都会失效 |
-| P006 | “运行成功”与“完整可交付”没有统一机器定义 | 待解决 | 最高 | 默认 CLI 只做 plan，诊断结果容易被误认为正式交付 |
+| P006 | “运行成功”与“完整可交付”没有统一机器定义 | 已完成 | 最高 | 四类 profile 与统一终态机已落地，只有 production 全部必需阶段闭合才可 deliverable=true |
 | P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 待解决 | 最高 | 进程名白名单和每请求新线程不能可靠防止资源竞争 |
 | P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 待解决 | 高 | 上游输入变化后，下游旧产物可能未被正确失效 |
 | P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 待解决 | 高 | 旧字段、旧轴向或环境漂移可能被新代码静默接受 |
@@ -649,6 +649,35 @@
   属于 P009。
 - 下一入口：P006，定义 plan/development/production/benchmark 四种机器 profile，并保证只有 production
   必需阶段、最终 hash audit 和 terminal status 全部闭合时才允许 `deliverable=true`。
+
+### 断点 CP-20260901-07：P006 已完成
+
+- 完成时间：2026-09-01
+- 根因：旧 CLI 的退出 0 和 `validation_ok` 只代表布局阶段；默认 `asset-mode=plan`、未装配、未做最终
+  多通道渲染或 hash audit 的结果仍使用同一种 summary，消费者无法机器区分诊断运行与正式交付。
+- 修改文件：新增 `delivery_status.py` 与 `tests/test_delivery_status.py`；修改 `cli.py` 和 `pipeline.py`。
+- Profile 契约：`plan`、`development`、`production`、`benchmark` 各有固定 required-stage 列表；plan
+  即使完整也只能得到 `plan_complete_non_deliverable`。production 禁止 `asset-mode=plan`，强制 assembly、
+  preview、最终 RGB/depth/instance acceptance、MuJoCo structural/performance check，并关闭两个 allow-fail
+  开关。
+- 统一终态：所有 summary 都包含 `profile`、`terminal_status`、`deliverable`、`profile_complete`、
+  `required_stages`、`missing_required_stages` 和逐阶段布尔状态。只有 production 的 SceneBrief、建筑、
+  typed graph、资产计划与 QA、layout/validation、relation geometry、Blender、最终多通道渲染、结构性能和
+  final hash audit 全为 true 时，才产生 `production_deliverable` 与 `deliverable=true`。
+- 诚实 relation 门：无声明关系时 production 写出显式 `not_applicable_no_declared_relations` 证书；存在声明
+  关系但没有 relation-geometry 证书时写 `required_relation_geometry_certificate_missing` 并保持不可交付，
+  不用二维布局验证冒充几何证明。final hash audit 对九类关键产物逐文件记录 bytes/SHA-256，缺一项即失败。
+- 失败保存：CLI 任意异常都会原子覆盖 `run_summary.json` 为
+  `terminal_status=diagnostic_failure_preserved, deliverable=false` 并记录异常类型；逃生开关和失败前产物不再
+  可能保留含糊的成功 summary。
+- 负向测试：对 production 的 12 个必需阶段逐一置 false，全部必须不可交付且准确列入 missing；只有
+  12/12 true 才可交付；plan 6/6 完整仍明确 non-deliverable。
+- 验证结果：V2 298/298、仓库根 12/12，共 310/310；compileall 与 `git diff --check` 通过。未启动模型、
+  GPU 或 Blender；这是终态定义修复，不以已有渲染冒充 production E2E。
+- 未解决风险：production relation stage 的通用自动调度仍需随 P008 阶段 DAG 收敛；当前契约选择安全
+  失败而不是静默跳过。GPU/Blender nightly 的真实成功路径纳入 P014。
+- 下一入口：P007，建立基于 GPU/RAM/I/O/disk/cgroup lease 的统一 heavy-job broker，并用并发、外部 GPU
+  占用和 worker 异常三类测试验证背压、TTL 与回收。
 
 每完成一个问题，按以下模板追加：
 

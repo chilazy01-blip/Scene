@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 
+from .io_utils import write_json
 from .pipeline import run_pipeline
 from .policies import FLOOR_MATERIAL_PRESETS, WALL_MATERIAL_PRESETS
 
@@ -17,6 +18,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--prompt-file", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--profile",
+        choices=("plan", "development", "production", "benchmark"),
+        default="development",
+        help="Machine completion contract; only a complete production profile is deliverable.",
+    )
     parser.add_argument(
         "--resume",
         action="store_true",
@@ -171,7 +178,25 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
-    summary = run_pipeline(build_parser().parse_args())
+    args = build_parser().parse_args()
+    try:
+        summary = run_pipeline(args)
+    except Exception as exc:
+        output = Path(args.output_dir).expanduser().resolve()
+        summary = {
+            "schema": "codex_trellis_scene_v2_summary",
+            "profile": str(args.profile),
+            "terminal_status": "diagnostic_failure_preserved",
+            "deliverable": False,
+            "profile_complete": False,
+            "missing_required_stages": ["run_terminated_before_profile_completion"],
+            "error": f"{type(exc).__name__}: {exc}",
+            "output_dir": str(output),
+        }
+        output.mkdir(parents=True, exist_ok=True)
+        write_json(output / "run_summary.json", summary)
+        print(json.dumps(summary, indent=2, ensure_ascii=False))
+        raise
     print(json.dumps(summary, indent=2, ensure_ascii=False))
 
 

@@ -9,6 +9,8 @@ from .architecture import plan_architecture
 from .assets import resolve_assets
 from .brief import expand_prompt
 from .constraint_scopes import evaluate_constraint_scope_envelopes
+from .content_chain import file_binding
+from .delivery_status import apply_profile_defaults, evaluate_terminal_status
 from .io_utils import read_json, write_json
 from .planner import codex_layout, codex_repair_layout, rules_layout
 from .repair import deterministic_repair
@@ -40,6 +42,7 @@ def prepare_output_dir(path: Path, overwrite: bool, resume: bool = False) -> Non
 
 
 def run_pipeline(args: Any) -> dict[str, Any]:
+    apply_profile_defaults(args)
     output_dir = Path(args.output_dir).expanduser().resolve()
     resume = bool(getattr(args, "resume", False))
     prepare_output_dir(output_dir, bool(args.overwrite), resume=resume)
@@ -283,6 +286,25 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         )
         write_json(output_dir / "mujoco_check.json", mujoco_report)
 
+    profile = str(getattr(args, "profile", "development"))
+    relation_report_path = output_dir / "relation_geometry_audit.json"
+    if profile == "production" and not relation_report_path.is_file():
+        declared_relations = plan.get("spatial_relations", [])
+        declared_relations = declared_relations if isinstance(declared_relations, list) else []
+        write_json(
+            relation_report_path,
+            {
+                "schema": "scene-v2-production-relation-geometry-stage/v1",
+                "ok": not declared_relations,
+                "status": (
+                    "not_applicable_no_declared_relations"
+                    if not declared_relations
+                    else "required_relation_geometry_certificate_missing"
+                ),
+                "declared_relation_count": len(declared_relations),
+            },
+        )
+
     summary = {
         "schema": "codex_trellis_scene_v2_summary",
         "output_dir": str(output_dir),
@@ -471,6 +493,70 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         ),
         "mujoco_ok": mujoco_report.get("ok") if mujoco_report else None,
     }
+    final_hash_audit_path = output_dir / "final_delivery_audit.json"
+    relation_report = read_json(relation_report_path) if relation_report_path.is_file() else None
+    if profile == "production" and not final_hash_audit_path.is_file():
+        hash_inputs = {
+            "scene_brief": output_dir / "scene_brief_resolved.json",
+            "architecture": output_dir / "architecture_plan.json",
+            "scene_graph": output_dir / "scene_graph_resolved.json",
+            "asset_resolution": output_dir / "asset_resolution.json",
+            "layout": plan_path,
+            "validation": output_dir / "validation_final.json",
+            "relation_geometry": relation_report_path,
+            "scene_glb": scene_glb,
+            "render_acceptance": (
+                output_dir
+                / "scene_render_acceptance"
+                / "scene_render_acceptance_report.json"
+            ),
+            "structural_performance": output_dir / "mujoco_check.json",
+        }
+        missing_hash_inputs = [
+            name
+            for name, path in hash_inputs.items()
+            if path is None or not Path(path).is_file()
+        ]
+        write_json(
+            final_hash_audit_path,
+            {
+                "schema": "scene-v2-final-hash-audit/v1",
+                "ok": not missing_hash_inputs and bool(
+                    isinstance(relation_report, dict) and relation_report.get("ok")
+                ),
+                "missing": missing_hash_inputs,
+                "artifacts": {
+                    name: file_binding(Path(path))
+                    for name, path in hash_inputs.items()
+                    if path is not None and Path(path).is_file()
+                },
+            },
+        )
+    final_hash_audit = read_json(final_hash_audit_path) if final_hash_audit_path.is_file() else None
+    stages = {
+        "scene_brief": (output_dir / "scene_brief_resolved.json").is_file(),
+        "architecture": (output_dir / "architecture_plan.json").is_file(),
+        "typed_scene_graph": (output_dir / "scene_graph_resolved.json").is_file(),
+        "asset_plan": (output_dir / "asset_resolution.json").is_file(),
+        "assets_ready_and_qa": bool(asset_report.get("ready_for_assembly")),
+        "layout": plan_path.is_file(),
+        "layout_validation": bool(validation.get("ok")),
+        "relation_geometry": bool(isinstance(relation_report, dict) and relation_report.get("ok")),
+        "blender_assembly": bool(assembly_report and assembly_report.get("ok")),
+        "final_multichannel_render": bool(
+            isinstance(scene_render_acceptance, dict)
+            and scene_render_acceptance.get("accepted")
+        ),
+        "structural_performance_check": bool(mujoco_report and mujoco_report.get("ok")),
+        "final_hash_audit": bool(
+            isinstance(final_hash_audit, dict) and final_hash_audit.get("ok")
+        ),
+        "benchmark_metrics": bool(validation.get("metrics")),
+    }
+    terminal = evaluate_terminal_status(
+        profile, stages
+    )
+    summary.update(terminal)
     write_json(output_dir / "run_summary.json", summary)
     if not validation["ok"] and not bool(args.allow_invalid):
         raise RuntimeError(
