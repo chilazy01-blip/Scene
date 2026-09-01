@@ -174,6 +174,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-glb", required=True, type=Path)
     parser.add_argument("--preview-image", type=Path)
     parser.add_argument("--preview-image-center", type=Path)
+    parser.add_argument("--relationship-preview", type=Path)
     return parser.parse_args(argv)
 
 
@@ -907,6 +908,50 @@ def parent_roots(objects: list[bpy.types.Object], root: bpy.types.Object) -> Non
         obj.matrix_world = world
 
 
+def bake_canonical_asset_reflection(
+    objects: list[bpy.types.Object], axis: str
+) -> dict[str, object]:
+    """Bake one left/right reflection into mesh vertices before world placement."""
+
+    axis = str(axis).lower()
+    if axis not in {"x", "y"}:
+        raise ValueError(f"Unsupported handedness reflection axis: {axis!r}")
+    reflection = Matrix.Diagonal(
+        (-1.0, 1.0, 1.0, 1.0)
+        if axis == "x"
+        else (1.0, -1.0, 1.0, 1.0)
+    )
+    renderables = [obj for obj in objects if obj.type in TARGET_TYPES]
+    unsupported = [obj.name for obj in renderables if obj.type != "MESH"]
+    if unsupported:
+        raise RuntimeError(
+            "Handedness reflection requires bakeable mesh geometry; unsupported "
+            + ", ".join(unsupported)
+        )
+    if not renderables:
+        raise RuntimeError("Handedness reflection requested for an asset with no mesh")
+
+    reflected_vertices = 0
+    for obj in renderables:
+        obj.data = obj.data.copy()
+        local_reflection = (
+            obj.matrix_world.inverted_safe() @ reflection @ obj.matrix_world
+        )
+        obj.data.transform(local_reflection, shape_keys=True)
+        if local_reflection.to_3x3().determinant() < 0.0:
+            obj.data.flip_normals()
+        obj.data.validate(clean_customdata=False)
+        obj.data.update()
+        reflected_vertices += len(obj.data.vertices)
+    return {
+        "axis": axis,
+        "space": "canonical_asset_local",
+        "baked": True,
+        "mesh_count": len(renderables),
+        "vertex_count": reflected_vertices,
+    }
+
+
 def transform_imported_asset(
     objects: list[bpy.types.Object], obj_plan: dict
 ) -> bpy.types.Object:
@@ -925,6 +970,25 @@ def transform_imported_asset(
         for obj in objects:
             if obj.type in TARGET_TYPES:
                 obj.matrix_world = local_front_matrix @ obj.matrix_world
+
+    reflection_result = None
+    reflection_axis = str(obj_plan.get("asset_reflection_axis") or "")
+    if reflection_axis:
+        reflection_space = str(
+            obj_plan.get("asset_reflection_space") or "canonical_asset_local"
+        )
+        if reflection_space != "canonical_asset_local":
+            raise ValueError(
+                f"Unsupported reflection space for {obj_plan['id']}: {reflection_space}"
+            )
+        reflection_result = bake_canonical_asset_reflection(
+            objects, reflection_axis
+        )
+        print(
+            "baked handedness reflection "
+            f"for {obj_plan['id']}: axis={reflection_axis}",
+            flush=True,
+        )
 
     renderables = [obj for obj in objects if obj.type in TARGET_TYPES]
     min_v, max_v = mesh_bbox_world(renderables)
@@ -984,6 +1048,17 @@ def transform_imported_asset(
         )
     root["imported_raw_extents"] = [float(extents.x), float(extents.y), float(extents.z)]
     root["mesh_normalization_scale"] = [float(scale.x), float(scale.y), float(scale.z)]
+    if reflection_result is not None:
+        root["asset_reflection_axis"] = str(reflection_result["axis"])
+        root["asset_reflection_space"] = str(reflection_result["space"])
+        root["asset_reflection_baked"] = bool(reflection_result["baked"])
+        root["asset_reflection_mesh_count"] = int(
+            reflection_result["mesh_count"]
+        )
+        root["asset_reflection_vertex_count"] = int(
+            reflection_result["vertex_count"]
+        )
+        root["asset_pair_role"] = str(obj_plan.get("asset_pair_role") or "")
     parent_roots(objects, root)
 
     yaw = math.radians(
@@ -1227,6 +1302,100 @@ def render_front_45_preview(
         raise RuntimeError(f"Blender did not create preview image: {output_path}")
 
 
+def render_relationship_preview(plan: dict, output_path: Path) -> None:
+    """Render a plan-authored diagnostic view of relation-heavy objects."""
+
+    spec = plan.get("relationship_preview")
+    if not isinstance(spec, dict):
+        raise ValueError("relationship_preview output requires plan.relationship_preview")
+    location = spec.get("camera_location")
+    target_value = spec.get("target")
+    if not (
+        isinstance(location, list)
+        and len(location) == 3
+        and isinstance(target_value, list)
+        and len(target_value) == 3
+    ):
+        raise ValueError("relationship_preview requires 3D camera_location and target")
+
+    scene = bpy.context.scene
+    for obj in list(scene.objects):
+        if bool(obj.get("preview_rig")):
+            bpy.data.objects.remove(obj, do_unlink=True)
+    hidden_walls = {str(value) for value in spec.get("hidden_walls", ["south"])}
+    for obj in scene.objects:
+        architecture_wall = str(obj.get("architecture_wall", ""))
+        if architecture_wall or obj.name.startswith("wall_"):
+            obj.hide_render = False
+        if architecture_wall in hidden_walls or any(
+            obj.name.startswith(f"wall_{wall}_panel_") for wall in hidden_walls
+        ):
+            obj.hide_render = True
+
+    target = Vector(tuple(float(value) for value in target_value))
+    camera_data = bpy.data.cameras.new("relationship_preview_camera")
+    camera = bpy.data.objects.new("relationship_preview_camera", camera_data)
+    scene.collection.objects.link(camera)
+    camera.location = tuple(float(value) for value in location)
+    camera["preview_rig"] = True
+    camera_data.lens = float(spec.get("lens_mm", 48.0) or 48.0)
+    camera_data.clip_start = 0.05
+    camera_data.clip_end = 200.0
+    point_at(camera, target)
+    scene.camera = camera
+
+    room = plan["room"]
+    width = float(room["width"])
+    length = float(room["length"])
+    height = float(room["height"])
+    for name, light_location, energy, size in [
+        (
+            "relationship_key_light",
+            (width * 0.72, length * 0.18, height + 1.8),
+            1250.0,
+            max(width, length) * 0.55,
+        ),
+        (
+            "relationship_fill_light",
+            (width * 0.18, length * 0.72, height * 1.15),
+            700.0,
+            max(width, length) * 0.45,
+        ),
+    ]:
+        light = add_area_light(
+            name,
+            light_location,
+            target,
+            energy=energy,
+            size=size,
+        )
+        light["preview_rig"] = True
+
+    try:
+        scene.render.engine = "BLENDER_EEVEE_NEXT"
+    except TypeError:
+        scene.render.engine = "BLENDER_EEVEE"
+    scene.render.resolution_x = int(spec.get("resolution_x", 1280) or 1280)
+    scene.render.resolution_y = int(spec.get("resolution_y", 900) or 900)
+    scene.render.resolution_percentage = 100
+    scene.render.image_settings.file_format = "PNG"
+    scene.render.image_settings.color_mode = "RGB"
+    scene.render.film_transparent = False
+    scene.render.filepath = str(output_path)
+    if scene.world is None:
+        scene.world = bpy.data.worlds.new("relationship_preview_world")
+    scene.world.use_nodes = True
+    background = scene.world.node_tree.nodes.get("Background") if scene.world.node_tree else None
+    if background:
+        background.inputs["Color"].default_value = (0.06, 0.07, 0.085, 1.0)
+        background.inputs["Strength"].default_value = 0.6
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    print(f"rendering relationship preview: {output_path}", flush=True)
+    bpy.ops.render.render(write_still=True)
+    if not output_path.is_file() or output_path.stat().st_size <= 0:
+        raise RuntimeError(f"Blender did not create relationship preview: {output_path}")
+
+
 def main() -> None:
     args = parse_args()
     print(f"loading plan: {args.plan}", flush=True)
@@ -1253,12 +1422,15 @@ def main() -> None:
         render_front_45_preview(plan, args.preview_image, view="left")
     if args.preview_image_center:
         render_front_45_preview(plan, args.preview_image_center, view="center")
+    if args.relationship_preview:
+        render_relationship_preview(plan, args.relationship_preview)
     print(
         json.dumps(
             {
                 "output_glb": str(args.output_glb),
                 "preview_image": str(args.preview_image) if args.preview_image else None,
                 "preview_image_center": str(args.preview_image_center) if args.preview_image_center else None,
+                "relationship_preview": str(args.relationship_preview) if args.relationship_preview else None,
             },
             indent=2,
         ),

@@ -1,0 +1,36 @@
+Create one complete, high-density warm contemporary living room designed as a collision-avoidance
+stress scene. Use a coherent light-oak, cream-boucle, muted-sage, charcoal, and restrained
+brushed-brass material language throughout.
+
+Required furniture and objects:
+- exactly one three-seat sofa along the south side, facing the television;
+- exactly one coffee table centered closely in front of the sofa, with a usable narrow gap and no
+  geometric overlap;
+- exactly one low television stand against the north wall, with exactly one television supported by
+  it and facing the seating group;
+- exactly two matching accent chairs flanking the coffee table as a symmetric conversation
+  pair, angled toward the table and kept close without intersecting it;
+- exactly two matching side tables immediately beside the left and right ends of the sofa, aligned
+  with each other and separated from the sofa by only a small visible gap;
+- exactly two matching table lamps, one supported by each side table;
+- exactly one slender floor lamp behind the right accent chair with a small but visible clearance;
+- exactly one open bookcase near but not touching the west wall, with divided open shelves, varied bound volumes, and its
+  interaction front facing east into the room;
+- exactly one compact light-oak desk near but not touching the east wall and exactly one office chair
+  closely in front of the desk, facing the desk with a narrow gap and without penetrating its solid panels;
+- exactly one large area rug anchoring the sofa, chairs, and coffee table;
+- exactly two framed wall art pieces above the sofa;
+- exactly two potted plants, one near the bookcase and one near the television stand;
+- exactly one ceramic mug supported by the desk.
+
+Make the furniture arrangement visibly dense and deliberately test close-proximity handling: the
+chair-to-table, side-table-to-sofa, floor-lamp-to-chair, office-chair-to-desk, plant-to-console, and
+bookcase-to-seating gaps should read as near-collision cases, but the final accepted scene must have
+no interpenetration, no floating objects, no wall clipping, and no blocked architectural opening. Preserve
+a continuous 0.90 m route from the east-side entrance into the main seating area and a practical
+route to the desk. Keep the sofa-to-television and chair-to-table facing relationships legible.
+
+Use warm-white plaster walls with a muted-sage north accent wall and a light-oak plank floor. Favor
+realistic furniture scale, readable upholstery seams, cushions, open shelf structure, varied bound-volume detail,
+wood grain, and restrained decor. The final camera should show the dense seating group, media wall,
+bookcase, and desk nook together so the successful collision repair is visually inspectable.

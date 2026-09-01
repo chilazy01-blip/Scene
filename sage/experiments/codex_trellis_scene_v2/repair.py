@@ -299,7 +299,9 @@ def _repair_spatial_relations(
 
 def deterministic_repair(plan: dict[str, Any], iteration: int = 1) -> dict[str, Any]:
     repaired = deepcopy(plan)
-    orientation_changes = apply_facing_constraints(repaired["objects"])
+    orientation_changes = apply_facing_constraints(
+        repaired["objects"], repaired["room"]
+    )
     room = repaired["room"]
     floor = [obj for obj in repaired["objects"] if obj.get("placement_type", "floor") == "floor"]
     wall = [obj for obj in repaired["objects"] if obj.get("placement_type") == "wall"]
@@ -409,6 +411,10 @@ def deterministic_repair(plan: dict[str, Any], iteration: int = 1) -> dict[str, 
         floor + wall + coverings + supports + others,
         key=lambda item: order[str(item["id"])],
     )
+    # Collision/relationship repair may legally move a soft wall-preference
+    # object to another wall.  Re-resolve its functional front from the final
+    # physical contact wall before target-facing constraints are applied.
+    changes.extend(apply_facing_constraints(repaired["objects"], repaired["room"]))
     changes.extend(
         apply_relation_facing_constraints(
             repaired["objects"], repaired.get("relations", [])

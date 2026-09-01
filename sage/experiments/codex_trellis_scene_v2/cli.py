@@ -17,6 +17,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--prompt-file", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "Resume an interrupted run from its scene_brief.json and verified "
+            "assets_staged GLB/JSON checkpoints. Mutually exclusive with --overwrite."
+        ),
+    )
     parser.add_argument("--room-type", choices=("bedroom", "living_room", "kitchen", "study", "restroom"))
     parser.add_argument(
         "--floor-material",
@@ -70,6 +78,17 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument("--asset-mode", choices=("plan", "reuse", "trellis2"), default="plan")
+    parser.add_argument(
+        "--scene-dna-mode",
+        choices=(
+            "legacy_coarse_tags",
+            "user_prompt_only",
+            "global_anchor_only",
+            "relation_aware",
+        ),
+        default="relation_aware",
+        help="Use one fixed V2 pipeline with a selectable style-matching ablation.",
+    )
     parser.add_argument("--asset-library-manifest", type=Path)
     parser.add_argument("--max-new-assets", type=int, default=8)
     parser.add_argument("--trellis-url", default="http://127.0.0.1:8082")
@@ -84,6 +103,22 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--steps", type=int, default=12)
     parser.add_argument("--texture-size", type=int, default=2048)
     parser.add_argument("--decimation-target", type=int, default=500000)
+    parser.add_argument(
+        "--scene-dna-multiview",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Render and audit four views of each generated asset; failed checks may trigger the bounded SceneDNA regeneration loop.",
+    )
+    parser.add_argument("--scene-dna-multiview-resolution", type=int, default=420)
+    parser.add_argument(
+        "--scene-dna-multiview-semantic-model",
+        help="Optional local SigLIP2 checkpoint for final four-view category and style scoring.",
+    )
+    parser.add_argument(
+        "--scene-dna-multiview-semantic-device",
+        default="cpu",
+        help="Torch device used by the optional final multi-view semantic/style scorer.",
+    )
 
     parser.add_argument("--assemble", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument(
@@ -91,6 +126,18 @@ def build_parser() -> argparse.ArgumentParser:
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Render front-left and front-center downward-45-degree PNGs whenever Blender assembles a GLB.",
+    )
+    parser.add_argument(
+        "--scene-render-acceptance",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="After assembly, render RGB/depth/instance-mask diagnostics and reject missing or invisible required objects.",
+    )
+    parser.add_argument("--scene-render-acceptance-resolution", type=int, default=512)
+    parser.add_argument(
+        "--allow-render-acceptance-failure",
+        action="store_true",
+        help="Keep a diagnostic GLB even when final RGB/depth/instance-mask acceptance fails.",
     )
     parser.add_argument("--blender-bin", default="/data/wsj/tools/blender/blender")
     parser.add_argument("--mujoco-check", action=argparse.BooleanOptionalAction, default=False)

@@ -26,6 +26,7 @@ from ..instance_groups import (
     validate_instance_groups,
 )
 from ..orientation import (
+    apply_facing_constraints,
     evaluate_facing,
     evaluate_relation_facing,
     solve_facing_yaw,
@@ -64,8 +65,12 @@ class BriefTest(unittest.TestCase):
             {"left_member", "right_member"},
         )
         self.assertEqual(group["asset_contract"]["match_mode"], "same_family")
+        self.assertEqual(group["asset_contract"]["fallback"], "mirror_primary")
+        self.assertTrue(group["asset_contract"]["requires_handedness"])
+        self.assertTrue(group["asset_contract"]["requires_medial_facing"])
         self.assertEqual(group["layout_contract"]["anchor_id"], "bed")
         self.assertEqual(group["layout_contract"]["anchor_zone"], "front")
+        self.assertEqual(group["layout_contract"]["heading_rule"], "anchor_front")
         self.assertTrue(group["members_remain_independent_instances"])
 
     def test_sparse_bedroom_gets_functional_required_objects(self) -> None:
@@ -283,6 +288,46 @@ class SemanticGroundingTest(unittest.TestCase):
             report["rejected"][0]["overlapping_object_ids"],
         )
 
+    def test_codex_cannot_weaken_deterministic_handed_pair_contract(self) -> None:
+        prompt = "A bedroom with exactly one pair of slippers near the foot of the bed."
+        brief = build_baseline_brief(prompt)
+        baseline = brief["instance_groups"][0]
+        members = list(reversed(deepcopy(baseline["members"])))
+        members[0]["role"] = "left_member"
+        members[1]["role"] = "right_member"
+        report = ground_instance_groups(
+            brief,
+            [
+                {
+                    "group_id": "model_slipper_pair",
+                    "group_kind": "paired_instances",
+                    "cardinality": 2,
+                    "members": members,
+                    "asset_contract": {
+                        "match_mode": "same_family",
+                        "fallback": "same_asset_reuse",
+                        "require_distinct_roles": False,
+                    },
+                    "layout_contract": {
+                        "arrangement": "side_by_side",
+                        "reference_frame": "room",
+                        "anchor_zone": "free",
+                    },
+                    "source_evidence": "exactly one pair of slippers near the foot of the bed",
+                }
+            ],
+        )
+        self.assertEqual(report["accepted_count"], 1)
+        group = brief["instance_groups"][0]
+        self.assertEqual(group["asset_contract"]["fallback"], "mirror_primary")
+        self.assertTrue(group["asset_contract"]["requires_handedness"])
+        self.assertEqual(group["layout_contract"]["anchor_id"], "bed")
+        self.assertEqual(group["layout_contract"]["heading_rule"], "anchor_front")
+        self.assertEqual(
+            {member["object_id"]: member["role"] for member in group["members"]},
+            {member["object_id"]: member["role"] for member in baseline["members"]},
+        )
+
     def test_group_postprocess_compacts_roles_and_normalizes_asset_fronts(self) -> None:
         members = [
             {
@@ -348,7 +393,7 @@ class SemanticGroundingTest(unittest.TestCase):
             metrics["results"][0]["orientation_errors_degrees"][0], 0.0
         )
 
-    def test_group_asset_resolution_reuses_one_curated_asset_without_merging_instances(
+    def test_group_asset_resolution_mirrors_one_curated_asset_without_merging_instances(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -366,6 +411,16 @@ class SemanticGroundingTest(unittest.TestCase):
                                 "styles": ["modern"],
                                 "qa_status": "approved",
                                 "glb_path": "left.glb",
+                                "asset_canonical_front": {
+                                    "axis": "+x",
+                                    "confidence": 0.9,
+                                },
+                                "asset_medial_axis": {
+                                    "axis": "+y",
+                                    "confidence": 0.9,
+                                },
+                                "pair_role": "right",
+                                "pair_role_semantics": "anatomical_wearer",
                                 "dimensions": {
                                     "width": 0.28,
                                     "length": 0.12,
@@ -378,6 +433,10 @@ class SemanticGroundingTest(unittest.TestCase):
                                 "styles": ["modern"],
                                 "qa_status": "approved",
                                 "glb_path": "right.glb",
+                                "asset_canonical_front": {
+                                    "axis": "+x",
+                                    "confidence": 0.9,
+                                },
                                 "dimensions": {
                                     "width": 0.28,
                                     "length": 0.12,
@@ -420,11 +479,299 @@ class SemanticGroundingTest(unittest.TestCase):
                     obj["instance_group_asset_family"]
                     for obj in slippers
                 },
-                {"same_asset:slipper_left_asset"},
+                {"mirror_pair:slipper_left_asset"},
+            )
+            self.assertEqual(
+                {obj["asset_pair_role"] for obj in slippers}, {"left", "right"}
+            )
+            self.assertEqual(
+                {obj["asset_source_pair_role"] for obj in slippers}, {"right"}
+            )
+            left = next(obj for obj in slippers if obj["asset_pair_role"] == "left")
+            right = next(obj for obj in slippers if obj["asset_pair_role"] == "right")
+            self.assertEqual(left.get("asset_reflection_axis"), "y")
+            self.assertIsNone(right.get("asset_reflection_axis"))
+            self.assertEqual(
+                [obj.get("asset_reflection_axis") for obj in slippers].count("y"),
+                1,
             )
             self.assertEqual(
                 report["instance_group_resolution"]["group_count"], 1
             )
+
+    def test_group_asset_resolution_prefers_verified_manifest_pair(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "left.glb").write_bytes(b"left")
+            (root / "right.glb").write_bytes(b"right")
+            manifest = root / "manifest.json"
+            assets = []
+            for role in ("left", "right"):
+                assets.append(
+                    {
+                        "asset_id": f"slipper_{role}_asset",
+                        "asset_family_id": "verified_blue_pair",
+                        "pair_role": role,
+                        "category": "slipper",
+                        "styles": ["modern"],
+                        "qa_status": "approved",
+                        "glb_path": f"{role}.glb",
+                        "asset_canonical_front": {
+                            "axis": "+y",
+                            "confidence": 0.9,
+                        },
+                        "asset_medial_axis": {
+                            "axis": "+x" if role == "left" else "-x",
+                            "confidence": 0.9,
+                        },
+                        "dimensions": {
+                            "width": 0.28,
+                            "length": 0.12,
+                            "height": 0.08,
+                        },
+                    }
+                )
+            manifest.write_text(
+                json.dumps({"assets": assets}), encoding="utf-8"
+            )
+            brief = build_baseline_brief(
+                "A modern bedroom with exactly one pair of slippers."
+            )
+            resolve_assets(
+                brief,
+                root / "run",
+                mode="plan",
+                manifest_path=manifest,
+                trellis_url="http://127.0.0.1:1",
+                seed=1,
+                timeout=1.0,
+                steps=1,
+                texture_size=64,
+                decimation_target=1000,
+                pipeline_type="512",
+                preprocess_image=False,
+                max_new_assets=4,
+            )
+            slippers = [
+                obj for obj in brief["objects"] if obj["category"] == "slipper"
+            ]
+            self.assertEqual(
+                {obj["asset_id"] for obj in slippers},
+                {"slipper_left_asset", "slipper_right_asset"},
+            )
+            self.assertTrue(
+                all(not obj.get("asset_reflection_axis") for obj in slippers)
+            )
+            self.assertEqual(
+                {obj["instance_group_asset_strategy"] for obj in slippers},
+                {"manifest_pair_role"},
+            )
+            self.assertEqual(
+                {obj["asset_source_pair_role"] for obj in slippers},
+                {"left", "right"},
+            )
+
+    def test_handed_pair_without_distinct_geometry_is_a_hard_failure(self) -> None:
+        members = []
+        for index, role in enumerate(("left", "right")):
+            members.append(
+                {
+                    "id": f"slipper_{role}",
+                    "category": "slipper",
+                    "placement_type": "floor",
+                    "dimensions": {
+                        "width": 0.28,
+                        "length": 0.12,
+                        "height": 0.08,
+                    },
+                    "x": 1.0 + index * 0.36,
+                    "y": 1.0,
+                    "yaw": 0.0,
+                    "asset_source": "curated_library",
+                    "asset_id": "same_slipper",
+                    "asset_pair_role": role,
+                    "instance_group_asset_family": "same_asset:same_slipper",
+                }
+            )
+        group = {
+            "group_id": "slipper_pair",
+            "cardinality": 2,
+            "members": [
+                {"object_id": "slipper_left", "role": "left_member"},
+                {"object_id": "slipper_right", "role": "right_member"},
+            ],
+            "asset_contract": {
+                "require_distinct_roles": True,
+                "requires_handedness": True,
+                "mirror_axis": "x",
+            },
+            "layout_contract": {
+                "reference_frame": "room",
+                "shared_orientation": True,
+                "min_gap": 0.03,
+                "max_gap": 0.20,
+            },
+        }
+        violations, metrics = validate_instance_groups(
+            {"objects": members, "instance_groups": [group]}
+        )
+        self.assertFalse(metrics["results"][0]["ok"])
+        handedness = [
+            item
+            for item in violations
+            if item["type"] == "instance_group_handedness_unverified"
+        ]
+        self.assertEqual(handedness[0]["severity"], "hard")
+
+    def test_anatomical_source_role_and_medial_sides_reject_swapped_slippers(
+        self,
+    ) -> None:
+        bed = {
+            "id": "bed",
+            "category": "bed",
+            "dimensions": {"width": 1.8, "length": 2.0, "height": 1.0},
+            "x": 2.6,
+            "y": 3.0,
+            "yaw": 0.0,
+            "asset_canonical_front": {"axis": "-y", "confidence": 0.9},
+        }
+        members = []
+        for role, x in (("left", 2.7), ("right", 2.5)):
+            members.append(
+                {
+                    "id": f"slipper_{role}",
+                    "category": "slipper",
+                    "placement_type": "floor",
+                    "dimensions": {"width": 0.28, "length": 0.12, "height": 0.08},
+                    "x": x,
+                    "y": 1.83,
+                    "yaw": 270.0,
+                    "asset_source": "curated_library",
+                    "asset_id": "camera_left_slipper",
+                    "asset_pair_role": role,
+                    "asset_source_pair_role": "right",
+                    "asset_canonical_front": {"axis": "+x", "confidence": 0.9},
+                    "asset_medial_axis": {"axis": "+y", "confidence": 0.9},
+                    "instance_group_asset_family": "mirror_pair:camera_left_slipper",
+                }
+            )
+        group = {
+            "group_id": "slipper_pair",
+            "cardinality": 2,
+            "members": [
+                {"object_id": "slipper_left", "role": "left_member"},
+                {"object_id": "slipper_right", "role": "right_member"},
+            ],
+            "asset_contract": {
+                "require_distinct_roles": True,
+                "requires_handedness": True,
+                "requires_medial_facing": True,
+                "medial_facing_tolerance_degrees": 35.0,
+                "mirror_axis": "lateral",
+            },
+            "layout_contract": {
+                "reference_frame": "anchor_local",
+                "anchor_id": "bed",
+                "heading_rule": "anchor_front",
+                "shared_orientation": True,
+                "min_gap": 0.03,
+                "max_gap": 0.20,
+            },
+        }
+        wrong = deepcopy(members)
+        wrong[1]["asset_reflection_axis"] = "y"
+        wrong_violations, wrong_metrics = validate_instance_groups(
+            {"objects": [bed, *wrong], "instance_groups": [group]}
+        )
+        self.assertFalse(wrong_metrics["results"][0]["ok"])
+        self.assertEqual(
+            {
+                violation["type"]
+                for violation in wrong_violations
+                if violation["severity"] == "hard"
+            },
+            {
+                "instance_group_handedness_unverified",
+                "instance_group_medial_facing",
+            },
+        )
+
+        corrected = deepcopy(members)
+        corrected[0]["asset_reflection_axis"] = "y"
+        corrected_violations, corrected_metrics = validate_instance_groups(
+            {"objects": [bed, *corrected], "instance_groups": [group]}
+        )
+        self.assertEqual(corrected_metrics["hard_violation_count"], 0, corrected_violations)
+        result = corrected_metrics["results"][0]
+        self.assertEqual(result["geometry_pair_roles_after_reflection"], ["left", "right"])
+        self.assertEqual(result["medial_facing_scores"], [1.0, 1.0])
+        self.assertTrue(result["medial_facing_verified"])
+
+    def test_anchor_front_heading_places_slippers_parallel_to_bed(self) -> None:
+        bed = {
+            "id": "bed",
+            "category": "bed",
+            "placement_type": "floor",
+            "dimensions": {"width": 1.8, "length": 2.0, "height": 1.0},
+            "x": 2.0,
+            "y": 2.4,
+            "yaw": 0.0,
+            "asset_canonical_front": {"axis": "-y", "confidence": 0.9},
+        }
+        slippers = []
+        for index, role in enumerate(("left", "right")):
+            slippers.append(
+                {
+                    "id": f"slipper_{role}",
+                    "category": "slipper",
+                    "placement_type": "floor",
+                    "dimensions": {
+                        "width": 0.28,
+                        "length": 0.12,
+                        "height": 0.08,
+                    },
+                    "x": 1.4 + index,
+                    "y": 0.8,
+                    "yaw": 0.0,
+                    "asset_canonical_front": {"axis": "+y", "confidence": 0.9},
+                }
+            )
+        group = {
+            "group_id": "slipper_pair",
+            "cardinality": 2,
+            "members": [
+                {"object_id": "slipper_left", "role": "left_member"},
+                {"object_id": "slipper_right", "role": "right_member"},
+            ],
+            "asset_contract": {"requires_handedness": False},
+            "layout_contract": {
+                "reference_frame": "anchor_local",
+                "anchor_id": "bed",
+                "anchor_zone": "front",
+                "anchor_min_gap": 0.05,
+                "anchor_target_gap": 0.25,
+                "anchor_max_gap": 0.8,
+                "heading_rule": "anchor_front",
+                "shared_orientation": True,
+                "orientation_tolerance_degrees": 15.0,
+                "min_gap": 0.03,
+                "target_gap": 0.08,
+                "max_gap": 0.20,
+                "allow_member_respacing": True,
+                "allow_rigid_translation": True,
+            },
+        }
+        plan = {
+            "room": {"width": 4.0, "length": 4.0, "height": 2.7},
+            "objects": [bed, *slippers],
+            "relations": [],
+            "instance_groups": [group],
+        }
+        apply_instance_group_postprocess(plan)
+        violations, metrics = validate_instance_groups(plan)
+        self.assertEqual(metrics["hard_violation_count"], 0, violations)
+        self.assertEqual({obj["yaw"] for obj in slippers}, {180})
+        self.assertTrue(metrics["results"][0]["anchor_orientation_ok"])
 
     def test_codex_typed_delta_overrides_policy_defaults_before_graph_build(self) -> None:
         prompt_path = (
@@ -976,8 +1323,8 @@ class SemanticGroundingTest(unittest.TestCase):
             )["generation_entries"][0]
         runtime = Trellis2BridgeRuntime(Namespace(flux_background_mode="contrast"))
         final_prompt = runtime._compose_flux_prompt(entry["bridge_input_prompt"])
-        self.assertTrue(final_prompt.startswith("Exactly one isolated object:"))
-        self.assertLessEqual(len(final_prompt.split()), 150)
+        self.assertTrue(final_prompt.startswith("One isolated "))
+        self.assertLessEqual(len(final_prompt.split()), 90)
         self.assertNotIn("built-in lamp base", final_prompt.lower())
         self.assertNotIn("scene context:", final_prompt.lower())
         self.assertNotIn("minimal design", final_prompt.lower())
@@ -1046,6 +1393,100 @@ class SemanticGroundingTest(unittest.TestCase):
                 {item["final_flux_prompt"] for item in report["results"]},
                 {"final isolated Flux prompt"},
             )
+
+    def test_trellis_resume_reuses_verified_staged_glb_and_metadata(self) -> None:
+        def one_box_brief():
+            brief = build_baseline_brief(
+                "A modern bedroom with exactly two storage boxes and no decorative clutter."
+            )
+            brief["objects"] = [
+                obj for obj in brief["objects"] if obj["category"] == "storage_box"
+            ]
+            brief["asset_inventory"] = [
+                {
+                    "category": "storage_box",
+                    "requested_count": 2,
+                    "required_count": 2,
+                    "instance_ids": [obj["id"] for obj in brief["objects"]],
+                }
+            ]
+            return brief
+
+        def fake_generate(obj, output_path, **kwargs):
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_bytes(b"glTF resumable checkpoint")
+            return {
+                "job_id": "resume-job",
+                "request": {"input_text": obj["asset_prompt"]},
+                "bridge_metadata": {
+                    "selected_reference_job_id": "resume-ref",
+                    "reference_attempts": [
+                        {"reference_job_id": "resume-ref", "prompt": "resumed Flux prompt"}
+                    ],
+                },
+            }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            output_dir = Path(tmp)
+            with patch(
+                "sage.experiments.codex_trellis_scene_v2.assets.bridge_health",
+                return_value={"ok": True},
+            ), patch(
+                "sage.experiments.codex_trellis_scene_v2.assets.generate_trellis_asset",
+                side_effect=fake_generate,
+            ):
+                resolve_assets(
+                    one_box_brief(),
+                    output_dir,
+                    mode="trellis2",
+                    manifest_path=None,
+                    trellis_url="http://127.0.0.1:8082",
+                    seed=1,
+                    timeout=1,
+                    steps=1,
+                    texture_size=64,
+                    decimation_target=100,
+                    pipeline_type="512",
+                    preprocess_image=False,
+                    max_new_assets=1,
+                )
+
+            # Simulate an interruption after the paired GLB was copied but
+            # before its per-instance metadata was completely committed.
+            second_id = one_box_brief()["objects"][1]["id"]
+            incomplete_path = output_dir / "assets_staged" / f"{second_id}.json"
+            incomplete = json.loads(incomplete_path.read_text(encoding="utf-8"))
+            incomplete["object"].pop("asset_id", None)
+            incomplete_path.write_text(json.dumps(incomplete), encoding="utf-8")
+
+            with patch(
+                "sage.experiments.codex_trellis_scene_v2.assets.bridge_health"
+            ) as health, patch(
+                "sage.experiments.codex_trellis_scene_v2.assets.generate_trellis_asset"
+            ) as generate:
+                resumed = resolve_assets(
+                    one_box_brief(),
+                    output_dir,
+                    mode="trellis2",
+                    manifest_path=None,
+                    trellis_url="http://127.0.0.1:8082",
+                    seed=1,
+                    timeout=1,
+                    steps=1,
+                    texture_size=64,
+                    decimation_target=100,
+                    pipeline_type="512",
+                    preprocess_image=False,
+                    max_new_assets=0,
+                    resume_staged_assets=True,
+                )
+            health.assert_not_called()
+            generate.assert_not_called()
+            self.assertEqual(resumed["generated_count"], 2)
+            self.assertEqual(resumed["unique_generated_count"], 0)
+            self.assertEqual(resumed["resumed_generated_instance_count"], 1)
+            self.assertEqual(resumed["pending_unique_generation_count_at_resume"], 0)
+            self.assertTrue(resumed["ready_for_assembly"])
 
     def test_restroom_detection_has_complete_functional_core(self) -> None:
         brief = build_baseline_brief("一个紧凑的现代卫生间。")
@@ -1244,6 +1685,59 @@ class FunctionalOrientationTest(unittest.TestCase):
             },
         }
         self.assertEqual(solve_facing_yaw(obj), 90.0)
+
+    def test_soft_wall_facing_follows_actual_contact_wall_after_relocation(self) -> None:
+        room = {"width": 5.2, "length": 4.4, "height": 2.7}
+        wardrobe = {
+            "id": "wardrobe",
+            "placement_type": "floor",
+            "preferred_wall": "east",
+            "wall_constraint_strength": "soft",
+            "dimensions": {"width": 1.6, "length": 0.62, "height": 2.1},
+            # Same failure shape as the presentation bedroom: collision repair
+            # put the cabinet against west while stale east-wall yaw remained.
+            "x": 0.39,
+            "y": 0.88,
+            "yaw": 270.0,
+            "asset_canonical_front": {"axis": "-y", "confidence": 0.9},
+            "facing_constraint": {
+                "mode": "into_room",
+                "wall": "east",
+                "contact_face": "back",
+            },
+        }
+        apply_facing_constraints([wardrobe], room)
+        status = evaluate_facing(wardrobe, room)
+        self.assertEqual(wardrobe["yaw"], 90.0)
+        self.assertEqual(status["wall"], "west")
+        self.assertEqual(status["requested_wall"], "east")
+        self.assertEqual(status["wall_resolution_source"], "physical_contact_wall")
+        self.assertEqual(status["world_front"], [1.0, 0.0])
+        self.assertTrue(status["ok"])
+
+    def test_hard_wall_facing_never_retargets_to_another_wall(self) -> None:
+        room = {"width": 5.2, "length": 4.4, "height": 2.7}
+        wardrobe = {
+            "id": "wardrobe",
+            "placement_type": "floor",
+            "preferred_wall": "east",
+            "wall_constraint_strength": "hard",
+            "dimensions": {"width": 1.6, "length": 0.62, "height": 2.1},
+            "x": 0.39,
+            "y": 0.88,
+            "yaw": 0.0,
+            "asset_canonical_front": {"axis": "-y", "confidence": 0.9},
+            "facing_constraint": {
+                "mode": "into_room",
+                "wall": "east",
+                "contact_face": "back",
+            },
+        }
+        apply_facing_constraints([wardrobe], room)
+        status = evaluate_facing(wardrobe, room)
+        self.assertEqual(wardrobe["yaw"], 270.0)
+        self.assertEqual(status["wall"], "east")
+        self.assertEqual(status["wall_resolution_source"], "declared_hard_wall")
 
     def test_rules_layout_points_east_wardrobe_and_south_dresser_into_room(self) -> None:
         brief = build_baseline_brief("A bedroom.")

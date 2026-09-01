@@ -1,8 +1,138 @@
 # Scene 当前接续断点
 
-最后更新：2026-07-24
+最后更新：2026-09-01
 
 本文档只保留恢复工作所需的当前结论。不要继续追加逐次终端流水；新结论应替换已过期内容。
+
+## 0B. 高密度碰撞关系客厅的 SceneDNA + 真实 TRELLIS.2 交付已完成（2026-09-01）
+
+本轮用户要求的独立客厅目录为：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/living_room_collision_scene_dna_trellis2_20260831_v3
+```
+
+最终主产物：
+
+- `scene_codex_trellis_v2.glb`：348,187,036 bytes，SHA-256
+  `eece9a93a481e482a243f015ce3b5af4fc282f502b089fb4cb727fa7d30f68ef`；`trimesh` 可加载，含 33 个
+  geometry/33 个 geometry node，20 个家具/摆件实例全部有对应最终节点。
+- `scene_collision_relationship_result.png`：1800x1120 RGB，SHA-256
+  `b5fe3405cb0b381512f1cd85b27cbccbd5cc44aa253f17eb5a20f03ffde03c13`；左侧为最终渲染，右侧为顶视
+  碰撞/间距关系图，明确标注 20 instances、0 hard collisions、72 graph relations 和 8 TRELLIS types。
+- `scene_front_45.png`、`scene_front_center_45.png` 及 render-acceptance 的 top/corner/front/desk-close
+  视角均已实际检查。RGB/depth/instance 门确认 20/20 必需对象可见，且每个对象至少在一个视角完整。
+  `agent_visual_review.json` 保存逐项人工结论和未美化的局限，`final_delivery_audit.json` 保存最终哈希、
+  指标、资源与测试证据。
+
+完整资产流程没有用参数化资产冒充缺失项：
+
+- 10 个实例来自真实 TRELLIS.2，按 8 个唯一生成类型去重：sofa、coffee_table、tv_stand、tv、
+  accent_chair、side_table、floor_lamp、bookcase；另外 10 个实例复用审核库资产，最终 missing=0。
+- SceneDNA 使用 `relation_aware` opt-in，contract hash 为
+  `8ee95cc1de62a5a5c4183125dc7e04fe95eef1e6fb76600edaad00ef5166e877`。8 类共比较 46 个 3D 候选，
+  最终 8/8 通过硬 3D 可装配门；自动完整多视图软门只有 1/8，故 harmony certificate 正确保留
+  `claims_visual_harmony_pass=false`、`style_review_required=true`。人工多视图确认八类均可辨识且四向结构
+  一致，但部分资产仍带参考图展示底面或小道具残留；这不造成硬碰撞，却是后续生产级清理点。不得把
+  本轮描述为 SceneDNA 已证明有效或资产美术质量完美，vNext 默认替换仍关闭。
+- 恢复流程新增逐候选原子 checkpoint（路径、大小、SHA-256、contract hash、完整 metadata/multiview），
+  可在服务重启后跳过已验证候选。floor_lamp 6 个、bookcase 4 个候选均有可校验 checkpoint；前 6 类
+  已在新增机制前完整落盘并由 selection report 恢复。
+
+几何、关系、资源和工程验收：
+
+- `validation_final.json` 为 `ok=true`、0 hard violations、0 raw/scoped relation failures，20/20 空间关系
+  有效，6/6 功能朝向有效，walkway reachable；floor occupancy 0.2618、compactness balanced。仅有两条
+  wall-affinity 软偏好告警（accent chair、floor lamp），不是碰撞或越界。
+- 两幅 wall art 实际硬挂在南墙 `y=0.1025m, z=1.55m`；剖视图隐藏相机侧南墙但保留墙饰，因此看似
+  悬空，不是布局关系失败。
+- TRELLIS 每个有界批次都由 `trellis_fresh_cgroup_supervisor.py` 启动新的 user systemd cgroup，
+  `MemoryHigh=12G/MemoryMax=16G`。第一次恢复暴露进程内 allocator 在卸载 SceneDNA scorer 后没有真正
+  归还 RSS，并触发 systemd-oomd；bridge 现执行 `gc.collect()` + glibc `malloc_trim(0)`，且服务使用
+  `MALLOC_ARENA_MAX=2`，之后各批次稳定完成。最终 FLUX、TRELLIS 和主 pipeline unit 全部
+  inactive/dead、Result=success、ExecMainStatus=0。
+- 本轮正式回归为 V2 包 282/282、仓库根 12/12，共 294/294；V2 compileall、运行目录全部 JSON 解析、
+  `git diff --check` 均通过。此前一次遗漏 unittest `-t .` 的收集错误不计入正式结果。
+
+该客厅交付已完成，不要再次启动 FLUX/TRELLIS 或覆盖最终资产；若继续精进，优先实现生成资产的
+instance-mask/geometry-component 展示底面与额外道具清理，并复用现有多视图、场景渲染和关系门复验。
+
+## 0A. relation-aware SDF 复杂卧室的真实 TRELLIS.2 交付已完成（2026-08-30）
+
+最终独立目录为：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/sdf_complex_bedroom_trellis2_20260829_v2
+```
+
+最终产物：
+
+- `scene_sdf_complex_bedroom.glb`：252,089,564 bytes，SHA-256
+  `76e76da2632e41bd3f8dc259c8665b1981d2d6d8a85d9e17c6c3e2611309b5c2`。`trimesh` 可加载，含
+  33 个 geometry/33 个 geometry node；桌、椅、开放书架和三排书六类必需节点全部存在。
+- `scene_relationships_bookshelf_desk.png`：1280x900 sRGB，SHA-256
+  `6b6a72758f10f622416c42580cce2a17aae10bc1e5ea38bac2d4f9e13a74112e`。已人工检查：三排各五本书
+  分别清楚位于三层开放格内，办公椅的椅背、座面、扶手、底座和脚轮整体位于书桌开口下方，无明显
+  穿插或相机遮挡。`scene_front_45.png` 与 `scene_front_center_45.png` 的全景检查也通过。
+
+书架与书排不再使用参数化替代：
+
+- `open_bookcase_trellis2_001` 和 `book_row_trellis2_001/002/003` 均为本地 TRELLIS.2 真实生成 GLB；
+  `layout_plan_final.json` 中四者的 `asset_source` 全部为
+  `trellis2_scene_specific_multiview_approved`，`trellis_assets/multiview_qa.json` 为 4/4 accepted，
+  `parametric_fallback_used=false`。
+- 第一轮三组书排因多视图出现约 10 本、6 本或含糊额外书体而被拒收，原 GLB、pilot report 和拒收
+  原因保存在 `trellis_assets/rejected_multiview_v1/`，未覆盖或美化。第二轮使用三张严格五本、透明
+  背景的 imagegen 参考图和新 seed 重建；`trellis_multiview_v2/*_contact.png` 的正反面均能明确数出
+  正好五本，侧面仅有同一排的正常深度遮挡。
+- 四个最终 TRELLIS GLB 的 SHA-256 分别为书架
+  `5f8bba8c623fb1964203d8d790cd3273a5b512072f889ae6a561893263fcb281`、三排书
+  `aba9f072554a0bef3d67409d7e7e728c9aff9f0b7ada9855da0e81ef881e46af`、
+  `c8bbdeb0b57099810be2d85c7390036cc7fdb5031eb24ea9c2a9940ea6043930`、
+  `603d53edef5a7384e741e827076967aeea0c8fbdbaed24942e489ac439678683`。
+
+几何、关系与资源验收：
+
+- 六个资产均完成 collision-only 清理和多级代理，visual mesh 保留；没有 hole filling 或全局 voxel
+  remesh。四条 hard relations（椅子 `tucked_under`、三排书 `contained_in`）4/4 accepted；每条
+  source-to-target/target-to-source `deep_count=0`，原三角网格终检均
+  `complete=true/intersects=false/candidate_pair_count=0`。
+- TRELLIS、geometry、Blender 均串行运行在 `MemoryHigh=12G/MemoryMax=16G` 的 user systemd 服务中；
+  heavy launch/运行门仍为 96/64 GiB available，12 GiB 连续 RSS、4 GiB Dirty+Writeback、blocked 和
+  I/O wait 门均启用。TRELLIS 第二轮三项峰值进程树 RSS 为 11.160、9.961、10.238 GiB，全部
+  `ok=true/signal=null/termination_reason=null`。
+- 生成前发现 GPU 0 的声学训练后把本任务迁到 GPU 1；又发现四卡 CUDA FEA 几何任务后补充
+  `round11b_cuda_fea480`/`formalize_one_node1.py` 进程标记并重新累计完整 3600 秒稳定窗口，没有终止
+  其他用户任务。最终成功窗口从 `2026-08-30T14:03:43Z` 到 `15:45:28Z` 共 202 个资源样本，全部
+  healthy；最低 available 224.509 GiB、最大 Dirty+Writeback 0.188 GiB、最大 blocked 2、最大
+  I/O wait 0.515%。
+- `tree-sage-flow2` 完整 V2 包回归 270 项、仓库根测试 12 项，共 282 项全部通过；Python compile、
+  JSON 校验和 `git diff --check` 通过。
+
+旧参数化诊断目录 `/data/wsj/main/scene_runs/codex_trellis_v2/sdf_complex_bedroom_optimized_20260829_v1`
+仍仅作历史诊断，不得替代上述最终 v2 交付。工作树原有大量用户/前序修改与未跟踪实验文件均保留，
+未 reset、checkout 或清理。
+
+## 0. 换对话接续摘要（2026-08-28）
+
+SceneDNA vNext 第四轮已经完成生成、工程验收和公开包冻结，不需要继续启动 FLUX/TRELLIS 或重新
+制作问卷。当前没有 tmux 生成服务在运行，四张 GPU 均已释放。实验根目录为：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_vnext_round4_20260828_v1
+```
+
+当前唯一 SceneDNA 行动是把根目录中的
+`SceneDNA_blind_review_2D_round4_offline.html` 单独发给 3–5 名未参与开发的新评审者，并把导出的
+原始 JSONL 不修改地放入 `/data/wsj/main/test`。达到预注册人数后才统一解盲分析；现在不要读取
+sealed key 后人工挑图、不要调选择器、不要生成配对 3D，也不要打开默认 vNext。第四轮为 38 个独立
+case + 4 道隐藏重复，公开图卫生 100%，正式 100 批全部有终态；工程通过不等于人工效果已提升。
+
+首轮旧 v2、受色溢混杂的第二轮 beta 和卫生门失败的第三轮均只作历史诊断，不得复用图片、seed 或
+答案。第四轮完整恢复、服务器 `/dev/sdb` I/O 阻塞证据、固定控制变量、公开哈希和 269 项回归结果
+见 `scene_dna_vnext_round4_20260828_v1/RECOVERY_AND_FREEZE_AUDIT_20260828.md`。若新对话的用户询问
+“接下来做什么”，先等待/收集第四轮独立评审数据；除非用户明确切换到其他项目分支，不要再次生成
+第四轮候选或问卷。
 
 ## 1. 当前唯一优先目标
 
@@ -472,7 +602,7 @@ Flux 的完整组合 Prompt 仍超过 CLIP 77-token 限制，日志会截断靠�
 
 类型化场景图第一版已实现于 `sage/experiments/codex_trellis_scene_v2/scene_graph.py`。它保留一个唯一主父节点树作为所有权、局部变换和未来优化顺序，并把旧 `relations`、`support_id`、`preferred_wall`、`facing_constraint` 编译为独立的类型化关系边。房间是根；墙和地板属于房间；门窗安装在具体墙体；普通家具属于房间并另有 `supported_by floor`；墙挂物属于墙；台灯、书等支撑物属于实际父家具。节点已预留 `part_of_id/container_id/container_slot/included_components/support_surfaces/containment_volumes` 等资产组成与容纳接口，关系边记录 constraint class、hard/soft、方向、来源和参数。
 
-布局完成后，图中物件节点会记录 world pose；有可解析物件父节点时同时计算 parent-local pose。rules/Codex layout 和 deterministic/Codex repair 都会刷新图，避免修复后位姿陈旧。管线新增 `scene_graph_initial.json`、`scene_graph_resolved.json`、`scene_graph_final.json`，验证器会把图中的重复节点、缺失父节点、层级环和悬空关系作为硬错误；run summary 记录图的路径、统计与验证结果。现有 AABB/footprint 仍是有效 broad phase，graph optimization contract 只预留 relation-aware SDF narrow phase，当前尚未实现 SDF 或参考图关系推断。
+布局完成后，图中物件节点会记录 world pose；有可解析物件父节点时同时计算 parent-local pose。rules/Codex layout 和 deterministic/Codex repair 都会刷新图，避免修复后位姿陈旧。管线新增 `scene_graph_initial.json`、`scene_graph_resolved.json`、`scene_graph_final.json`，验证器会把图中的重复节点、缺失父节点、层级环和悬空关系作为硬错误；run summary 记录图的路径、统计与验证结果。现有 AABB/footprint 仍是默认 broad phase；通用 relation-aware geometry narrow phase 已在独立 opt-in 层实现，但尚未替换默认 V2 repair。
 
 枕头重复问题已按“组合资产吸收”最小方案处理：当且仅当场景里有唯一一张床，显式枕头实例不会再进入独立资产解析、Flux/TRELLIS.2 生成或 layout，而是将数量、外观词和原实例 ID 记录为床的 `component_requirements`。生成/计划中的床会把该要求写进单资产 Prompt；审核床 manifest 若有 `included_components` 则核验数量，旧 manifest 缺少该字段时只标记 `assumed_satisfied_by_composite_asset`，不会谎称已验证；manifest 明示数量不足会阻止装配。审计结果写入 `component_resolution.json` 与 run summary。多床或无床的歧义场景仍保留独立枕头，不做猜测性吸收。
 
@@ -508,7 +638,7 @@ Codex 最终仍保持 15 个物理对象、吸收 2 个枕头、3 个缺失实�
 
 上述 grounding 缺口的第一版代码已实现。Codex expansion schema 新增 `relation_updates/attribute_updates/component_updates`；本地 `apply_expansion_grounding()` 只接受稳定 baseline ID 和受限关系词表，验证 wall target、hard/soft、support target 与主父级环后才更新 canonical SceneBrief，并把接受/拒绝、覆盖前值、证据写入 `semantic_grounding.json`。`supported_by` 会改主父节点，`against_wall` 会覆盖房间默认墙面并为功能家具刷新入室朝向，`faces` 会形成补充边。布局归一化和 deterministic repair 都会重新求解 target-facing yaw，验证器新增 target-facing 指标和违规。对象级 `appearance_terms_grounded` 可覆盖句级类别扫描，解决 cup/book 同句的 `ceramic` 泄漏；组件更新只能细化已有 deterministic component requirement，不能修改显式数量或凭空创建组件。
 
-V2 无模型 unittest 现为 108 个且全部通过，覆盖 grounding 关系覆盖、非法 ID、support cycle、图边生成、对象属性隔离、repair 后 chair-facing 保持，以及 target-local 旋转参考系、桌椅前方/净空、箱子左右/分离、soft 关系不升级、不可满足关系显式报告、`one pair of slippers -> 2` 物理实例、方向关系与中心对齐解耦、语义锚点对齐、镜像对称、锁定 side-role 参考系、重叠 constraint scope、组级失败聚合、软/硬墙面约束、实例组的互斥成员/资产复用/组级布局，以及 capability schema、raw Y-up 到 canonical Z-up、voxel SDF 符号/缓存、support-surface 对照、桌下 dense/sparse 分类一致性、命名 free-space、hard `tucked_under` grounding/图验证与显式文本保真、参考引导 SDF 搜索、whole-room/target-local 坐标往返、显式资产绑定、关系专属 AABB waiver、参考图 soft-prior contract/投影和生成器库存对照审计。仓库根另有 12 个 unittest 通过，合计 120 个。纯本地 pipeline smoke 也通过，`semantic_grounding.json` 与 run summary 正常输出；rules 模式正确记录 `mode=deterministic_baseline`。
+V2 无模型 unittest 现为 133 个且全部通过；除原有 grounding、类型图、布局 CSP、capability、单关系 SDF 和参考图测试外，新增覆盖通用关系编译、双向碰撞、开放书架、不认识类别、语义锚点入口深度、证书失效、多级代理、高部件预算回退、三角形复核、通用姿态求解、多关系 opt-in bridge 和自动 capability 提议。仓库根另有 12 个 unittest 通过，合计 145 个。纯本地 pipeline smoke 继续通过；默认流程未切换到新 geometry bridge。
 
 桌下文本 grounding 的真实失败已修复。此前 expansion schema 的关系枚举漏掉
 `tucked_under`，导致模型只能把 “tucked under the desk” 近似为 `in_front_of`。schema
@@ -537,9 +667,11 @@ Codex 返回的 37 项关系/属性/组件增量被接受，5 项被拒绝。关
 
 Validator 已增加 reporting-only `constraint_scope_failures`。它不替换原始 `violations`，不改变 `validation.ok`、hard/soft count 或 repair 输入；只把同一 scope 内端点连通的失败关系聚合，互不相连的关系保持分组。若 Codex scope 漏列一个 relation_ref，但该失败关系两端都是 scope members，则仅在报告层按 membership 归组并写入 `membership_inferred_relation_ids`，不新增约束。对 `bedroom_constraint_scopes_codex_plan_r1` 只读回放保持原始 `false/4 hard/1 soft/5 violations` 完全不变，同时把 4 条 raw relation failures 汇总为 2 个 hard scope failures：衣柜-收纳箱组和床-拖鞋组。
 
-成对/匹配物件问题已完成前两阶段实现，新增项目 skill `sage/skills/scene-instance-group-planning/SKILL.md` 和独立运行时模块 `instance_groups.py`。`instance_groups` 与 advisory `constraint_scopes` 明确分离：前者是成员互斥的执行组，后者允许重叠且只做计算/报告视图。显式且无歧义的一双物件可由确定性基线建组，Codex expansion schema 也可用 exact prompt evidence、稳定 ID、cardinality/member role、资产和布局 contract 提案或细化；本地会拒绝未知 ID、数量不符、重复角色和一个物件进入两个刚体组。组不会改变 ownership tree、support parent，也不会合并 mesh、对象 ID、instance mask 或 collision shape。
+成对/匹配物件问题已完成前三阶段实现，已有项目 skill `sage/skills/scene-instance-group-planning/SKILL.md` 和独立运行时模块 `instance_groups.py`。`instance_groups` 与 advisory `constraint_scopes` 明确分离：前者是成员互斥的执行组，后者允许重叠且只做计算/报告视图。显式且无歧义的一双物件可由确定性基线建组，Codex expansion schema 也可用 exact prompt evidence、稳定 ID、cardinality/member role、资产和布局 contract 提案或细化；本地会拒绝未知 ID、数量不符、重复角色和一个物件进入两个刚体组。组不会改变 ownership tree、support parent，也不会合并对象 ID、instance mask 或 collision shape。
 
-资产解析现在优先同一 `asset_family_id`；manifest 缺少 family 时按 contract 复用同一个审核资产，缺失资产则共享 generation spec/key，并在每个成员记录 group/family/strategy。布局完成和普通 relation CSP 修复后，再执行组级后处理：按各资产 canonical front 统一世界朝向，受限调整成员顺序和内部间距，然后以整组刚性平移搜索房间内、无外部碰撞的 anchor 区域。validator 会硬检查成员互斥、cardinality、role order、间距、anchor gap/direction、朝向和资产 family；“复用同一几何但没有真实左右脚角色”只记 soft QA，不伪装成已验证的成对资产。报告固定为 `instance_group_grounding.json`、`instance_group_asset_resolution.json`、`instance_group_resolution.json` 和 `validation_final.json.metrics.instance_groups`。
+具有左右手性的 pair（当前类别策略覆盖 slipper/shoe/glove）不再允许 `same_asset_reuse`。资产解析先选同一 `asset_family_id` 下带互补 `pair_role=left/right` 的审核 bundle；找不到时复用一份源 GLB，并只给另一成员写入 `asset_reflection_axis`。默认 `mirror_axis=lateral` 会根据审核 `asset_canonical_front` 选择与前向垂直的本地轴，避免镜像左右脚时同时把鞋头翻向相反方向；TRELLIS 缺失资产也强制共享一次生成结果再镜像，不再生成两个未经配对的形状。Blender assembler 在 canonical-local 空间把反射烘焙进 mesh 顶点、翻转法线后再执行世界 yaw/placement，导出节点 extras 记录轴、mesh 和 vertex 数，GLB 不遗留负 determinant。
+
+组级后处理现在真正用 anchor canonical front，而不是第一成员初始朝向：`heading_rule=anchor_front` 同时决定成员世界前向和并列横轴。床脚拖鞋因此平行、鞋头沿床的功能前向、按床局部左右排序。validator 新增 anchor-relative heading gate；对于 `requires_handedness=true` 的已物化资产，只有真实 manifest pair 或同一资产且恰好一份审核横向镜像才算 `handedness_verified`，否则 `instance_group_handedness_unverified` 为 hard，不能再带警告输出最终 GLB。Codex 对确定性拖鞋组的细化不能降级该 contract、交换稳定角色或移除床 anchor。报告仍为 `instance_group_grounding.json`、`instance_group_asset_resolution.json`、`instance_group_resolution.json` 和 `validation_final.json.metrics.instance_groups`。
 
 持久化 rules/plan-only 回归：
 
@@ -547,7 +679,31 @@ Validator 已增加 reporting-only `constraint_scope_failures`。它不替换原
 /data/wsj/main/scene_runs/codex_trellis_v2/bedroom_instance_group_rules_plan_20260723
 ```
 
-严格关系卧室 Prompt 自动建立 `explicit_slipper_pair`；两只拖鞋仍是两个独立实例，但都选择 `slipper_blue_left_001`，避免旧轮换选择产生款式/形状差异。组后处理把原 1.02m 间距收紧为 0.08m，并将整组移到床脚前方，床—组实际 gap 为 0.25m；最终 0 个硬违规、2 个软告警，composition proxy `0.8904`。两个软项分别是已有 bbox 遮挡和 `instance_group_handedness_unverified`。当前尚未修改 Blender 做镜像，也没有把现有两个质量不一致的左右拖鞋标为同一真实 family；因此本阶段达到布局测试可用，而不是最终左右脚资产 QA。第三阶段 group-first 联合布局、真实 pair bundle/镜像几何和 SDF narrow phase 均未实现。
+旧严格关系卧室输出 `bedroom_complete_relation_geometry_20260822_v1` 保留原样，里面两只拖鞋仍是改动前的同一几何复用结果，不得把该旧 GLB 表述为已修正。新代码对同一完整卧室 Prompt 的 rules/plan 离线回归选择一份 `slipper_blue_left_001`，第二成员做本地 Y 镜像；两只均为 `yaw=270°`、内部 gap `0.08m`、床—组 gap `0.25m`，instance-group 验证 0 hard/0 soft。视觉 smoke 保存在 `/data/wsj/main/scene_runs/codex_trellis_v2/slipper_pair_mirror_smoke_20260822_v1`：Blender 日志确认 Y 轴烘焙镜像，GLB 11,536,660 bytes、7 geometry、100,060 faces，回读后镜像匹配中位误差约 0.000149m，近景 `slipper_pair_closeup.png` 已人工确认两鞋纵向平行、鞋头同向、轮廓互为左右。该审核同时把 manifest 中 `slipper_blue_left_001.asset_canonical_front` 从错误 `+y` 改为 `+x`；现有独立 right 资产仍未冒充同一真实 family。
+
+旧 `bedroom_complete_relation_geometry_20260822_v2_handed_slippers` 虽实现了一次镜像和正确
+并列朝向，但把来源 `left_slipper` 的 camera-left 命名误当成左脚语义，实际把右鞋几何放到
+左脚位置；不得再把 v2 表述为最终修正版。审核 manifest 现明确记录
+`slipper_blue_left_001.pair_role=right`、`pair_role_semantics=anatomical_wearer`、canonical front
+`+x` 和 source medial axis `+y`。资产解析分别记录 source role 与 requested role，镜像奇偶必须
+推导出请求角色；validator 还会把 medial axis 经过同一反射/yaw 变换并硬检查两鞋内侧相向。
+文件名、source ID 和画面左右不再能充当人体左右证据。
+
+最终完整卧室修正版为：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/bedroom_complete_relation_geometry_20260822_v3_anatomical_slippers
+```
+
+v3 只改变拖鞋资产手性字段与对应 group contract，其他物体、relations、room 和 architecture
+与 v2 完全相同。左成员 `explicit_slipper_1`（世界 `x=2.7`）由审核右鞋做 local Y 镜像，右成员
+`explicit_slipper_2`（`x=2.5`）保持右鞋源几何；两者均 yaw 270°，鞋头沿床前向。验证推导角色
+为 `[left,right]`，medial-facing scores 为 `[1.0,1.0]`，0 hard/0 soft。新 GLB
+`scene_complete_bedroom_anatomical_slippers.glb` 为 160,050,440 bytes、29 geometry、
+1,442,138 faces；导出节点全部正 scale determinant，镜像已烘焙进左鞋顶点。近景
+`slipper_pair_anatomical_closeup.png` 与两张完整预览已人工核对。MuJoCo box proxy 2 秒检查
+`ok=true`、无 unstable，最大位移 0.094557m；两只拖鞋均仅 0.00004m。派生与范围审核见
+`anatomical_slipper_derivation.json`。
 
 墙面语义已区分 `preferred_wall` 与显式 `against_wall`：房型策略偏好默认是 soft，显式墙面要求和墙挂物保持 hard；旧 plan 缺少强度字段时继续按 hard 兼容。deterministic repair 仍优先尝试偏好墙面，但软偏好在冲突时允许使用全房间候选。validator 与 repair 共用同一关系 evaluator；无法满足的关系继续写入 `repair_history.spatial_relation_search.unresolved`。
 
@@ -650,6 +806,387 @@ named free-space、坐标系和 dimension policy 定义可行域。运行时先�
 目标插入深度和构图方向，不能覆盖碰撞结果。whole-room observation 的 target-local 转换与
 opt-in repair 调用现已由下述 bridge 覆盖单个显式绑定关系。
 
+第二代通用关系几何层已于 2026-08-21 在同一独立目录完成首版，不再以
+`office_chair -> desk` 等类别对选择算法。`relation_geometry.py` 将 `supported_by`、
+`contained_in`、`tucked_under/partially_inserted`、`against/contact` 分别编译为审核资产上的
+bounded support plane、containment volume、free-space + entry portal/anchor 和 contact plane；
+类别只允许作为 authoring filter，求解器不含类别分支。所有关系叠加双向 solid 查询，保守
+模式缺任一方向即拒绝；证书绑定 relation、pose 和 proxy hash，输入变化后自动陈旧。
+
+新增核心文件：
+
+```text
+relation contract/evaluator:
+  sage/experiments/codex_trellis_scene_v2/relation_geometry.py
+generic bounded pose solver:
+  sage/experiments/codex_trellis_scene_v2/relation_solver.py
+multi-relation opt-in bridge:
+  sage/experiments/codex_trellis_scene_v2/relation_geometry_bridge.py
+component-aware multilevel proxy:
+  sage/experiments/codex_trellis_scene_v2/multilevel_proxy.py
+adaptive triangle verifier:
+  sage/experiments/codex_trellis_scene_v2/mesh_verifier.py
+automatic review-only proposals:
+  sage/experiments/codex_trellis_scene_v2/capability_proposer.py
+  sage/experiments/codex_trellis_scene_v2/propose_capabilities.py
+Z-up scene to glTF Y-up export boundary:
+  sage/experiments/codex_trellis_scene_v2/gltf_export.py
+design and validation:
+  sage/experiments/codex_trellis_scene_v2/GEOMETRY_RELATIONS.md
+  sage/experiments/codex_trellis_scene_v2/RELATION_GEOMETRY_VALIDATION.md
+```
+
+RobustCage 可借鉴部分已按 clean-room Python 方式落实为“逐连通部件、粗细多级、显式离散
+误差、manifest 最后提交”。若 TRELLIS 网格碎成过多部件则不实例化数千个 mesh：desk
+实测 16,170 个、chair 8,022 个，超过 512 预算后退化为不做全局 fill 的 surface shell，既
+避免 exit 137，也不封闭空腔。该 fallback 不是带严格 Hausdorff 证明的 RobustCage cage，
+不能冒充同等保证。OpenMeshCraft 可借鉴部分落实为退化面过滤、空间 broad phase 和三角形
+narrow phase；当前 Python verifier 明示 `exact_predicates=false`，后续仍需小型 native exact
+backend，未复制 GPL 代码。
+
+真实 desk/chair/mug 两级 proxy 已生成在：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/relation_geometry_v1/proxies
+```
+
+旧 15% whole-surface 桌下比例会接受真实相交姿态，已由 triangle verifier 揭示并拒绝。chair
+现增加审核 `seat_front` anchor，desk free-space 增加 0.05m minimum entry depth；通用 solver
+找到 local `(0,-0.52,0), yaw=180°`，anchor 进入 0.09m，双向各 8,000 点均无超误差深穿透，
+triangle broad phase 为 0 candidate pair。真实 mug 支撑位置为 `(0.25,0,0.74893)`，桌面 footprint
+全包含、contact sample 17.7%、双向无深穿透。一个 bridge audit 同时审核这两条 hard relation
+并返回 2/2 accepted。合成五部件 open shelf fixture 继续作为稳定回归；另用已下载 SAGE-10k
+真实开放书架 `102e68cd.ply`（27,198 faces、单连通 watertight）做未入库 smoke，proposer 找到
+多个正面开放柜格。一个此前未参与开发的 book box 经同一 `contained_in` solver 从 192 个候选
+中选出 `(0.3075,-0.0425,0.2125)`，100% containment、双向 0 deep、triangle candidate pair=0。
+该真实 target 仍未进入 curated manifest，不能表述为已审核资产。
+
+关系几何最终装配 smoke 已补做真实 GLB 导出和 Blender 回读。首版直接用 `trimesh` 将内部
+Z-up 场景写入 glTF，文件结构与关系证书虽通过，但 Blender 按 glTF Y-up 规则导入后将地面
+转成竖直平面。现由 `gltf_export.py` 在导出边界显式绕 X 轴 `-90°`，不修改内部求解坐标；
+诊断渲染器也会检查命名 floor 的 Blender world extents，竖直地面立即以非零退出码失败。
+修复输出为：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/relation_geometry_glb_smoke_20260821_v2
+```
+
+Blender 回读 floor 为 `4.0 x 3.0 x 0.04m`，shelf 为
+`1.032 x 0.330 x 1.293m`，轴向检查通过；三视图已重新生成。旧 v1 保留为 guard 的失败
+fixture，不再视为可交付 GLB。书架原始 PLY 仍缺少审核材质和 canonical front 标注，当前
+中性诊断材质只改善可见性，不等同资产入库 QA。新增轴向、Codex stdin transport 和几何
+加入手性 pair、anchor heading、人体源角色、内侧相向、镜像资产和 SceneDNA A/B 回归后 V2 目录
+167 tests、根目录 12 tests 全部通过。
+
+在上述能力基础上已生成一个完整卧室，不调用 TRELLIS 新生成资产：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/bedroom_complete_relation_geometry_20260822_v1
+```
+
+该运行使用 `gpt-5.6-sol` 做 expansion/layout/repair，复用 16 个审核资产实例，typed graph 有
+57 条关系，包含 5.2x4.4x2.7m 房间、四墙、地面、审核门窗、床/双床头柜/双灯、衣柜、斗柜、
+书桌椅、地毯、挂画、绿植、杯子、闹钟和一双拖鞋。默认 AABB 只把椅子停在桌前；opt-in
+generic solver 在 975 个候选中找到 desk-local `(0,-0.555,0), yaw=180°`，139 个候选通过，
+双向各 8,000 点均 0 deep，triangle verifier 0 intersection。`relation_geometry_bridge.py`
+现可只对同一已认证 pair 的 `floor_collision` AABB 假阳性做定向豁免，要求 bilateral complete、
+0 deep 且 triangle complete/no-intersection；其他违规不会被移除。最终 0 hard、1 soft
+（wardrobe 未遵循 east-wall 软偏好）。
+
+Blender 最终 GLB 为 159,749,728 bytes、29 geometry、1,442,138 faces，`trimesh` 可回读；
+Blender 二次导入 floor 为 `5.2x4.4x0.05m` 且水平。MuJoCo box-proxy 2 秒检查无 unstable，
+最大位移 0.094557m，主要来自 box proxy 对桌椅插入的近似响应，低于 0.18m 阈值。两个正式
+预览和 top/corner 诊断图均已人工检查，家具完整且椅子视觉上位于桌下。
+
+本次复杂 typed-graph layout request 约 150KB，曾触发 Linux 单参数 128KB 上限；
+`io_utils.py` 的文本与图像 Codex 请求现统一以 stdin 传递，request artifact 仍完整保留。
+
+自动 capability proposer 已在真实 desk 上找到 z=0.74993m 的顶部支撑面，以及近似
+`[-0.63,-0.36,0] -> [0.63,0.25,0.57]` 的开放空间；同时也因体积接触地面错误提出向下入口。
+所有提议固定 `review_required=true/approved=false/automatic_approval_forbidden=true`，该误提
+正是必须人工审核的证据。默认 V2 pipeline 和旧 `reference_sdf_bridge.py` 均未被替换。
+
+混合审核资产与 TRELLIS.2 缺失资产的 SceneDNA MVP 已接入 V2 资产解析。新增
+`scene_dna.py` 和 `SCENE_DNA.md`；`scene_dna_contract.json` 统一约束资产库软重排与缺失资产
+Prompt 编译，来源优先级为明确用户文本 > 预留用户参考图 > 尺寸兼容审核锚点共识/建筑材料
+> 房型默认。类别、QA、尺寸、能力、canonical front、手性和关系几何继续作为先于风格的
+硬门禁，风格分数不能补偿硬失败。typed scene graph 会编译局部审美关系组，分面评分允许
+办公椅等物件在保持风格家族一致时使用不同色板/材料，避免全屋同色同材质的风格坍缩。
+
+缺失资产计划写出 4 个隔离 2D 候选、最多 2 个晋级 TRELLIS.2、最多 2 轮的机器可读预算。
+`scene_dna_semantic.py` 现把 SigLIP2 类别/必需部件/禁用部件、7 个类别无关 alpha 形态 profile、
+DINOv3 审核锚点和原有局部外观分融合；语义或形态候选全灭时整批失败/重试，分差小或评分器
+冲突时 Top-2 用相同 TRELLIS seed 晋级。TRELLIS 仍延迟到 2D 筛选后加载。
+`generated_asset_harmony_certificate.json` 继续绑定合同、资产、Prompt、排序和四视角 hash；
+冻结视觉模型分数只是筛选证据，不是人工语义真值。
+
+冻结基准入口为 `scene_dna_benchmark.py`（7 类 × 2 风格 × 3 seed × 4 图 = 168 候选），
+候选运行器为 `scene_dna_candidate_benchmark_runner.py`，同 seed 配对 GLB 为
+`scene_dna_3d_benchmark_runner.py`。`scene_dna_blind_review.py` 会隐藏方法标签、随机左右、加入
+至少 10% 隐藏重复题，并按原 case 做 clustered bootstrap，重复题只用于评审一致性、不扩大 n。
+当前实验根目录为：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_semantic_form_benchmark_20260823_v1
+```
+
+首轮每类单批开发 pilot 已作废：DINOv3 的 fp16 token 平均产生 NaN，旧 `_clip01` 又把非有限
+值错误处理成高分。现在使用 fp32 global/CLS token 并硬拒非有限值；SigLIP2 正负假设合为一次
+前向。任何旧 pilot 的“4 类改变选择/5 类 Top-2 不确定”都不得引用为收益证据，必须用修正代码
+重跑冻结计划。拖鞋合同已明确 open-back slide，并把 closed-back shoe/loafer/moccasin 作为
+硬负类；尚缺修正模型下多 seed 验证。
+
+旧 3D 配对 pilot 还暴露 bridge 的透明输入错误：抠图 RGBA 以 `preprocess_image=false` 进入
+TRELLIS，隐藏 RGB 背景会被重建成彩色平面。bridge 现检测有效透明度并强制执行 alpha 裁切，
+同时记录 requested/effective 值。修复后的椅子/台灯配对测试位于：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_semantic_form_benchmark_20260823_v1/paired_3d_alpha_fix_v2
+```
+
+椅子两分支背景板消失且均为完整 3D，保守结论 `inconclusive_or_small_effect`；台灯基线把电线/
+地面残留重建成巨大矩形并失败，SceneDNA 分支为完整灯体并通过，结论 `positive_effect`。这只
+证明透明修复与该台灯个案，不能推广到全类别。多视图碎片门现读取 semantic form profile：
+`skeletal_support` 允许脚轮/底座等合理分件，`slender_radial` 仍严格拒绝电线/平台；runner 的
+`--refresh-evaluation` 可在不重做 GLB 的情况下复算旧 render。
+
+旧收纳箱闭环 `scene_dna_real_harmonization_storage_box_20260822_v8_final` 与 A/B
+`scene_dna_effectiveness_storage_box_20260823` 继续保留为回归；后者仅 `+0.002044`，结论仍是
+`inconclusive_or_small_effect`。四模式计划消融 `scene_dna_ablation_20260822_v1` 只证明控制
+变量接口成立。
+
+修正评分器的冻结全量基准已在不改计划、不看图后挑样本的前提下完成，根目录为：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_semantic_form_benchmark_20260823_v2
+```
+
+正式候选结果在 `candidate_results_full_v1`：42 个批次中 41 个成功，1 个 office-chair 批次因
+4 张图全部不满足 alpha/form 硬门而拒绝，批次硬失败率 `0.023810`；实际结构化评分 164 张图，
+alpha/form/semantic/joint 候选通过率分别为 `0.969512/0.804878/0.945122/0.756098`。41 个成功
+批次中 25 个改变旧的 candidate-0 选择，33 个因分差或评分器冲突晋级 Top-2。按类别诊断，
+table-lamp 的 form 候选通过率最低（`0.541667`），office-chair 是唯一出现整批失败的类别，
+potted-plant 全部通过。该结果只证明硬门、排序和不确定性机制会产生非平凡决策，不证明这些
+决策视觉上更好。
+
+DINOv3 的修正现在是模型本身以 fp32 前向，不再只在已经产生 NaN 后把 token 转成 fp32；
+无匹配审核锚点时也不会无意义加载 DINO。通用 required-part 默认阈值由 `0.04` 改为 `0`，
+高风险类别必须显式 opt in；开放书架允许有实体背板，并以重复水平层结构判定。拖鞋改用
+`open_back_footwear` 形态合同，以端部高度比例硬拒封闭高鞋跟/乐福鞋，旧开发候选回放可正确
+保留唯一 open-back slide。全量运行支持 deterministic shard、resume 和单批失败留证；分析入口
+为 `scene_dna_benchmark_analysis.py`，离线迁移/复算入口为 `scene_dna_candidate_rescore.py`。
+
+v2 的 28 题 2D 包已作废：人工预检发现 white-base repair 会把浅米色收纳箱下半部和部分书页
+误当地台删除，旧 alpha QA 又错误放行。依赖这些旧 alpha 的 v2 3D GLB/8 题包也不得继续收集
+正式标签。旧文件保留为诊断证据，不得交给新评审者。
+
+预注册的跨类别同 seed 配对 3D 已完成，目录为 `paired_3d_stratified_v1`：7 个 case、14 个 GLB、
+14 份四视角报告全部生成，生成失败 0。首次自动回放暴露旧门禁会放过连接式地台/承载板和封闭
+物体破洞，并把分件灯体的断连与地台问题混在一起。`scene_dna_multiview.py` 现从形态合同启用
+三项类别无关证据：封闭紧凑轮廓内部孔洞、细长物体下部过宽、鞋类下部持续满宽；4 个合成回归
+和已有 14 个 GLB 离线复算通过。修正后的诊断为：potted-plant 1 个自动正向；storage-box、
+book-stack、office-chair 3 个负向；bookcase、table-lamp、slipper 3 个双分支硬失败。台灯基线的
+地台与 proposed 的灯体断连、拖鞋两边的大承载板、收纳箱 proposed 的孔洞现在都不会再被误报
+为通过。
+
+正式 3D 公开包是 `blind_review_bundle_3d`，密钥是 `sealed_blind_key_3d.json`，含 7 个独立 case
+以及 1 道隐藏重复题，共 8 题。操作规程为 `BLIND_REVIEW_PROTOCOL.md`。当前 3D 非回归已经不成立，
+因此即使后续 2D 人工偏好较高也不能直接替换默认链；应优先解决“2D 看起来合格但 TRELLIS 后
+产生破洞、地台或断连”的可生成性预测。在独立人工统计前也不得把 selection-change/Top-2 rate
+表述为收益。
+
+首次评审启动时确认评审者浏览器与服务器不在同一网络命名空间，loopback 页面虽返回 HTTP 200
+但浏览器不可达；为避免把无认证提交接口暴露到局域网，未改用全网卡监听。盲评工具现新增
+`export-offline`：把公开 `trials.json` 与匿名图片内嵌成单文件 HTML，使用浏览器 local storage
+续存进度并导出与既有分析器兼容的 JSONL，sealed key 不进入页面。冻结 v2 根目录已生成
+`SceneDNA_blind_review_2D_offline.html`（28 题，约 9.2MB）和
+`SceneDNA_blind_review_3D_offline.html`（8 题，约 2.2MB）；离线操作规程已写入
+`BLIND_REVIEW_PROTOCOL.md`。离线页面只改变答案采集通道，不改变随机顺序、隐藏重复题或统计门槛。
+
+white-base 检测现把颜色降为候选线索，并增加通用拓扑/损伤保护：低位浅色区域必须至少覆盖
+主体宽度 50%，且与主体透明分离或只通过窄支撑连接才可判地台；同宽连续箱体/书页与稀疏椅脚
+不会被删除。删除超过前景 35%、触及受保护上部或造成内部水平断层会回滚。新增
+`scene_dna_alpha_reprocess.py`，用保存的原始 Flux RGB 重跑 RMBG，不重新生成 Flux/TRELLIS。
+
+新冻结目录为 `scene_dna_semantic_form_benchmark_20260823_v3_alpha_safe`。41 个成功 case 的 164 张
+候选重处理后全部 alpha QA 通过：48 处连续浅色主体受到保护，1 处宽地面残留被安全删除，0 次
+回滚。重新计算 SigLIP2/form/DINOv3 后 41 批全部可选，27 批改变旧式选择，33 批晋级 Top-2。
+正式 2D 包现为该目录下 `blind_review_bundle_2d` / `sealed_blind_key_2d.json`，含 27 个独立 case
++ 3 道隐藏重复题，共 30 题；离线文件是 `SceneDNA_blind_review_2D_alpha_safe_offline.html`。
+全量联系表已人工检查，未再发现主体被 alpha 截断；题中仍允许保留生成模型自身产生的地台或
+结构错误，供 `neither`/分支偏好测量。旧 v2 3D 包继续作废；alpha-safe v3 的新 3D 配对已在
+独立 v4 目录生成，但尚未导出为人工题包。
+
+三份独立人工结果已收齐并从 `/data/wsj/main/test` 只读匿名归档。正式结果位于
+`/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_review_3reviewers_20260824_v5_final`：3 名评审、
+90 条评分、27 个独立 case、0 异常题；semantic/form 偏好率 `0.508025/0.524691`，主要指标
+`0.516358`，两项 CI 下界均未超过 `0.5`，`primary_gate_passed=false`。主要维度隐藏重复一致率均
+`0.888889`。原始 JSONL 未修改，真实姓名只在原始文件中，派生结果使用 `reviewer_01..03`。
+
+正式分析器已修正口径：`tie` 按 `0.5`，`neither` 作为双边不可用单独统计并从偏好率分母排除。
+类别描述性结果显示 table_lamp/bookcase/office_chair 偏正，potted_plant/slipper/storage_box 和部分
+book_stack 偏负。自动分与人工对齐暴露 SigLIP 语义差值对人工语义偏好的相关系数 `-0.605276`，
+form 差值为 `0.342682`，combined 对 overall 近零。因此新增默认关闭、无类别特判的 form 改善门：
+实验候选相对当前 eligible legacy control 的 form 分必须至少提高 `0.08` 才允许替换；否则回退。
+该阈值来自当前标签，只能用于下一轮新 seed/新候选/新评审的隐藏验证，本轮两候选回放 `0.570988`
+不得宣称为新收益；当前候选快照还有 4 个第三候选未被旧问卷评价。
+
+在不改写当前 30 题冻结问卷、不读取首份答案的前提下，SceneDNA 完成一轮工程安全优化。材质词
+现通过形态 profile/部件角色限制适用范围，避免全金属拖鞋、书本或植物；Top-K GLB 使用通用
+四视角可用性选择器，整批硬失败时禁止“最高分失败品”装配；最终四视角新增 SigLIP2 类别/部件
+和风格对比证据。未来问卷源码新增图片异常标记、跳过和返回重做，但在途 v3 HTML 保持 10,032,325
+bytes 未重导出。
+
+新真实 3D 输出为
+`/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_v4_dev/paired_3d_alpha_safe_v4`：冻结 7 类、
+14 个 GLB 全部成功；baseline/proposed 通用几何可用率分别为 4/7 与 5/7，自动结论 2 正向、
+3 小效应/不确定、2 双分支硬失败。proposed 平均零样本语义分 `0.493862` 高于 baseline
+`0.408436`，平均风格分 `0.497661` 略低于 `0.515909`。书架与拖鞋仍失败，默认替换门继续关闭。
+
+新增独立 opt-in 细节审查闭环，设计与诚实结论见
+`sage/experiments/codex_trellis_scene_v2/DETAIL_REPAIR_AGENT.md`。它冻结当前 GLB 为 control，先用
+自适应相机重新取证，再从通用几何、语义和风格证据编译问题，依次尝试有界局部网格编辑或同 seed
+单资产重生成，并只在无硬回归、语义/风格不显著退化且确有改善时提交；否则自动回滚。主链、冻结
+问卷在收集完成前未改动/读取；达到三名评审门槛后才执行上述解盲统计。
+
+严格真实 pilot 位于
+`/data/wsj/main/scene_runs/codex_trellis_v2/scene_detail_agent_dev/final_strict_v1`：旧执行器在 2 个冻结
+case 上 verified repair 为 0。后续 opt-in 开发回放位于
+`/data/wsj/main/scene_runs/codex_trellis_v2/scene_detail_agent_dev/localized_face_final_v1`。转台现在可输出
+对齐的 face-ID/depth/normal/camera 证据；图像低位缺陷掩码通过可见 ray hit 与遮挡面 centroid projection
+映射回稳定 mesh polygon，局部执行器只扩展并删除完整位于归一化高度 28% 以下的 seed-connected 面，
+默认删除上限为 50%，同时验证材质图 hash、纹理/node 参数和存活面材质分配未变。拖鞋 4 个视角共同确认
+缺陷，删除 40,059/95,629 面（0.418900）后地台 footprint ratio 为 2.638709（上限 2.8），无新增硬错误，
+semantic delta -0.048128、automated delta -0.060803 均过门，最终 1 次修复获准提交；书柜安全重拍后
+已可用，0 次网格误编辑。相对同两 case 旧版 0/2 提升到 1/2，提交硬回归仍为 0，但这是开发集回放，
+不是 held-out 泛化结论，默认链继续关闭。
+
+随后冻结的合成开发/留出各 6/6 均达到 face precision/recall/repair success 1.0，保护面删除和
+clean false trigger 均为 0。自然 TRELLIS v2 使用 canonical `plus_y`、3 类 × 2 个全新 seed：6/6
+完成，3 个地台候选中两盆植物通过四视图强证据、局部删除和回归门后提交，弱证据衣柜安全回退，
+提交硬回归 0。只有足迹比至少 8 且四视图一致时，tessellation-aware 例外才允许 85% 面数上限；
+最低 28% 高度、材质和修复后硬门仍不可绕过。自然隐藏 pilot 为 2 个独立题 + 1 个重复题，不足以
+证明跨类别泛化。当前最大缺口是更多类别的自然正例和通用重建算子：现仅支持 typed
+forbidden-platform 低位删除，尚无 cage deformation、exact local remeshing 或缺失部件重建。
+
+最终卧室已新增真实 RGB/depth/object-index 验收和 south-to-north 1.55m/65mm 正视图，输出为
+`/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_v4_dev/bedroom_render_acceptance_final`：16/16
+required 对象至少一视角可见、12/16 至少一视角完整入画、0 硬失败、4 个相机覆盖软告警，报告
+`accepted=true`。资产库覆盖审计位于同一 v4 根目录：当前 20 个审核资产/18 类，卧室 13 个必需
+类别均未达到每类 3 个资产和 2 种风格签名的验证目标。
+
+默认关闭的 `0.08` form 改善门第二轮隐藏问卷已经制作并冻结，根目录为
+`/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_guard_blind_round2_20260824_v1`。冻结计划使用全新
+seed，覆盖原 7 类并增加休闲椅、餐椅和落地灯，共 60 批/240 张图片；47 批通过硬门，13 批真实
+拒绝。当前综合选择器与 form 门在 18 个 hard-eligible case 上选择不同，最终中文离线问卷为
+`SceneDNA_blind_review_2D_beta_offline.html`：18 个独立题 + 2 个隐藏重复题，共 20 题。实验方案在
+独立题左右严格 9:9，重复题距原题至少 4 位，与首轮 case/image SHA-256 零重合。只可把该 HTML
+发给 3–5 名新评审者；sealed key、私有联系表、候选分数和根目录不得外发。休闲椅 6/6 批被当前
+`skeletal_support` 门整体拒绝，餐椅仅 3/6 批可评估，属于需要保留的泛化失败，不能临时改阈值。
+FLUX 服务同时新增单 pipeline 生成互斥，避免冷启动重试并发进入 tokenizer/pipeline。
+
+第二轮 beta 的三份独立答案已收齐并统一解盲。正式匿名归档为：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_guard_review_3reviewers_20260826_v3_final
+```
+
+3 名评审共 60 条评分、18 个独立 case、0 评审者主动标记的图片异常；形态门相对当前 combined selector 的
+semantic/form 偏好率为 `0.495370/0.453704`，主要指标 `0.474537`，对应区间分别为
+`[0.356481,0.634259]` 与 `[0.314815,0.592593]`，`primary_gate_passed=false`。隐藏重复一致率
+semantic/form 为 `0.666667/1.0`，四维合计 `0.791667`。类别结果仅作诊断：office chair 与
+potted plant 偏向形态门，book stack、slipper、table lamp 明显偏向原 combined selector，dining
+chair 持平；每类仅 2-4 case，禁止据此加类别特判。form 自动差值与人工 form 偏好相关系数为
+`-0.130759`，未支持 `0.08` 阈值。形态门必须继续默认关闭；由于 2D 必要门已失败，不为晋级目的
+继续生成本轮 3D non-regression。分析器现会根据 comparison manifest 区分第一轮候选实验与第二轮
+guard 实验，避免沿用“形态证据正向”的旧报告措辞；原始 `/data/wsj/main/test` JSONL 未修改。
+
+用户随后指出问卷部分候选有红色泛光。新增的通用透明边缘色溢审计对冻结 beta 做只读回放后，
+36 张独立图片中 18 张失败：baseline `7/18`、guard treatment `11/18`。机器报告与说明位于：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/scene_dna_beta_chroma_audit_20260826_v1
+```
+
+根因不是网页有意效果，而是旧 FLUX 重试轮换 cyan/magenta/green 饱和背景，RMBG 虽将背景 alpha
+置零，透明像素隐藏 RGB 与半透明边缘仍保留背景色；旧 QA 只看轮廓、边界和白色地台，未检查
+chroma spill。由于两实验分支失败数不平衡，`0.474537` 仍是对实际所见图片的正确统计，但降级为
+受图像卫生混杂的诊断结果，不能证明 guard 在干净图片上更差；它同样不能支持启用 guard。
+
+修复已进入代码但不改旧问卷：bridge 默认背景改为统一浅灰；新增 `alpha_hygiene.py`，清零 alpha=0
+的隐藏 RGB、保守修正半透明边缘并硬拒残留色溢或过度清理；盲评准备阶段不再复制原 RGBA，而是
+先过色溢硬门，再统一合成为 `(224,224,224)` RGB PNG，并把 QA 写入 sealed key。新增
+`scene_dna_blind_review audit-images` 只读审计入口。彩色 contrast 模式只保留为显式诊断选项，不是
+默认评审路径。旧 beta HTML、sealed key 和答卷均保持冻结，不得清理后与旧答案混用。
+
+真实 FLUX + RMBG 色溢 smoke 已完成：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/chroma_gray_real_smoke_20260826_v1
+```
+
+FLUX.1-schnell 用新默认提示生成 512x512 浅灰背景书堆；背景估计 RGB 为 `[229,225,217]`、chroma
+range `12`，正确判为非彩色背景。`trellis2` 环境运行本地 RMBG 后，bridge alpha QA、色溢硬门和
+盲评导出二次 QA 均 `ok=true`、无理由；最终 `review_gray_rgb.png` 是固定 `[224,224,224]` 背景的
+RGB 图，人工检查无红/绿/青边缘。测试结束后 FLUX 服务已停止。`tree-sage-flow2` 环境缺 `timm`，
+不能独立加载 RMBG；真实 alpha smoke 与生产 bridge 均应继续使用依赖完整的 `trellis2` 环境。
+
+汇报用的真实 FLUX + TRELLIS.2 完整场景已生成到
+`/data/wsj/main/scene_runs/presentation_20260824/full_flux_trellis`。卧室最终 18 件，13/13 空间关系、
+6/6 功能朝向通过，0 硬/软违规；衣柜固定西墙，canonical `-y` 经 yaw 90° 后柜门朝东/室内，
+朝向误差 0°。客厅最终 13 件，6/6 空间关系、7/7 功能朝向通过，0 硬违规、2 个非阻塞墙面偏好
+软告警；开放书柜同样位于西墙且开口朝东/室内。两份 GLB 均通过 assembly、MuJoCo proxy 和最终
+RGB/depth/object-index 验收；SceneDNA 自动证书仍要求人工风格复核，不能把几何验收表述为风格已
+被证明最优。卧室 GLB 为 226,320,452 bytes，客厅 GLB 为 287,124,968 bytes。
+
+V2 CLI 新增 `--resume`，可从匹配 Prompt 的 scene brief、合法最终布局以及已成对落盘的 staged
+GLB/metadata 继续运行；半写入 metadata、缺少 `asset_id` 或尺寸决议未通过的 checkpoint 会被拒绝并
+重做。实例组恢复优先复用完整 direct checkpoint，避免中断发生在第二个共享实例时重复调用 FLUX/
+TRELLIS.2。诊断渲染同时修复 `floor_lamp_geometry_0` 被子串误判为建筑地板的问题。
+
+SceneDNA 新增默认关闭的 vNext 选择器，不再把单一类别形态分当成唯一替换门，而是用统一的取景、
+alpha 确定性、连通/开运算稳定性、下部平台轮廓、语义部件完整性、禁用部件和原 form 合同作为
+类别无关证据；先过硬可生成性门，再最大化最弱证据、平衡分和当前综合分。8 类/32 张全新 seed
+工程 pilot 中 8/8 批完成，原始生成 31/32 通过卫生门，11/11 个可评审选择通过；7 个双方都有
+control 的 case 中 3 个改变选择，并额外安全救回 1 个当前选择器无合格项的休闲椅 case。这只证明
+工程可行和行为非平凡，不是人工收益。
+
+第三轮正式计划冻结为 10 类 × 2 风格 × 5 seed = 100 个独立批次、400 个全局唯一候选 seed，且与
+第二轮和 pilot seed 零重合。2026-08-28 VS Code/SSH 链路中断后，服务器未重启、无 RAM/磁盘/GPU
+故障；旧会话把 FLUX 恢复到缺少 Diffusers 的错误环境，造成 36 个基础设施失败，另有 6 批未启动。
+恢复审计位于 `scene_dna_vnext_round3_20260826_v2/RECOVERY_AUDIT_20260828.md`。任务改由 tmux 托管，
+FLUX 固定 `simgen`、bridge 固定 `trellis2`、SigLIP 固定 CUDA/FP16；保留 56 个成功结果与 2 个真实
+语义拒绝，只重试 42 个未完成/基础设施失败，最终 100/100 完成并释放全部 GPU。
+
+正式提取有 41 个干净的双方可比选择差异，另有 22 个 vNext rescue 因没有公平 current control
+只报告、不进问卷；但二次色溢审计仅 138/140 选中图通过（`0.985714`，要求 `1.0`），其中一张属于
+真实 changed pair。冻结门因此失败，未生成第三轮公开问卷，也未改图、阈值、类别或候选绕门。
+第三轮继续永久作废，不得就地修图、删题或复用候选。
+
+第四轮位于 `scene_dna_vnext_round4_20260828_v1`。alpha 审计已改为使用 bridge 记录的真实源背景，
+只审计最终透明像素而不二次改变暖色主体；独立 10 类/40 图 preflight 为 40/40 原始卫生通过、
+14/14 选中图通过，之后才冻结全新 100 批/400 个唯一 seed 的正式计划。正式运行 100/100 有终态：
+96 批成功，3 批被必需语义契约拒绝，1 批被 vNext 可生成性门拒绝；38 个双方都合格且选择不同的
+公平 case 进入盲测，16 个没有 current control 的 vNext rescue 只作覆盖诊断。134 张决策相关图的
+卫生与统一中性背景均为 `1.0`，冻结门通过。
+
+2026-08-28 本次 VS Code 断联时，`/data` 对应 `/dev/sdb`，`jbd2/sdb-8` 及其他用户扫描任务处于
+不可中断 I/O 等待，而系统仍有约 228 GiB 可用内存、四卡显存最终均能释放；这次异常最符合服务器
+存储层阻塞，不是显存不足。FLUX 改为 `--preload --no-cpu-offload` 常驻，bridge 临时图转到 `/tmp`
+完成恢复；77 MiB 临时源资产随后持久化回本轮目录，重新提取前仅替换路径指针。迁移前后公开
+trials 和 HTML 哈希完全相同。完整恢复与冻结证据见本轮 `RECOVERY_AND_FREEZE_AUDIT_20260828.md`。
+
+第四轮公开文件为 `SceneDNA_blind_review_2D_round4_offline.html`：38 个独立 case + 4 道隐藏重复，
+vNext 在独立题左右各 19 次；与首轮/第二轮公开 case、图片哈希及历史候选 seed 均零重合。现在只把
+该 HTML 发给 3–5 名未参与阈值/候选调试的新评审者，原始 JSONL 放入 `/data/wsj/main/test`。
+新人工分析前禁止宣称 vNext 有效；2D 通过预注册门后才生成同 seed 配对 3D，默认链与 vNext 继续关闭。
+
+候选 runner 现把连接超时、断开以及缺少 Diffusers 明确识别为可重试基础设施失败，同时保留真实
+语义硬拒绝。正式冻结器会验证方法标签隔离、左右平衡、隐藏重复题、RGB 图片格式、历史 case/图片/
+seed 零重合与关键文件 SHA-256。本轮回归更新为 V2 257 项加根测试 12 项，共 269 项全部通过；
+`git diff --check` 通过，`trellis2` 环境也已验证可导入新增
+`alpha_hygiene` 与 bridge 代码。
+
 ## 8. 仓库与环境
 
 - 仓库：`/data/wsj/main/scene`
@@ -669,27 +1206,35 @@ Flow2/Codex orchestration:
 TRELLIS.2 bridge:
   /data/wsj/anaconda3/envs/trellis2/bin/python
   http://127.0.0.1:8082
+  HF_HOME=/data/wsj/cache/hf_home
+  HF_HUB_CACHE=/data/wsj/cache/hf_home/hub
+  ATTN_BACKEND=sdpa
+  SPARSE_ATTN_BACKEND=sdpa
+  SPARSE_CONV_BACKEND=flex_gemm
 
 Blender:
   /data/wsj/tools/blender/blender
 ```
 
 当前账号可调用 Codex CLI。普通沙箱访问本地 bridge 端口可能受限；需要本地网络验证时使用允许访问 loopback 的执行方式。
+当前 `trellis2` 环境没有 `flash_attn` Python 模块；启动 bridge 时必须使用上述 SDPA 环境变量，
+并保留本地 Hugging Face cache 变量，否则会分别在采样阶段或 DINOv3 离线加载阶段失败。
 
 ## 9. 下一窗口的第一步
 
 1. 继续围绕独立目录 `sage/experiments/codex_trellis_scene_v2` 工作，不改旧主链，也不要覆盖工作树中的已有修改。
-2. 临时缺失资产链已经达到布局测试可用水准，不继续为 Flux/TRELLIS.2 单物体生成做精修或审核入库；后续资产库建立后优先复用审核资产，仅把这条链保留为缺口兜底。
-3. `cup_on_desk`、桌椅 v2 与单关系 whole-room opt-in bridge 已完成，不要重复。下一步先用真实 image2 accepted observation 重跑相同门禁，再设计多关系顺序/冲突调度；在这些证据前仍不得直接替换完整 V2 repair。
-4. 桌椅语义 contract 稳定后，为一个真正开放的审核书架定义 `solid proxy + containment_volume + support_surface`；必须先验证 voxel fill 不会封死开放柜格，再做 `books_in_open_shelf/box_in_open_cubby`。只有这些案例通过后才评估接入完整 repair。
-5. SDF pilot 之后仍需加入真正的 south-to-north、1.55m、65mm 正面渲染，并对最终 RGB/depth/instance mask 的完整入画和遮挡重新评分；固定 45 度 dollhouse 图不能代替该验收。
-6. 参考图 soft-prior 单 study smoke 已通过安全门槛但证据有限；下一步先做多 Prompt/seed 与等资产 Blender A/B，不把 RMSE 下降表述成最终视觉提升，也暂不并入默认 planner。
-7. 实例组前两阶段与 rules/plan-only 回归已经完成，不要重复实现；真实左右脚 family/镜像仍延期。`bed_warm_oak_001` 未经视觉审核前也不要向 manifest 写入 `included_components: {pillow: 2}`，继续保留 assumed 状态。
-8. `door_white_minimal_001` 的 60k 面优化、独立 manifest、0.9x2.1m 门洞静态 QA 与正式入库已完成，不要重复。若需要第二种门风格，再处理 `door_warm_oak_modern_001`（目标约 70k faces）；胡桃木门只保留为 `front_only` 待修候选。
-9. 当前审核门是静态关闭的门框-门扇组合资产；MuJoCo proxy 不包含建筑门资产，也不作为门候选验收项。铰链开合、`open_angle_degrees`、把手动态净空和门扇碰撞仍留待 articulation manifest 完成后验证。
-10. 设计覆盖 bedroom、living room、kitchen、restroom 和 study 的多 Prompt 测试集，统计硬/软违规、结构核心覆盖、占用率、紧凑度和家具 layout-plan MuJoCo proxy 稳定性；不要把该指标表述为最终 GLB 或建筑铰链物理验证。
-11. 后续在已有功能朝向之上补充柜门/抽屉正面操作净空，以及更一般的 `toward_object` 关系（椅子->桌、沙发->电视）和视觉关系评分，不针对单个 Prompt 手工硬编码。
-12. 在把 RGB-D dataset 风格 Prompt 升级为完整端到端基准前，增加“预布局 -> 目标尺寸请求 -> 资产再选择”的 packed-layout 尺寸优化或自然语言数值尺寸解析，并在 Blender 请求视角完成装配后增加 RGB/depth/instance-mask 可见性与遮挡评分；当前尺寸目标仍来自类别默认/上游显式字段，layout bbox composition 也仍只是前置 proxy。
+2. SceneDNA v2 旧 2D/3D、受色溢混杂的 beta 第二轮和卫生门失败的第三轮都只作历史诊断；`0.08` form guard 与 vNext 默认关闭。第四轮已用新 seed 完成 preflight、100 批正式生成、100% 决策图卫生门和公开包冻结。下一步不要再生成问卷或调选择器，而是只把 `scene_dna_vnext_round4_20260828_v1/SceneDNA_blind_review_2D_round4_offline.html` 发给 3–5 名独立新评审者，原始 JSONL 不修改地放入 `/data/wsj/main/test`；达到预注册人数后统一解盲。只有 semantic/form 主要指标和 CI 通过后才做同 seed 配对 3D，3D 不劣化后才讨论扩大 opt-in。细节闭环的合成留出与 6-case 自然 pilot 已完成；其页面只能作方向检查，只有两个同类自然正例，不得宣称跨类别泛化或改默认链。
+3. 通用 relation geometry、双向 proxy、generic solver、多关系 opt-in bridge、证书驱动的定向 AABB 豁免和完整卧室 desk/chair 应用均已完成，不要退回类别对特判或重复旧 pilot。该豁免仍是 opt-in postprocess，尚未进入默认 pipeline。下一步先把当前 Python adaptive verifier 接到小型 native exact-predicate backend，并缓存静态目标 BVH；在 exact backend 与跨资产统计完成前仍不得替换默认 V2 repair。
+4. 合成开放书架和未入库 SAGE `102e68cd` 真实书架均已通过 `book contained_in` 与三角形终检；后者同时覆盖未见源形状且没有新增类别分支。GLB 全局轴向和站立高度 QA 已完成；下一步审核并标注书架 canonical front、材质和具体柜格，再把一个 open bookcase/cubby 正式注册到 curated manifest，并在更多真实 storage 资产上统计 proposal precision/recall。
+5. 自动 capability proposer 只能生成待审核候选，真实 desk 已暴露“向下入口”误提。下一步补 review/overlay 工作流、入口方向排序和审核后的 schema 合并；任何自动提议不得直接成为 production hard constraint。
+6. south-to-north、1.55m、65mm 正面渲染和最终 RGB/depth/object-index 可见性验收已接入并通过完整卧室 smoke；仍需处理床、右灯、左床头柜和衣柜没有任何投影包围盒完全入画的 4 个软告警，并在更多房型验证相机覆盖。
+7. 参考图 soft-prior 单 study smoke 已通过安全门槛但证据有限；下一步先做多 Prompt/seed 与等资产 Blender A/B，不把 RMSE 下降表述成最终视觉提升，也暂不并入默认 planner。
+8. 实例组真实左右 bundle 优先、审核横向镜像 fallback、anchor-relative heading、anatomical source role、medial-facing 和 hard handedness gate 均已实现，不要退回 `same_asset_reuse`、固定 X 镜像或用文件名/画面左右猜人体角色。完整卧室最终修正版在 `bedroom_complete_relation_geometry_20260822_v3_anatomical_slippers`；v1 是同几何复用，v2 是左右鞋型对调，两者都不得当作修正版。现有两个独立拖鞋资产仍未被标成同一真实 family；当前只审核了 `slipper_blue_left_001` 实际为人体右鞋并以镜像生成左鞋。`bed_warm_oak_001` 未经视觉审核前也不要向 manifest 写入 `included_components: {pillow: 2}`，继续保留 assumed 状态。
+9. `door_white_minimal_001` 的 60k 面优化、独立 manifest、0.9x2.1m 门洞静态 QA 与正式入库已完成，不要重复。若需要第二种门风格，再处理 `door_warm_oak_modern_001`（目标约 70k faces）；胡桃木门只保留为 `front_only` 待修候选。
+10. 当前审核门是静态关闭的门框-门扇组合资产；MuJoCo proxy 不包含建筑门资产，也不作为门候选验收项。铰链开合、`open_angle_degrees`、把手动态净空和门扇碰撞仍留待 articulation manifest 完成后验证。
+11. 设计覆盖 bedroom、living room、kitchen、restroom 和 study 的多 Prompt 测试集，统计硬/软违规、结构核心覆盖、占用率、紧凑度和家具 layout-plan MuJoCo proxy 稳定性；不要把该指标表述为最终 GLB 或建筑铰链物理验证。
+12. 后续在已有功能朝向之上补充柜门/抽屉正面操作净空，以及更一般的 `toward_object` 关系（椅子->桌、沙发->电视）和视觉关系评分，不针对单个 Prompt 手工硬编码。
+13. 在把 RGB-D dataset 风格 Prompt 升级为完整端到端基准前，增加“预布局 -> 目标尺寸请求 -> 资产再选择”的 packed-layout 尺寸优化或自然语言数值尺寸解析；最终 Blender RGB/depth/object-index 可见性验收已经接入，但当前尺寸目标仍来自类别默认/上游显式字段，layout bbox composition 也仍只是前置 proxy。
 
 ## 10. 文档维护规则
 

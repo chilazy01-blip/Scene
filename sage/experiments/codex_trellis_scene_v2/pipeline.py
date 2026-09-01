@@ -9,16 +9,28 @@ from .architecture import plan_architecture
 from .assets import resolve_assets
 from .brief import expand_prompt
 from .constraint_scopes import evaluate_constraint_scope_envelopes
-from .io_utils import write_json
+from .io_utils import read_json, write_json
 from .planner import codex_layout, codex_repair_layout, rules_layout
 from .repair import deterministic_repair
 from .runtime import assemble_with_blender, run_mujoco_proxy, write_preview_svg
+from .scene_render_acceptance import render_and_evaluate_scene
 from .scene_graph import build_typed_scene_graph
 from .validator import validate_layout
 
 
-def prepare_output_dir(path: Path, overwrite: bool) -> None:
+def prepare_output_dir(path: Path, overwrite: bool, resume: bool = False) -> None:
+    if overwrite and resume:
+        raise ValueError("--overwrite and --resume are mutually exclusive")
     if path.exists() and any(path.iterdir()):
+        if resume:
+            required = (path / "selected_prompt.txt", path / "scene_brief.json")
+            missing = [str(item) for item in required if not item.is_file()]
+            if missing:
+                raise FileNotFoundError(
+                    "Cannot resume because required checkpoints are missing: "
+                    + ", ".join(missing)
+                )
+            return
         if not overwrite:
             raise FileExistsError(
                 f"Output directory is not empty: {path}; pass --overwrite to replace it"
@@ -29,24 +41,35 @@ def prepare_output_dir(path: Path, overwrite: bool) -> None:
 
 def run_pipeline(args: Any) -> dict[str, Any]:
     output_dir = Path(args.output_dir).expanduser().resolve()
-    prepare_output_dir(output_dir, bool(args.overwrite))
+    resume = bool(getattr(args, "resume", False))
+    prepare_output_dir(output_dir, bool(args.overwrite), resume=resume)
     prompt = str(args.prompt or "").strip()
     if args.prompt_file:
         prompt = Path(args.prompt_file).read_text(encoding="utf-8").strip()
     if not prompt:
         raise ValueError("--prompt or --prompt-file is required")
-    (output_dir / "selected_prompt.txt").write_text(prompt + "\n", encoding="utf-8")
-
-    brief = expand_prompt(
-        prompt,
-        output_dir,
-        room_type_override=args.room_type,
-        mode=str(args.expander),
-        model=str(args.model),
-        hard_min_objects=args.hard_min_scene_objects,
-        target_max_objects=args.target_max_scene_objects,
-        max_auto_inferred_objects=args.max_auto_inferred_assets,
-    )
+    selected_prompt_path = output_dir / "selected_prompt.txt"
+    if resume:
+        checkpoint_prompt = selected_prompt_path.read_text(encoding="utf-8").strip()
+        if checkpoint_prompt != prompt:
+            raise ValueError(
+                "Resume prompt does not match the interrupted run's selected_prompt.txt"
+            )
+        brief = read_json(output_dir / "scene_brief.json")
+        if not isinstance(brief, dict) or not isinstance(brief.get("objects"), list):
+            raise ValueError("Interrupted scene_brief.json is not a valid scene checkpoint")
+    else:
+        selected_prompt_path.write_text(prompt + "\n", encoding="utf-8")
+        brief = expand_prompt(
+            prompt,
+            output_dir,
+            room_type_override=args.room_type,
+            mode=str(args.expander),
+            model=str(args.model),
+            hard_min_objects=args.hard_min_scene_objects,
+            target_max_objects=args.target_max_scene_objects,
+            max_auto_inferred_objects=args.max_auto_inferred_assets,
+        )
     constraint_scope_envelopes = evaluate_constraint_scope_envelopes(brief)
     architecture_plan = plan_architecture(
         brief,
@@ -91,6 +114,21 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         pipeline_type=str(args.trellis_pipeline_type),
         preprocess_image=bool(args.trellis_preprocess_image),
         max_new_assets=int(args.max_new_assets),
+        scene_dna_mode=str(getattr(args, "scene_dna_mode", "relation_aware")),
+        blender_bin=Path(args.blender_bin).expanduser(),
+        scene_dna_multiview=bool(
+            getattr(args, "scene_dna_multiview", True)
+        ),
+        scene_dna_multiview_resolution=int(
+            getattr(args, "scene_dna_multiview_resolution", 420)
+        ),
+        scene_dna_semantic_model=getattr(
+            args, "scene_dna_multiview_semantic_model", None
+        ),
+        scene_dna_semantic_device=str(
+            getattr(args, "scene_dna_multiview_semantic_device", "cpu")
+        ),
+        resume_staged_assets=resume,
     )
     write_json(
         output_dir / "instance_group_asset_resolution.json",
@@ -115,48 +153,64 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     write_json(output_dir / "scene_graph_resolved.json", brief["scene_graph"])
     write_json(output_dir / "scene_brief_resolved.json", brief)
 
-    if args.planner == "codex":
-        plan = codex_layout(brief, output_dir, str(args.model))
-    else:
-        plan = rules_layout(brief)
-    write_json(output_dir / "layout_plan_initial.json", plan)
-
-    validation = validate_layout(plan)
-    write_json(output_dir / "validation_00.json", validation)
-    for iteration in range(1, int(args.repair_iterations) + 1):
-        spatial_pending = int(
-            validation.get("metrics", {})
-            .get("spatial_relations", {})
-            .get("invalid_count", 0)
-            or 0
-        ) > 0
-        if validation["ok"] and not spatial_pending:
-            break
-        plan = deterministic_repair(plan, iteration=iteration)
-        validation = validate_layout(plan)
-        write_json(output_dir / f"validation_{iteration:02d}_sdk.json", validation)
-        spatial_pending = int(
-            validation.get("metrics", {})
-            .get("spatial_relations", {})
-            .get("invalid_count", 0)
-            or 0
-        ) > 0
-        if validation["ok"] and not spatial_pending:
-            break
-        if validation["ok"]:
-            continue
-        if bool(args.codex_repair) and args.planner == "codex":
-            plan = codex_repair_layout(
-                plan,
-                validation,
-                output_dir,
-                model=str(args.model),
-                iteration=iteration,
-            )
-            validation = validate_layout(plan)
-            write_json(output_dir / f"validation_{iteration:02d}_codex.json", validation)
-
     plan_path = output_dir / "layout_plan_final.json"
+    validation_path = output_dir / "validation_final.json"
+    layout_resumed = False
+    if resume and plan_path.is_file() and validation_path.is_file():
+        checkpoint_plan = read_json(plan_path)
+        checkpoint_validation = read_json(validation_path)
+        if (
+            isinstance(checkpoint_plan, dict)
+            and isinstance(checkpoint_plan.get("objects"), list)
+            and isinstance(checkpoint_validation, dict)
+            and bool(checkpoint_validation.get("ok"))
+        ):
+            plan = checkpoint_plan
+            validation = checkpoint_validation
+            layout_resumed = True
+
+    if not layout_resumed:
+        if args.planner == "codex":
+            plan = codex_layout(brief, output_dir, str(args.model))
+        else:
+            plan = rules_layout(brief)
+        write_json(output_dir / "layout_plan_initial.json", plan)
+
+        validation = validate_layout(plan)
+        write_json(output_dir / "validation_00.json", validation)
+        for iteration in range(1, int(args.repair_iterations) + 1):
+            spatial_pending = int(
+                validation.get("metrics", {})
+                .get("spatial_relations", {})
+                .get("invalid_count", 0)
+                or 0
+            ) > 0
+            if validation["ok"] and not spatial_pending:
+                break
+            plan = deterministic_repair(plan, iteration=iteration)
+            validation = validate_layout(plan)
+            write_json(output_dir / f"validation_{iteration:02d}_sdk.json", validation)
+            spatial_pending = int(
+                validation.get("metrics", {})
+                .get("spatial_relations", {})
+                .get("invalid_count", 0)
+                or 0
+            ) > 0
+            if validation["ok"] and not spatial_pending:
+                break
+            if validation["ok"]:
+                continue
+            if bool(args.codex_repair) and args.planner == "codex":
+                plan = codex_repair_layout(
+                    plan,
+                    validation,
+                    output_dir,
+                    model=str(args.model),
+                    iteration=iteration,
+                )
+                validation = validate_layout(plan)
+                write_json(output_dir / f"validation_{iteration:02d}_codex.json", validation)
+
     write_json(plan_path, plan)
     if isinstance(plan.get("scene_graph"), dict):
         write_json(output_dir / "scene_graph_final.json", plan["scene_graph"])
@@ -178,6 +232,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     write_preview_svg(plan, preview_path)
 
     assembly_report = None
+    scene_render_acceptance = None
     scene_glb = None
     scene_render = None
     scene_render_front_center = None
@@ -198,6 +253,17 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             preview_image_center=scene_render_front_center,
         )
         write_json(output_dir / "assembly_report.json", assembly_report)
+        if bool(getattr(args, "scene_render_acceptance", False)):
+            scene_render_acceptance = render_and_evaluate_scene(
+                blender_bin=Path(args.blender_bin).expanduser(),
+                scene_glb=scene_glb,
+                plan_path=plan_path,
+                asset_dir=Path(asset_report["asset_dir"]),
+                output_dir=output_dir / "scene_render_acceptance",
+                resolution=int(
+                    getattr(args, "scene_render_acceptance_resolution", 512)
+                ),
+            )
 
     mujoco_report = None
     if bool(args.mujoco_check):
@@ -211,6 +277,8 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     summary = {
         "schema": "codex_trellis_scene_v2_summary",
         "output_dir": str(output_dir),
+        "resumed": resume,
+        "layout_resumed": layout_resumed,
         "prompt": str(output_dir / "selected_prompt.txt"),
         "room_type": brief["room_type"],
         "expansion": brief["expansion"],
@@ -323,6 +391,19 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         },
         "asset_mode": args.asset_mode,
         "asset_resolution": str(output_dir / "asset_resolution.json"),
+        "scene_dna": {
+            "mode": asset_report.get("scene_dna_mode", "relation_aware"),
+            "contract": asset_report.get("scene_dna_contract"),
+            "contract_hash": asset_report.get("scene_dna_contract_hash"),
+            "harmony_certificate": asset_report.get("harmony_certificate"),
+            "harmony_certificate_hash": asset_report.get(
+                "harmony_certificate_hash"
+            ),
+            "style_review_required": bool(
+                asset_report.get("style_review_required", False)
+            ),
+            "hard_constraints_remain_authoritative": True,
+        },
         "missing_asset_generation_plan": asset_report.get("missing_asset_generation_plan"),
         "asset_prompt_audit": {
             "source_scene_prompt": str(output_dir / "selected_prompt.txt"),
@@ -369,6 +450,16 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             str(scene_render_front_center) if scene_render_front_center else None
         ),
         "assembly_ok": assembly_report.get("ok") if assembly_report else None,
+        "scene_render_acceptance": (
+            str(output_dir / "scene_render_acceptance" / "scene_render_acceptance_report.json")
+            if scene_render_acceptance is not None
+            else None
+        ),
+        "scene_render_acceptance_ok": (
+            bool(scene_render_acceptance.get("accepted"))
+            if isinstance(scene_render_acceptance, dict)
+            else None
+        ),
         "mujoco_ok": mujoco_report.get("ok") if mujoco_report else None,
     }
     write_json(output_dir / "run_summary.json", summary)
@@ -376,5 +467,14 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         raise RuntimeError(
             f"Layout still has {validation['hard_violation_count']} hard violations; "
             f"see {output_dir / 'validation_final.json'}"
+        )
+    if (
+        isinstance(scene_render_acceptance, dict)
+        and not bool(scene_render_acceptance.get("accepted"))
+        and not bool(getattr(args, "allow_render_acceptance_failure", False))
+    ):
+        raise RuntimeError(
+            "Final RGB/depth/instance-mask acceptance failed; see "
+            f"{output_dir / 'scene_render_acceptance' / 'scene_render_acceptance_report.json'}"
         )
     return summary

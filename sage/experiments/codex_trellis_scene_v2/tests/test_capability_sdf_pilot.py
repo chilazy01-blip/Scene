@@ -125,6 +125,38 @@ class CapabilitySchemaTest(unittest.TestCase):
             validation["errors"],
         )
 
+    def test_optional_generic_contact_anchor_and_proxy_levels_are_valid(self) -> None:
+        registry_path = (
+            Path(__file__).resolve().parents[1]
+            / "capabilities"
+            / "pilot_desk_mug_v1.json"
+        )
+        registry = load_capability_registry(registry_path)
+        desk = deepcopy(registry["assets"][0])
+        desk["contact_surfaces"] = [
+            {
+                "id": "front",
+                "shape": "planar_rectangle",
+                "center_m": [0.0, -0.36, 0.4],
+                "normal": [0.0, -1.0, 0.0],
+                "u_axis": [1.0, 0.0, 0.0],
+                "v_axis": [0.0, 0.0, 1.0],
+                "half_extents_m": [0.5, 0.3],
+                "contact_tolerance_m": 0.01,
+            }
+        ]
+        desk["semantic_anchors"] = [
+            {"id": "front_center", "shape": "point", "point_m": [0, -0.36, 0.4]}
+        ]
+        desk["collision_proxy_levels"] = [
+            {
+                "name": "fine",
+                "pitch_m": 0.01,
+                "max_discretization_error_m": 0.0187,
+            }
+        ]
+        self.assertTrue(validate_asset_capability(desk)["ok"])
+
 
 class VoxelSdfTest(unittest.TestCase):
     def _box_proxy(self) -> VoxelSDF:

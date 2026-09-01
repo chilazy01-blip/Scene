@@ -59,10 +59,98 @@ DEFAULT_TUCKED_UNDER_FREE_SPACES = {
 
 ASSET_SHAPE_GUIDANCE = {
     "book_stack": "one compact stack of several closed books with distinct covers and page blocks",
+    "bookcase": "one freestanding open-front bookcase with two vertical side supports and several repeated horizontal shelves and visible storage cavities",
     "storage_box": "one closed rectangular fabric-covered storage box with straight edges and a visible lid",
+    "accent_chair": "one complete accent chair with a distinct seat, backrest, arm or side supports, and stable separated legs",
+    "dining_chair": "one complete dining chair with a distinct seat, upright backrest, and stable separated legs",
+    "office_chair": "one complete office chair with a distinct seat, backrest, central support, and stable wheeled or legged base",
+    "table_lamp": "one complete table lamp with a distinct shade, central stem or body, and integrated stable base",
+    "floor_lamp": "one complete tall floor lamp with a distinct shade or light head, slender stem, and integrated stable base",
+    "potted_plant": "one complete potted plant with an actual plant pot, visible stems, and naturally branching leaves",
     "pillow": "one soft rectangular sleeping pillow with rounded corners, fabric seams, and a gently puffed form",
-    "slipper": "one wearable house slipper with a clear sole, upper, heel opening, and left-or-right form",
+    "slipper": "one open-back slide house slipper with a clear sole, broad upper strap, exposed heel end, and left-or-right form",
     "mug": "one ceramic drinking mug with a clearly separated handle and open top",
+}
+
+
+ASSET_SEMANTIC_FORM_HINTS: dict[str, dict[str, Any]] = {
+    "storage_box": {
+        "shape_profile": "compact_orthogonal",
+        "required_parts": ["closed box body", "visible lid"],
+        "forbidden_parts": ["display pedestal", "extra floor platform"],
+        "hard_negative_identities": ["ottoman", "suitcase", "cabinet", "open basket"],
+    },
+    "bookcase": {
+        "shape_profile": "open_repeated_frame",
+        "required_parts": ["open front", "multiple horizontal shelves", "vertical side supports"],
+        "forbidden_parts": ["closed solid doors", "display pedestal"],
+        "hard_negative_identities": ["closed wardrobe", "solid cabinet", "ladder", "wall panel"],
+    },
+    "book_stack": {
+        "identity": "stack of closed books",
+        "shape_profile": "compact_layered",
+        "required_parts": ["multiple distinct book layers", "visible covers and page blocks"],
+        "forbidden_parts": ["bookcase", "display pedestal"],
+        "hard_negative_identities": ["single box", "bookcase", "loose paper pile"],
+    },
+    "accent_chair": {
+        "shape_profile": "skeletal_support",
+        "required_parts": ["seat", "backrest", "stable support legs"],
+        "forbidden_parts": ["display pedestal"],
+        "hard_negative_identities": ["stool", "sofa", "side table"],
+    },
+    "dining_chair": {
+        "shape_profile": "skeletal_support",
+        "required_parts": ["seat", "upright backrest", "stable support legs"],
+        "forbidden_parts": ["display pedestal"],
+        "hard_negative_identities": ["stool", "armchair", "side table"],
+    },
+    "office_chair": {
+        "shape_profile": "skeletal_support",
+        "required_parts": ["seat", "backrest", "stable central or separated support"],
+        "forbidden_parts": ["display pedestal"],
+        "hard_negative_identities": ["stool", "dining chair", "side table"],
+    },
+    "table_lamp": {
+        "shape_profile": "slender_radial",
+        "required_parts": ["light shade or light head", "central body", "integrated base"],
+        "forbidden_parts": ["extra floor platform"],
+        "hard_negative_identities": ["vase", "floor lamp", "candle holder"],
+    },
+    "floor_lamp": {
+        "shape_profile": "slender_radial",
+        "required_parts": ["light shade or light head", "tall stem", "integrated base"],
+        "forbidden_parts": ["extra floor platform"],
+        "hard_negative_identities": ["table lamp", "coat rack", "plant stand"],
+    },
+    "potted_plant": {
+        "shape_profile": "organic_branching",
+        "required_parts": ["actual plant pot", "stems", "branching leaves"],
+        "forbidden_parts": ["extra saucer platform", "display pedestal"],
+        "hard_negative_identities": ["vase of flowers", "artificial tree sculpture", "empty pot"],
+    },
+    "slipper": {
+        "shape_profile": "open_back_footwear",
+        "required_parts": [
+            "sole",
+            "broad upper strap",
+            "open back with an exposed heel end",
+            "left-or-right anatomical shape",
+        ],
+        "forbidden_parts": ["duplicate pair", "display pedestal"],
+        "hard_negative_identities": [
+            "closed-back shoe",
+            "closed-back loafer",
+            "moccasin",
+            "sock",
+            "sandal pair",
+        ],
+        "semantic_gate": {
+            "minimum_category_margin": 0.55,
+            "minimum_required_part_score": 0.04,
+            "maximum_forbidden_probability": 0.60,
+        },
+    },
 }
 
 ASSET_APPEARANCE_TERMS = {
@@ -121,7 +209,7 @@ def _asset_style_tags(styles: list[str], original_prompt: str) -> list[str]:
     ][:6]
 
 
-def _category_appearance_terms(category: str, original_prompt: str) -> list[str]:
+def category_appearance_terms(category: str, original_prompt: str) -> list[str]:
     definition = OBJECT_DEFINITIONS[category]
     labels = [category.replace("_", " "), *definition.get("keywords", [])]
     relevant = [
@@ -135,6 +223,10 @@ def _category_appearance_terms(category: str, original_prompt: str) -> list[str]
         for canonical, variants in ASSET_APPEARANCE_TERMS.items()
         if any(_contains_prompt_term(evidence, variant) for variant in variants)
     ][:4]
+
+
+# Compatibility alias for older internal call sites and downstream experiments.
+_category_appearance_terms = category_appearance_terms
 
 
 def build_asset_generation_spec(
@@ -168,7 +260,20 @@ def build_asset_generation_spec(
     appearance_terms = (
         [str(item) for item in grounded_appearance if str(item).strip()][:6]
         if isinstance(grounded_appearance, list)
-        else _category_appearance_terms(category, original_prompt)
+        else category_appearance_terms(category, original_prompt)
+    )
+    semantic_form = deepcopy(ASSET_SEMANTIC_FORM_HINTS.get(category, {}))
+    semantic_form.setdefault("identity", category.replace("_", " "))
+    semantic_form.setdefault("shape_profile", "general_object")
+    semantic_form.setdefault("required_parts", [])
+    semantic_form.setdefault("forbidden_parts", ["display pedestal", "extra prop"])
+    semantic_form.setdefault("hard_negative_identities", [])
+    semantic_form.update(
+        {
+            "schema": "scene_dna_semantic_form_contract_v1",
+            "target_proportion_ratio_w_l_h": ratios,
+            "source": "asset_semantic_form_registry_and_requested_dimensions",
+        }
     )
     return {
         "schema": "codex_trellis_single_asset_spec_v1",
@@ -177,6 +282,7 @@ def build_asset_generation_spec(
         "shape_guidance": ASSET_SHAPE_GUIDANCE.get(
             category, f"one complete, plausible {category.replace('_', ' ')}"
         ),
+        "semantic_form_contract": semantic_form,
         "style_tags": _asset_style_tags(styles, original_prompt),
         "appearance_terms": appearance_terms,
         "target_dimensions_m": {
@@ -232,6 +338,10 @@ def render_asset_prompt(spec: dict[str, Any]) -> str:
             "isolated object only; no room, surrounding furniture, extra props, text, platform, or ground plane",
         ]
     )
+    if str(spec.get("category") or "") in {"floor_lamp", "table_lamp"}:
+        clauses.append(
+            "no visible power cord, loose cable, plug, or wire extending from the lamp"
+        )
     return ". ".join(clauses) + "."
 
 
@@ -1318,8 +1428,12 @@ Return only JSON with this shape:
       ],
       "asset_contract": {{
         "match_mode": "same_family|same_asset",
-        "fallback": "same_asset_reuse|shared_generation_spec|reject",
-        "require_distinct_roles": true
+        "fallback": "same_asset_reuse|shared_generation_spec|mirror_primary|reject",
+        "require_distinct_roles": true,
+        "requires_handedness": false,
+        "requires_medial_facing": false,
+        "medial_facing_tolerance_degrees": 35.0,
+        "mirror_axis": "lateral|x|y"
       }},
       "layout_contract": {{
         "arrangement": "side_by_side|mirrored_pair|row",
@@ -1329,6 +1443,7 @@ Return only JSON with this shape:
         "anchor_min_gap": 0.05,
         "anchor_target_gap": 0.25,
         "anchor_max_gap": 0.80,
+        "heading_rule": "preserve|anchor_front|anchor_back",
         "shared_orientation": true,
         "orientation_tolerance_degrees": 15.0,
         "min_gap": 0.03,
@@ -1396,6 +1511,13 @@ Rules:
   bounded arrangement contract. Do not group ordinary co-occurring furniture merely because it is
   near another object. When the deterministic baseline already contains the same member set, refine
   that group rather than creating an overlapping group.
+- A chiral pair such as slippers, shoes, or gloves must keep left_member/right_member roles,
+  requires_handedness=true, requires_medial_facing=true, fallback=mirror_primary, and
+  mirror_axis=lateral so reflection is
+  perpendicular to the asset canonical front without reversing its functional heading. When it is anchored
+  at the functional front of another object, use reference_frame=anchor_local and
+  heading_rule=anchor_front. Member left/right means anatomical wearer left/right, never camera-left,
+  filename-left, or source-id-left. Never weaken an existing handed-pair contract to same_asset_reuse.
 - Do not include markdown or text outside JSON.
 """.strip()
 

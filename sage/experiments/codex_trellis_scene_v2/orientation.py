@@ -56,6 +56,86 @@ def facing_constraint(obj: dict[str, Any]) -> dict[str, Any] | None:
     return result
 
 
+def physical_contact_wall(
+    obj: dict[str, Any],
+    room: dict[str, Any] | None,
+    *,
+    tolerance: float = 0.35,
+) -> str | None:
+    """Return the closest room wall actually touched by a floor object.
+
+    A soft ``preferred_wall`` may be abandoned by collision repair.  Functional
+    facing must then follow the wall the object ended up against, rather than
+    continuing to use stale preference metadata.
+    """
+
+    if not isinstance(room, dict):
+        return None
+    try:
+        width = float(room["width"])
+        length = float(room["length"])
+        dimensions = obj["dimensions"]
+        object_width = float(dimensions["width"])
+        object_length = float(dimensions["length"])
+        yaw = (
+            float(obj.get("yaw", 0.0) or 0.0)
+            + float(obj.get("footprint_yaw_offset_degrees", 0.0) or 0.0)
+        ) % 360.0
+        if int(round(yaw / 90.0)) % 2:
+            object_width, object_length = object_length, object_width
+        x = float(obj["x"])
+        y = float(obj["y"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    distances = {
+        "west": abs(x - object_width / 2.0),
+        "east": abs(width - (x + object_width / 2.0)),
+        "south": abs(y - object_length / 2.0),
+        "north": abs(length - (y + object_length / 2.0)),
+    }
+    # In a corner, a wide cabinet can touch both its back wall and an adjacent
+    # side wall.  Prefer the contact whose normal is parallel to the asset's
+    # declared front/back axis; otherwise a side-wall touch can rotate the
+    # cabinet by another quarter turn.
+    front = world_front_vector(obj)
+    wall, distance = min(
+        distances.items(),
+        key=lambda item: (
+            -abs(
+                front[0] * WALL_INWARD_NORMALS[item[0]][0]
+                + front[1] * WALL_INWARD_NORMALS[item[0]][1]
+            ),
+            item[1],
+            item[0] != str(obj.get("preferred_wall") or ""),
+            item[0],
+        ),
+    )
+    return wall if distance <= float(tolerance) + 1e-9 else None
+
+
+def effective_facing_constraint(
+    obj: dict[str, Any], room: dict[str, Any] | None = None
+) -> dict[str, Any] | None:
+    constraint = facing_constraint(obj)
+    if not constraint:
+        return None
+    requested_wall = str(constraint["wall"])
+    strength = str(obj.get("wall_constraint_strength") or "hard")
+    actual_wall = physical_contact_wall(obj, room)
+    if strength != "hard" and actual_wall in WALL_INWARD_NORMALS:
+        constraint["wall"] = actual_wall
+        constraint["requested_wall"] = requested_wall
+        constraint["wall_resolution_source"] = (
+            "physical_contact_wall"
+            if actual_wall != requested_wall
+            else "preferred_wall_contact"
+        )
+    else:
+        constraint["requested_wall"] = requested_wall
+        constraint["wall_resolution_source"] = "declared_hard_wall" if strength == "hard" else "preferred_wall"
+    return constraint
+
+
 def canonical_front(obj: dict[str, Any]) -> dict[str, Any]:
     legacy = obj.get("asset_canonical_front")
     if isinstance(legacy, dict) and str(legacy.get("axis", "")).lower() in AXIS_VECTORS:
@@ -95,8 +175,10 @@ def world_front_vector(
     return _rotate(vector, rotation)
 
 
-def evaluate_facing(obj: dict[str, Any]) -> dict[str, Any] | None:
-    constraint = facing_constraint(obj)
+def evaluate_facing(
+    obj: dict[str, Any], room: dict[str, Any] | None = None
+) -> dict[str, Any] | None:
+    constraint = effective_facing_constraint(obj, room)
     if not constraint:
         return None
     wall = str(constraint["wall"])
@@ -109,6 +191,10 @@ def evaluate_facing(obj: dict[str, Any]) -> dict[str, Any] | None:
         "object_id": str(obj.get("id") or ""),
         "mode": "into_room",
         "wall": wall,
+        "requested_wall": str(constraint.get("requested_wall") or wall),
+        "wall_resolution_source": str(
+            constraint.get("wall_resolution_source") or "preferred_wall"
+        ),
         "contact_face": str(constraint.get("contact_face") or "back"),
         "canonical_front_axis": front["axis"],
         "canonical_front_source": front["source"],
@@ -122,9 +208,12 @@ def evaluate_facing(obj: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def solve_facing_yaw(
-    obj: dict[str, Any], candidates: Iterable[float] = CARDINAL_YAWS
+    obj: dict[str, Any],
+    candidates: Iterable[float] = CARDINAL_YAWS,
+    *,
+    room: dict[str, Any] | None = None,
 ) -> float | None:
-    constraint = facing_constraint(obj)
+    constraint = effective_facing_constraint(obj, room)
     if not constraint:
         return None
     expected = WALL_INWARD_NORMALS[str(constraint["wall"])]
@@ -140,15 +229,17 @@ def solve_facing_yaw(
     return min(ranked)[2]
 
 
-def apply_facing_constraints(objects: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def apply_facing_constraints(
+    objects: list[dict[str, Any]], room: dict[str, Any] | None = None
+) -> list[dict[str, Any]]:
     changes: list[dict[str, Any]] = []
     for obj in objects:
-        solved = solve_facing_yaw(obj)
+        solved = solve_facing_yaw(obj, room=room)
         if solved is None:
             continue
         previous = float(obj.get("yaw", 0.0) or 0.0) % 360.0
         obj["yaw"] = solved
-        status = evaluate_facing(obj)
+        status = evaluate_facing(obj, room)
         if status:
             obj["facing_resolution"] = status
         if _circular_difference(previous, solved) > 1e-6:

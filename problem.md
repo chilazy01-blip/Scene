@@ -1,0 +1,596 @@
+# Scene V2 待解决问题与执行断点
+
+最后更新：2026-09-01
+
+## 1. 文档目的
+
+本文档集中记录当前讨论中发现、但尚未进入代码修复阶段的问题，供正在运行的任务结束后由 Codex
+统一分析和解决。
+
+当前阶段只允许：
+
+- 记录问题、证据、影响、假设和验收标准。
+- 对已有文件做只读核对。
+- 补充后续执行思路。
+
+当前阶段禁止：
+
+- 修改正在运行的代码、配置、checkpoint 或输出。
+- 覆盖、清理或“修饰”既有实验产物。
+- 在当前任务结束前启动新的模型生成、Blender 装配或完整回归。
+
+## 2. 执行原则
+
+运行结束后，Codex 应按以下原则处理本文档中的问题：
+
+1. **执行成功前持续思考和迭代。** 一次代码修改、一个单元测试通过或一个局部渲染正常，都不代表
+   问题已经完成。若验证失败，应保留失败证据，更新根因假设，继续下一轮最小修复与验证。
+2. **先复现和定位，再修改。** 先确认最终产物、layout、typed graph、资产元数据、实例组、朝向解析和
+   Blender 装配之间的数据流，禁止仅凭渲染结果硬改坐标或 yaw。
+3. **修复通用机制，不为单个场景写特判。** 修复应落在实例组传递、canonical front、墙面朝向求解、
+   checkpoint 恢复或最终全场景验收等正确抽象层。
+4. **逐层验证。** 推荐顺序为：结构化数据检查 -> 定向单测 -> 本地 plan/layout 回归 -> Blender GLB
+   回读 -> 近景人工检查 -> 完整场景回归。
+5. **不破坏历史证据。** 旧 GLB、旧 JSON、失败截图和日志均保留；新结果写入新的独立输出目录。
+6. **只有满足该问题的全部验收标准，才可标记为完成。** 如果遇到必须由用户授权、外部服务或新数据
+   才能解除的真实阻塞，应明确记录阻塞证据和恢复条件，不能把“暂时无法继续”写成成功。
+7. **每完成一个问题，立即在本文档记录一个断点。** 断点必须包含修改范围、验证命令、关键结果、
+   新产物路径、仍存在的风险和下一问题入口，确保后续 Codex 可以从该位置继续而不重复工作。
+
+## 3. 问题索引
+
+| ID | 问题 | 状态 | 严重度 | 当前结论 |
+|---|---|---|---|---|
+| P001 | 床尾拖鞋没有形成正确的左右鞋实例组 | 已完成 | 高 | 已恢复 pair contract、人体左右角色、单侧镜像与床锚点朝向 |
+| P002 | 西墙衣柜的功能面朝向墙外 | 已完成 | 高 | 已按实际西墙接触面重算 yaw，柜门朝向室内 |
+| P003 | 最终交付审计未覆盖全场景既有语义回归 | 已完成 | 高 | target/whole-scene 双门已覆盖 typed graph、实例组、朝向、support、opening、操作净空、关系几何和 GLB 变换 |
+| P004 | 当前成果无法从一个受控代码版本完整复现 | 处理中 | 最高 | 正在冻结正式源码、外部 TRELLIS 补丁、模型与运行环境，并执行干净检出验证 |
+| P005 | QA、缓存和恢复证书没有闭合内容哈希链 | 待解决 | 最高 | 同名资产被替换后旧审核仍可能放行 |
+| P006 | “运行成功”与“完整可交付”没有统一机器定义 | 待解决 | 最高 | 默认 CLI 只做 plan，诊断结果容易被误认为正式交付 |
+| P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 待解决 | 最高 | 进程名白名单和每请求新线程不能可靠防止资源竞争 |
+| P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 待解决 | 高 | 上游输入变化后，下游旧产物可能未被正确失效 |
+| P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 待解决 | 高 | 旧字段、旧轴向或环境漂移可能被新代码静默接受 |
+| P010 | 最终 GLB 面数和体积明显过高 | 待解决 | 高 | 当前卧室约 252 MB，不适合规模化与实时使用 |
+| P011 | 关系几何证书仍不是严格精确谓词证明 | 待解决 | 中高 | 当前三角终检可信，但浮点与粗 SDF 模糊区仍需分级 |
+| P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 待解决 | 中 | 材质同质、噪点、曝光和遮挡降低成片质量 |
+| P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 待解决 | 高 | 结构可加载不等于数量、形态、朝向和能力合格 |
+| P014 | 测试以快速单测为主，缺少真实集成与故障恢复验证 | 待解决 | 高 | 测试全过仍不能证明 Blender/TRELLIS/恢复链可靠 |
+| P015 | 三条流程和多份文档缺少统一事实源 | 待解决 | 中高 | V2、旧图生、旧文生以及文档口径仍在漂移 |
+| P016 | WebUI 只是启动面板，尚不是可恢复的任务控制系统 | 待解决 | 中低 | 服务重启后缺少事务状态、队列和任务重新关联 |
+
+状态只使用：`待讨论`、`待解决`、`处理中`、`验证中`、`已完成`、`真实阻塞`。
+
+## 4. 当前问题详情
+
+### P001：床尾拖鞋没有形成正确的左右鞋实例组
+
+#### 现象
+
+最终预览中的两只拖鞋摆放方向和左右手性明显异常：视觉上更像两个同型鞋体被横向排列，而不是
+一双左右脚拖鞋沿床的功能前向平行摆放。
+
+涉及最终产物：
+
+```text
+/data/wsj/main/scene_runs/codex_trellis_v2/sdf_complex_bedroom_trellis2_20260829_v2/scene_sdf_complex_bedroom.glb
+```
+
+#### 已确认的结构化证据
+
+`layout_plan_final.json` 中：
+
+- `explicit_slipper_1` 与 `explicit_slipper_2` 均使用 `slipper_blue_left_001`。
+- 两个实例均为 `yaw=0`。
+- 两个实例虽然带有 `instance_group_id="explicit_slipper_pair"`，但顶层
+  `instance_groups=[]`。
+- `instance_group_resolution.group_count=0`、`adjusted_count=0`，说明组级后处理没有执行。
+- 两个实例均未记录 `asset_reflection_axis`。
+- 本次 plan 仍记录旧的 `asset_canonical_front.axis="+y"`；项目后续审核结论已经指出该资产的
+  canonical front 应为 `+x`，且源几何实际是人体右鞋。
+
+#### 影响
+
+- 左右鞋手性没有得到验证，两只鞋可能是同一只脚的重复几何。
+- 分离方向与鞋头方向没有基于床的 canonical front 求解。
+- 当前摆法不符合可穿戴物件的自然使用状态。
+- 说明最终 SDF 场景可能从旧卧室 plan 继承了拖鞋回归，而没有继承
+  `bedroom_complete_relation_geometry_20260822_v3_anatomical_slippers` 中已经验证的修正逻辑。
+
+#### 优先根因假设
+
+1. SDF 复杂卧室准备阶段使用了早于 anatomical-slipper v3 的基础 plan。
+2. plan 拷贝、场景合并或 checkpoint 恢复时只保留了对象上的 `instance_group_id`，丢失了顶层
+   `instance_groups` 和 group contract。
+3. 资产解析阶段没有重新读取最新 overlay manifest，因而保留了旧 canonical front。
+4. 最终装配前没有运行 handedness hard gate，或最终交付审计没有读取该 gate。
+
+#### 预期修复方向
+
+- 追踪 `SceneBrief -> instance_groups -> asset resolution -> layout -> geometry stage -> Blender`
+  的完整传递链，找到 group contract 丢失位置。
+- 使用正式左右 bundle；没有真实 bundle 时，只允许同一审核源资产恰好一份做 canonical-local 横向镜像。
+- 从审核资产元数据推导 source anatomical role、requested role、反射奇偶和 medial axis，禁止从文件名或
+  画面左右猜测人体角色。
+- 组级 heading 应以床的 canonical front 为 anchor，使两鞋鞋头同向、内侧相向、横向并列。
+- 将实例组完整性和 handedness gate 加入最终全场景交付审计，而不只依赖对象局部字段。
+
+#### 完成验收标准
+
+- 顶层 `instance_groups` 中存在合法的拖鞋 pair contract，成员、角色、anchor 和 cardinality 完整。
+- 两只鞋推导角色恰好为 `[left, right]`。
+- 使用真实左右 bundle，或同一审核源资产且恰好一个成员做审核允许的横向镜像。
+- 两鞋世界前向与床的功能前向一致，medial-facing 检查均通过。
+- 导出 GLB 不保留负 determinant；镜像正确烘焙到 mesh。
+- 近景可明确看出左右鞋平行、鞋头同向、内侧相向，且不位于主要通行线中央。
+- 鞋子修复后，书架三排 containment、椅子 tucked-under 和其他既有硬约束无回归。
+
+### P002：西墙衣柜的功能面朝向墙外
+
+#### 现象
+
+左前方大衣柜虽然贴近西墙，但柜门功能面朝向西侧墙外；从房间内部主要面对柜体背面。这不是单纯
+构图问题，而是家具无法正常使用的功能朝向错误。
+
+#### 已确认的结构化证据
+
+`layout_plan_final.json` 中：
+
+- 衣柜中心为 `x=0.39, y=0.88`，实际位于西墙。
+- `preferred_wall` 仍为 `east`，与最终位置不一致。
+- `asset_canonical_front.axis="-y"`、置信度 `0.9`。
+- 最终 `yaw=270`；按该 canonical front 旋转后，世界功能面朝西，而不是朝东进入房间。
+- `orientation_resolution=[]`，说明本轮没有留下重新求解衣柜朝向的记录。
+
+项目已有正确对照结论：西墙上的同一衣柜应使用约 `yaw=90`，使 canonical `-y` 转为世界 `+x`
+并朝向室内。最终值仍必须由通用 orientation solver 推导，不能为该衣柜硬编码 90 度。
+
+#### 影响
+
+- 柜门和把手朝墙，衣柜在功能上不可使用。
+- `preferred_wall`、实际接触墙和功能面朝向三者互相矛盾。
+- 说明物体被迁移到另一面墙时，没有同步重新求解 yaw 或刷新朝向证书。
+
+#### 优先根因假设
+
+1. 衣柜从东墙迁移到西墙后沿用了东墙姿态。
+2. SDF 复杂卧室组装复用了旧 layout，未运行通用 `orientation.py` 刷新。
+3. `preferred_wall` 与实际 hard/soft `against_wall` 关系没有在 repair 后统一刷新。
+4. 最终审计只检查新增 SDF relations，没有检查所有高置信 canonical-front 家具。
+
+#### 预期修复方向
+
+- 在任何墙面迁移、repair 或 checkpoint 恢复后，按实际接触墙的室内法向重新运行通用朝向求解。
+- 明确区分 `preferred_wall`、实际 resolved wall 和硬 `against_wall`，最终 plan 中不得留下相互矛盾的
+  墙面字段。
+- 朝向证书绑定对象 pose、实际墙面、canonical front 和资产 hash；任一输入变化后证书自动失效。
+- 最终交付前对所有高置信功能面家具执行 world-front 与 wall inward normal 的夹角验证。
+
+#### 完成验收标准
+
+- 衣柜位置、resolved wall 和墙面关系一致，且不保留错误的 east-wall 元数据。
+- 世界功能面朝向房间内部，角误差满足现有高置信朝向硬门。
+- 柜门前存在合理操作净空，并且不阻塞入口到床、书桌或衣柜的通路。
+- Blender GLB 回读后的真实节点变换与 layout 中的朝向一致。
+- 至少一张室内视角能看到柜门和把手朝向房间，而非隔墙外侧。
+- 修复不引入窗洞遮挡、墙体穿插或其他家具碰撞。
+
+### P003：最终交付审计未覆盖全场景既有语义回归
+
+#### 现象
+
+`final_delivery_audit.json` 为 `ok=true`，但其核心视觉与几何验收只覆盖：
+
+- 三排书分别 `contained_in` 开放书架。
+- 办公椅 `tucked_under` 书桌。
+- 必需节点存在、GLB 可加载、资源窗口健康和回归测试通过。
+
+因此 P001/P002 可以在最终交付仍显示成功的情况下被遗漏。
+
+#### 影响
+
+最新生成文件通过的是“本轮新增关系交付”，而不是“完整卧室所有既有语义均无回归”。若继续沿用
+该审计范围，未来新增局部能力时仍可能破坏其他家具朝向、实例组、support 或操作净空。
+
+#### 预期修复方向
+
+- 保留本轮四条关系的专项证书，同时增加全场景 non-regression audit。
+- 全场景审计至少覆盖：typed graph 完整性、所有 hard relations、功能面朝向、实例组完整性与手性、
+  support parent、建筑 opening、入口/通道、静态操作净空和 GLB 回读变换。
+- 区分 `target_feature_ok` 与 `whole_scene_ok`，不得用前者替代后者。
+- 最终视觉检查表应明确列出每个必需对象，而不是只描述新生成资产。
+
+#### 完成验收标准
+
+- 审计输出同时给出专项关系状态和完整场景状态。
+- 人为构造“衣柜朝墙”与“鞋组丢失”fixture 时，全场景审计必须失败。
+- 修复后的完整场景中 P001、P002 和原 4 条 relation geometry 全部通过。
+- 最终 `ok=true` 只能在所有必需全场景门通过后产生。
+
+### P004：当前成果无法从一个受控代码版本完整复现
+
+#### 价值判断
+
+这是必须保留的最高优先级问题。算法效果再好，如果无法从确定的提交、环境和模型重新生成，就无法
+可靠交付、复现实验或安全修改。
+
+#### 当前证据
+
+- 2026-08-31 只读检查：当前分支为 `experiment/reference-soft-layout-prior`，HEAD 为 `b248160`。
+- 工作树仍有 24 个已跟踪修改项和 80 个未跟踪条目。
+- 当前复杂卧室依赖的部分 V2、关系几何、资源门、SceneDNA、Blender 工具和测试不一定能由 HEAD
+  单独恢复。
+
+#### 处理方向与完成标准
+
+- 当前运行结束后先分类工作树：正式代码、测试、文档、实验产物、模型/缓存、个人临时文件。
+- 在不误纳入运行产物、模型、密钥或用户实验文件的前提下，建立受控 release commit/tag。
+- 生成 release manifest，冻结 Git commit、外部 TRELLIS commit、模型 fingerprint、Python 环境、
+  Blender、CUDA/PyTorch 和关键配置。
+- 从新的干净 checkout 运行 CPU 回归和至少一个不重新生成资产的 Blender smoke。
+- 只有干净 checkout 能复现代码、配置和最终审计逻辑，才可标记完成。
+
+### P005：QA、缓存和恢复证书没有闭合内容哈希链
+
+#### 价值判断
+
+这是最危险的逻辑缺口之一：旧审核文件可能为后来被覆盖的同名 GLB 背书，形成“证书通过、内容已变”
+的假安全。
+
+#### 当前证据
+
+- `_require_trellis_multiview_qa()` 目前只检查资产 ID、`accepted` 和总体 `ok`，没有把 QA 中记录的
+  GLB hash 与当前源 GLB 重新比较。
+- 专项批处理看到旧 `pilot_report.json` 的 `ok=true` 就可跳过，没有绑定参考图、Prompt、seed、模型、
+  pipeline 参数和代码版本。
+- 通用 `generation_key` 目前主要来自类别、Prompt 和目标尺寸，尚不足以代表完整生成环境。
+
+#### 处理方向与完成标准
+
+- 建立规范化 content key，至少绑定参考图 hash、Prompt、类别、尺寸、seed、模型 fingerprint、RMBG、
+  pipeline/steps/texture/decimation 和代码版本。
+- 多视图 QA 证书绑定 GLB、所有视图、相机、渲染器、QA 规则和上游 generation key。
+- 每次恢复都重新核对当前内容 hash；任一输入变化必须使相关阶段失效。
+- 增加三类负向测试：审核后替换 GLB、替换参考图、改变 seed/模型/生成参数；旧证书均必须拒绝。
+
+### P006：“运行成功”与“完整可交付”没有统一机器定义
+
+#### 价值判断
+
+这是从高级原型走向可信产品的核心问题。现在命令退出 0 可能只表示 plan 成功，并不表示资产生成、
+装配、渲染和最终验收都完成。
+
+#### 当前证据
+
+- CLI 默认 `--asset-mode=plan`，默认不等于真实缺失资产生成。
+- 装配、MuJoCo、relation geometry 和最终 RGB/depth/object-index 并非所有运行都强制执行。
+- 逃生开关和失败前写出的 summary 可能被下游误读为正式结果。
+
+#### 处理方向与完成标准
+
+- 定义 `plan`、`development`、`production`、`benchmark` 四个明确 profile。
+- `production` 强制完成 SceneBrief、建筑、图、资产检索/生成/QA、布局、关系几何、Blender、最终多通道
+  渲染、结构/性能检查和哈希审计。
+- 输出必须包含 `deliverable` 和不可含糊的 `terminal_status`；诊断失败产物只能标为
+  `diagnostic_failure_preserved`。
+- 用端到端测试证明缺少任何 production 必需阶段时都不能得到 `deliverable=true`。
+
+### P007：重任务资源门和 TRELLIS bridge 缺少统一调度
+
+#### 价值判断
+
+该问题直接关系到长任务稳定性和其他用户任务安全，应在扩大生成规模前解决。
+
+#### 当前证据
+
+- 专项运行仍依赖已知进程名和固定稳定窗口，新的 CUDA/训练任务可能无法识别。
+- `resource_health.py` 的核心门不等于完整 GPU 调度；GPU compute process、显存和温度需要统一纳入。
+- bridge 当前每个 `/generate` 请求启动一个后台线程，缺少共享队列、明确并发上限和背压。
+
+#### 处理方向与完成标准
+
+- 建立统一 heavy-job broker：NVML GPU 状态、RAM、I/O、磁盘、cgroup 和 lease 共同决定调度。
+- 同一 GPU 默认最多一个 TRELLIS heavy job；bridge 超过队列上限返回明确的 busy/429。
+- 任务拥有 lease TTL、心跳、异常回收和 systemd/cgroup 资源限制。
+- 不再以进程名字作为主要安全依据；固定 3600 秒改为可配置策略。
+- 用两个并发请求、GPU 被外部任务占用和 worker 异常退出测试证明不会抢占或无限开线程。
+
+### P008：流程恢复仍依赖文件存在，缺少显式阶段 DAG
+
+#### 价值判断
+
+这是 P005 的系统级修复。仅修几个 hash 检查无法避免以后在其他阶段重复出现 stale checkpoint。
+
+#### 处理方向与完成标准
+
+- 把流程显式化为 `expand -> architecture -> scene_graph -> asset_plan -> asset_generate -> asset_qa ->
+  layout -> relation_geometry -> assemble -> render_acceptance -> delivery_audit`。
+- 每阶段记录输入/输出 hash、schema、配置、attempt、状态、依赖、耗时和资源峰值，并采用原子提交。
+- 恢复时由依赖 hash 自动计算失效范围，不以“文件存在”或单个 `ok=true` 决定复用。
+- 模拟任意阶段中断后，应只重跑真正失效的阶段，并且不能混入旧 attempt 产物。
+
+### P009：Schema、坐标契约和运行环境缺少强约束与锁定
+
+#### 价值判断
+
+鞋子和衣柜问题已经说明：字段存在不代表契约完整。弱类型字典、旧 schema 和环境漂移会制造难以察觉
+的语义错误。
+
+#### 处理方向与完成标准
+
+- 优先强类型化 SceneBrief、TypedSceneGraph、Asset/QA Certificate、LayoutPlan、Relation Certificate、
+  RunManifest 和 FinalDeliveryAudit。
+- 明确定义单位、Z-up/Y-up 边界、canonical front、yaw、手性、未知字段策略和 schema migration。
+- 使用规范化序列化计算 content hash，旧 schema 必须显式迁移或拒绝。
+- 锁定 orchestrator、TRELLIS runtime、Blender tools 和 research 环境，并在启动前执行 preflight。
+- 用旧字段、错误单位、错误轴向和缺失实例组构造测试，确保不会静默通过。
+
+### P010：最终 GLB 面数和体积明显过高
+
+#### 价值判断
+
+这是明确而有价值的工程问题，但应在 P004-P009 稳定地基后处理，避免优化不可复现的流水线。
+
+#### 当前证据
+
+- 当前复杂卧室 GLB 为 252,089,564 bytes。
+- 历史审阅统计整个场景约 340 万 faces；仅书架和三排书就接近 197 万 faces。
+- 对简单书排和方正柜体统一使用接近 500k 的预算，性价比很低。
+
+#### 处理方向与完成标准
+
+- 使用类别/曲率/轮廓复杂度感知的面数预算，而不是统一 500k。
+- 减面验收同时检查轮廓、法线、UV/材质、接触面、capability 槽位和关系证书。
+- 逐步加入重复资产实例化、材质去重、meshopt/Draco、KTX2 和 LOD。
+- 第一阶段目标：当前卧室低于 100 MB、约 100 万 faces 或更低，同时 P001-P003 和全部视觉关系无回归。
+
+### P011：关系几何证书仍不是严格精确谓词证明
+
+#### 价值判断
+
+这是有前景的研究升级，但不是当前最先处理的阻塞。现有双向代理加三角终检已经比 AABB 强很多，应在
+保留诚实置信等级的基础上继续升级。
+
+#### 处理方向与完成标准
+
+- 接入小型 native exact-predicate backend，并缓存静态目标 BVH。
+- SDF ambiguous 比例过高时自动局部细化到更小 pitch；containment 增加可靠内外分类。
+- 代理和 capability 证书绑定内容 hash，并记录可量化误差上界。
+- exact backend 不可用时明确标为 `floating_point_verified`，不能使用含糊的“精确验证”。
+- 在多种真实桌椅、书架/容器和接触关系上统计失败率后，才讨论替换默认 repair。
+
+### P012：诊断渲染可用，但最终视觉表现和相机质量不足
+
+#### 价值判断
+
+这是用户最容易感知的问题，但不能靠后期渲染掩盖 P001/P002 这类结构错误。应在全场景语义门通过后
+优化。
+
+#### 当前问题
+
+- 书架内壁、书本和部分木材有颗粒/噪点。
+- 家具大多为相近浅木色，材质层次不足。
+- 白墙、黑窗外和强调墙的曝光关系突兀。
+- 全景相机遮挡衣柜或裁切家具，更像诊断图而非成片。
+
+#### 处理方向与完成标准
+
+- 分离“关系证据图”和“最终展示图”两个渲染 profile。
+- 固定 Cycles/denoise、AgX/Filmic、白平衡、曝光和材质尺度规范。
+- 自动搜索满足 required-object coverage、关系可见性和构图的相机候选。
+- 增加过曝、纯黑窗洞、噪声和对象裁切指标，并保留人工最终复核。
+
+### P013：缺失资产生成与长期资产库仍未形成正式闭环
+
+#### 价值判断
+
+第一轮书排生成成 10 本、6 本已经证明“GLB 可加载”远远不够。该问题直接决定系统能否从任意 Prompt
+稳定补全资产。
+
+#### 处理方向与完成标准
+
+- 正式子流程应覆盖资产合同、2D 候选、alpha/语义/数量 QA、TRELLIS、多视图、尺寸、朝向、拓扑、
+  capability 和临时入场证书。
+- 对“五本书”等要求建立显式 count contract，正反面必须对应同一组对象，侧面不得出现第二排。
+- 区分 `generated_for_run`、`scene_specific_approved`、`candidate_for_curation`、`curated` 和
+  `rejected/deprecated`，禁止单场景成功自动入长期库。
+- 高频类别逐步达到至少 3 个审核资产和 2 种风格签名，并包含 front、手性、尺寸策略、能力、许可证、
+  QA hash 和已知失败场景。
+
+### P014：测试以快速单测为主，缺少真实集成与故障恢复验证
+
+#### 价值判断
+
+282 项测试快速通过是优点，但不能代表 GPU、Blender、恢复、并发和完整交付可靠。
+
+#### 处理方向与完成标准
+
+- 建立提交级静态检查/单测、CPU integration、Blender headless integration 和 nightly GPU 四层测试。
+- 增加 chaos cases：bridge 中断、GLB/metadata 半写入、QA 后替换 GLB、GPU 抢占、磁盘/I/O 压力、
+  systemd 残留和旧输出目录污染。
+- 每个 P001-P013 修复都必须至少有一个能复现原错误的负向测试。
+- CI 产出机器可读的 release/status manifest，而不是手工在多份文档更新测试数量。
+
+### P015：三条流程和多份文档缺少统一事实源
+
+#### 价值判断
+
+这是长期维护问题。若继续把新能力复制回旧 48k 行入口，修复会在不同链条反复丢失。
+
+#### 处理方向与完成标准
+
+- 定义共享核心领域对象；图生和文生只负责生成请求/SceneBrief，资产、关系、布局、装配和验收统一走
+  V2 核心。
+- 旧 Flow2 通过 adapter 迁移并进入兼容维护期，不再承载新算法。
+- 建立唯一用户入口 README、真实架构、运行手册、研究状态和 ADR；历史实验结论留在实验报告。
+- 测试数、默认参数、schema、模型 fingerprint 和 release 状态自动生成，避免 README/AGENT/研究文档漂移。
+
+### P016：WebUI 只是启动面板，尚不是可恢复的任务控制系统
+
+#### 价值判断
+
+该问题有价值，但优先级低于正式主链。只有准备让其他人长期使用或多人排队运行时，才应集中投入。
+
+#### 处理方向与完成标准
+
+- 用 SQLite WAL 保存任务、阶段、attempt、日志位置和 artifact hash，并与 P007/P008 的 broker/DAG 对接。
+- 服务重启后能重新关联 systemd/cgroup job，而不是直接变成未知状态。
+- 明确展示诊断运行与正式交付、当前资源门原因、资产候选和人工批准状态。
+- 若开放远程访问，再补认证、CSRF、路径 allowlist、请求体、并发和速率限制。
+
+## 5. 研究能力的启用边界
+
+以下内容有研究价值，但暂不作为“默认链缺陷”直接修复：
+
+- SceneDNA vNext：第四轮独立盲评和预注册统计完成前继续默认关闭；不能因工程分数好看直接启用。
+- 自动细节修复：目前自然正例和 operator 类型仍少，继续 opt-in、保留 rollback，不进入 production。
+- reference soft prior：先做多 Prompt/seed 与等资产 Blender A/B，不能把 RMSE 降低当成视觉提升。
+- 通用 relation geometry：在 exact backend 和跨资产统计完成前保持 opt-in postprocess。
+
+这些方向应与工程稳定化并行，但不能抢占 P004-P009 的优先级，也不能绕过 P003 的全场景门。
+
+## 6. 运行结束后的建议执行顺序
+
+1. **冻结证据与代码（P004）：** 当前运行结束后，先记录失败 GLB、layout、audit、预览和代码状态，
+   建立不包含运行产物的可恢复 release snapshot。
+2. **修复眼前回归（P001-P003）：** 对比 anatomical-slipper v3 与当前 SDF plan，修鞋组和衣柜朝向，
+   再把它们纳入全场景 non-regression audit。
+3. **闭合正式交付地基（P005-P009）：** 内容哈希证书、production profile、heavy-job broker、阶段 DAG、
+   强 schema 与环境锁必须形成一套相互衔接的运行契约。
+4. **建立真实验证体系（P014）：** 先补负向集成和恢复测试，再扩大 nightly GPU 与 chaos coverage。
+5. **降低交付成本（P010）：** 做类别感知减面、实例化与纹理压缩，以低于 100 MB 为首阶段目标。
+6. **提升资产与视觉（P012-P013）：** 正式化缺失资产子流水线，扩充审核库，之后优化材质、灯光和相机。
+7. **升级研究证明（P011）：** 接 exact predicate、局部细化和跨资产统计，成熟后再讨论默认启用。
+8. **长期收敛（P015-P016）：** 统一图生/文生/V2 核心与事实源；有多人使用需求时再升级 WebUI。
+9. 每完成一个问题立即记录断点；任一验收失败都保留证据、更新假设并继续迭代，不能用局部通过代替完成。
+
+## 7. 完成断点记录
+
+### 断点 CP-20260901-01：P001 已完成
+
+- 完成时间：2026-09-01
+- 根因：专项 SDF 构建默认继承 `bedroom_complete_relation_geometry_20260822_v1` 旧 plan；对象上虽有
+  `instance_group_id`，但顶层 pair contract、最新 canonical front、人体源角色和镜像信息均未传入。
+  首次恢复 pair 后又发现实例组求解器把 area rug 当成实体障碍，错误地把鞋组横移到房间左侧。
+- 修改文件：
+  `sage/experiments/codex_trellis_scene_v2/build_sdf_complex_bedroom.py`、
+  `sage/experiments/codex_trellis_scene_v2/instance_groups.py`、
+  `sage/experiments/codex_trellis_scene_v2/tests/test_build_sdf_complex_bedroom.py`。
+- 新增/修改测试：恢复旧 plan 时必须建立一组拖鞋、从审核 manifest 刷新手性、只镜像一只鞋、按床前向
+  排列；area rug 不得驱逐鞋组。
+- 验证结果：拖鞋组 `1/1 valid`；推导角色 `[left,right]`；反射轴 `[y,null]`；两鞋 yaw 均 270°；
+  内部 gap `0.08m`；床锚点 gap `0.25m`；medial-facing `[1.0,1.0]`。
+- GLB 回读：左鞋 root extras 为 `asset_reflection_baked=true`、`asset_reflection_axis=y`、
+  `asset_pair_role=left`；两个 root scale 均为正，没有遗留负 determinant。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/sdf_complex_bedroom_trellis2_20260901_v3_semantic_fixed`
+- 关键文件 SHA-256：修正版 GLB
+  `817c35961f359a817f96e13e710f8bcec6767f1e80e422b0682afe9b31c5cdf7`；鞋子近景
+  `064a6e7e24a5c7962b48983e7c3f9e01485d45db2082cec9f4709157338b362b`。
+- 人工检查结论：两鞋位于床尾中央、平行、鞋头同向，轮廓构成可穿的左右 pair。
+- 未解决风险：长期仍应优先扩充真实左右 bundle；当前是审核右鞋源几何加单侧 canonical-local 镜像。
+- 下一入口：P003 全场景交付门扩展。
+
+### 断点 CP-20260901-02：P002 已完成
+
+- 完成时间：2026-09-01
+- 根因：衣柜从 east-wall 软偏好迁移到实际 west-wall 后，保留了旧 `preferred_wall=east`、
+  facing wall 和 `yaw=270°`，专项构建未重新运行功能面求解。
+- 修改文件：`sage/experiments/codex_trellis_scene_v2/build_sdf_complex_bedroom.py`。
+- 新增/修改测试：软墙面家具的实际接触墙变化后，必须持久化 resolved wall 并重新计算 canonical-front yaw。
+- 验证结果：衣柜 `preferred_wall/resolved_wall=west`、`yaw=90°`，世界 front `[1,0]` 与西墙室内法向
+  `[1,0]` 一致，角误差 0°；五个受约束家具功能面全部通过。
+- 新产物目录：同 CP-20260901-01。
+- 关键文件 SHA-256：修正版 GLB
+  `817c35961f359a817f96e13e710f8bcec6767f1e80e422b0682afe9b31c5cdf7`；正中预览
+  `a81d75c1c5757854f111dd5bff5f8c7c64192e034209638673b3f719a6158dab`。
+- 人工检查结论：正中视图可以看到衣柜门和把手朝向室内，原来朝墙的功能错误已消失。
+- 未解决风险：动态柜门/操作扫掠体不在当前静态 GLB 验收范围内。
+- 下一入口：P003 的操作净空门。
+
+### 断点 CP-20260901-03：P003 阶段进展（未完成）
+
+- 完成时间：2026-09-01
+- 已完成范围：新增 `whole_scene_regression_audit.json`，检查 required object、实例组/手性、所有已声明
+  into-room 功能面，以及四条 relation-geometry 证书；该门不通过时禁止 Blender 正式装配。
+- 验证结果：required object 缺失 0；实例组 1/1 valid；功能面 5/5 accepted；关系几何 4/4 accepted；
+  GLB 33 geometry/33 node，必需衣柜、两鞋、书桌椅、书架和三排书节点全部存在。
+- 测试结果：定向 8/8、V2 包 282/282、仓库根 12/12；完整回归合计 294/294；Python compile 和
+  `git diff --check` 通过。
+- 额外进展：专项多视图 QA 现在重新核对当前 GLB 与 contact sheet SHA-256，替换审核后 GLB 的负向
+  测试已经通过；这只是 P005 的专项子集，不能把 P005 标记完成。
+- 交付审计：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/sdf_complex_bedroom_trellis2_20260901_v3_semantic_fixed/semantic_fix_delivery_audit.json`
+- 尚未完成：通用 typed graph 完整性、support parent、建筑 opening、入口/柜门/椅子拉出操作净空和
+  GLB world-transform 全覆盖仍需接入同一 production gate。
+- 下一入口：从 support、opening、operation-clearance 三类现有 validator 抽取机器门，补失败 fixture 后
+  才能把 P003 标为 `已完成`。
+
+### 断点 CP-20260901-04：P003 已完成
+
+- 完成时间：2026-09-01
+- 根因：旧 `whole_scene_regression_audit_v1` 只覆盖 required object、实例组 validator、功能朝向和本轮四条
+  relation geometry；专项 prepare 又在旧 graph materialize 后追加书架/书排，造成最终 plan 20 个对象而
+  typed graph 仍只有 16 个对象节点。旧 validator 的二维 floor broad phase 还会把 `tucked_under`、
+  `contained_in` 和垂直分层对象误报为普通 floor collision，无法直接作为完整交付门。最终复验又发现
+  两个床头柜仍引用已丢失的 `matching_nightstand_pair` 顶层 contract。
+- 修改文件：
+  `sage/experiments/codex_trellis_scene_v2/whole_scene_audit.py`、
+  `sage/experiments/codex_trellis_scene_v2/build_sdf_complex_bedroom.py`、
+  `sage/experiments/codex_trellis_scene_v2/instance_groups.py`、
+  `sage/experiments/codex_trellis_scene_v2/tests/test_whole_scene_audit.py`、
+  `sage/experiments/codex_trellis_scene_v2/tests/test_build_sdf_complex_bedroom.py`。
+- 新增/修改测试：追加对象但不刷新图、support parent 丢失、window obstruction、衣柜操作区被挡、衣柜
+  朝墙、对象引用缺失 pair contract、GLB 平移偏差与负 determinant 均必须让 `whole_scene_ok=false`；只有
+  Prompt 存在可逐字核对的 `exactly two matching <category>`、两对象同类同资产且角色完整时，才允许恢复
+  legacy matched-set contract。
+- 执行命令：
+  `python -m unittest discover -s sage/experiments/codex_trellis_scene_v2/tests -t .`；
+  `python -m unittest discover -s tests -p 'test_*.py'`；
+  `python -m sage.experiments.codex_trellis_scene_v2.build_sdf_complex_bedroom --phase reaudit-existing ...`。
+- 验证结果：`target_feature_ok=true`、`whole_scene_ok=true`；typed graph 20/20 object nodes、2/2 opening
+  nodes且全部 hard relation 在图中；实例组 2/2 valid、0 orphan；功能面 5/5；support 5/5；opening/入口
+  0 failure、walkway reachable；衣柜/斗柜/两床头柜/书桌与办公椅 pullout 共 6 个操作区 6/6；原四条
+  relation geometry 4/4；GLB 20/20 对象中心、尺寸、yaw 与正 determinant 回读通过，door/window 节点齐全。
+  正式回归为 V2 290/290、仓库根 12/12，共 302/302；compileall、全部结果 JSON 和 `git diff --check`
+  通过。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/sdf_complex_bedroom_trellis2_20260901_v6_p003_whole_scene_final`。
+  该目录通过 hardlink/copy 复用已审核 GLB 和资产，不重新生成 TRELLIS、不覆盖 v3；v5 失败目录保留为
+  orphan nightstand group 的负面证据。
+- 关键文件 SHA-256：GLB
+  `817c35961f359a817f96e13e710f8bcec6767f1e80e422b0682afe9b31c5cdf7`；完整审计
+  `88121f21c7e6ed2f588247676c8ab04f80ae8582315cb6a52f901af6725dcf78`；GLB transform 审计
+  `728d7e9f9e333910fef6bf48982d4e96d8d155dce4565c3d0502834e90605b36`；reaudit report
+  `5d283fd48009108be28cedc455e73367966c6afa8d891d8b636b3e2577e9a7b1`。
+- 人工检查结论：沿用 P001/P002 已通过的同一 GLB 与近景证据；本轮没有改变任何 mesh 或 pose，只闭合
+  全场景结构/关系/操作区/GLB 回读机器门，因此无需用新渲染掩盖旧视觉证据。
+- 未解决风险：操作区仍是静态 cardinal AABB contract，不是动态铰链/人体轨迹仿真；非 cardinal 操作
+  朝向会明确失败而不是近似通过。更强 schema 与动态能力证书分别归入 P009/P013。
+- 下一入口：P004，先分类 dirty worktree，建立不含模型、缓存、运行产物和用户临时文件的受控 release
+  snapshot，并从干净 checkout 复现 CPU 回归与无资产重生成 Blender smoke。
+
+每完成一个问题，按以下模板追加：
+
+```markdown
+### 断点 CP-YYYYMMDD-NN：PXXX 已完成
+
+- 完成时间：
+- 根因：
+- 修改文件：
+- 新增/修改测试：
+- 执行命令：
+- 验证结果：
+- 新产物目录：
+- 关键文件 SHA-256：
+- 人工检查结论：
+- 未解决风险：
+- 下一入口：
+```
+
+## 8. 后续讨论记录规则
+
+- 后续讨论发现的新问题，先分配新的稳定 ID，再写入“问题索引”和“当前问题详情”。
+- 不把推测写成事实；推测必须放在“根因假设”，并附待验证方式。
+- 同一根因造成的不同用户可见症状可以分成多个问题，但应明确依赖关系。
+- 新证据推翻旧结论时，直接更新当前结论，并在断点中保留变更原因；不要堆叠互相矛盾的结论。
+- 只有实际修复并完成全部验收后才能把状态改为 `已完成`。

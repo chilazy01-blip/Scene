@@ -101,8 +101,18 @@ ASSETS: list[dict[str, Any]] = [
     {
         "source_id": "left_slipper", "asset_id": "slipper_blue_left_001", "category": "slipper",
         "dimensions": [0.28, 0.12, 0.08], "styles": ["modern", "blue", "fabric"],
-        "target_faces": 50000, "canonical_front_axis": "+y", "quality_tier": "corrected_metadata",
-        "corrections": ["replaced erroneous 2.8 m scene dimensions with real slipper dimensions"],
+        "target_faces": 50000, "canonical_front_axis": "+x", "quality_tier": "corrected_metadata",
+        "pair_role": "right", "pair_role_semantics": "anatomical_wearer",
+        "medial_axis": "+y",
+        "pair_role_qa": {
+            "status": "approved",
+            "evidence": "source_id means the camera-left reference instance; with toes facing the camera it is the wearer's right slipper",
+        },
+        "corrections": [
+            "replaced erroneous 2.8 m scene dimensions with real slipper dimensions",
+            "corrected canonical front from +y to +x after paired top-view geometry audit",
+            "reclassified camera-left source as anatomical right and audited local +y as its medial side",
+        ],
     },
     {
         "source_id": "right_slipper", "asset_id": "slipper_blue_right_001", "category": "slipper",
@@ -224,6 +234,14 @@ def main() -> None:
         }
         if item.get("canonical_front_axis"):
             entry["asset_canonical_front"] = {"axis": item["canonical_front_axis"], "confidence": 0.9}
+        if item.get("medial_axis"):
+            entry["asset_medial_axis"] = {"axis": item["medial_axis"], "confidence": 0.9}
+        if item.get("pair_role"):
+            entry["pair_role"] = item["pair_role"]
+        if item.get("pair_role_semantics"):
+            entry["pair_role_semantics"] = item["pair_role_semantics"]
+        if item.get("pair_role_qa"):
+            entry["pair_role_qa"] = item["pair_role_qa"]
         if item.get("usage_constraints"):
             entry["usage_constraints"] = item["usage_constraints"]
         if item.get("corrections"):

@@ -5,7 +5,7 @@ import re
 from copy import deepcopy
 from typing import Any
 
-from .orientation import CARDINAL_YAWS, world_front_vector
+from .orientation import AXIS_VECTORS, CARDINAL_YAWS, world_front_vector
 
 
 GROUP_KINDS = {"paired_instances", "matched_set"}
@@ -13,6 +13,75 @@ ARRANGEMENTS = {"side_by_side", "mirrored_pair", "row"}
 REFERENCE_FRAMES = {"room", "anchor_local"}
 ANCHOR_ZONES = {"front", "near", "free"}
 ASSET_MATCH_MODES = {"same_family", "same_asset"}
+ASSET_FALLBACKS = {
+    "same_asset_reuse",
+    "shared_generation_spec",
+    "mirror_primary",
+    "reject",
+}
+HEADING_RULES = {"preserve", "anchor_front", "anchor_back"}
+PAIR_ROLE_TO_HANDEDNESS = {
+    "left_member": "left",
+    "right_member": "right",
+}
+HANDEDNESS_ROLES = {"left", "right"}
+CHIRAL_PAIR_CATEGORIES = {"slipper", "shoe", "glove"}
+
+
+def member_handedness_role(member: dict[str, Any] | None) -> str:
+    if not isinstance(member, dict):
+        return ""
+    return PAIR_ROLE_TO_HANDEDNESS.get(str(member.get("role") or ""), "")
+
+
+def _opposite_handedness_role(role: str) -> str:
+    return "right" if role == "left" else "left" if role == "right" else ""
+
+
+def requires_handed_pair(group: dict[str, Any] | None) -> bool:
+    if not isinstance(group, dict):
+        return False
+    contract = group.get("asset_contract")
+    return bool(
+        isinstance(contract, dict) and contract.get("requires_handedness", False)
+    )
+
+
+def _enforce_category_pair_policy(
+    group: dict[str, Any], by_id: dict[str, dict[str, Any]]
+) -> None:
+    """Apply deterministic semantics that a model is not allowed to weaken."""
+
+    member_rows = [
+        member for member in group.get("members", []) if isinstance(member, dict)
+    ]
+    categories = {
+        str(by_id.get(str(member.get("object_id") or ""), {}).get("category") or "")
+        for member in member_rows
+    }
+    roles = {str(member.get("role") or "") for member in member_rows}
+    if (
+        len(categories) != 1
+        or not categories <= CHIRAL_PAIR_CATEGORIES
+        or roles != set(PAIR_ROLE_TO_HANDEDNESS)
+    ):
+        return
+    asset_contract = group.setdefault("asset_contract", {})
+    asset_contract.update(
+        {
+            "match_mode": "same_family",
+            "fallback": "mirror_primary",
+            "require_distinct_roles": True,
+            "requires_handedness": True,
+            "requires_medial_facing": True,
+            "medial_facing_tolerance_degrees": 35.0,
+            "mirror_axis": "lateral",
+        }
+    )
+    layout_contract = group.setdefault("layout_contract", {})
+    if layout_contract.get("anchor_id"):
+        layout_contract["reference_frame"] = "anchor_local"
+        layout_contract["heading_rule"] = "anchor_front"
 
 
 def _verified_evidence(evidence: str, prompt: str) -> bool:
@@ -88,8 +157,11 @@ def _canonical_group(
     if match_mode not in ASSET_MATCH_MODES:
         return None, "unsupported asset match_mode"
     fallback = str(raw_asset.get("fallback") or "same_asset_reuse")
-    if fallback not in {"same_asset_reuse", "shared_generation_spec", "reject"}:
+    if fallback not in ASSET_FALLBACKS:
         return None, "unsupported asset fallback"
+    mirror_axis = str(raw_asset.get("mirror_axis") or "lateral")
+    if mirror_axis not in {"lateral", "x", "y"}:
+        return None, "unsupported asset mirror_axis"
 
     raw_layout = raw.get("layout_contract")
     raw_layout = raw_layout if isinstance(raw_layout, dict) else {}
@@ -105,6 +177,9 @@ def _canonical_group(
     anchor_zone = str(raw_layout.get("anchor_zone") or "free")
     if anchor_zone not in ANCHOR_ZONES:
         return None, "unsupported layout anchor_zone"
+    heading_rule = str(raw_layout.get("heading_rule") or "preserve")
+    if heading_rule not in HEADING_RULES:
+        return None, "unsupported layout heading_rule"
     min_gap = _number(raw_layout.get("min_gap"), 0.03, minimum=0.0, maximum=1.0)
     max_gap = _number(raw_layout.get("max_gap"), 0.20, minimum=min_gap, maximum=2.0)
     target_gap = _number(
@@ -147,6 +222,19 @@ def _canonical_group(
                 "require_distinct_roles": bool(
                     raw_asset.get("require_distinct_roles", group_kind == "paired_instances")
                 ),
+                "requires_handedness": bool(
+                    raw_asset.get("requires_handedness", False)
+                ),
+                "requires_medial_facing": bool(
+                    raw_asset.get("requires_medial_facing", False)
+                ),
+                "medial_facing_tolerance_degrees": _number(
+                    raw_asset.get("medial_facing_tolerance_degrees"),
+                    35.0,
+                    minimum=0.0,
+                    maximum=90.0,
+                ),
+                "mirror_axis": mirror_axis,
             },
             "layout_contract": {
                 "arrangement": arrangement,
@@ -156,6 +244,7 @@ def _canonical_group(
                 "anchor_min_gap": anchor_min_gap,
                 "anchor_target_gap": anchor_target_gap,
                 "anchor_max_gap": anchor_max_gap,
+                "heading_rule": heading_rule,
                 "shared_orientation": bool(
                     raw_layout.get("shared_orientation", True)
                 ),
@@ -240,6 +329,7 @@ def deterministic_pair_groups(
                     break
         if evidence_span is None:
             continue
+        chiral_pair = category in CHIRAL_PAIR_CATEGORIES
         raw = {
             "group_id": f"explicit_{category}_pair",
             "group_kind": "paired_instances",
@@ -250,14 +340,21 @@ def deterministic_pair_groups(
             ],
             "asset_contract": {
                 "match_mode": "same_family",
-                "fallback": "same_asset_reuse",
-                "require_distinct_roles": True,
+                "fallback": (
+                    "mirror_primary" if chiral_pair else "same_asset_reuse"
+                ),
+                "require_distinct_roles": chiral_pair,
+                "requires_handedness": chiral_pair,
+                "requires_medial_facing": chiral_pair,
+                "medial_facing_tolerance_degrees": 35.0,
+                "mirror_axis": "lateral",
             },
             "layout_contract": {
                 "arrangement": "side_by_side",
                 "reference_frame": "room",
                 "anchor_id": None,
                 "anchor_zone": "free",
+                "heading_rule": "preserve",
                 "shared_orientation": True,
                 "orientation_tolerance_degrees": 15.0,
                 "min_gap": 0.03,
@@ -285,6 +382,8 @@ def deterministic_pair_groups(
                     "anchor_min_gap": 0.05,
                     "anchor_target_gap": 0.25,
                     "anchor_max_gap": 0.80,
+                    "reference_frame": "anchor_local",
+                    "heading_rule": "anchor_front",
                 }
             )
         canonical, reason = _canonical_group(
@@ -293,8 +392,104 @@ def deterministic_pair_groups(
             prompt=prompt,
         )
         if canonical is not None and not reason:
+            _enforce_category_pair_policy(
+                canonical,
+                {str(obj["id"]): obj for obj in objects if obj.get("id")},
+            )
             result.append(canonical)
     return result
+
+
+def recover_orphan_matched_groups(brief: dict[str, Any]) -> list[dict[str, Any]]:
+    """Recover a legacy two-member matched-set contract from verified evidence.
+
+    Recovery is deliberately narrow: both objects must already reference the same
+    absent group, share a category and materialized asset, carry left/right member
+    roles, and the prompt must contain an exact ``two matching <category>`` claim.
+    """
+
+    objects = [
+        item
+        for item in brief.get("objects", [])
+        if isinstance(item, dict) and item.get("id")
+    ]
+    existing = {
+        str(item.get("group_id"))
+        for item in brief.get("instance_groups", [])
+        if isinstance(item, dict) and item.get("group_id")
+    }
+    members_by_group: dict[str, list[dict[str, Any]]] = {}
+    for obj in objects:
+        group_id = str(obj.get("instance_group_id") or "")
+        if group_id and group_id not in existing:
+            members_by_group.setdefault(group_id, []).append(obj)
+    prompt = str(brief.get("original_prompt") or brief.get("description") or "")
+    lowered = prompt.lower()
+    recovered: list[dict[str, Any]] = []
+    object_ids = {str(item["id"]) for item in objects}
+    for group_id, members in sorted(members_by_group.items()):
+        if len(members) != 2:
+            continue
+        categories = {str(item.get("category") or "") for item in members}
+        asset_ids = {str(item.get("asset_id") or "") for item in members}
+        roles = {str(item.get("instance_group_role") or "") for item in members}
+        if len(categories) != 1 or len(asset_ids) != 1 or "" in asset_ids:
+            continue
+        if roles != {"left_member", "right_member"}:
+            continue
+        category = next(iter(categories))
+        evidence_match = re.search(
+            rf"(?:exactly\s+)?(?:two|2)\s+matching\s+{re.escape(category)}s?(?![a-z0-9])",
+            lowered,
+        )
+        if evidence_match is None:
+            continue
+        gap = _rectangle_gap(members[0], members[1])
+        if gap < 0.0 or gap > 2.0:
+            continue
+        raw = {
+            "group_id": group_id,
+            "group_kind": "matched_set",
+            "cardinality": 2,
+            "members": [
+                {
+                    "object_id": str(member["id"]),
+                    "role": str(member["instance_group_role"]),
+                }
+                for member in members
+            ],
+            "asset_contract": {
+                "match_mode": "same_asset",
+                "fallback": "same_asset_reuse",
+                "require_distinct_roles": False,
+                "requires_handedness": False,
+                "requires_medial_facing": False,
+                "mirror_axis": "lateral",
+            },
+            "layout_contract": {
+                "arrangement": "side_by_side",
+                "reference_frame": "room",
+                "anchor_id": None,
+                "anchor_zone": "free",
+                "heading_rule": "preserve",
+                "shared_orientation": True,
+                "orientation_tolerance_degrees": 15.0,
+                "min_gap": max(0.0, gap - 0.10),
+                "target_gap": gap,
+                "max_gap": min(2.0, gap + 0.10),
+                "allow_member_respacing": False,
+                "allow_rigid_translation": False,
+            },
+            "source_evidence": prompt[evidence_match.start() : evidence_match.end()],
+            "provenance": "legacy_orphan_matched_group_recovery",
+        }
+        canonical, reason = _canonical_group(
+            raw, object_ids=object_ids, prompt=prompt
+        )
+        if canonical is not None and not reason:
+            recovered.append(canonical)
+    brief.setdefault("instance_groups", []).extend(recovered)
+    return recovered
 
 
 def ground_instance_groups(
@@ -321,6 +516,11 @@ def ground_instance_groups(
         for obj in brief.get("objects", [])
         if isinstance(obj, dict) and obj.get("id")
     }
+    by_id = {
+        str(obj["id"]): obj
+        for obj in brief.get("objects", [])
+        if isinstance(obj, dict) and obj.get("id")
+    }
     prompt = str(brief.get("original_prompt") or "")
     for raw in raw_groups[:16]:
         if not isinstance(raw, dict):
@@ -334,6 +534,7 @@ def ground_instance_groups(
         if canonical is None:
             rejected.append({"raw": deepcopy(raw), "reason": reason})
             continue
+        _enforce_category_pair_policy(canonical, by_id)
         member_ids = {
             str(member["object_id"]) for member in canonical["members"]
         }
@@ -354,6 +555,36 @@ def ground_instance_groups(
             baseline = groups[exact_index]
             canonical["group_id"] = str(baseline.get("group_id") or canonical["group_id"])
             canonical["provenance"] = "deterministic_pair_with_codex_refinement"
+            if requires_handed_pair(baseline):
+                baseline_roles = {
+                    str(member.get("object_id") or ""): str(
+                        member.get("role") or ""
+                    )
+                    for member in baseline.get("members", [])
+                    if isinstance(member, dict)
+                }
+                for member in canonical.get("members", []):
+                    object_id = str(member.get("object_id") or "")
+                    if object_id in baseline_roles:
+                        member["role"] = baseline_roles[object_id]
+                baseline_layout = baseline.get("layout_contract")
+                baseline_layout = (
+                    baseline_layout if isinstance(baseline_layout, dict) else {}
+                )
+                if baseline_layout.get("anchor_id"):
+                    for key in (
+                        "reference_frame",
+                        "anchor_id",
+                        "anchor_zone",
+                        "anchor_min_gap",
+                        "anchor_target_gap",
+                        "anchor_max_gap",
+                        "heading_rule",
+                    ):
+                        canonical["layout_contract"][key] = deepcopy(
+                            baseline_layout.get(key)
+                        )
+            _enforce_category_pair_policy(canonical, by_id)
             groups[exact_index] = canonical
             accepted.append(deepcopy(canonical))
             continue
@@ -472,6 +703,67 @@ def _group_asset_key(obj: dict[str, Any]) -> str:
     )
 
 
+def _is_materialized_asset(obj: dict[str, Any]) -> bool:
+    return str(obj.get("asset_source") or "") not in {
+        "",
+        "missing_generation_plan",
+    }
+
+
+def _reference_front(
+    layout: dict[str, Any],
+    members: list[dict[str, Any]],
+    anchor: dict[str, Any] | None,
+) -> tuple[float, float]:
+    heading_rule = str(layout.get("heading_rule") or "preserve")
+    if anchor is not None and heading_rule in {"anchor_front", "anchor_back"}:
+        front = world_front_vector(anchor)
+        return front if heading_rule == "anchor_front" else (-front[0], -front[1])
+    return world_front_vector(members[0])
+
+
+def _resolved_reflection_axis(
+    contract: dict[str, Any], source_member: dict[str, Any]
+) -> str:
+    requested = str(contract.get("mirror_axis") or "lateral")
+    if requested in {"x", "y"}:
+        return requested
+    front = source_member.get("asset_canonical_front")
+    front = front if isinstance(front, dict) else {}
+    front_axis = str(front.get("axis") or "+y").lower().lstrip("+-")
+    return "y" if front_axis == "x" else "x"
+
+
+def _world_medial_vector(member: dict[str, Any]) -> tuple[float, float] | None:
+    """Transform an audited source-mesh medial axis into world space."""
+
+    raw = member.get("asset_medial_axis")
+    raw = raw if isinstance(raw, dict) else {}
+    axis = str(raw.get("axis") or "").lower()
+    if axis not in AXIS_VECTORS:
+        return None
+    vector = AXIS_VECTORS[axis]
+    reflection_axis = str(member.get("asset_reflection_axis") or "")
+    if reflection_axis == "x":
+        vector = (-vector[0], vector[1])
+    elif reflection_axis == "y":
+        vector = (vector[0], -vector[1])
+    elif reflection_axis:
+        return None
+    rotation = (
+        float(member.get("yaw", 0.0) or 0.0)
+        + float(member.get("footprint_yaw_offset_degrees", 0.0) or 0.0)
+        + float(member.get("asset_local_yaw_offset_degrees", 0.0) or 0.0)
+    )
+    angle = math.radians(rotation)
+    cosine = math.cos(angle)
+    sine = math.sin(angle)
+    return (
+        vector[0] * cosine - vector[1] * sine,
+        vector[0] * sine + vector[1] * cosine,
+    )
+
+
 def validate_instance_groups(
     plan: dict[str, Any],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -525,6 +817,10 @@ def validate_instance_groups(
         members = [by_id[object_id] for object_id in member_ids]
         layout = group.get("layout_contract")
         layout = layout if isinstance(layout, dict) else {}
+        anchor_id = str(layout.get("anchor_id") or "")
+        anchor_zone = str(layout.get("anchor_zone") or "free")
+        anchor = by_id.get(anchor_id)
+        reference_front = _reference_front(layout, members, anchor)
         min_gap = float(layout.get("min_gap", 0.03) or 0.03)
         max_gap = float(layout.get("max_gap", 0.20) or 0.20)
         gaps = [
@@ -555,7 +851,7 @@ def validate_instance_groups(
                     left.get("x", 0.0)
                 )
             else:
-                front = world_front_vector(members[0])
+                front = reference_front
                 right_axis = (front[1], -front[0])
                 signed_order = (
                     float(right.get("x", 0.0)) - float(left.get("x", 0.0))
@@ -580,9 +876,6 @@ def validate_instance_groups(
 
         anchor_ok = True
         anchor_gap: float | None = None
-        anchor_id = str(layout.get("anchor_id") or "")
-        anchor_zone = str(layout.get("anchor_zone") or "free")
-        anchor = by_id.get(anchor_id)
         if anchor_id and anchor is None:
             anchor_ok = False
             violations.append(
@@ -665,8 +958,41 @@ def validate_instance_groups(
                     }
                 )
 
+        anchor_orientation_errors: list[float] = []
+        anchor_orientation_ok = True
+        if (
+            anchor is not None
+            and str(layout.get("heading_rule") or "preserve")
+            in {"anchor_front", "anchor_back"}
+        ):
+            anchor_orientation_errors = [
+                _angle_error(world_front_vector(member), reference_front)
+                for member in members
+            ]
+            tolerance = float(
+                layout.get("orientation_tolerance_degrees", 15.0) or 15.0
+            )
+            anchor_orientation_ok = all(
+                error <= tolerance + 1e-6 for error in anchor_orientation_errors
+            )
+            if not anchor_orientation_ok:
+                violations.append(
+                    {
+                        "type": "instance_group_anchor_orientation",
+                        "severity": "hard",
+                        "group_id": group_id,
+                        "anchor_id": anchor_id,
+                        "heading_rule": str(layout.get("heading_rule")),
+                        "member_ids": member_ids,
+                        "angle_errors_degrees": [
+                            round(error, 6) for error in anchor_orientation_errors
+                        ],
+                        "tolerance_degrees": tolerance,
+                    }
+                )
+
         asset_keys = [_group_asset_key(member) for member in members]
-        resolved_assets = all(str(member.get("asset_source") or "") for member in members)
+        resolved_assets = all(_is_materialized_asset(member) for member in members)
         asset_match_ok = not resolved_assets or (
             bool(asset_keys[0]) and len(set(asset_keys)) == 1
         )
@@ -684,9 +1010,60 @@ def validate_instance_groups(
         handedness = [
             str(member.get("asset_pair_role") or "") for member in members
         ]
-        handedness_verified = len(set(handedness) - {""}) == len(members)
+        source_handedness = [
+            str(member.get("asset_source_pair_role") or "") for member in members
+        ]
         asset_contract = group.get("asset_contract")
         asset_contract = asset_contract if isinstance(asset_contract, dict) else {}
+        expected_handedness = [member_handedness_role(row) for row in member_rows]
+        roles_aligned = bool(expected_handedness) and all(
+            expected and expected == actual
+            for expected, actual in zip(expected_handedness, handedness)
+        )
+        asset_ids = [str(member.get("asset_id") or "") for member in members]
+        reflection_axes = [
+            str(member.get("asset_reflection_axis") or "") for member in members
+        ]
+        geometry_handedness = [
+            (
+                _opposite_handedness_role(source_role)
+                if reflection_axis
+                else source_role
+            )
+            if source_role in HANDEDNESS_ROLES
+            else ""
+            for source_role, reflection_axis in zip(
+                source_handedness, reflection_axes
+            )
+        ]
+        source_roles_verified = bool(source_handedness) and all(
+            role in HANDEDNESS_ROLES for role in source_handedness
+        )
+        geometry_roles_aligned = source_roles_verified and all(
+            geometry_role == actual_role == expected_role
+            for geometry_role, actual_role, expected_role in zip(
+                geometry_handedness, handedness, expected_handedness
+            )
+        )
+        expected_reflection_axis = _resolved_reflection_axis(
+            asset_contract, members[0]
+        )
+        distinct_manifest_pair = (
+            len(set(asset_ids) - {""}) == len(members)
+            and len(set(handedness) - {""}) == len(members)
+        )
+        mirrored_pair = (
+            len(set(asset_ids) - {""}) == 1
+            and sum(bool(axis) for axis in reflection_axes) == 1
+            and all(
+                axis in {"", expected_reflection_axis} for axis in reflection_axes
+            )
+        )
+        handedness_verified = roles_aligned and geometry_roles_aligned and (
+            distinct_manifest_pair or mirrored_pair
+        )
+        handedness_required = bool(asset_contract.get("requires_handedness", False))
+        handedness_ok = not resolved_assets or not handedness_required or handedness_verified
         if (
             resolved_assets
             and bool(asset_contract.get("require_distinct_roles", False))
@@ -695,12 +1072,75 @@ def validate_instance_groups(
             violations.append(
                 {
                     "type": "instance_group_handedness_unverified",
-                    "severity": "soft",
+                    "severity": "hard" if handedness_required else "soft",
                     "group_id": group_id,
                     "member_ids": member_ids,
-                    "reason": "matching assets are usable, but distinct left/right geometry is not verified",
+                    "expected_pair_roles": expected_handedness,
+                    "actual_pair_roles": handedness,
+                    "source_pair_roles": source_handedness,
+                    "geometry_pair_roles_after_reflection": geometry_handedness,
+                    "asset_ids": asset_ids,
+                    "reflection_axes": reflection_axes,
+                    "expected_reflection_axis": expected_reflection_axis,
+                    "reason": "anatomical source roles, reflection parity, and member roles must agree for either a manifest pair or one verified local reflection",
                 }
             )
+
+        medial_scores: list[float | None] = []
+        medial_facing_verified = True
+        medial_facing_required = bool(
+            asset_contract.get("requires_medial_facing", False)
+        )
+        if resolved_assets and medial_facing_required:
+            tolerance = float(
+                asset_contract.get("medial_facing_tolerance_degrees", 35.0)
+                or 35.0
+            )
+            minimum_score = math.cos(math.radians(tolerance))
+            for index, member in enumerate(members):
+                medial = _world_medial_vector(member)
+                others = [
+                    other for other_index, other in enumerate(members)
+                    if other_index != index
+                ]
+                target_x = sum(float(other.get("x", 0.0) or 0.0) for other in others) / len(others)
+                target_y = sum(float(other.get("y", 0.0) or 0.0) for other in others) / len(others)
+                dx = target_x - float(member.get("x", 0.0) or 0.0)
+                dy = target_y - float(member.get("y", 0.0) or 0.0)
+                distance = math.hypot(dx, dy)
+                if medial is None or distance <= 1e-9:
+                    medial_scores.append(None)
+                    continue
+                medial_scores.append(
+                    medial[0] * dx / distance + medial[1] * dy / distance
+                )
+            medial_facing_verified = len(medial_scores) == len(members) and all(
+                score is not None and score >= minimum_score - 1e-6
+                for score in medial_scores
+            )
+            if not medial_facing_verified:
+                violations.append(
+                    {
+                        "type": "instance_group_medial_facing",
+                        "severity": "hard",
+                        "group_id": group_id,
+                        "member_ids": member_ids,
+                        "source_pair_roles": source_handedness,
+                        "reflection_axes": reflection_axes,
+                        "medial_facing_scores": [
+                            round(score, 6) if score is not None else None
+                            for score in medial_scores
+                        ],
+                        "minimum_score": round(minimum_score, 6),
+                        "tolerance_degrees": tolerance,
+                        "reason": "each audited anatomical medial side must point toward the other member",
+                    }
+                )
+        medial_facing_ok = (
+            not resolved_assets
+            or not medial_facing_required
+            or medial_facing_verified
+        )
         results.append(
             {
                 "group_id": group_id,
@@ -713,18 +1153,34 @@ def validate_instance_groups(
                     round(anchor_gap, 6) if anchor_gap is not None else None
                 ),
                 "orientation_ok": orientation_ok,
+                "anchor_orientation_ok": anchor_orientation_ok,
                 "asset_match_ok": asset_match_ok,
                 "handedness_verified": handedness_verified,
+                "handedness_ok": handedness_ok,
+                "source_pair_roles": source_handedness,
+                "geometry_pair_roles_after_reflection": geometry_handedness,
+                "medial_facing_verified": medial_facing_verified,
+                "medial_facing_ok": medial_facing_ok,
+                "medial_facing_scores": [
+                    round(score, 6) if score is not None else None
+                    for score in medial_scores
+                ],
                 "gaps": [round(gap, 6) for gap in gaps],
                 "orientation_errors_degrees": [
                     round(error, 6) for error in orientation_errors
+                ],
+                "anchor_orientation_errors_degrees": [
+                    round(error, 6) for error in anchor_orientation_errors
                 ],
                 "ok": (
                     spacing_ok
                     and arrangement_ok
                     and anchor_ok
                     and orientation_ok
+                    and anchor_orientation_ok
                     and asset_match_ok
+                    and handedness_ok
+                    and medial_facing_ok
                 ),
             }
         )
@@ -824,7 +1280,9 @@ def apply_instance_group_postprocess(
             }
             for member in members
         }
-        expected_front = world_front_vector(members[0])
+        anchor_id = str(layout.get("anchor_id") or "")
+        anchor = by_id.get(anchor_id)
+        expected_front = _reference_front(layout, members, anchor)
         facing_sources = {
             str(relation.get("source") or "")
             for relation in plan.get("relations", [])
@@ -832,7 +1290,14 @@ def apply_instance_group_postprocess(
             and str(relation.get("type") or "") in {"faces", "facing"}
         }
         if bool(layout.get("shared_orientation", True)):
-            for member in members[1:]:
+            heading_rule = str(layout.get("heading_rule") or "preserve")
+            orientation_members = (
+                members
+                if anchor is not None
+                and heading_rule in {"anchor_front", "anchor_back"}
+                else members[1:]
+            )
+            for member in orientation_members:
                 if member.get("facing_constraint") or str(member["id"]) in facing_sources:
                     continue
                 member["yaw"] = _solve_yaw_for_front(member, expected_front)
@@ -868,11 +1333,25 @@ def apply_instance_group_postprocess(
                 members[member_index]["y"] = center_y + right_axis[1] * offset
                 cursor += extent * 2.0 + target_gap
 
-        nonmembers = [obj for obj in objects if obj not in members]
+        # Thin floor coverings are support/decor surfaces, not solid obstacles.
+        # Treating a rug as a blocking furniture box pushes slippers and other
+        # matched floor sets away from their semantic anchor even though they
+        # are expected to rest on or overlap the rug footprint.
+        nonblocking_floor_categories = {
+            "area_rug",
+            "rug",
+            "carpet",
+            "floor_mat",
+            "doormat",
+        }
+        nonmembers = [
+            obj
+            for obj in objects
+            if obj not in members
+            and str(obj.get("category") or "") not in nonblocking_floor_categories
+        ]
         candidate_translations: list[tuple[float, float]] = []
-        anchor_id = str(layout.get("anchor_id") or "")
         anchor_zone = str(layout.get("anchor_zone") or "free")
-        anchor = by_id.get(anchor_id)
         if anchor is not None and anchor_zone == "front":
             anchor_front = world_front_vector(anchor)
             anchor_width, anchor_length = _footprint(anchor)

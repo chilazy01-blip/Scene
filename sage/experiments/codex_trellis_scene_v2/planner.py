@@ -77,7 +77,7 @@ def rules_layout(brief: dict[str, Any]) -> dict[str, Any]:
         obj.update({"x": x, "y": y, "z": z, "yaw": yaw})
         objects.append(obj)
         by_id[str(obj["id"])] = obj
-    orientation_changes = apply_facing_constraints(objects)
+    orientation_changes = apply_facing_constraints(objects, room)
     for spec in brief["objects"]:
         if spec.get("placement_type") != "support":
             continue
@@ -323,7 +323,9 @@ def _normalize_codex_layout(raw: dict[str, Any], brief: dict[str, Any]) -> dict[
         "render_requirements": deepcopy(brief.get("render_requirements", {})),
         "planner": "codex_exec",
     }
-    plan["orientation_resolution"] = apply_facing_constraints(plan["objects"])
+    plan["orientation_resolution"] = apply_facing_constraints(
+        plan["objects"], plan["room"]
+    )
     plan["orientation_resolution"].extend(
         apply_relation_facing_constraints(
             plan["objects"], plan.get("relations", [])

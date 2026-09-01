@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 import gc
 import json
 import os
@@ -18,11 +19,32 @@ from pathlib import Path
 from typing import Any, Iterable
 from contextlib import contextmanager
 from urllib import request as urlrequest
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 
 from PIL import Image
 import numpy as np
+
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPOSITORY_ROOT))
+
+from sage.experiments.codex_trellis_scene_v2.scene_dna_semantic import (
+    DinoV3PrototypeScorer,
+    Siglip2SemanticScorer,
+    combine_semantic_form_style_scores,
+    score_form_contract,
+    selection_uncertainty,
+    form_improvement_guard,
+)
+from sage.experiments.codex_trellis_scene_v2.alpha_hygiene import (
+    audit_sanitized_alpha_edges,
+    clean_chromatic_alpha_edges,
+)
+from sage.experiments.codex_trellis_scene_v2.scene_dna_vnext import (
+    assess_2d_generability,
+    select_vnext_candidate,
+)
 
 
 class JobStore:
@@ -123,12 +145,70 @@ class Trellis2BridgeRuntime:
         self._rembg_to_pil = None
         self._rembg_torch = None
         self._rembg_lock = threading.Lock()
+        self._semantic_scorer = None
+        self._anchor_scorer = None
+        self._semantic_scorer_lock = threading.Lock()
 
     def cleanup_after_job(self) -> None:
         gc.collect()
         torch_mod = self._torch
         if torch_mod is not None and hasattr(torch_mod, "cuda") and torch_mod.cuda.is_available():
             torch_mod.cuda.empty_cache()
+
+    @staticmethod
+    def _trim_host_allocator(reason: str) -> bool:
+        """Return freed glibc arenas to the cgroup after large model teardown."""
+        gc.collect()
+        try:
+            libc = ctypes.CDLL(None)
+            malloc_trim = libc.malloc_trim
+            malloc_trim.argtypes = [ctypes.c_size_t]
+            malloc_trim.restype = ctypes.c_int
+            trimmed = bool(malloc_trim(0))
+            print(
+                f"[trellis2] host allocator trim after {reason}: {trimmed}",
+                flush=True,
+            )
+            return trimmed
+        except (AttributeError, OSError) as exc:
+            print(
+                f"[trellis2] host allocator trim unavailable after {reason}: {exc}",
+                flush=True,
+            )
+            return False
+
+    def _release_pipeline_before_scene_dna_scoring(self) -> None:
+        """Keep SceneDNA scorers and TRELLIS checkpoints out of one cgroup peak.
+
+        This is an opt-in resource-isolation path for repeated SceneDNA
+        harmonization loops.  Moving the pipeline to CPU would exceed the host
+        memory gate, so drop the cached pipeline and rebuild it after reference
+        selection instead.  The default server behavior remains unchanged.
+        """
+        if not bool(
+            getattr(
+                self.args,
+                "scene_dna_release_pipeline_before_scoring",
+                False,
+            )
+        ):
+            return
+        with self._lock:
+            if self._pipeline is None:
+                return
+            print(
+                "[trellis2] releasing cached pipeline before SceneDNA scoring",
+                flush=True,
+            )
+            self._pipeline = None
+            gc.collect()
+            torch_mod = self._torch
+            if (
+                torch_mod is not None
+                and hasattr(torch_mod, "cuda")
+                and torch_mod.cuda.is_available()
+            ):
+                torch_mod.cuda.empty_cache()
 
     def _pipeline_instance(self):
         if self._pipeline is not None:
@@ -145,6 +225,7 @@ class Trellis2BridgeRuntime:
             import o_voxel
             from trellis2 import models as trellis2_models
             from trellis2.pipelines import Trellis2ImageTo3DPipeline
+            from trellis2.pipelines import rembg as trellis2_rembg
 
             model_names_to_load = _trellis2_model_names_for_pipeline(str(self.args.pipeline_type))
             print(
@@ -154,21 +235,51 @@ class Trellis2BridgeRuntime:
             )
             original_model_names = list(getattr(Trellis2ImageTo3DPipeline, "model_names_to_load", []))
             original_from_pretrained = trellis2_models.from_pretrained
+            original_pipeline_birefnet = trellis2_rembg.BiRefNet
 
             def traced_from_pretrained(path: str, **kwargs: Any):
                 start = time.time()
                 print(f"[trellis2] loading checkpoint start: {path}", flush=True)
                 model = original_from_pretrained(path, **kwargs)
+                if self.args.trellis_low_vram is False:
+                    # Loading every selected checkpoint on CPU before the final
+                    # pipeline.to() creates a roughly 12 GiB host-RSS peak.  On
+                    # a sufficiently large GPU, move each completed module
+                    # immediately so CPU storage does not accumulate across
+                    # checkpoints.  This is opt-in and leaves upstream/default
+                    # low-VRAM behavior unchanged.
+                    model.to(torch.device(self.args.device))
+                    gc.collect()
+                    print(
+                        f"[trellis2] checkpoint moved to {self.args.device}: {path}",
+                        flush=True,
+                    )
                 print(f"[trellis2] loading checkpoint done: {path} ({time.time() - start:.1f}s)", flush=True)
                 return model
 
             Trellis2ImageTo3DPipeline.model_names_to_load = model_names_to_load
             trellis2_models.from_pretrained = traced_from_pretrained
+            def local_pipeline_birefnet(**kwargs: Any):
+                # TRELLIS.2's pipeline.json contains the upstream Hub name.  The
+                # bridge already exposes --rmbg-model, so make that argument
+                # authoritative as well during pipeline construction.  This
+                # keeps offline runs from silently reaching for the network.
+                kwargs["model_name"] = str(self.args.rmbg_model)
+                return original_pipeline_birefnet(**kwargs)
+
+            trellis2_rembg.BiRefNet = local_pipeline_birefnet
             try:
                 pipeline = Trellis2ImageTo3DPipeline.from_pretrained(self.args.trellis_model)
             finally:
                 Trellis2ImageTo3DPipeline.model_names_to_load = original_model_names
                 trellis2_models.from_pretrained = original_from_pretrained
+                trellis2_rembg.BiRefNet = original_pipeline_birefnet
+            if self.args.trellis_low_vram is not None:
+                pipeline.low_vram = bool(self.args.trellis_low_vram)
+            print(
+                f"[trellis2] pipeline low_vram={pipeline.low_vram}",
+                flush=True,
+            )
             pipeline.to(torch.device(self.args.device))
             self._pipeline = pipeline
             self._torch = torch
@@ -184,10 +295,10 @@ class Trellis2BridgeRuntime:
             return ["simple solid white background"]
         if mode == "contrast":
             return [
-                "flat solid saturated cyan background, strong color separation from the object, no white background",
-                "flat solid saturated magenta background, strong color separation from the object, no white background",
-                "flat solid chroma green background, strong color separation from the object, no white background",
-                "flat solid dark neutral gray background, strong color separation from the object, no white background",
+                "solid saturated cyan background",
+                "solid saturated magenta background",
+                "solid chroma green background",
+                "solid dark neutral gray background",
             ]
         raise ValueError(f"Unsupported flux background mode: {mode}")
 
@@ -196,32 +307,49 @@ class Trellis2BridgeRuntime:
         contains = lambda words: any(
             re.search(rf"(?<![a-z]){re.escape(word)}(?![a-z])", text) for word in words
         )
-        clauses = [
-            "No display base, floor disc, pedestal, plinth, ground plane, shadow catcher, or support surface",
-            "show only the real object geometry on the solid background",
-        ]
+        clauses = []
         if contains(("plant", "potted", "pot", "vase")):
-            clauses.append("A real plant pot is allowed, but no extra saucer or platform")
+            clauses.append("A real plant pot is allowed; no extra saucer")
         if contains(("cabinet", "dresser", "nightstand", "wardrobe", "chest", "table", "chair", "sofa", "bed")):
-            clauses.append("Show furniture legs or bottom directly, without a display base")
+            clauses.append("Show furniture legs or bottom directly")
         if contains(("mirror",)):
-            clauses.append("For a mirror, show only its glass and frame, without a wall panel or stand")
+            clauses.append("Mirror: glass and frame only")
         if contains(("lamp", "lantern", "light")):
-            clauses.append("A built-in lamp base is allowed, but no separate display platform")
+            clauses.append("A built-in lamp base is allowed")
         if attempt > 0:
-            clauses.append("STRICT retry: no staging props, tabletop, floor patch, or contact platform")
+            clauses.append("Retry without staging geometry")
         return ". ".join(clauses)
 
-    def _compose_flux_prompt(self, input_text: str, background_phrase: str | None = None, attempt: int = 0) -> str:
+    def _compact_flux_object_text(self, input_text: str, max_words: int = 24) -> str:
         raw = " ".join(str(input_text).strip().split())
+        if len(raw.split()) <= max_words:
+            return raw
+        clauses = [
+            clause.strip(" .")
+            for clause in re.split(r"[.!?]+", raw)
+            if clause.strip(" .")
+        ]
+        selected = clauses[:3]
+        for clause in clauses[3:]:
+            lowered = clause.lower()
+            if "complete composite asset includes" in lowered and clause not in selected:
+                selected.append(clause)
+        words = " ".join(selected).split()
+        return " ".join(words[:max_words])
+
+    def _compose_flux_prompt(self, input_text: str, background_phrase: str | None = None, attempt: int = 0) -> str:
+        raw = self._compact_flux_object_text(input_text)
+        if raw.lower().startswith("one "):
+            raw = raw[4:]
         background = background_phrase or self._flux_background_phrases()[0]
         white_base_clause = self._white_base_prompt_clause(raw, attempt)
-        return (
-            f"Exactly one isolated object: {raw} Studio product image, clean 3/4 view, full object "
-            f"visible and centered, realistic materials, {background}. No duplicate object, props, "
-            "room, walls, floor, table, text, or reflections. "
-            f"{white_base_clause}"
+        prompt = (
+            f"One isolated {raw}. Centered full-object 3/4 view; {background}. "
+            "No room, props, text, duplicate, platform, floor, or extra support."
         )
+        if white_base_clause:
+            prompt += f" {white_base_clause}."
+        return prompt
 
     def _center_foreground_on_transparent_canvas(self, rgba: np.ndarray) -> np.ndarray:
         alpha = rgba[:, :, 3]
@@ -271,7 +399,10 @@ class Trellis2BridgeRuntime:
         status, payload = post_json(
             f"{self.args.flux_server_url.rstrip('/')}/generate",
             flux_payload,
-            timeout=20.0,
+            # The FLUX worker can briefly hold the interpreter while a prior
+            # image is finishing.  Give the accepted-job response enough time
+            # to arrive; retrying POST would risk creating a duplicate job.
+            timeout=min(120.0, max(20.0, float(self.args.flux_timeout))),
         )
         if status != 202:
             raise RuntimeError(f"Flux server returned unexpected status: {status}")
@@ -281,7 +412,16 @@ class Trellis2BridgeRuntime:
 
         deadline = time.time() + self.args.flux_timeout
         while time.time() < deadline:
-            status, body, content_type = get_bytes(f"{self.args.flux_server_url.rstrip('/')}/job/{flux_job_id}", timeout=20.0)
+            try:
+                status, body, content_type = get_bytes(
+                    f"{self.args.flux_server_url.rstrip('/')}/job/{flux_job_id}",
+                    timeout=60.0,
+                )
+            except (TimeoutError, URLError, ConnectionError):
+                # A slow individual poll is not a failed generation.  Keep the
+                # frozen batch alive until the explicit FLUX batch deadline.
+                time.sleep(1.0)
+                continue
             if status == 200:
                 image_path.write_bytes(body)
                 return image_path
@@ -311,7 +451,12 @@ class Trellis2BridgeRuntime:
         if not input_text:
             raise ValueError("Missing input_text")
         backgrounds = self._flux_background_phrases()
-        attempts = max(1, int(self.args.flux_retry_count) + 1)
+        scene_dna_count = self._scene_dna_candidate_count(payload)
+        attempts = (
+            scene_dna_count
+            if scene_dna_count > 1
+            else max(1, int(self.args.flux_retry_count) + 1)
+        )
         base_seed = int(payload.get("seed", 1))
         for attempt in range(attempts):
             background = backgrounds[attempt % len(backgrounds)]
@@ -328,8 +473,616 @@ class Trellis2BridgeRuntime:
                 "background": background,
                 "seed": attempt_seed,
             }
-            if not self.args.alpha_quality_check:
+            if not self.args.alpha_quality_check and scene_dna_count <= 1:
                 break
+
+    def _scene_dna_payload(self, payload: dict[str, Any]) -> dict[str, Any] | None:
+        scene_dna = payload.get("scene_dna")
+        if not isinstance(scene_dna, dict) or not scene_dna.get("contract_hash"):
+            return None
+        return scene_dna
+
+    def _scene_dna_candidate_count(self, payload: dict[str, Any]) -> int:
+        if payload.get("reference_image_path") or payload.get("input_image_path"):
+            return 1
+        scene_dna = self._scene_dna_payload(payload)
+        if scene_dna is None:
+            return 1
+        funnel = scene_dna.get("candidate_funnel")
+        funnel = funnel if isinstance(funnel, dict) else {}
+        requested = payload.get(
+            "scene_dna_candidate_count",
+            funnel.get("isolated_2d_candidates", 1),
+        )
+        return max(1, min(8, int(requested or 1)))
+
+    def _scene_dna_visual_candidate_score(
+        self,
+        prepared_image_path: Path,
+        alpha_metadata: dict[str, Any],
+        scene_dna: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Score real foreground pixels without treating this as semantic/VLM proof."""
+
+        rgba = np.array(Image.open(prepared_image_path).convert("RGBA"), dtype=np.uint8)
+        foreground = rgba[:, :, 3] > int(getattr(self.args, "alpha_bbox_threshold", 24))
+        pixels = rgba[:, :, :3][foreground].astype(np.float32)
+        alpha_quality = alpha_metadata.get("alpha_quality", {})
+        alpha_score = max(
+            0.0,
+            min(1.0, float(alpha_quality.get("score", 0.0))),
+        )
+        if pixels.size == 0:
+            return {
+                "score": 0.0,
+                "alpha_structure_score": alpha_score,
+                "palette_score": 0.0,
+                "temperature_score": 0.0,
+                "detail_score": 0.0,
+                "reason": "empty_foreground",
+                "semantic_embedding_evaluated": False,
+            }
+        if len(pixels) > 50_000:
+            pixels = pixels[:: max(1, len(pixels) // 50_000)][:50_000]
+
+        palette_rgb: dict[str, tuple[int, int, int]] = {
+            "white": (238, 238, 232),
+            "black": (32, 32, 32),
+            "beige": (210, 190, 158),
+            "gray": (135, 135, 135),
+            "blue": (55, 92, 155),
+            "green": (80, 125, 82),
+            "red": (165, 58, 48),
+            "oak": (181, 132, 78),
+            "walnut": (92, 58, 38),
+            "wood": (164, 112, 67),
+            "brass": (184, 145, 62),
+        }
+        global_tags = {
+            str(item).strip().lower()
+            for item in scene_dna.get("global_tags", [])
+            if str(item).strip()
+        }
+        individuality_tags = {
+            str(item).strip().lower()
+            for item in scene_dna.get("individuality_tags", [])
+            if str(item).strip()
+        }
+        desired_tags = global_tags | individuality_tags
+        local_palette_tags = individuality_tags & set(palette_rgb)
+        palette_target_tags = local_palette_tags or (desired_tags & set(palette_rgb))
+        palette_scores: dict[str, float] = {}
+        max_rgb_distance = float(np.sqrt(3.0) * 255.0)
+        for tag in sorted(palette_target_tags):
+            target = np.array(palette_rgb[tag], dtype=np.float32)
+            distances = np.linalg.norm(pixels - target, axis=1)
+            representative_distance = float(np.percentile(distances, 20.0))
+            palette_scores[tag] = round(
+                max(0.0, min(1.0, 1.0 - representative_distance / max_rgb_distance)),
+                6,
+            )
+        palette_score = max(palette_scores.values(), default=0.5)
+
+        mean_rgb = pixels.mean(axis=0)
+        warmth_index = float((mean_rgb[0] - mean_rgb[2]) / 255.0)
+        if "warm" in desired_tags and "cool" not in desired_tags:
+            temperature_score = max(0.0, min(1.0, 0.5 + warmth_index))
+            temperature_target = "warm"
+        elif "cool" in desired_tags and "warm" not in desired_tags:
+            temperature_score = max(0.0, min(1.0, 0.5 - warmth_index))
+            temperature_target = "cool"
+        else:
+            temperature_score = 0.5
+            temperature_target = "unspecified"
+
+        gray = (
+            rgba[:, :, 0].astype(np.float32) * 0.299
+            + rgba[:, :, 1].astype(np.float32) * 0.587
+            + rgba[:, :, 2].astype(np.float32) * 0.114
+        )
+        horizontal_valid = foreground[:, 1:] & foreground[:, :-1]
+        vertical_valid = foreground[1:, :] & foreground[:-1, :]
+        horizontal_edges = np.abs(gray[:, 1:] - gray[:, :-1]) > 18.0
+        vertical_edges = np.abs(gray[1:, :] - gray[:-1, :]) > 18.0
+        valid_count = int(np.count_nonzero(horizontal_valid)) + int(
+            np.count_nonzero(vertical_valid)
+        )
+        edge_count = int(np.count_nonzero(horizontal_edges & horizontal_valid)) + int(
+            np.count_nonzero(vertical_edges & vertical_valid)
+        )
+        edge_density = float(edge_count) / float(max(1, valid_count))
+        target_edge_density = 0.08
+        detail_score = max(
+            0.0,
+            min(1.0, 1.0 - abs(edge_density - target_edge_density) / 0.18),
+        )
+        score = (
+            0.55 * alpha_score
+            + 0.25 * palette_score
+            + 0.10 * temperature_score
+            + 0.10 * detail_score
+        )
+        legacy_report = {
+            "score": round(score, 6),
+            "alpha_structure_score": round(alpha_score, 6),
+            "palette_score": round(palette_score, 6),
+            "palette_tag_scores": palette_scores,
+            "palette_target_source": (
+                "object_individuality" if local_palette_tags else "global_profile"
+            ),
+            "temperature_score": round(temperature_score, 6),
+            "temperature_target": temperature_target,
+            "warmth_index": round(warmth_index, 6),
+            "detail_score": round(detail_score, 6),
+            "edge_density": round(edge_density, 6),
+            "weights": {
+                "alpha_structure": 0.55,
+                "palette": 0.25,
+                "temperature": 0.10,
+                "detail": 0.10,
+            },
+            "foreground_pixel_count": int(len(pixels)),
+            "pixel_feature_evaluated": True,
+            "semantic_embedding_evaluated": False,
+            "limitations": "pixel palette/detail score; not semantic style or category verification",
+        }
+        semantic_form_contract = scene_dna.get("semantic_form_contract")
+        semantic_form_contract = (
+            semantic_form_contract
+            if isinstance(semantic_form_contract, dict)
+            else {}
+        )
+        vnext_enabled = bool(
+            getattr(self.args, "scene_dna_vnext_selector", False)
+        )
+        if not bool(getattr(self.args, "scene_dna_form_scoring", False)) and not vnext_enabled:
+            return legacy_report
+
+        form_report = score_form_contract(
+            prepared_image_path,
+            semantic_form_contract,
+            alpha_threshold=int(getattr(self.args, "alpha_bbox_threshold", 24)),
+        )
+        semantic_report: dict[str, Any] | None = None
+        semantic_mode = str(
+            getattr(self.args, "scene_dna_semantic_scoring", "off")
+        )
+        if semantic_mode != "off":
+            try:
+                with self._semantic_scorer_lock:
+                    if self._semantic_scorer is None:
+                        self._semantic_scorer = Siglip2SemanticScorer(
+                            str(self.args.scene_dna_semantic_model),
+                            device=str(self.args.scene_dna_semantic_device),
+                        )
+                    semantic_report = self._semantic_scorer.score(
+                        prepared_image_path, semantic_form_contract
+                    )
+            except Exception as exc:
+                if semantic_mode == "required":
+                    raise
+                semantic_report = {
+                    "evaluated": False,
+                    "score": None,
+                    "error": f"{type(exc).__name__}: {exc}",
+                    "reason": "optional_semantic_scorer_unavailable",
+                }
+        anchor_report: dict[str, Any] | None = None
+        anchor_manifest_path = str(
+            getattr(self.args, "scene_dna_anchor_manifest", "") or ""
+        )
+        if anchor_manifest_path:
+            try:
+                with self._semantic_scorer_lock:
+                    if self._anchor_scorer is None:
+                        anchor_manifest = json.loads(
+                            Path(anchor_manifest_path).read_text(encoding="utf-8")
+                        )
+                        self._anchor_scorer = DinoV3PrototypeScorer(
+                            str(self.args.scene_dna_anchor_model),
+                            anchor_manifest,
+                            device=str(self.args.scene_dna_anchor_device),
+                        )
+                    anchor_report = self._anchor_scorer.score(
+                        prepared_image_path, semantic_form_contract
+                    )
+            except Exception as exc:
+                anchor_report = {
+                    "evaluated": False,
+                    "score": None,
+                    "error": f"{type(exc).__name__}: {exc}",
+                    "reason": "optional_anchor_scorer_unavailable",
+                }
+        combined = combine_semantic_form_style_scores(
+            pixel_style_score=(
+                0.625 * palette_score
+                + 0.25 * temperature_score
+                + 0.125 * detail_score
+            ),
+            form_report=form_report,
+            semantic_report=semantic_report,
+            anchor_similarity_score=(
+                float(anchor_report["score"])
+                if isinstance(anchor_report, dict)
+                and anchor_report.get("evaluated")
+                and anchor_report.get("score") is not None
+                else None
+            ),
+        )
+        generability_report = assess_2d_generability(
+            prepared_image_path,
+            alpha_metadata=alpha_metadata,
+            semantic_report=semantic_report,
+            form_report=form_report,
+            alpha_threshold=int(getattr(self.args, "alpha_bbox_threshold", 24)),
+        )
+        return {
+            **legacy_report,
+            "score": combined["score"],
+            "selection_strategy": "semantic_form_style_v1",
+            "legacy_pixel_score": legacy_report["score"],
+            "semantic": semantic_report,
+            "form": form_report,
+            "anchor_similarity": anchor_report,
+            "generability": generability_report,
+            "combined": combined,
+            "semantic_embedding_evaluated": combined[
+                "semantic_embedding_evaluated"
+            ],
+            "limitations": (
+                "experimental frozen semantic/form/style ranking; blind-label "
+                "calibration still required"
+            ),
+        }
+
+    def _select_scene_dna_reference_attempt(
+        self,
+        reference_attempts: list[dict[str, Any]],
+        payload: dict[str, Any],
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        self._release_pipeline_before_scene_dna_scoring()
+        scene_dna = self._scene_dna_payload(payload)
+        if scene_dna is None:
+            raise ValueError("SceneDNA reference selection requires a SceneDNA payload")
+        usable = [item for item in reference_attempts if item.get("prepared_image_path")]
+        if not usable:
+            raise RuntimeError("No usable reference image was prepared")
+        for item in usable:
+            try:
+                item["scene_dna_candidate_score"] = self._scene_dna_visual_candidate_score(
+                    Path(str(item["prepared_image_path"])),
+                    item.get("alpha_metadata", {}),
+                    scene_dna,
+                )
+            except Exception as exc:
+                item["scene_dna_candidate_score"] = {
+                    "score": 0.0,
+                    "error": f"{type(exc).__name__}: {exc}",
+                    "semantic_embedding_evaluated": False,
+                }
+        eligible = list(usable)
+        vnext_enabled = bool(
+            getattr(self.args, "scene_dna_vnext_selector", False)
+        )
+        if bool(getattr(self.args, "white_base_require_clean", True)):
+            clean = [item for item in eligible if not self._attempt_has_white_base_violation(item)]
+            if not clean:
+                raise RuntimeError("All SceneDNA reference candidates failed white-base QA")
+            eligible = clean
+        alpha_ok = [item for item in eligible if bool(item.get("alpha_quality_ok"))]
+        if alpha_ok:
+            eligible = alpha_ok
+        elif bool(getattr(self.args, "alpha_require_quality", False)):
+            raise RuntimeError("All SceneDNA reference candidates failed required alpha QA")
+        hygiene_eligible = list(eligible)
+        form_gate_eligible = [
+            item
+            for item in eligible
+            if bool(
+                item.get("scene_dna_candidate_score", {})
+                .get("form", {})
+                .get("gate_passed")
+            )
+        ]
+        if bool(getattr(self.args, "scene_dna_form_scoring", False)):
+            current_eligible = list(form_gate_eligible)
+        else:
+            current_eligible = list(hygiene_eligible)
+        if not current_eligible and bool(
+            getattr(self.args, "scene_dna_form_scoring", False)
+        ) and not vnext_enabled:
+            raise RuntimeError(
+                "All SceneDNA reference candidates failed the required form contract"
+            )
+        # vNext deliberately treats the old single-view form profile as soft
+        # evidence.  Image hygiene and semantic identity remain hard gates.
+        eligible = list(hygiene_eligible if vnext_enabled else current_eligible)
+        semantic_gate_eligible = [
+            item
+            for item in eligible
+            if bool(
+                (
+                    item.get("scene_dna_candidate_score", {}).get("semantic")
+                    or {}
+                ).get("gate_passed")
+            )
+        ]
+        if semantic_gate_eligible:
+            eligible = semantic_gate_eligible
+        elif str(getattr(self.args, "scene_dna_semantic_scoring", "off")) == "required":
+            raise RuntimeError(
+                "All SceneDNA reference candidates failed the required semantic contract"
+            )
+        current_semantic_eligible = [
+            item
+            for item in current_eligible
+            if str(getattr(self.args, "scene_dna_semantic_scoring", "off"))
+            != "required"
+            or bool(
+                (
+                    item.get("scene_dna_candidate_score", {}).get("semantic")
+                    or {}
+                ).get("gate_passed")
+            )
+        ]
+        current_selector_rejected = not current_semantic_eligible
+        current_ranking_pool = current_semantic_eligible or eligible
+        combined_selected = max(
+            current_ranking_pool,
+            key=lambda item: (
+                float(item.get("scene_dna_candidate_score", {}).get("score", -1.0)),
+                float(
+                    item.get("alpha_metadata", {})
+                    .get("alpha_quality", {})
+                    .get("score", -1.0)
+                ),
+                -int(item.get("attempt", 0)),
+            ),
+        )
+        legacy_control = max(
+            current_ranking_pool,
+            key=lambda item: (
+                float(
+                    item.get("scene_dna_candidate_score", {}).get(
+                        "legacy_pixel_score", -1.0
+                    )
+                ),
+                float(
+                    item.get("alpha_metadata", {})
+                    .get("alpha_quality", {})
+                    .get("score", -1.0)
+                ),
+                -int(item.get("attempt", 0)),
+            ),
+        )
+        form_guard_enabled = bool(
+            getattr(self.args, "scene_dna_form_improvement_guard", False)
+        )
+        if form_guard_enabled and vnext_enabled:
+            raise ValueError(
+                "SceneDNA vNext selector and legacy form guard are mutually exclusive"
+            )
+        vnext_selected, vnext_selection = select_vnext_candidate(eligible)
+        selection_guard: dict[str, Any] = {
+            "schema": "scene_dna_form_improvement_guard_v1",
+            "enabled": False,
+            "decision": "not_applied",
+            "category_specific_branching": False,
+        }
+        selected = combined_selected
+        if vnext_enabled:
+            if vnext_selection["all_candidates_failed_generability_gate"]:
+                raise RuntimeError(
+                    "All SceneDNA reference candidates failed the vNext generability gate"
+                )
+            selected = vnext_selected
+        elif form_guard_enabled and combined_selected is not legacy_control:
+            selection_guard = form_improvement_guard(
+                combined_selected.get("scene_dna_candidate_score", {}),
+                legacy_control.get("scene_dna_candidate_score", {}),
+                minimum_form_improvement=float(
+                    getattr(
+                        self.args,
+                        "scene_dna_minimum_form_improvement",
+                        0.08,
+                    )
+                ),
+            )
+            if not selection_guard["accepted_proposed_selection"]:
+                selected = legacy_control
+        elif form_guard_enabled:
+            selection_guard = {
+                "schema": "scene_dna_form_improvement_guard_v1",
+                "enabled": True,
+                "accepted_proposed_selection": True,
+                "decision": "combined_and_legacy_select_same_candidate",
+                "minimum_form_improvement": float(
+                    getattr(
+                        self.args,
+                        "scene_dna_minimum_form_improvement",
+                        0.08,
+                    )
+                ),
+                "category_specific_branching": False,
+                "calibration_status": "development_only_requires_heldout_validation",
+            }
+        funnel = scene_dna.get("candidate_funnel")
+        funnel = funnel if isinstance(funnel, dict) else {}
+        ranking = sorted(
+            usable,
+            key=lambda item: float(
+                item.get("scene_dna_candidate_score", {}).get("score", -1.0)
+            ),
+            reverse=True,
+        )
+        eligible_ranking = [item for item in ranking if item in eligible]
+        semantic_ranking = sorted(
+            [
+                item
+                for item in eligible
+                if (
+                    item.get("scene_dna_candidate_score", {}).get("semantic")
+                    or {}
+                ).get("evaluated")
+            ],
+            key=lambda item: float(
+                item["scene_dna_candidate_score"]["semantic"].get("score", -1.0)
+            ),
+            reverse=True,
+        )
+        form_ranking = sorted(
+            [
+                item
+                for item in eligible
+                if item.get("scene_dna_candidate_score", {})
+                .get("form", {})
+                .get("evaluated")
+            ],
+            key=lambda item: float(
+                item["scene_dna_candidate_score"]["form"].get("score", -1.0)
+            ),
+            reverse=True,
+        )
+        scorer_conflict = bool(
+            semantic_ranking
+            and form_ranking
+            and semantic_ranking[0] is not form_ranking[0]
+        )
+        margin_threshold = float(
+            getattr(self.args, "scene_dna_uncertainty_margin", 0.03)
+        )
+        uncertainty = selection_uncertainty(
+            [
+                float(item.get("scene_dna_candidate_score", {}).get("score", 0.0))
+                for item in eligible_ranking
+            ],
+            margin_threshold=margin_threshold,
+            scorer_conflict=scorer_conflict,
+        )
+        maximum_promoted = max(
+            1, int(funnel.get("max_candidates_promoted_to_trellis2", 2))
+        )
+        promotion_count = min(
+            len(eligible_ranking),
+            maximum_promoted,
+            int(uncertainty["recommended_promotion_count"]),
+        )
+        promotion_order = [selected] + [
+            item for item in eligible_ranking if item is not selected
+        ]
+        promoted = promotion_order[:promotion_count]
+        report = {
+            "schema": "scene_dna_2d_candidate_selection_v1",
+            "contract_hash": scene_dna.get("contract_hash"),
+            "requested_candidate_count": self._scene_dna_candidate_count(payload),
+            "generated_candidate_count": len(reference_attempts),
+            "usable_candidate_count": len(usable),
+            "eligible_candidate_count": len(eligible),
+            "max_candidates_promoted_to_trellis2": int(
+                funnel.get("max_candidates_promoted_to_trellis2", 2)
+            ),
+            "actual_candidates_promoted_to_trellis2": promotion_count,
+            "promoted_reference_job_ids": [
+                item.get("reference_job_id") for item in promoted
+            ],
+            "promoted_reference_image_paths": [
+                item.get("prepared_image_path") for item in promoted
+            ],
+            "uncertainty": uncertainty,
+            "selected_reference_job_id": selected.get("reference_job_id"),
+            "combined_selector_reference_job_id": combined_selected.get(
+                "reference_job_id"
+            ) if not current_selector_rejected else None,
+            "current_selector_batch_rejected": current_selector_rejected,
+            "current_selector_hard_eligible_candidate_count": len(
+                current_semantic_eligible
+            ),
+            "vnext_selector_reference_job_id": vnext_selected.get(
+                "reference_job_id"
+            ),
+            "legacy_control_reference_job_id": legacy_control.get(
+                "reference_job_id"
+            ) if not current_selector_rejected else None,
+            "selection_guard": selection_guard,
+            "vnext_selection": {
+                **vnext_selection,
+                "enabled": vnext_enabled,
+                "decision": (
+                    vnext_selection["decision"]
+                    if vnext_enabled
+                    else "preview_only_default_off"
+                ),
+            },
+            "ranking": [
+                {
+                    "rank": rank,
+                    "reference_job_id": item.get("reference_job_id"),
+                    "attempt": item.get("attempt"),
+                    "alpha_quality_ok": bool(item.get("alpha_quality_ok")),
+                    "eligible": item in eligible,
+                    "score": item.get("scene_dna_candidate_score"),
+                }
+                for rank, item in enumerate(ranking, start=1)
+            ],
+            "hard_gates": [
+                "prepared_rgba_exists",
+                "white_base_clean",
+                "alpha_quality_if_available",
+                *(
+                    ["form_contract"]
+                    if bool(getattr(self.args, "scene_dna_form_scoring", False))
+                    else []
+                ),
+                *(
+                    ["semantic_contract"]
+                    if str(getattr(self.args, "scene_dna_semantic_scoring", "off"))
+                    == "required"
+                    else []
+                ),
+                *(["vnext_generability"] if vnext_enabled else []),
+            ],
+            "selection_method": (
+                "hard_QA_then_opt_in_vnext_balanced_generability"
+                if vnext_enabled
+                else "hard_QA_then_opt_in_form_improvement_guard"
+                if form_guard_enabled
+                else "hard_QA_then_semantic_form_anchor_pixel_ranking"
+                if bool(getattr(self.args, "scene_dna_form_scoring", False))
+                else "hard_QA_then_weighted_pixel_palette_temperature_detail"
+            ),
+            "semantic_embedding_evaluated": any(
+                bool(
+                    item.get("scene_dna_candidate_score", {}).get(
+                        "semantic_embedding_evaluated"
+                    )
+                )
+                for item in usable
+            ),
+            "form_contract_evaluated": any(
+                bool(
+                    item.get("scene_dna_candidate_score", {})
+                    .get("form", {})
+                    .get("evaluated")
+                )
+                for item in usable
+            ),
+        }
+        if bool(getattr(self.args, "scene_dna_unload_scorers", True)):
+            with self._semantic_scorer_lock:
+                for scorer in (self._semantic_scorer, self._anchor_scorer):
+                    if scorer is not None:
+                        scorer.close()
+                self._semantic_scorer = None
+                self._anchor_scorer = None
+            self._trim_host_allocator("SceneDNA scorer unload")
+            torch_mod = self._torch
+            if (
+                torch_mod is not None
+                and hasattr(torch_mod, "cuda")
+                and torch_mod.cuda.is_available()
+            ):
+                torch_mod.cuda.empty_cache()
+        return selected, report
 
     def _white_base_policy_notes(self, object_text: str | None = None) -> dict[str, Any]:
         text = str(object_text or "").lower()
@@ -421,16 +1174,144 @@ class Trellis2BridgeRuntime:
                                 continue
                             visited[ny, nx] = True
                             stack.append((ny, nx))
-                components.append({"bbox": [min_x, min_y, max_x + 1, max_y + 1], "area": int(area)})
+                components.append(
+                    {"bbox": [min_x, min_y, max_x + 1, max_y + 1], "area": int(area)}
+                )
             return components
 
+    def _white_base_topology_report(
+        self,
+        foreground: np.ndarray,
+        *,
+        candidate_bbox: list[int],
+        foreground_bbox: list[int],
+    ) -> dict[str, Any]:
+        """Check whether a low white region is geometrically separate from the body.
+
+        Colour alone is unsafe: a cream box body or pale book pages can satisfy the
+        old white-platform heuristic. A removable base must instead be detached or
+        meet the subject through a substantially narrower support immediately above
+        its top edge.
+        """
+
+        x0, y0, x1, _ = candidate_bbox
+        fg_x0, fg_y0, fg_x1, fg_y1 = foreground_bbox
+        fg_h = max(1, fg_y1 - fg_y0)
+        candidate_width = max(1, x1 - x0)
+        band_height_ratio = float(
+            getattr(self.args, "white_base_support_band_height_ratio", 0.04)
+        )
+        band_height = max(2, int(round(fg_h * band_height_ratio)))
+        band_y0 = max(fg_y0, y0 - band_height)
+        support_band = foreground[band_y0:y0, x0:x1]
+        if support_band.size:
+            row_occupancies = np.count_nonzero(support_band, axis=1) / float(
+                candidate_width
+            )
+            maximum_support_occupancy = float(np.max(row_occupancies))
+            mean_support_occupancy = float(np.mean(row_occupancies))
+        else:
+            maximum_support_occupancy = 0.0
+            mean_support_occupancy = 0.0
+        maximum_allowed = float(
+            getattr(self.args, "white_base_max_support_occupancy_ratio", 0.55)
+        )
+        separated_or_narrowly_supported = maximum_support_occupancy <= maximum_allowed
+        return {
+            "support_band_bbox": [x0, band_y0, x1, y0],
+            "support_band_height_ratio": band_height_ratio,
+            "maximum_support_occupancy_ratio": round(maximum_support_occupancy, 6),
+            "mean_support_occupancy_ratio": round(mean_support_occupancy, 6),
+            "maximum_allowed_support_occupancy_ratio": maximum_allowed,
+            "detached_from_subject": not bool(np.any(support_band)),
+            "separated_or_narrowly_supported": separated_or_narrowly_supported,
+            "foreground_bbox": [fg_x0, fg_y0, fg_x1, fg_y1],
+        }
+
+    def _white_base_repair_damage_report(
+        self,
+        before: np.ndarray,
+        after: np.ndarray,
+        *,
+        protected_upper_y: int,
+    ) -> dict[str, Any]:
+        """Reject repairs that erase too much foreground or cut through a subject."""
+
+        threshold = int(getattr(self.args, "alpha_bbox_threshold", 24))
+        before_fg = before[:, :, 3] > threshold
+        after_fg = after[:, :, 3] > threshold
+        removed = before_fg & ~after_fg
+        before_count = int(np.count_nonzero(before_fg))
+        removed_count = int(np.count_nonzero(removed))
+        removed_fraction = removed_count / float(max(1, before_count))
+        upper_before = before_fg[:protected_upper_y]
+        upper_removed = removed[:protected_upper_y]
+        upper_removed_fraction = int(np.count_nonzero(upper_removed)) / float(
+            max(1, int(np.count_nonzero(upper_before)))
+        )
+
+        ys, xs = np.nonzero(before_fg)
+        horizontal_sever = False
+        severed_rows: list[int] = []
+        if len(xs) and len(ys):
+            x0, x1 = int(xs.min()), int(xs.max()) + 1
+            y0, y1 = int(ys.min()), int(ys.max()) + 1
+            width = max(1, x1 - x0)
+            before_rows = np.count_nonzero(before_fg[y0:y1, x0:x1], axis=1)
+            after_rows = np.count_nonzero(after_fg[y0:y1, x0:x1], axis=1)
+            surviving = after_rows > 0
+            for local_y, (old_count, new_count) in enumerate(
+                zip(before_rows.tolist(), after_rows.tolist())
+            ):
+                if old_count < width * 0.45 or new_count > old_count * 0.25:
+                    continue
+                if np.any(surviving[:local_y]) and np.any(surviving[local_y + 1 :]):
+                    horizontal_sever = True
+                    severed_rows.append(y0 + local_y)
+                    if len(severed_rows) >= 8:
+                        break
+
+        max_removed_fraction = float(
+            getattr(
+                self.args,
+                "white_base_repair_max_removed_foreground_fraction",
+                0.35,
+            )
+        )
+        max_upper_removed_fraction = float(
+            getattr(
+                self.args,
+                "white_base_repair_max_upper_removed_fraction",
+                0.005,
+            )
+        )
+        reasons: list[str] = []
+        if removed_fraction > max_removed_fraction:
+            reasons.append("removed_foreground_fraction_too_large")
+        if upper_removed_fraction > max_upper_removed_fraction:
+            reasons.append("removed_protected_upper_body")
+        if horizontal_sever:
+            reasons.append("introduced_horizontal_subject_cut")
+        return {
+            "ok": not reasons,
+            "reasons": reasons,
+            "removed_foreground_pixels": removed_count,
+            "original_foreground_pixels": before_count,
+            "removed_foreground_fraction": round(removed_fraction, 6),
+            "maximum_removed_foreground_fraction": max_removed_fraction,
+            "protected_upper_y": int(protected_upper_y),
+            "removed_protected_upper_fraction": round(upper_removed_fraction, 6),
+            "maximum_removed_protected_upper_fraction": max_upper_removed_fraction,
+            "introduced_horizontal_subject_cut": horizontal_sever,
+            "severed_rows": severed_rows,
+        }
     def _white_base_artifact_report(self, rgba: np.ndarray, object_text: str | None = None) -> dict[str, Any]:
         enabled = bool(getattr(self.args, "white_base_quality_check", True))
         policy_notes = self._white_base_policy_notes(object_text)
         limits = {
             "bottom_start_ratio": float(getattr(self.args, "white_base_bottom_start_ratio", 0.58)),
             "top_slack_ratio": float(getattr(self.args, "white_base_top_slack_ratio", 0.035)),
-            "min_width_ratio": float(getattr(self.args, "white_base_min_width_ratio", 0.22)),
+            "min_width_ratio": float(getattr(self.args, "white_base_min_width_ratio", 0.50)),
             "max_height_ratio": float(getattr(self.args, "white_base_max_height_ratio", 0.45)),
             "bedlike_max_height_ratio": float(getattr(self.args, "white_base_bedlike_max_height_ratio", 0.20)),
             "min_aspect_ratio": float(getattr(self.args, "white_base_min_aspect_ratio", 1.55)),
@@ -500,7 +1381,7 @@ class Trellis2BridgeRuntime:
                 "bottom_ratio": round(bottom_ratio, 4),
                 "center_x_ratio": round(center_x_ratio, 4),
             }
-            is_low_wide_base = (
+            color_geometry_candidate = (
                 width_ratio >= limits["min_width_ratio"]
                 and height_ratio <= max_height_ratio
                 and aspect_ratio >= limits["min_aspect_ratio"]
@@ -508,7 +1389,21 @@ class Trellis2BridgeRuntime:
                 and bottom_ratio >= 0.86
                 and top_ratio >= limits["bottom_start_ratio"] - limits["top_slack_ratio"]
             )
-            stats["decision"] = "illegal_base_candidate" if is_low_wide_base else "ignored_legal_or_non_base_white_region"
+            topology = self._white_base_topology_report(
+                foreground,
+                candidate_bbox=[x0, y0, x1, y1],
+                foreground_bbox=[fg_x0, fg_y0, fg_x1, fg_y1],
+            )
+            stats["topology"] = topology
+            is_low_wide_base = color_geometry_candidate and bool(
+                topology["separated_or_narrowly_supported"]
+            )
+            if is_low_wide_base:
+                stats["decision"] = "illegal_base_candidate"
+            elif color_geometry_candidate:
+                stats["decision"] = "protected_connected_subject_region"
+            else:
+                stats["decision"] = "ignored_legal_or_non_base_white_region"
             report["candidates"].append(stats)
             if is_low_wide_base:
                 violating.append(stats)
@@ -540,6 +1435,7 @@ class Trellis2BridgeRuntime:
         if not violating:
             return rgba, report
 
+        original = rgba.copy()
         repaired = rgba.copy()
         alpha = repaired[:, :, 3]
         foreground = alpha > int(getattr(self.args, "alpha_bbox_threshold", 24))
@@ -566,6 +1462,7 @@ class Trellis2BridgeRuntime:
         min_remove_pixels = max(8, int(round(fg_w * fg_h * float(getattr(self.args, "white_base_repair_min_area_ratio", 0.001)))))
         fg_center_x = (fg_x0 + fg_x1) * 0.5
         plant_keep_half_width = fg_w * plant_center_keep_width_ratio * 0.5
+        protected_upper_y = repaired.shape[0]
 
         for candidate in violating:
             bbox = candidate.get("bbox") if isinstance(candidate, dict) else None
@@ -578,6 +1475,10 @@ class Trellis2BridgeRuntime:
             y1 = min(repaired.shape[0], y1)
             if x1 <= x0 or y1 <= y0:
                 continue
+            topology = candidate.get("topology", {}) if isinstance(candidate, dict) else {}
+            if not bool(topology.get("separated_or_narrowly_supported", False)):
+                continue
+            protected_upper_y = min(protected_upper_y, y0)
 
             local = white_like[y0:y1, x0:x1] & (alpha[y0:y1, x0:x1] > int(getattr(self.args, "alpha_bbox_threshold", 24)))
             remove_local = np.zeros_like(local, dtype=bool)
@@ -620,8 +1521,26 @@ class Trellis2BridgeRuntime:
             )
 
         repaired[:, :, 3] = alpha
-        report["applied"] = bool(report["repairs"])
+        report["attempted"] = bool(report["repairs"])
+        report["attempted_repair_count"] = len(report["repairs"])
+        if not report["repairs"]:
+            report["repair_count"] = 0
+            return original, report
+        damage = self._white_base_repair_damage_report(
+            original,
+            repaired,
+            protected_upper_y=protected_upper_y,
+        )
+        report["damage_audit"] = damage
+        if not damage["ok"]:
+            report["applied"] = False
+            report["repair_count"] = 0
+            report["rolled_back"] = True
+            report["rollback_reason"] = "damage_audit_failed"
+            return original, report
+        report["applied"] = True
         report["repair_count"] = len(report["repairs"])
+        report["rolled_back"] = False
         return repaired, report
 
     def _alpha_quality_report(self, rgba: np.ndarray, object_text: str | None = None) -> dict[str, Any]:
@@ -720,6 +1639,16 @@ class Trellis2BridgeRuntime:
         object_text: str | None = None,
         extra: dict[str, Any] | None = None,
     ) -> Path:
+        rgba, source_chroma_cleanup = clean_chromatic_alpha_edges(
+            rgba,
+            foreground_alpha_threshold=int(self.args.alpha_bbox_threshold),
+            maximum_visible_spill_fraction=float(
+                getattr(self.args, "alpha_max_visible_chroma_spill_fraction", 0.12)
+            ),
+            maximum_alpha_weight_removed_fraction=float(
+                getattr(self.args, "alpha_max_chroma_cleanup_removed_fraction", 0.12)
+            ),
+        )
         rgba = self._center_foreground_on_transparent_canvas(rgba)
         white_base_repair: dict[str, Any] = {
             "enabled": bool(getattr(self.args, "white_base_auto_repair", True)),
@@ -745,6 +1674,53 @@ class Trellis2BridgeRuntime:
             white_base_repair["stop_reason"] = "max_repair_passes_reached"
         white_base_repair["applied"] = any(bool(item.get("applied")) for item in white_base_repair.get("passes", []))
         white_base_repair["repair_count"] = sum(int(item.get("repair_count", 0) or 0) for item in white_base_repair.get("passes", []))
+        white_base_repair["attempted_repair_count"] = sum(
+            int(item.get("attempted_repair_count", 0) or 0)
+            for item in white_base_repair.get("passes", [])
+        )
+        white_base_repair["rolled_back"] = any(
+            bool(item.get("rolled_back"))
+            for item in white_base_repair.get("passes", [])
+        )
+        # Repairs and Lanczos recentering happen after the source matte is
+        # cleaned, so verify the final pixels against the *recorded* source
+        # background instead of trying to infer a new background from subject
+        # antialiasing. Fully transparent RGB is normalized one final time.
+        final_hidden_rgb_zeroed = int(
+            np.count_nonzero(
+                (rgba[:, :, 3] == 0)
+                & np.any(rgba[:, :, :3] != 0, axis=2)
+            )
+        )
+        rgba[:, :, :3][rgba[:, :, 3] == 0] = 0
+        background_estimate = source_chroma_cleanup.get("background_estimate", {})
+        background_rgb = (
+            background_estimate.get("background_rgb")
+            if isinstance(background_estimate, dict)
+            and background_estimate.get("evaluated")
+            else None
+        )
+        prepared_chroma_audit = audit_sanitized_alpha_edges(
+            rgba,
+            background_rgb,
+            foreground_alpha_threshold=int(self.args.alpha_bbox_threshold),
+            maximum_visible_spill_fraction=float(
+                getattr(self.args, "alpha_max_visible_chroma_spill_fraction", 0.12)
+            ),
+        )
+        chroma_reasons = list(source_chroma_cleanup.get("reasons", [])) + list(
+            prepared_chroma_audit.get("reasons", [])
+        )
+        chroma_hygiene = {
+            "schema": "scene_dna_alpha_chroma_hygiene_provenance_v2",
+            "ok": bool(source_chroma_cleanup.get("ok", True))
+            and bool(prepared_chroma_audit.get("ok", True)),
+            "background_rgb": background_rgb,
+            "source_cleanup": source_chroma_cleanup,
+            "prepared_audit": prepared_chroma_audit,
+            "final_hidden_rgb_zeroed_pixel_count": final_hidden_rgb_zeroed,
+            "reasons": list(dict.fromkeys(chroma_reasons)),
+        }
         alpha = rgba[:, :, 3]
         prepared = Path(self.args.output_dir) / "reference_rgba" / f"{job_id}.png"
         prepared.parent.mkdir(parents=True, exist_ok=True)
@@ -754,6 +1730,15 @@ class Trellis2BridgeRuntime:
         Image.fromarray(alpha, mode="L").save(mask_path)
         foreground = float(np.count_nonzero(alpha > 16)) / float(alpha.size)
         quality = self._alpha_quality_report(rgba, object_text)
+        quality["chroma_spill_hygiene"] = chroma_hygiene
+        if not bool(chroma_hygiene.get("ok", True)):
+            quality["ok"] = False
+            quality["reasons"] = list(quality.get("reasons", [])) + list(
+                chroma_hygiene.get("reasons", [])
+            )
+            quality["score"] = round(
+                max(-1.0, float(quality.get("score", 0.0)) - 0.65), 4
+            )
         metadata = {
             "source_image_path": str(image_path),
             "prepared_image_path": str(prepared),
@@ -1115,16 +2100,25 @@ class Trellis2BridgeRuntime:
         output_glb = output_dir / f"{job_id}.glb"
         metadata_path = output_dir / f"{job_id}.json"
 
-        pipeline, torch, o_voxel = self._pipeline_instance()
         reference_attempts: list[dict[str, Any]] = []
         selected_attempt: dict[str, Any] | None = None
+        scene_dna_candidate_selection: dict[str, Any] | None = None
         last_error: str | None = None
         object_text = str(payload.get("input_text") or payload.get("prompt") or "").strip()
+        collect_scene_dna_candidates = (
+            self._scene_dna_payload(payload) is not None
+            and self._scene_dna_candidate_count(payload) > 1
+        )
         for candidate in self._reference_candidates_for_payload(payload, job_id):
             reference_job_id = str(candidate["reference_job_id"])
             source_image_path = Path(candidate["source_image_path"])
             try:
-                image_path = self._prepare_reference_rgba(source_image_path, reference_job_id, pipeline, object_text)
+                image_path = self._prepare_reference_rgba(
+                    source_image_path,
+                    reference_job_id,
+                    None,
+                    object_text,
+                )
                 metadata = self._read_alpha_metadata(reference_job_id)
                 attempt_report = {
                     **candidate,
@@ -1135,8 +2129,10 @@ class Trellis2BridgeRuntime:
                 }
                 reference_attempts.append(attempt_report)
                 if attempt_report["alpha_quality_ok"]:
-                    selected_attempt = attempt_report
-                    break
+                    if not collect_scene_dna_candidates:
+                        selected_attempt = attempt_report
+                        break
+                    continue
                 quality = metadata.get("alpha_quality", {})
                 print(
                     f"[trellis2] alpha quality failed for {reference_job_id}: "
@@ -1154,7 +2150,11 @@ class Trellis2BridgeRuntime:
                 )
                 print(f"[trellis2] reference preparation failed for {reference_job_id}: {exc}", flush=True)
 
-        if selected_attempt is None:
+        if collect_scene_dna_candidates:
+            selected_attempt, scene_dna_candidate_selection = (
+                self._select_scene_dna_reference_attempt(reference_attempts, payload)
+            )
+        elif selected_attempt is None:
             usable_attempts = [a for a in reference_attempts if a.get("prepared_image_path")]
             if not usable_attempts:
                 raise RuntimeError(last_error or "No usable reference image was prepared")
@@ -1187,12 +2187,50 @@ class Trellis2BridgeRuntime:
                 flush=True,
             )
 
+        if bool(payload.get("candidate_only", False)):
+            metadata_path.write_text(
+                json.dumps(
+                    {
+                        "schema": "scene_dna_candidate_batch_result_v1",
+                        "job_id": job_id,
+                        "status": "candidate_batch_done",
+                        "candidate_only": True,
+                        "input_text": payload.get("input_text"),
+                        "seed": int(payload.get("seed", 1)),
+                        "reference_attempts": reference_attempts,
+                        "selected_reference_job_id": selected_attempt.get(
+                            "reference_job_id"
+                        ),
+                        "reference_image_path": selected_attempt.get(
+                            "prepared_image_path"
+                        ),
+                        "scene_dna_candidate_selection": scene_dna_candidate_selection,
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+            return metadata_path
+
         source_image_path = Path(str(selected_attempt["source_image_path"]))
         image_path = Path(str(selected_attempt["prepared_image_path"]))
+        pipeline, torch, o_voxel = self._pipeline_instance()
         seed = int(payload.get("seed", 1))
         requested_pipeline_type = str(payload.get("pipeline_type") or self.args.pipeline_type)
-        preprocess_image = bool(payload.get("preprocess_image", self.args.trellis_preprocess_image))
-        image = Image.open(image_path).convert("RGBA")
+        requested_preprocess_image = bool(
+            payload.get("preprocess_image", self.args.trellis_preprocess_image)
+        )
+        source_image = Image.open(image_path)
+        source_has_transparency = bool(
+            source_image.mode == "RGBA"
+            and np.any(np.asarray(source_image, dtype=np.uint8)[:, :, 3] < 250)
+        )
+        # TRELLIS preprocessing uses an existing alpha channel directly, crops to
+        # the object, and multiplies RGB by alpha. Skipping it on our prepared
+        # transparent references makes the hidden cyan/pink RGB backdrop become a
+        # large reconstructed plane. Force the safe alpha-aware path in that case.
+        preprocess_image = bool(requested_preprocess_image or source_has_transparency)
+        image = source_image.convert("RGBA")
         pipeline_run_attempts: list[dict[str, Any]] = []
         mesh = None
         pipeline_type = requested_pipeline_type
@@ -1258,10 +2296,13 @@ class Trellis2BridgeRuntime:
                                 "requested_pipeline_type": requested_pipeline_type,
                                 "pipeline_type": candidate_pipeline_type,
                                 "preprocess_image": preprocess_image,
+                                "requested_preprocess_image": requested_preprocess_image,
+                                "source_has_transparency": source_has_transparency,
                                 "source_image_path": str(source_image_path),
                                 "reference_image_path": str(image_path),
                                 "reference_attempts": reference_attempts,
                                 "selected_reference_job_id": selected_attempt.get("reference_job_id"),
+                                "scene_dna_candidate_selection": scene_dna_candidate_selection,
                                 "alpha_quality_ok": selected_attempt.get("alpha_quality_ok"),
                                 "pipeline_run_attempts": pipeline_run_attempts,
                                 "glb_path": None,
@@ -1293,10 +2334,13 @@ class Trellis2BridgeRuntime:
                         "requested_pipeline_type": requested_pipeline_type,
                         "pipeline_type": pipeline_type,
                         "preprocess_image": preprocess_image,
+                        "requested_preprocess_image": requested_preprocess_image,
+                        "source_has_transparency": source_has_transparency,
                         "source_image_path": str(source_image_path),
                         "reference_image_path": str(image_path),
                         "reference_attempts": reference_attempts,
                         "selected_reference_job_id": selected_attempt.get("reference_job_id"),
+                        "scene_dna_candidate_selection": scene_dna_candidate_selection,
                         "alpha_quality_ok": selected_attempt.get("alpha_quality_ok"),
                         "pipeline_run_attempts": pipeline_run_attempts,
                         "postprocess_attempts": postprocess_attempts,
@@ -1321,11 +2365,14 @@ class Trellis2BridgeRuntime:
                     "requested_pipeline_type": requested_pipeline_type,
                     "pipeline_type": pipeline_type,
                     "preprocess_image": preprocess_image,
+                    "requested_preprocess_image": requested_preprocess_image,
+                    "source_has_transparency": source_has_transparency,
                     "glb_webp": glb_webp,
                     "source_image_path": str(source_image_path),
                     "reference_image_path": str(image_path),
                     "reference_attempts": reference_attempts,
                     "selected_reference_job_id": selected_attempt.get("reference_job_id"),
+                    "scene_dna_candidate_selection": scene_dna_candidate_selection,
                     "alpha_quality_ok": selected_attempt.get("alpha_quality_ok"),
                     "pipeline_run_attempts": pipeline_run_attempts,
                     "postprocess_attempts": postprocess_attempts,
@@ -1345,8 +2392,48 @@ def json_bytes(payload: dict[str, Any]) -> bytes:
 
 
 def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
+    metadata_delivery_lock = threading.Lock()
+    metadata_delivery_count = 0
+    recycle_pending = threading.Event()
+
+    def schedule_process_recycle_after_metadata_delivery() -> None:
+        """Optionally recycle only after the client has fetched job metadata.
+
+        Repeatedly unloading and rebuilding the full TRELLIS pipeline in one
+        cgroup can accumulate reclaim pressure even when Python references and
+        CUDA caches have been released.  The opt-in process boundary gives the
+        next candidate a fresh cgroup while preserving the HTTP contract: both
+        the GLB and metadata have already been delivered before exit is queued.
+        A supervising service must be configured to restart the process.
+        """
+
+        nonlocal metadata_delivery_count
+        limit = int(getattr(runtime.args, "exit_after_metadata_responses", 0))
+        if limit <= 0:
+            return
+        with metadata_delivery_lock:
+            metadata_delivery_count += 1
+            should_exit = metadata_delivery_count >= limit
+        if not should_exit:
+            return
+        # Close the admission gate before queuing the exit.  Without this,
+        # a fast client can submit the next job during the short grace period;
+        # that in-memory job id disappears when the supervised process restarts.
+        recycle_pending.set()
+        print(
+            "[trellis2] scheduling clean process recycle after metadata delivery",
+            flush=True,
+        )
+        timer = threading.Timer(1.5, os._exit, args=(0,))
+        timer.daemon = True
+        timer.start()
+
     class Handler(BaseHTTPRequestHandler):
         server_version = "SAGETrellis2Bridge/0.1"
+        recycle_pending_event = recycle_pending
+        schedule_process_recycle_for_test = staticmethod(
+            schedule_process_recycle_after_metadata_delivery
+        )
 
         def _send_json(self, status: int, payload: dict[str, Any]) -> None:
             body = json_bytes(payload)
@@ -1408,6 +2495,7 @@ def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
                     self._send_json(202 if job.get("status") == "processing" else 404, {"error": "metadata not ready"})
                     return
                 self._send_file(metadata_path, "application/json")
+                schedule_process_recycle_after_metadata_delivery()
                 return
             if parsed.path.startswith("/job/"):
                 job_id = parsed.path.rsplit("/", 1)[-1]
@@ -1416,7 +2504,10 @@ def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
                     self._send_json(404, {"error": "job not found"})
                     return
                 if job.get("status") == "done":
-                    self._send_file(Path(str(job["glb_path"])), "model/gltf-binary")
+                    self._send_file(
+                        Path(str(job["glb_path"])),
+                        str(job.get("content_type") or "model/gltf-binary"),
+                    )
                     return
                 if job.get("status") == "failed":
                     self._send_json(
@@ -1436,6 +2527,15 @@ def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
             if parsed.path != "/generate":
                 self._send_json(404, {"error": "not found"})
                 return
+            if recycle_pending.is_set():
+                self._send_json(
+                    503,
+                    {
+                        "error": "bridge process is draining before supervised restart",
+                        "retryable": True,
+                    },
+                )
+                return
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 payload = json.loads(self.rfile.read(length).decode("utf-8") or "{}")
@@ -1445,10 +2545,16 @@ def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
                     try:
                         glb_path = runtime.generate(payload, job_id)
                         metadata_path = Path(runtime.args.output_dir) / f"{job_id}.json"
+                        content_type = (
+                            "application/json"
+                            if glb_path.suffix.lower() == ".json"
+                            else "model/gltf-binary"
+                        )
                         jobs.update(
                             job_id,
                             status="done",
                             glb_path=str(glb_path),
+                            content_type=content_type,
                             metadata_path=str(metadata_path),
                             completed_at=time.time(),
                         )
@@ -1492,13 +2598,31 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", default="/data/xy/SAGE_repro/trellis2_bridge")
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--pipeline-type", default="1024_cascade", choices=["512", "1024", "1024_cascade", "1536_cascade"])
+    parser.add_argument(
+        "--trellis-low-vram",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "Override the pipeline low-VRAM policy. --no-trellis-low-vram "
+            "moves the selected TRELLIS models to the target device after load, "
+            "reducing host RSS on GPUs with sufficient VRAM."
+        ),
+    )
     parser.add_argument("--trellis-preprocess-image", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--flux-width", type=int, default=768)
     parser.add_argument("--flux-height", type=int, default=768)
     parser.add_argument("--flux-steps", type=int)
     parser.add_argument("--flux-guidance-scale", type=float)
     parser.add_argument("--flux-max-sequence-length", type=int)
-    parser.add_argument("--flux-background-mode", choices=["contrast", "gray", "white"], default="contrast")
+    parser.add_argument(
+        "--flux-background-mode",
+        choices=["contrast", "gray", "white"],
+        default="gray",
+        help=(
+            "Background used for generated isolated references. Neutral gray is "
+            "the fair/default path; saturated contrast colors are diagnostic-only."
+        ),
+    )
     parser.add_argument("--flux-retry-count", type=int, default=2)
     parser.add_argument("--flux-timeout", type=float, default=600.0)
     parser.add_argument("--sparse-steps", type=int, default=12)
@@ -1534,7 +2658,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--white-base-auto-repair", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--white-base-bottom-start-ratio", type=float, default=0.58)
     parser.add_argument("--white-base-top-slack-ratio", type=float, default=0.035)
-    parser.add_argument("--white-base-min-width-ratio", type=float, default=0.22)
+    parser.add_argument("--white-base-min-width-ratio", type=float, default=0.50)
     parser.add_argument("--white-base-max-height-ratio", type=float, default=0.45)
     parser.add_argument("--white-base-bedlike-max-height-ratio", type=float, default=0.20)
     parser.add_argument("--white-base-min-aspect-ratio", type=float, default=1.55)
@@ -1543,12 +2667,104 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--white-base-value-threshold", type=float, default=170.0)
     parser.add_argument("--white-base-rgb-delta-threshold", type=float, default=52.0)
     parser.add_argument("--white-base-score-penalty", type=float, default=0.65)
+    parser.add_argument("--white-base-support-band-height-ratio", type=float, default=0.04)
+    parser.add_argument("--white-base-max-support-occupancy-ratio", type=float, default=0.55)
     parser.add_argument("--white-base-repair-start-ratio", type=float, default=0.64)
     parser.add_argument("--white-base-repair-min-row-width-ratio", type=float, default=0.22)
     parser.add_argument("--white-base-repair-plant-min-row-width-ratio", type=float, default=0.38)
     parser.add_argument("--white-base-repair-plant-center-keep-width-ratio", type=float, default=0.56)
     parser.add_argument("--white-base-repair-min-area-ratio", type=float, default=0.001)
     parser.add_argument("--white-base-repair-max-passes", type=int, default=3)
+    parser.add_argument(
+        "--white-base-repair-max-removed-foreground-fraction",
+        type=float,
+        default=0.35,
+    )
+    parser.add_argument(
+        "--white-base-repair-max-upper-removed-fraction",
+        type=float,
+        default=0.005,
+    )
+    parser.add_argument(
+        "--alpha-max-visible-chroma-spill-fraction",
+        type=float,
+        default=0.12,
+    )
+    parser.add_argument(
+        "--alpha-max-chroma-cleanup-removed-fraction",
+        type=float,
+        default=0.12,
+    )
+    parser.add_argument(
+        "--scene-dna-form-scoring",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument(
+        "--scene-dna-semantic-scoring",
+        choices=["off", "optional", "required"],
+        default="off",
+    )
+    parser.add_argument(
+        "--scene-dna-semantic-model",
+        default="google/siglip2-base-patch16-naflex",
+    )
+    parser.add_argument("--scene-dna-semantic-device", default="cpu")
+    parser.add_argument("--scene-dna-anchor-manifest")
+    parser.add_argument(
+        "--scene-dna-anchor-model",
+        default="facebook/dinov3-vitl16-pretrain-lvd1689m",
+    )
+    parser.add_argument("--scene-dna-anchor-device", default="cpu")
+    parser.add_argument("--scene-dna-uncertainty-margin", type=float, default=0.03)
+    parser.add_argument(
+        "--scene-dna-form-improvement-guard",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help=(
+            "Development-only conservative selector: replace the legacy candidate "
+            "only when the SceneDNA candidate has a measured form-score gain."
+        ),
+    )
+    parser.add_argument(
+        "--scene-dna-vnext-selector",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help=(
+            "Development-only category-independent selector that balances 2D-to-3D "
+            "generability, part completeness, image hygiene, and current style evidence."
+        ),
+    )
+    parser.add_argument(
+        "--scene-dna-minimum-form-improvement",
+        type=float,
+        default=0.08,
+        help="Minimum opt-in form-score delta over the legacy candidate.",
+    )
+    parser.add_argument(
+        "--scene-dna-unload-scorers",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument(
+        "--scene-dna-release-pipeline-before-scoring",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help=(
+            "Opt in to dropping a cached TRELLIS pipeline before SceneDNA "
+            "reference scoring so scorer and generator host-memory peaks do "
+            "not overlap; the pipeline is rebuilt before 3D generation."
+        ),
+    )
+    parser.add_argument(
+        "--exit-after-metadata-responses",
+        type=int,
+        default=0,
+        help=(
+            "Opt in to exiting cleanly after this many completed-job metadata "
+            "responses. Use only under a restart supervisor; zero disables it."
+        ),
+    )
     parser.add_argument("--remesh", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--remesh-band", type=int, default=1)
     parser.add_argument("--remesh-project", type=int, default=0)

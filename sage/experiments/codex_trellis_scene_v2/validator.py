@@ -396,10 +396,12 @@ def walkway_exists(plan: dict[str, Any], floor_objects: list[dict[str, Any]]) ->
 
 
 def _facing_violations(
-    objects: list[dict[str, Any]], relations: list[Any],
+    objects: list[dict[str, Any]], relations: list[Any], room: dict[str, Any],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     violations: list[dict[str, Any]] = []
-    wall_statuses = [status for obj in objects if (status := evaluate_facing(obj))]
+    wall_statuses = [
+        status for obj in objects if (status := evaluate_facing(obj, room))
+    ]
     relation_statuses = evaluate_relation_facing(objects, relations)
     statuses = wall_statuses + relation_statuses
     for status in statuses:
@@ -803,7 +805,7 @@ def validate_layout(plan: dict[str, Any]) -> dict[str, Any]:
     )
     violations.extend(architecture_violations)
     facing_violations, facing_metrics = _facing_violations(
-        objects, list(plan.get("relations", []))
+        objects, list(plan.get("relations", [])), room
     )
     violations.extend(facing_violations)
     spatial_relation_violations, spatial_relation_metrics = (

@@ -40,6 +40,16 @@ RELATION_VOCABULARY: dict[str, dict[str, Any]] = {
         "default_strength": "hard",
         "directed": True,
     },
+    "partially_inserted": {
+        "constraint_class": "free_space",
+        "default_strength": "hard",
+        "directed": True,
+    },
+    "contact": {
+        "constraint_class": "contact",
+        "default_strength": "hard",
+        "directed": True,
+    },
     "against_wall": {
         "constraint_class": "contact",
         "default_strength": "hard",

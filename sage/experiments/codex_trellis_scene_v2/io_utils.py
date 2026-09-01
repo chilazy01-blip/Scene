@@ -77,10 +77,11 @@ def run_codex_json(
         "read-only",
         "--output-last-message",
         str(response_path),
-        prompt,
+        "-",
     ]
     proc = subprocess.run(
         cmd,
+        input=prompt,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -142,11 +143,11 @@ def run_codex_image_json(
         str(response_path),
         "--image",
         str(image_path),
-        "--",
-        prompt,
+        "-",
     ]
     proc = subprocess.run(
         cmd,
+        input=prompt,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,

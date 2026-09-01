@@ -21,6 +21,7 @@ SUPPORTED_PROXY_TYPES = {"voxel_sdf"}
 SUPPORTED_SUPPORT_SHAPES = {"planar_rectangle"}
 SUPPORTED_CONTAINMENT_SHAPES = {"box"}
 SUPPORTED_FREE_SPACE_SHAPES = {"box"}
+SUPPORTED_ANCHOR_SHAPES = {"point", "box"}
 
 
 def _positive_dimensions(value: Any) -> dict[str, float] | None:
@@ -251,6 +252,18 @@ def _validate_free_space_volumes(
             > 1e-4
         ):
             errors.append(f"{prefix}.entry_axis must be a unit 3-vector")
+        minimum_depth = float(volume.get("minimum_entry_depth_m", 0.0) or 0.0)
+        if minimum_depth < 0.0:
+            errors.append(f"{prefix}.minimum_entry_depth_m must be non-negative")
+        elif entry_axis is not None and minimum is not None and maximum is not None:
+            projected_span = sum(
+                abs(entry_axis[axis]) * (maximum[axis] - minimum[axis])
+                for axis in range(3)
+            )
+            if minimum_depth > projected_span + 1e-9:
+                errors.append(
+                    f"{prefix}.minimum_entry_depth_m exceeds the volume span"
+                )
         overlap = float(volume.get("minimum_footprint_overlap", 0.0) or 0.0)
         if not 0.0 < overlap <= 1.0:
             errors.append(
@@ -282,6 +295,117 @@ def _validate_free_space_volumes(
             errors.append(
                 f"{prefix}.entry_pose.yaw_tolerance_degrees must be in (0, 180]"
             )
+
+
+def _validate_contact_surfaces(
+    capability: dict[str, Any], errors: list[str]
+) -> None:
+    surfaces = capability.get("contact_surfaces", [])
+    if not isinstance(surfaces, list):
+        errors.append("contact_surfaces must be a list")
+        return
+    seen: set[str] = set()
+    for index, surface in enumerate(surfaces):
+        prefix = f"contact_surfaces[{index}]"
+        if not isinstance(surface, dict):
+            errors.append(f"{prefix} must be an object")
+            continue
+        surface_id = str(surface.get("id") or "")
+        if not surface_id:
+            errors.append(f"{prefix}.id must be non-empty")
+        elif surface_id in seen:
+            errors.append(f"duplicate contact surface id: {surface_id}")
+        seen.add(surface_id)
+        if surface.get("shape") != "planar_rectangle":
+            errors.append(f"{prefix}.shape must be planar_rectangle")
+        vectors = {
+            "center_m": _vector(surface.get("center_m"), 3),
+            "normal": _vector(surface.get("normal"), 3),
+            "u_axis": _vector(surface.get("u_axis"), 3),
+            "v_axis": _vector(surface.get("v_axis"), 3),
+        }
+        if any(value is None for value in vectors.values()):
+            errors.append(f"{prefix} must define center_m, normal, u_axis, and v_axis")
+        elif abs(
+            math.sqrt(sum(item * item for item in vectors["normal"] or [])) - 1.0
+        ) > 1e-4:
+            errors.append(f"{prefix}.normal must be a unit 3-vector")
+        half_extents = _vector(surface.get("half_extents_m"), 2)
+        if half_extents is None or any(value <= 0.0 for value in half_extents):
+            errors.append(f"{prefix}.half_extents_m must contain two positive values")
+        if float(surface.get("contact_tolerance_m", 0.0) or 0.0) <= 0.0:
+            errors.append(f"{prefix}.contact_tolerance_m must be positive")
+
+
+def _validate_semantic_anchors(
+    capability: dict[str, Any],
+    dimensions: dict[str, float] | None,
+    errors: list[str],
+) -> None:
+    anchors = capability.get("semantic_anchors", [])
+    if not isinstance(anchors, list):
+        errors.append("semantic_anchors must be a list")
+        return
+    seen: set[str] = set()
+    for index, anchor in enumerate(anchors):
+        prefix = f"semantic_anchors[{index}]"
+        if not isinstance(anchor, dict):
+            errors.append(f"{prefix} must be an object")
+            continue
+        anchor_id = str(anchor.get("id") or "")
+        if not anchor_id:
+            errors.append(f"{prefix}.id must be non-empty")
+        elif anchor_id in seen:
+            errors.append(f"duplicate semantic anchor id: {anchor_id}")
+        seen.add(anchor_id)
+        shape = anchor.get("shape")
+        if shape not in SUPPORTED_ANCHOR_SHAPES:
+            errors.append(f"{prefix}.shape must be point or box")
+        if shape == "point":
+            point = _vector(anchor.get("point_m"), 3)
+            if point is None:
+                errors.append(f"{prefix}.point_m must be a 3-vector")
+            elif dimensions:
+                lower = (-dimensions["width"] / 2, -dimensions["length"] / 2, 0.0)
+                upper = (dimensions["width"] / 2, dimensions["length"] / 2, dimensions["height"])
+                if any(
+                    point[axis] < lower[axis] - 1e-6
+                    or point[axis] > upper[axis] + 1e-6
+                    for axis in range(3)
+                ):
+                    errors.append(f"{prefix}.point_m lies outside canonical dimensions")
+        if shape == "box":
+            minimum = _vector(anchor.get("min_m"), 3)
+            maximum = _vector(anchor.get("max_m"), 3)
+            if minimum is None or maximum is None:
+                errors.append(f"{prefix}.min_m and max_m must be 3-vectors")
+            elif any(minimum[axis] >= maximum[axis] for axis in range(3)):
+                errors.append(f"{prefix}.min_m must be smaller than max_m")
+
+
+def _validate_collision_proxy_levels(
+    capability: dict[str, Any], errors: list[str]
+) -> None:
+    levels = capability.get("collision_proxy_levels", [])
+    if not isinstance(levels, list):
+        errors.append("collision_proxy_levels must be a list")
+        return
+    seen: set[str] = set()
+    for index, level in enumerate(levels):
+        prefix = f"collision_proxy_levels[{index}]"
+        if not isinstance(level, dict):
+            errors.append(f"{prefix} must be an object")
+            continue
+        name = str(level.get("name") or "")
+        if not name:
+            errors.append(f"{prefix}.name must be non-empty")
+        elif name in seen:
+            errors.append(f"duplicate collision proxy level name: {name}")
+        seen.add(name)
+        if float(level.get("pitch_m", 0.0) or 0.0) <= 0.0:
+            errors.append(f"{prefix}.pitch_m must be positive")
+        if float(level.get("max_discretization_error_m", 0.0) or 0.0) <= 0.0:
+            errors.append(f"{prefix}.max_discretization_error_m must be positive")
 
 
 def validate_asset_capability(capability: Any) -> dict[str, Any]:
@@ -318,6 +442,9 @@ def validate_asset_capability(capability: Any) -> dict[str, Any]:
     _validate_support_surfaces(capability, dimensions, errors)
     _validate_containment_volumes(capability, dimensions, errors)
     _validate_free_space_volumes(capability, dimensions, errors)
+    _validate_contact_surfaces(capability, errors)
+    _validate_semantic_anchors(capability, dimensions, errors)
+    _validate_collision_proxy_levels(capability, errors)
 
     if not capability.get("support_surfaces") and not capability.get(
         "containment_volumes"
@@ -408,3 +535,43 @@ def require_free_space(
             f"{free_space_id!r}"
         )
     return volume
+
+
+def containment_volume_index(
+    capability: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
+    return {
+        str(volume["id"]): volume
+        for volume in capability.get("containment_volumes", [])
+        if isinstance(volume, dict) and volume.get("id")
+    }
+
+
+def support_surface_index(
+    capability: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
+    return {
+        str(surface["id"]): surface
+        for surface in capability.get("support_surfaces", [])
+        if isinstance(surface, dict) and surface.get("id")
+    }
+
+
+def contact_surface_index(
+    capability: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
+    return {
+        str(surface["id"]): surface
+        for surface in capability.get("contact_surfaces", [])
+        if isinstance(surface, dict) and surface.get("id")
+    }
+
+
+def semantic_anchor_index(
+    capability: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
+    return {
+        str(anchor["id"]): anchor
+        for anchor in capability.get("semantic_anchors", [])
+        if isinstance(anchor, dict) and anchor.get("id")
+    }

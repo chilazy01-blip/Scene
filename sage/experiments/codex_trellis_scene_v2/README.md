@@ -1,5 +1,7 @@
 # Codex + TRELLIS.2 text-to-scene V2
 
+SceneDNA 的约束感知混合资产协同闭环已接入资产解析：审核资产检索与缺失资产生成共享同一份风格合同，风格只能在尺寸、能力、朝向、手性和几何硬门禁之后参与软重排；缺失资产会执行四张 2D 候选的 SigLIP2 语义、类别无关形态、DINOv3 审核锚点与局部外观融合，评分不确定时以相同 seed 晋级两个 TRELLIS.2 候选，再做 Blender 四视角审核和最多两轮有界重生成。alpha-safe v3 的 3 名独立评审、27 个独立 case 已完成：语义/形态偏好率为 `0.508025/0.524691`，主要指标 `0.516358`，未通过预注册门槛；默认替换继续关闭。失败归因表明形态差值与人工判断正相关，而当前零样本语义差值明显反向。默认关闭的类别无关形态改善门现已完成全新 seed 的第二轮候选生成，并冻结为 18 个独立 case + 2 个隐藏重复题的中文离线问卷；尚未收集新人工标签。设计、产物和诚实验收边界见 [SCENE_DNA.md](SCENE_DNA.md)，人工实验步骤见 [BLIND_REVIEW_PROTOCOL.md](BLIND_REVIEW_PROTOCOL.md)。
+
 This directory is an isolated experimental pipeline. It does not modify or replace:
 
 - `sage/scripts/run_codex_prompt_scene.py`
@@ -20,6 +22,18 @@ prompt
   -> optional Codex repair
   -> optional Blender assembly and MuJoCo proxy check
 ```
+
+当前完整回归数字以 `AGENT.md` 的最后一次全量运行记录为准。
+
+## Detail review and repair agent (opt-in)
+
+新增的细节审查闭环以现有 GLB 为冻结对照，按“四视角重新取证 -> 可解释问题清单 -> 有界局部
+修复/单资产重生成 -> 几何、语义、风格回归门 -> 提交或回滚”运行。它不重生成整个场景、不覆盖
+当前主链，也不把自动分数下降的提案当作成功。后续局部 face-ID 执行器已在开发回放将提交从
+0/2 提升到 1/2；合成开发/留出各 6/6 全部通过。独立自然 TRELLIS v2 pilot 在 3 类 × 2 seed 中
+完成 6/6，检测 3 个候选，提交 2 个四视图植物地台修复、对弱证据衣柜安全回退，提交硬回归 0。
+自然正例仍只有一个类别，功能继续 opt-in，不能据此宣称跨类别泛化或替换默认链。
+架构、复现命令、真实指标与下一阶段边界见 [DETAIL_REPAIR_AGENT.md](DETAIL_REPAIR_AGENT.md)。
 
 ## Typed scene graph
 
@@ -134,6 +148,79 @@ pipeline stages:
   audited support surfaces and relation-aware voxel-SDF queries on real desk/mug/chair assets;
 - `reference_soft_prior.py` compares a text-only plan with an optional generated reference image
   observation without changing the ordinary text path.
+
+## Generic relation geometry (opt-in)
+
+The second geometry experiment no longer selects collision logic from category pairs.  It compiles
+typed relations into asset-declared geometry primitives:
+
+- `supported_by` uses a bounded support plane;
+- `contained_in` uses a containment volume;
+- `tucked_under` and `partially_inserted` use a free-space volume, entry direction, functional
+  source anchor, and minimum entry depth;
+- `against` and `contact` use a bounded contact plane;
+- every relation adds bilateral solid non-penetration.
+
+The executable contract is in `relation_geometry.py`; bounded pose generation is in
+`relation_solver.py`; `relation_geometry_bridge.py` audits multiple relation types through one
+opt-in interface.  Accepted poses receive hash-bound certificates, and conservative mode rejects a
+missing collision direction.  The old single-relation reference bridge remains unchanged for
+reproducibility.
+
+`multilevel_proxy.py` implements component-aware coarse/fine voxel proxies.  Watertight connected
+parts are filled separately so an open shelf or desk bay is not sealed by a whole-asset fill.  Very
+fragmented TRELLIS meshes fall back to a global surface shell when the component budget is exceeded;
+the fallback and approximation error are explicit in metadata.  `mesh_verifier.py` provides the
+final adaptive triangle-intersection check.  It reports `exact_predicates=false`: this clean-room
+Python implementation borrows OpenMeshCraft's broad/narrow-phase separation but is not a substitute
+for its exact arithmetic.
+
+Compile real proxies with the offline Python command:
+
+```bash
+/data/wsj/anaconda3/envs/tree-sage-flow2/bin/python \
+  -m sage.experiments.codex_trellis_scene_v2.compile_collision_proxies \
+  --capability-registry \
+    sage/experiments/codex_trellis_scene_v2/capabilities/pilot_desk_chair_v1.json \
+  --asset-root /data/wsj/main/scene_runs/codex_trellis_v2/assets_curated_v1 \
+  --output-dir /data/wsj/main/scene_runs/codex_trellis_v2/relation_geometry_v1/proxies \
+  --levels coarse:0.04:1,fine:0.02:1
+```
+
+`propose_capabilities.py` proposes support/contact surfaces, open free-space boxes, entry-axis
+candidates and generic anchors from a normalized asset and its fine proxy.  Proposals always contain
+`review_required=true`, `approved=false`, and `automatic_approval_forbidden=true`; geometry heuristics
+cannot silently become production semantics.
+
+The design, acceptance matrix, current real-asset evidence and known limitations are recorded in
+`GEOMETRY_RELATIONS.md` and `RELATION_GEOMETRY_VALIDATION.md`.
+
+Internal relation solving uses a right-handed Z-up frame.  A scene exported directly by `trimesh`
+must not be written to glTF without an axis-boundary transform: glTF consumers interpret the file as
+Y-up, and Blender would rotate a floor into a wall.  `gltf_export.py` applies the required -90 degree
+X rotation to an export copy while leaving the solver scene unchanged.  Its conversion CLI is:
+
+```bash
+/data/wsj/anaconda3/envs/tree-sage-flow2/bin/python \
+  -m sage.experiments.codex_trellis_scene_v2.gltf_export \
+  --input-glb /path/to/incorrect-direct-z-up.glb \
+  --output-glb /path/to/fixed-y-up.glb \
+  --report /path/to/axis_export_report.json
+```
+
+`sage/scripts/blender_render_sage_diagnostics.py` now performs a Blender-side Z-up guard whenever a
+named floor is present.  A vertical floor stops the command with a nonzero exit code; successful
+manifests include the measured world extents under `axis_validation`.
+
+`relation_geometry_bridge.reconcile_layout_validation_with_geometry_audit` can supersede a legacy
+`floor_collision` AABB result for an intentional containment/insertion pair.  The waiver is narrow:
+the exact source/target pair must have an accepted bilateral certificate with zero deep samples and
+a completed triangle check reporting no surface intersection.  It never removes unrelated layout,
+architecture, clearance, support, or collision failures.
+
+Large Codex stages are passed through stdin rather than as one process argument.  This keeps complex
+typed-graph layout requests above Linux's per-argument size limit reproducible while preserving the
+same `request.txt`, `response.txt`, stdout, and stderr artifacts.
 
 ## Generated reference as a soft layout prior
 
@@ -308,6 +395,29 @@ and local appearance terms become an integrated component requirement on the bed
 pillow object is sent through asset resolution, generation, or layout. If there is no unique bed
 parent, pillows remain standalone so the ambiguity stays visible instead of being guessed away.
 
+Explicit chiral pairs such as slippers use a separate handed-pair contract. The members remain two
+independent instances with stable `left_member` and `right_member` roles. Asset resolution first
+looks for approved entries sharing one `asset_family_id` with complementary `pair_role` metadata;
+when that bundle is unavailable, it reuses one source GLB and marks exactly one member for a baked
+canonical-local lateral reflection. The lateral axis is derived as perpendicular to the audited
+asset canonical front, so changing handedness does not reverse the functional heading. Blender
+performs the reflection in mesh vertices before world yaw and
+placement, then records the baked axis in the exported node extras. An unreflected same-asset pair is
+a hard validation failure rather than a warning.
+
+Handedness is anatomical, not image-relative. A filename or source ID such as `left_slipper` may
+mean only camera-left and is not role evidence. A mirrored fallback therefore needs an approved
+source `pair_role`, `pair_role_semantics=anatomical_wearer`, canonical front, and local medial axis.
+Resolution records the source role separately from the requested member role; validation applies
+the same reflection and yaw to the medial axis and requires both medial sides to point toward the
+pair center. Unknown source roles, incorrect reflection parity, and outward-facing medial axes are
+hard failures.
+
+For a pair at the functional front of an anchor, `heading_rule=anchor_front` makes the anchor's
+canonical front the pair heading and its perpendicular axis the side-by-side axis. Thus slippers at
+the foot of a rotated bed stay parallel, point away from the bed, and preserve local left/right
+ordering instead of inheriting the first slipper's arbitrary initial yaw.
+
 Asset resolution writes `component_resolution.json`. A curated bed with manifest
 `included_components` metadata can be verified; an older curated bed without that metadata is
 explicitly marked `assumed_satisfied_by_composite_asset`. A generated or planned bed receives the
@@ -367,6 +477,7 @@ Implemented hard checks:
 - required default wall texture material and valid single-wall override
 - high-confidence functional fronts pointing into accessible room space
 - hard typed directional, clearance, semantic-anchor alignment, and mirror-symmetry constraints
+- chiral-pair role, geometry-source/reflection, anchor-relative heading, and local left/right order
 
 Implemented soft checks:
 

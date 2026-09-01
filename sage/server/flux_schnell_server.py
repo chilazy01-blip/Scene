@@ -41,6 +41,10 @@ class FluxRuntime:
     def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
         self._lock = threading.Lock()
+        # The HTTP service is threaded, but one Diffusers pipeline must not be
+        # entered concurrently by overlapping jobs (for example, when a client
+        # retries during a slow cold start).
+        self._generation_lock = threading.Lock()
         self._pipe = None
         self._torch = None
 
@@ -85,15 +89,16 @@ class FluxRuntime:
         if seed is not None:
             generator = torch.Generator(device=self.args.device).manual_seed(int(seed))
 
-        image = pipe(
-            prompt=prompt,
-            width=width,
-            height=height,
-            num_inference_steps=steps,
-            guidance_scale=guidance_scale,
-            max_sequence_length=int(payload.get("max_sequence_length", self.args.max_sequence_length)),
-            generator=generator,
-        ).images[0]
+        with self._generation_lock:
+            image = pipe(
+                prompt=prompt,
+                width=width,
+                height=height,
+                num_inference_steps=steps,
+                guidance_scale=guidance_scale,
+                max_sequence_length=int(payload.get("max_sequence_length", self.args.max_sequence_length)),
+                generator=generator,
+            ).images[0]
 
         output_dir = Path(self.args.output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -233,6 +238,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--steps", type=int, default=4)
     parser.add_argument("--guidance-scale", type=float, default=0.0)
     parser.add_argument("--max-sequence-length", type=int, default=256)
+    parser.add_argument(
+        "--preload",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Load the local pipeline before accepting HTTP jobs.",
+    )
     return parser.parse_args()
 
 
@@ -244,6 +255,8 @@ def main() -> None:
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     jobs = JobStore()
     runtime = FluxRuntime(args)
+    if args.preload:
+        runtime._pipeline()
     httpd = ThreadingHTTPServer((args.host, args.port), build_handler(jobs, runtime))
     print(f"[flux] serving on http://{args.host}:{args.port}", flush=True)
     httpd.serve_forever()
