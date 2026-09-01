@@ -39832,6 +39832,13 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    if "--legacy-engine" not in sys.argv:
+        from sage.experiments.codex_trellis_scene_v2.legacy_adapter import run_legacy_cli_adapter
+
+        summary = run_legacy_cli_adapter("flow2_image", sys.argv[1:])
+        print(f"[scene-v2-adapter] wrote {summary['output_dir']}")
+        return
+    sys.argv.remove("--legacy-engine")
     args = parse_args()
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)

@@ -12,6 +12,7 @@ import re
 import shutil
 import socket
 import subprocess
+import sys
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -1418,6 +1419,13 @@ def selected_scene_prompt(args: argparse.Namespace) -> str:
 
 
 def main() -> None:
+    if "--legacy-engine" not in sys.argv:
+        from sage.experiments.codex_trellis_scene_v2.legacy_adapter import run_legacy_cli_adapter
+
+        summary = run_legacy_cli_adapter("selfmade_text", sys.argv[1:])
+        print(f"[scene-v2-adapter] wrote {summary['output_dir']}")
+        return
+    sys.argv.remove("--legacy-engine")
     parser = argparse.ArgumentParser(description="Generate a self-made scene using local Codex, Flux, and Trellis2.")
     parser.add_argument("--prompt-preset", default="office_task", choices=sorted(OFFICIAL_PROMPTS))
     parser.add_argument("--prompt")

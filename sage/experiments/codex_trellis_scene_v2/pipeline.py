@@ -11,6 +11,7 @@ from .brief import expand_prompt
 from .constraint_scopes import evaluate_constraint_scope_envelopes
 from .content_chain import content_hash, file_binding
 from .contracts import COORDINATES, stamp_document, validate_document_family, validate_layout_plan
+from .core_domain import request_from_pipeline_args
 from .delivery_status import apply_profile_defaults, evaluate_terminal_status
 from .io_utils import read_json, write_json
 from .planner import codex_layout, codex_repair_layout, rules_layout
@@ -62,6 +63,15 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         prompt = Path(args.prompt_file).read_text(encoding="utf-8").strip()
     if not prompt:
         raise ValueError("--prompt or --prompt-file is required")
+    scene_request = request_from_pipeline_args(args, prompt)
+    request_path = output_dir / "scene_request.json"
+    request_document = scene_request.as_document()
+    if resume and request_path.is_file():
+        checkpoint_request = read_json(request_path)
+        if checkpoint_request.get("content_hash") != request_document["content_hash"]:
+            raise ValueError("Resume SceneRequest does not match the interrupted run")
+    else:
+        write_json(request_path, request_document)
     selected_prompt_path = output_dir / "selected_prompt.txt"
     dag = StageDAG(output_dir / "run_dag.json")
     if resume:
@@ -72,7 +82,11 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             )
     else:
         selected_prompt_path.write_text(prompt + "\n", encoding="utf-8")
-    expand_inputs = {"prompt": prompt, "prompt_sha256": content_hash(prompt)}
+    expand_inputs = {
+        "prompt": prompt,
+        "prompt_sha256": content_hash(prompt),
+        "scene_request_hash": request_document["content_hash"],
+    }
     expand_config = {
         "room_type": args.room_type,
         "mode": str(args.expander),
@@ -515,6 +529,8 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         "resumed": resume,
         "layout_resumed": layout_resumed,
         "prompt": str(output_dir / "selected_prompt.txt"),
+        "scene_request": str(request_path),
+        "scene_request_hash": request_document["content_hash"],
         "room_type": brief["room_type"],
         "expansion": brief["expansion"],
         "architecture_plan": str(output_dir / "architecture_plan.json"),
