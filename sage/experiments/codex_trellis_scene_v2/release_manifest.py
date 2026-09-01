@@ -7,6 +7,7 @@ not merely by path.  It never serializes arbitrary environment variables.
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import os
@@ -52,7 +53,9 @@ def _run(argv: list[str], cwd: Path | None = None, timeout: int = 120) -> dict[s
         return {
             "argv": argv,
             "returncode": result.returncode,
-            "stdout": result.stdout.strip(),
+            # Git porcelain uses a leading space as part of its XY status.  Keep
+            # leading bytes intact while removing only line terminators.
+            "stdout": result.stdout.rstrip("\r\n"),
             "stderr": result.stderr.strip(),
         }
     except (OSError, subprocess.TimeoutExpired) as exc:
@@ -62,14 +65,23 @@ def _run(argv: list[str], cwd: Path | None = None, timeout: int = 120) -> dict[s
 def _git_state(repo: Path) -> dict[str, Any]:
     head = _run(["git", "rev-parse", "HEAD"], cwd=repo)
     status = _run(["git", "status", "--short"], cwd=repo)
-    diff = _run(["git", "diff", "--binary", "HEAD"], cwd=repo)
-    diff_text = diff.get("stdout", "")
+    try:
+        diff = subprocess.run(
+            ["git", "diff", "--binary", "HEAD"],
+            cwd=repo,
+            check=False,
+            capture_output=True,
+            timeout=120,
+        )
+        patch_bytes = diff.stdout if diff.returncode == 0 else b""
+    except (OSError, subprocess.TimeoutExpired):
+        patch_bytes = b""
     return {
         "path": str(repo.resolve()),
         "commit": head.get("stdout") if head.get("returncode") == 0 else None,
         "dirty": bool(status.get("stdout")),
         "status": status.get("stdout", "").splitlines(),
-        "working_tree_patch_sha256": hashlib.sha256(diff_text.encode("utf-8")).hexdigest(),
+        "working_tree_patch_sha256": hashlib.sha256(patch_bytes).hexdigest(),
     }
 
 
@@ -138,6 +150,21 @@ def build_manifest(
             modified_paths.append(candidate)
     external["modified_file_contents"] = _file_records(modified_paths, trellis_repo)
     external["modified_files_fingerprint"] = canonical_hash(external["modified_file_contents"])
+    patch_bundle = (
+        repo
+        / "sage/experiments/codex_trellis_scene_v2/release"
+        / "trellis2_75fbf018_sdpa_compat.patch.b64"
+    )
+    encoded_patch = patch_bundle.read_bytes()
+    decoded_patch = base64.b64decode(encoded_patch, validate=False)
+    external["compatibility_patch_bundle"] = {
+        "path": patch_bundle.relative_to(repo).as_posix(),
+        "base64_sha256": hashlib.sha256(encoded_patch).hexdigest(),
+        "decoded_patch_sha256": hashlib.sha256(decoded_patch).hexdigest(),
+        "decoded_bytes": len(decoded_patch),
+        "matches_current_working_tree_patch": hashlib.sha256(decoded_patch).hexdigest()
+        == external["working_tree_patch_sha256"],
+    }
 
     blender_version = _run([str(blender), "--version"], timeout=30)
     nvidia = _run(

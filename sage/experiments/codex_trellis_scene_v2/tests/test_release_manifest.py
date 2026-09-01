@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 from sage.experiments.codex_trellis_scene_v2.release_manifest import (
+    _run,
     canonical_hash,
     sha256_file,
     write_json_atomic,
@@ -27,6 +29,16 @@ class ReleaseManifestTests(unittest.TestCase):
             path = Path(temporary) / "nested" / "manifest.json"
             write_json_atomic(path, {"ok": True})
             self.assertEqual(json.loads(path.read_text(encoding="utf-8")), {"ok": True})
+
+    def test_command_capture_preserves_porcelain_leading_space(self) -> None:
+        result = _run(
+            [
+                sys.executable,
+                "-c",
+                "print(' M tracked.py')",
+            ]
+        )
+        self.assertEqual(result["stdout"], " M tracked.py")
 
 
 if __name__ == "__main__":
