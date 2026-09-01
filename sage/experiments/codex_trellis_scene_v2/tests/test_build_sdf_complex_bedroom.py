@@ -8,6 +8,10 @@ from pathlib import Path
 from unittest import mock
 
 from sage.experiments.codex_trellis_scene_v2 import build_sdf_complex_bedroom as build
+from sage.experiments.codex_trellis_scene_v2.content_chain import (
+    build_generation_contract,
+    make_artifact_certificate,
+)
 
 
 def healthy_checkpoint() -> dict[str, object]:
@@ -24,6 +28,56 @@ def healthy_checkpoint() -> dict[str, object]:
 
 
 class SdfBedroomRunnerTest(unittest.TestCase):
+    def _qa_row(self, root: Path, asset_id: str) -> dict[str, object]:
+        glb = root / f"{asset_id}.glb"
+        glb.write_bytes(f"approved:{asset_id}".encode("utf-8"))
+        sheet = root / "evidence" / f"{asset_id}.png"
+        sheet.parent.mkdir(exist_ok=True)
+        sheet.write_bytes(f"sheet:{asset_id}".encode("utf-8"))
+        views = {}
+        evidence = {"contact_sheet": sheet}
+        for view_name in ("front", "back", "left", "right"):
+            view = root / "evidence" / f"{asset_id}_{view_name}.png"
+            view.write_bytes(f"{view_name}:{asset_id}".encode("utf-8"))
+            views[view_name] = f"evidence/{asset_id}_{view_name}.png"
+            evidence[f"view_{view_name}"] = view
+        contract = build_generation_contract(
+            category="book_stack",
+            prompt=f"one isolated {asset_id}",
+            target_dimensions_m={"width": 0.5, "length": 0.2, "height": 0.3},
+            seed=42,
+            model_fingerprint="model-a",
+            rmbg_fingerprint="rmbg-a",
+            pipeline_type="512",
+            steps=12,
+            texture_size=1024,
+            decimation_target=200000,
+            preprocess_image=True,
+            code_version="commit-a",
+        )
+        rules = {
+            "renderer_binary": {"sha256": "blender-binary-a"},
+            "renderer_script": {"sha256": "turntable-script-a"},
+            "camera_contract": "turntable-4-view-v1",
+            "qa_rules_version": "trellis-multiview-v2",
+        }
+        return {
+            "asset_id": asset_id,
+            "accepted": True,
+            "glb_sha256": build.sha256_file(glb),
+            "contact_sheet": f"evidence/{asset_id}.png",
+            "contact_sheet_sha256": build.sha256_file(sheet),
+            "views": views,
+            "generation_contract": contract,
+            "qa_rules": rules,
+            "content_certificate": make_artifact_certificate(
+                glb,
+                upstream={"generation_contract": contract},
+                rules=rules,
+                evidence=evidence,
+            ),
+        }
+
     def test_geometry_assets_are_six_isolated_units(self) -> None:
         self.assertEqual(len(build.GEOMETRY_ASSET_IDS), 6)
         self.assertEqual(len(set(build.GEOMETRY_ASSET_IDS)), 6)
@@ -39,6 +93,7 @@ class SdfBedroomRunnerTest(unittest.TestCase):
             (root / "multiview_qa.json").write_text(
                 json.dumps(
                     {
+                        "schema": "codex_trellis_multiview_qa_v2",
                         "ok": True,
                         "assets": [
                             {"asset_id": asset_id, "accepted": True}
@@ -55,24 +110,9 @@ class SdfBedroomRunnerTest(unittest.TestCase):
     def test_multiview_gate_accepts_all_real_assets(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            evidence = root / "evidence"
-            evidence.mkdir()
-            rows = []
-            for asset_id in build.TRELLIS_ASSET_INDEX:
-                glb = root / f"{asset_id}.glb"
-                glb.write_bytes(f"glb:{asset_id}".encode("utf-8"))
-                sheet = evidence / f"{asset_id}.png"
-                sheet.write_bytes(f"sheet:{asset_id}".encode("utf-8"))
-                rows.append(
-                    {
-                        "asset_id": asset_id,
-                        "accepted": True,
-                        "glb_sha256": build.sha256_file(glb),
-                        "contact_sheet": f"evidence/{asset_id}.png",
-                        "contact_sheet_sha256": build.sha256_file(sheet),
-                    }
-                )
+            rows = [self._qa_row(root, asset_id) for asset_id in build.TRELLIS_ASSET_INDEX]
             payload = {
+                "schema": "codex_trellis_multiview_qa_v2",
                 "ok": True,
                 "assets": rows,
             }
@@ -84,25 +124,16 @@ class SdfBedroomRunnerTest(unittest.TestCase):
     def test_multiview_gate_rejects_glb_replaced_after_review(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            evidence = root / "evidence"
-            evidence.mkdir()
-            rows = []
-            for asset_id in build.TRELLIS_ASSET_INDEX:
-                glb = root / f"{asset_id}.glb"
-                glb.write_bytes(f"approved:{asset_id}".encode("utf-8"))
-                sheet = evidence / f"{asset_id}.png"
-                sheet.write_bytes(f"sheet:{asset_id}".encode("utf-8"))
-                rows.append(
-                    {
-                        "asset_id": asset_id,
-                        "accepted": True,
-                        "glb_sha256": build.sha256_file(glb),
-                        "contact_sheet": f"evidence/{asset_id}.png",
-                        "contact_sheet_sha256": build.sha256_file(sheet),
-                    }
-                )
+            rows = [self._qa_row(root, asset_id) for asset_id in build.TRELLIS_ASSET_INDEX]
             (root / "multiview_qa.json").write_text(
-                json.dumps({"ok": True, "assets": rows}), encoding="utf-8"
+                json.dumps(
+                    {
+                        "schema": "codex_trellis_multiview_qa_v2",
+                        "ok": True,
+                        "assets": rows,
+                    }
+                ),
+                encoding="utf-8",
             )
             changed = next(iter(build.TRELLIS_ASSET_INDEX))
             (root / f"{changed}.glb").write_bytes(b"replaced-after-review")

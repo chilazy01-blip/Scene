@@ -19,6 +19,8 @@ from .build_sdf_complex_bedroom import (
     _process_tree_rss_gib,
 )
 from .io_utils import read_json
+from .content_chain import build_generation_contract
+from .pilot_asset import PILOT_ASSET_DEFINITIONS, validate_pilot_report
 from .resource_health import append_health_checkpoint
 
 
@@ -238,7 +240,32 @@ def _pilot_command(args: argparse.Namespace, item: dict[str, Any]) -> list[str]:
         "512",
         "--decimation-target",
         "500000",
+        "--model-fingerprint",
+        str(args.trellis_model_fingerprint),
+        "--rmbg-fingerprint",
+        str(args.rmbg_model_fingerprint),
+        "--code-version",
+        str(args.generation_code_version),
     ]
+
+
+def _expected_pilot_contract(args: argparse.Namespace, item: dict[str, Any]) -> dict[str, Any]:
+    width, length, height = PILOT_ASSET_DEFINITIONS[str(item["category"])]["dimensions"]
+    return build_generation_contract(
+        category=str(item["category"]),
+        prompt=str(item["asset_prompt"]),
+        target_dimensions_m={"width": width, "length": length, "height": height},
+        seed=int(item["seed"]),
+        model_fingerprint=str(args.trellis_model_fingerprint),
+        rmbg_fingerprint=str(args.rmbg_model_fingerprint),
+        pipeline_type="512",
+        steps=12,
+        texture_size=512,
+        decimation_target=500000,
+        preprocess_image=True,
+        code_version=str(args.generation_code_version),
+        reference_image=args.output_dir / str(item["reference_image"]),
+    )
 
 
 def _monitor_pilot(
@@ -359,9 +386,18 @@ def run(args: argparse.Namespace) -> None:
             for item in assets:
                 asset_id = str(item["object_id"])
                 report_path = output / "trellis_assets" / f"{asset_id}_pilot_report.json"
-                if report_path.is_file() and bool(read_json(report_path).get("ok")):
-                    print(f"[{_utc_now()}] resume accepted existing {asset_id}", flush=True)
-                    continue
+                if report_path.is_file():
+                    report = read_json(report_path)
+                    valid, reasons = validate_pilot_report(
+                        report, _expected_pilot_contract(args, item)
+                    )
+                    if valid:
+                        print(f"[{_utc_now()}] resume accepted existing {asset_id}", flush=True)
+                        continue
+                    print(
+                        f"[{_utc_now()}] invalidated stale {asset_id}: {','.join(reasons)}",
+                        flush=True,
+                    )
                 _require_concurrency_gate_clear(
                     output, f"trellis_{asset_id}_launch"
                 )
@@ -409,6 +445,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--rmbg-model", type=Path, default=DEFAULT_RMBG_MODEL)
     parser.add_argument("--trellis-python", type=Path, default=DEFAULT_TRELLIS_PYTHON)
     parser.add_argument("--client-python", type=Path, default=DEFAULT_CLIENT_PYTHON)
+    parser.add_argument(
+        "--trellis-model-fingerprint",
+        default=os.environ.get("SAGE_TRELLIS_MODEL_FINGERPRINT", "unfrozen-local-trellis-model"),
+    )
+    parser.add_argument(
+        "--rmbg-model-fingerprint",
+        default=os.environ.get("SAGE_RMBG_MODEL_FINGERPRINT", "unfrozen-local-rmbg-model"),
+    )
+    parser.add_argument(
+        "--generation-code-version",
+        default=os.environ.get("SAGE_GENERATION_CODE_VERSION", "unfrozen-scene-v2-code"),
+    )
     parser.add_argument(
         "--cuda-visible-devices",
         default="0",

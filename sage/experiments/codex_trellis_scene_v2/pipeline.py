@@ -129,6 +129,15 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             getattr(args, "scene_dna_multiview_semantic_device", "cpu")
         ),
         resume_staged_assets=resume,
+        trellis_model_fingerprint=str(
+            getattr(args, "trellis_model_fingerprint", "unfrozen-local-trellis-model")
+        ),
+        rmbg_model_fingerprint=str(
+            getattr(args, "rmbg_model_fingerprint", "unfrozen-local-rmbg-model")
+        ),
+        generation_code_version=str(
+            getattr(args, "generation_code_version", "unfrozen-scene-v2-code")
+        ),
     )
     write_json(
         output_dir / "instance_group_asset_resolution.json",

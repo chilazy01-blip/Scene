@@ -7,6 +7,12 @@ from pathlib import Path
 from typing import Any
 
 from .assets import bridge_health, generate_trellis_asset
+from .content_chain import (
+    build_generation_contract,
+    content_hash,
+    make_artifact_certificate,
+    verify_artifact_certificate,
+)
 from .io_utils import write_json
 from .policies import OBJECT_DEFINITIONS
 
@@ -21,6 +27,36 @@ PILOT_ASSET_DEFINITIONS = {
     **OBJECT_DEFINITIONS,
     **ARCHITECTURE_ASSET_DEFINITIONS,
 }
+
+
+def validate_pilot_report(
+    report: dict[str, Any], expected_generation_contract: dict[str, Any]
+) -> tuple[bool, list[str]]:
+    reasons: list[str] = []
+    if not bool(report.get("ok")):
+        reasons.append("pilot_not_ok")
+    actual_contract = report.get("generation_contract")
+    if not isinstance(actual_contract, dict) or actual_contract.get("content_key") != expected_generation_contract.get("content_key"):
+        reasons.append("generation_contract_mismatch")
+    artifact = Path(str(report.get("asset_glb") or ""))
+    reference = Path(str(report.get("reference_image") or ""))
+    if not artifact.is_file() or not reference.is_file():
+        reasons.append("artifact_or_reference_missing")
+        return False, reasons
+    certificate = report.get("content_certificate")
+    valid, certificate_reasons = verify_artifact_certificate(
+        certificate if isinstance(certificate, dict) else {},
+        artifact,
+        upstream={
+            "generation_contract": actual_contract,
+            "generation_metadata_hash": content_hash(report.get("generation")),
+        },
+        rules={"kind": "trellis_single_asset_pilot", "inspection_version": 1},
+        evidence={"reference_image": reference},
+    )
+    if not valid:
+        reasons.extend(certificate_reasons)
+    return not reasons, reasons
 
 
 def inspect_glb(path: Path) -> dict[str, Any]:
@@ -68,6 +104,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--texture-size", type=int, default=512)
     parser.add_argument("--decimation-target", type=int, default=500000)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument(
+        "--model-fingerprint",
+        default=os.environ.get("SAGE_TRELLIS_MODEL_FINGERPRINT", "unfrozen-local-trellis-model"),
+    )
+    parser.add_argument(
+        "--rmbg-fingerprint",
+        default=os.environ.get("SAGE_RMBG_MODEL_FINGERPRINT", "unfrozen-local-rmbg-model"),
+    )
+    parser.add_argument(
+        "--code-version",
+        default=os.environ.get("SAGE_GENERATION_CODE_VERSION", "unfrozen-scene-v2-code"),
+    )
     return parser
 
 
@@ -111,6 +159,30 @@ def main() -> None:
         reference_image_path=reference_image,
     )
     inspection = inspect_glb(output_glb)
+    generation_contract = build_generation_contract(
+        category=args.category,
+        prompt=str(obj["asset_prompt"]),
+        target_dimensions_m=obj["dimensions"],
+        seed=args.seed,
+        model_fingerprint=args.model_fingerprint,
+        rmbg_fingerprint=args.rmbg_fingerprint,
+        pipeline_type=args.pipeline_type,
+        steps=args.steps,
+        texture_size=args.texture_size,
+        decimation_target=args.decimation_target,
+        preprocess_image=args.preprocess_image,
+        code_version=args.code_version,
+        reference_image=reference_image,
+    )
+    content_certificate = make_artifact_certificate(
+        output_glb,
+        upstream={
+            "generation_contract": generation_contract,
+            "generation_metadata_hash": content_hash(metadata),
+        },
+        rules={"kind": "trellis_single_asset_pilot", "inspection_version": 1},
+        evidence={"reference_image": reference_image},
+    )
     result = {
         "schema": "codex_trellis_single_asset_pilot_v1",
         "ok": bool(inspection.get("ok") and inspection.get("trimesh_load_ok")),
@@ -120,6 +192,8 @@ def main() -> None:
         "asset_glb": str(output_glb),
         "bridge_health": health,
         "generation": metadata,
+        "generation_contract": generation_contract,
+        "content_certificate": content_certificate,
         "inspection": inspection,
         "curated_manifest_candidate": {
             "asset_id": object_id,

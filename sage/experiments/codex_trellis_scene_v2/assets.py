@@ -11,6 +11,14 @@ from typing import Any
 from urllib import request as urlrequest
 from urllib.error import HTTPError, URLError
 
+from .content_chain import (
+    build_generation_contract,
+    content_hash,
+    file_binding,
+    make_artifact_certificate,
+    verify_artifact_certificate,
+)
+
 from .dimensions import (
     AXES,
     dimension_policy_for_category,
@@ -226,6 +234,42 @@ def _candidate_checkpoint_path(record: dict[str, Any]) -> Path:
     return Path(str(record["path"])).parent.parent / "candidate_checkpoint.json"
 
 
+def _candidate_certificate_inputs(
+    obj: dict[str, Any], contract_hash: str, record: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    metadata = record.get("metadata")
+    metadata = metadata if isinstance(metadata, dict) else {}
+    bridge = metadata.get("bridge_metadata")
+    bridge = bridge if isinstance(bridge, dict) else {}
+    reference_value = record.get("reference_image_path") or bridge.get(
+        "reference_image_path"
+    )
+    reference = Path(str(reference_value)) if reference_value else None
+    generation_contract = deepcopy(obj.get("asset_generation_contract"))
+    generation_contract = generation_contract if isinstance(generation_contract, dict) else {}
+    generation_contract.pop("content_key", None)
+    generation_contract["seed"] = int(record["seed"])
+    generation_contract["reference_image"] = (
+        file_binding(reference) if reference is not None and reference.is_file() else None
+    )
+    generation_contract["content_key"] = content_hash(generation_contract)
+    upstream = {
+        "generation_contract": generation_contract,
+        "generation_key": generation_contract["content_key"],
+        "planning_generation_key": str(obj.get("asset_generation_key") or ""),
+        "scene_dna_contract_hash": str(contract_hash),
+        "seed": int(record["seed"]),
+        "request_hash": content_hash(metadata.get("request") or {}),
+    }
+    rules = {
+        "kind": "scene_dna_3d_candidate",
+        "attempt": int(record["attempt"]),
+        "candidate_rank": int(record.get("candidate_rank", 1)),
+        "multiview_report_hash": content_hash(record.get("multiview")),
+    }
+    return upstream, rules
+
+
 def persist_candidate_checkpoint(
     candidate_root: Path,
     obj: dict[str, Any],
@@ -250,6 +294,12 @@ def persist_candidate_checkpoint(
         "candidate_sha256": _candidate_file_sha256(candidate_path),
         "record": deepcopy(record),
     }
+    upstream, rules = _candidate_certificate_inputs(obj, contract_hash, record)
+    payload["content_certificate"] = make_artifact_certificate(
+        candidate_path,
+        upstream=upstream,
+        rules=rules,
+    )
     checkpoint_path = _candidate_checkpoint_path(record)
     write_json(checkpoint_path, payload)
     return checkpoint_path
@@ -289,6 +339,17 @@ def load_candidate_checkpoints(
                 continue
             metadata = record.get("metadata")
             if not isinstance(metadata, dict) or not str(metadata.get("job_id") or ""):
+                continue
+            upstream, rules = _candidate_certificate_inputs(obj, contract_hash, record)
+            valid, _ = verify_artifact_certificate(
+                payload.get("content_certificate")
+                if isinstance(payload.get("content_certificate"), dict)
+                else {},
+                candidate_path,
+                upstream=upstream,
+                rules=rules,
+            )
+            if not valid:
                 continue
             key = (int(payload["attempt"]), int(payload["candidate_rank"]))
             records[key] = deepcopy(record)
@@ -609,6 +670,9 @@ def resolve_assets(
     scene_dna_semantic_model: str | None = None,
     scene_dna_semantic_device: str = "cpu",
     resume_staged_assets: bool = False,
+    trellis_model_fingerprint: str = "unfrozen-local-trellis-model",
+    rmbg_model_fingerprint: str = "unfrozen-local-rmbg-model",
+    generation_code_version: str = "unfrozen-scene-v2-code",
 ) -> dict[str, Any]:
     registry = AssetRegistry(manifest_path)
     multiview_semantic_scorer = (
@@ -644,6 +708,25 @@ def resolve_assets(
                 or not isinstance(dimension_resolution, dict)
                 or not bool(dimension_resolution.get("accepted"))
             ):
+                continue
+            certificate = checkpoint.get("content_certificate")
+            metadata_payload = {
+                key: value
+                for key, value in checkpoint.items()
+                if key not in {"object", "content_certificate"}
+            }
+            upstream = {
+                "generation_key": str(checkpoint_object.get("asset_generation_key") or ""),
+                "object_hash": content_hash(checkpoint_object),
+                "metadata_hash": content_hash(metadata_payload),
+            }
+            valid, _ = verify_artifact_certificate(
+                certificate if isinstance(certificate, dict) else {},
+                glb_path,
+                upstream=upstream,
+                rules={"kind": "generated_asset_checkpoint", "version": 1},
+            )
+            if not valid:
                 continue
             resumed_assets[object_id] = {
                 "path": glb_path,
@@ -986,20 +1069,28 @@ def resolve_assets(
             str(obj["id"]),
         )
         prompt = render_asset_prompt(spec)
-        fingerprint_payload = {
-            "category": obj["category"],
-            "prompt": prompt,
-            "target_dimensions_m": spec["target_dimensions_m"],
-        }
-        generation_key = hashlib.sha256(
-            json.dumps(fingerprint_payload, sort_keys=True).encode("utf-8")
-        ).hexdigest()[:16]
+        generation_contract = build_generation_contract(
+            category=str(obj["category"]),
+            prompt=prompt,
+            target_dimensions_m=spec["target_dimensions_m"],
+            seed=int(seed),
+            model_fingerprint=trellis_model_fingerprint,
+            rmbg_fingerprint=rmbg_model_fingerprint,
+            pipeline_type=pipeline_type,
+            steps=steps,
+            texture_size=texture_size,
+            decimation_target=decimation_target,
+            preprocess_image=preprocess_image,
+            code_version=generation_code_version,
+        )
+        generation_key = str(generation_contract["content_key"])
         reuse_from = generation_units.get(generation_key)
         if reuse_from is None:
             generation_units[generation_key] = str(obj["id"])
         obj["asset_generation_spec"] = spec
         obj["asset_prompt"] = prompt
         obj["asset_generation_key"] = generation_key
+        obj["asset_generation_contract"] = generation_contract
         obj["asset_generation_strategy"] = (
             "generate_unique_asset" if reuse_from is None else "reuse_generated_asset"
         )
@@ -1020,6 +1111,7 @@ def resolve_assets(
                 "provenance": str(obj.get("provenance") or "unspecified"),
                 "requested_dimensions": deepcopy(obj["requested_dimensions"]),
                 "generation_key": generation_key,
+                "generation_contract": deepcopy(generation_contract),
                 "strategy": obj["asset_generation_strategy"],
                 "reuse_from_object_id": reuse_from,
                 "asset_generation_spec": deepcopy(spec),
@@ -1094,6 +1186,16 @@ def resolve_assets(
         entry["strategy"] = str(obj["asset_generation_strategy"])
         entry["reuse_from_object_id"] = obj.get("asset_generation_reuse_from")
 
+    current_generation_keys = {
+        str(obj["id"]): str(obj["asset_generation_key"]) for obj in missing
+    }
+    resumed_assets = {
+        object_id: checkpoint
+        for object_id, checkpoint in resumed_assets.items()
+        if current_generation_keys.get(object_id)
+        == str(checkpoint["object"].get("asset_generation_key") or "")
+    }
+
     resumable_generation_keys = {
         str(obj.get("asset_generation_key") or "")
         for obj in missing
@@ -1150,12 +1252,15 @@ def resolve_assets(
             # in-memory reuse map. This preserves per-instance asset metadata
             # for interrupted paired/grouped generations.
             if checkpoint is not None:
+                checkpoint_object = checkpoint["object"]
+                if (
+                    str(checkpoint_object.get("category") or "") != str(obj["category"])
+                    or str(checkpoint_object.get("asset_generation_key") or "")
+                    != generation_key
+                ):
+                    checkpoint = None
+            if checkpoint is not None:
                 checkpoint_object = deepcopy(checkpoint["object"])
-                if str(checkpoint_object.get("category") or "") != str(obj["category"]):
-                    raise ValueError(
-                        f"Resume checkpoint category mismatch for {obj['id']}: "
-                        f"{checkpoint_object.get('category')} != {obj['category']}"
-                    )
                 obj.update(checkpoint_object)
                 saved_payload = checkpoint["checkpoint"]
                 metadata = {
@@ -1175,6 +1280,10 @@ def resolve_assets(
                     "scene_dna_multiview": deepcopy(obj.get("scene_dna_multiview")),
                     "scene_dna_harmonization": deepcopy(
                         obj.get("scene_dna_harmonization")
+                    ),
+                    "generation_runtime_key": obj.get("asset_generation_runtime_key"),
+                    "generation_runtime_contract": deepcopy(
+                        obj.get("asset_generation_runtime_contract")
                     ),
                 }
                 generated_units[generation_key] = generated
@@ -1388,6 +1497,17 @@ def resolve_assets(
                     )
                 _copy_asset(Path(str(selected_attempt["path"])), destination)
                 metadata = deepcopy(selected_attempt["metadata"])
+                runtime_upstream, _ = _candidate_certificate_inputs(
+                    obj,
+                    str(scene_dna_contract.get("contract_hash") or ""),
+                    selected_attempt,
+                )
+                obj["asset_generation_runtime_contract"] = deepcopy(
+                    runtime_upstream["generation_contract"]
+                )
+                obj["asset_generation_runtime_key"] = str(
+                    runtime_upstream["generation_key"]
+                )
                 obj["scene_dna_multiview"] = deepcopy(selected_attempt.get("multiview"))
                 obj["scene_dna_harmonization"] = {
                     "schema": "scene_dna_harmonization_loop_v1",
@@ -1437,6 +1557,10 @@ def resolve_assets(
                     "scene_dna_harmonization": deepcopy(
                         obj.get("scene_dna_harmonization")
                     ),
+                    "generation_runtime_key": obj.get("asset_generation_runtime_key"),
+                    "generation_runtime_contract": deepcopy(
+                        obj.get("asset_generation_runtime_contract")
+                    ),
                 }
             elif checkpoint is None:
                 _copy_asset(Path(generated["path"]), destination)
@@ -1455,6 +1579,12 @@ def resolve_assets(
                 )
                 obj["scene_dna_harmonization"] = deepcopy(
                     generated.get("scene_dna_harmonization")
+                )
+                obj["asset_generation_runtime_key"] = generated.get(
+                    "generation_runtime_key"
+                )
+                obj["asset_generation_runtime_contract"] = deepcopy(
+                    generated.get("generation_runtime_contract")
                 )
             obj["final_flux_prompt"] = (
                 _final_flux_prompt(metadata)
@@ -1482,7 +1612,20 @@ def resolve_assets(
                 "requires_runtime_bounds_check": True,
                 "reason": "TRELLIS.2 asset generated for the requested physical dimensions",
             }
-            write_json(asset_dir / f"{obj['id']}.json", {"object": obj, **metadata})
+            checkpoint_payload = {"object": obj, **metadata}
+            metadata_payload = {
+                key: value for key, value in checkpoint_payload.items() if key != "object"
+            }
+            checkpoint_payload["content_certificate"] = make_artifact_certificate(
+                destination,
+                upstream={
+                    "generation_key": generation_key,
+                    "object_hash": content_hash(obj),
+                    "metadata_hash": content_hash(metadata_payload),
+                },
+                rules={"kind": "generated_asset_checkpoint", "version": 1},
+            )
+            write_json(asset_dir / f"{obj['id']}.json", checkpoint_payload)
             status = "generated"
         else:
             obj["asset_id"] = f"planned_{obj['category']}"
@@ -1519,6 +1662,11 @@ def resolve_assets(
                 "dimension_resolution": obj["dimension_resolution"],
                 "dimension_rejections": obj.get("asset_dimension_rejections", []),
                 "generation_key": obj.get("asset_generation_key"),
+                "generation_contract": deepcopy(obj.get("asset_generation_contract")),
+                "generation_runtime_key": obj.get("asset_generation_runtime_key"),
+                "generation_runtime_contract": deepcopy(
+                    obj.get("asset_generation_runtime_contract")
+                ),
                 "generation_strategy": obj.get("asset_generation_strategy"),
                 "generation_reuse_from": obj.get("asset_generation_reuse_from"),
                 "asset_generation_spec": deepcopy(obj.get("asset_generation_spec")),

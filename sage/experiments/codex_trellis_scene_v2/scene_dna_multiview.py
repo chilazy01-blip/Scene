@@ -11,6 +11,8 @@ from typing import Any
 import numpy as np
 from PIL import Image, ImageDraw
 
+from .content_chain import file_binding, make_artifact_certificate
+
 
 VIEW_AXES = ("+x", "-x", "+y", "-y")
 PALETTE_RGB: dict[str, tuple[int, int, int]] = {
@@ -900,6 +902,35 @@ def render_and_evaluate_generated_asset(
     )
     report["manifest_path"] = str(manifest_path)
     report["contact_sheet_path"] = str(contact_sheet)
+    asset_path = asset_dir / f"{object_id}.glb"
+    evidence = {"contact_sheet": contact_sheet}
+    for axis in VIEW_AXES:
+        path = Path(str(view_paths.get(axis) or ""))
+        if path.is_file():
+            evidence[f"view_{axis}"] = path
+    qa_rules = {
+        "kind": "scene_dna_generated_asset_multiview",
+        "qa_rules_version": "scene_dna_multiview_v2",
+        "renderer_binary": file_binding(blender_bin),
+        "renderer_script": file_binding(script),
+        "camera_contract": {
+            "axes": list(VIEW_AXES),
+            "resolution": int(resolution),
+            "transparent": True,
+            "fit_requested_dimensions": True,
+        },
+        "scene_dna_contract_hash": contract.get("contract_hash"),
+    }
+    report["qa_rules"] = qa_rules
+    report["content_certificate"] = make_artifact_certificate(
+        asset_path,
+        upstream={
+            "generation_contract": deepcopy(obj.get("asset_generation_contract")),
+            "generation_key": obj.get("asset_generation_key"),
+        },
+        rules=qa_rules,
+        evidence=evidence,
+    )
     report_path = output_dir / "scene_dna_multiview_report.json"
     report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     report["report_path"] = str(report_path)

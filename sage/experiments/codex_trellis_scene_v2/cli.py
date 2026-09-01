@@ -104,6 +104,25 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--texture-size", type=int, default=2048)
     parser.add_argument("--decimation-target", type=int, default=500000)
     parser.add_argument(
+        "--trellis-model-fingerprint",
+        default=os.environ.get(
+            "SAGE_TRELLIS_MODEL_FINGERPRINT", "unfrozen-local-trellis-model"
+        ),
+        help="Content fingerprint of the TRELLIS model bundle used in generation keys.",
+    )
+    parser.add_argument(
+        "--rmbg-model-fingerprint",
+        default=os.environ.get(
+            "SAGE_RMBG_MODEL_FINGERPRINT", "unfrozen-local-rmbg-model"
+        ),
+        help="Content fingerprint of the background-removal model.",
+    )
+    parser.add_argument(
+        "--generation-code-version",
+        default=os.environ.get("SAGE_GENERATION_CODE_VERSION", "unfrozen-scene-v2-code"),
+        help="Release commit/tag included in asset generation content keys.",
+    )
+    parser.add_argument(
         "--scene-dna-multiview",
         action=argparse.BooleanOptionalAction,
         default=True,

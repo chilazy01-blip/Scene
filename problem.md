@@ -45,7 +45,7 @@
 | P002 | 西墙衣柜的功能面朝向墙外 | 已完成 | 高 | 已按实际西墙接触面重算 yaw，柜门朝向室内 |
 | P003 | 最终交付审计未覆盖全场景既有语义回归 | 已完成 | 高 | target/whole-scene 双门已覆盖 typed graph、实例组、朝向、support、opening、操作净空、关系几何和 GLB 变换 |
 | P004 | 当前成果无法从一个受控代码版本完整复现 | 已完成 | 最高 | 正式源码、外部补丁、模型/环境指纹已冻结，干净检出 CPU、Blender 与最终审计复现通过 |
-| P005 | QA、缓存和恢复证书没有闭合内容哈希链 | 待解决 | 最高 | 同名资产被替换后旧审核仍可能放行 |
+| P005 | QA、缓存和恢复证书没有闭合内容哈希链 | 已完成 | 最高 | generation、候选、staged、pilot 与四视图 QA 已形成规范化内容链，任一绑定输入变化都会失效 |
 | P006 | “运行成功”与“完整可交付”没有统一机器定义 | 待解决 | 最高 | 默认 CLI 只做 plan，诊断结果容易被误认为正式交付 |
 | P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 待解决 | 最高 | 进程名白名单和每请求新线程不能可靠防止资源竞争 |
 | P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 待解决 | 高 | 上游输入变化后，下游旧产物可能未被正确失效 |
@@ -611,6 +611,44 @@
   无生成 Blender 门。
 - 下一入口：P005，从统一规范化 content key 开始闭合 generation、asset、multiview QA 和恢复证书哈希链，
   首先补“替换 GLB、替换参考图、改变 seed/模型/参数”三类负向测试。
+
+### 断点 CP-20260901-06：P005 已完成
+
+- 完成时间：2026-09-01
+- 根因：旧 `generation_key` 只散列类别、Prompt 和目标尺寸；staged 资产恢复只检查 GLB/JSON 存在及少量
+  字段；专项 batch 看到 `pilot_report.ok=true` 就跳过；多视图 QA 虽已补 GLB/contact-sheet 哈希，却没有
+  用同一证书绑定生成参数、真实参考图、四个原始视图、相机、Blender renderer/脚本和 QA 规则。因此同名
+  文件替换或 seed/model/pipeline 漂移后，旧阶段仍有被误复用的路径。
+- 修改文件：新增 `content_chain.py` 与 `tests/test_content_chain.py`；修改 `assets.py`、`cli.py`、
+  `pipeline.py`、`pilot_asset.py`、`run_sdf_bedroom_trellis_batch.py`、`scene_dna_multiview.py`、
+  `build_sdf_complex_bedroom.py` 及对应卧室测试。
+- 内容契约：规范化 JSON 禁止 NaN 并采用稳定 key 排序。规划 generation contract 绑定 category、完整隔离
+  Prompt、目标尺寸、seed、TRELLIS model fingerprint、RMBG fingerprint、pipeline、steps、texture、
+  decimation、preprocess 和 code version；真实候选 runtime contract 再绑定实际 attempt seed 与参考图
+  bytes/SHA-256，使用完整 64 位十六进制 content key，不再截断为 16 位。
+- 证书链：候选 checkpoint 绑定 runtime generation contract、SceneDNA contract、request、GLB 和 multiview
+  report；staged sidecar 绑定 GLB、对象、生成 metadata 和 generation key；pilot report 绑定 GLB、参考图、
+  generation metadata/contract 与 inspection rules；SceneDNA 多视图证书绑定 GLB、四个原始视图、contact
+  sheet、Blender binary、turntable script、相机 contract、分辨率和 QA rule version。恢复时全部重新读取
+  当前 bytes 校验，旧/缺失证书只会失效并重跑，不再因同名文件存在而放行。
+- 专项 SDF 门：只接受 `codex_trellis_multiview_qa_v2`；每个资产必须有 generation contract、四视图、
+  contact sheet、renderer binary/script、camera contract、QA rules 和完整 content certificate。旧 v1 文件
+  明确报 `unbound legacy schema`，需要重新审核/迁移，不能静默兼容。
+- 负向测试：审核后替换 GLB、替换参考图或任一视图，证书拒绝；改变 seed、TRELLIS model fingerprint、
+  steps、texture 或 decimation，generation key 改变且旧 pilot/resume 拒绝；同一规范化 payload 的字典
+  顺序变化不改变 key。专项 SDF 继续覆盖替换审核后 GLB，新增四视图/renderer/camera/rules 强制字段。
+- 验证命令：`python -m unittest discover -s sage/experiments/codex_trellis_scene_v2/tests -t .`；
+  `python -m unittest discover -s tests -p 'test_*.py'`；`python -m compileall -q
+  sage/experiments/codex_trellis_scene_v2`；`git diff --check`。
+- 验证结果：V2 296/296、仓库根 12/12，共 308/308；compileall 与 diff check 通过。没有启动 GPU、
+  FLUX、TRELLIS 或 Blender，也没有覆盖 P001-P004 历史产物。
+- 新产物目录：`/data/wsj/main/scene_runs/codex_trellis_v2/p005_content_chain_acceptance_20260901_v1`，保存
+  机器可读负向验收与最终源码提交信息；旧 QA/checkpoint 原样保留作为 legacy 拒绝输入。
+- 未解决风险：旧运行没有足够信息时不能凭空重建可信 generation contract，必须重新审核；这是安全失效，
+  不是兼容缺陷。阶段间更一般的依赖失效范围与原子 attempt DAG 属于 P008；强类型 schema migration
+  属于 P009。
+- 下一入口：P006，定义 plan/development/production/benchmark 四种机器 profile，并保证只有 production
+  必需阶段、最终 hash audit 和 terminal status 全部闭合时才允许 `deliverable=true`。
 
 每完成一个问题，按以下模板追加：
 

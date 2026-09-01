@@ -24,6 +24,7 @@ from .collision_mesh_cleanup import (
     cleanup_collision_mesh,
 )
 from .collision_proxy import load_normalized_asset_mesh, sha256_file
+from .content_chain import verify_artifact_certificate
 from .gltf_export import export_z_up_scene_glb
 from .instance_groups import (
     apply_instance_group_postprocess,
@@ -453,6 +454,11 @@ def _require_trellis_multiview_qa(trellis_asset_dir: Path) -> dict[str, Any]:
             f"TRELLIS multiview QA gate is missing: {qa_path}"
         )
     qa = read_json(qa_path)
+    if qa.get("schema") != "codex_trellis_multiview_qa_v2":
+        raise RuntimeError(
+            "TRELLIS multiview QA uses an unbound legacy schema; regenerate or "
+            "migrate it with content certificates"
+        )
     accepted_rows = {
         str(item.get("asset_id")): item
         for item in qa.get("assets", [])
@@ -492,6 +498,54 @@ def _require_trellis_multiview_qa(trellis_asset_dir: Path) -> dict[str, Any]:
             raise RuntimeError(
                 f"TRELLIS multiview QA contact-sheet hash mismatch for {asset_id}: "
                 f"expected={expected_sheet_hash} actual={actual_sheet_hash}"
+            )
+        generation_contract = row.get("generation_contract")
+        qa_rules = row.get("qa_rules")
+        certificate = row.get("content_certificate")
+        if not all(
+            isinstance(value, dict)
+            for value in (generation_contract, qa_rules, certificate)
+        ):
+            raise RuntimeError(
+                f"TRELLIS multiview QA content chain is incomplete for {asset_id}"
+            )
+        if not generation_contract.get("content_key"):
+            raise RuntimeError(
+                f"TRELLIS multiview QA generation key is missing for {asset_id}"
+            )
+        required_rule_fields = {
+            "renderer_binary",
+            "renderer_script",
+            "camera_contract",
+            "qa_rules_version",
+        }
+        if required_rule_fields.difference(qa_rules):
+            raise RuntimeError(
+                f"TRELLIS multiview QA renderer/camera/rules binding is incomplete for {asset_id}"
+            )
+        views = row.get("views")
+        required_views = {"front", "back", "left", "right"}
+        if not isinstance(views, dict) or required_views.difference(views):
+            raise RuntimeError(
+                f"TRELLIS multiview QA four-view evidence is incomplete for {asset_id}"
+            )
+        evidence = {"contact_sheet": contact_sheet}
+        for view_name in sorted(required_views):
+            view_path = (qa_path.parent / str(views[view_name])).resolve()
+            if not view_path.is_file():
+                raise FileNotFoundError(view_path)
+            evidence[f"view_{view_name}"] = view_path
+        valid, reasons = verify_artifact_certificate(
+            certificate,
+            glb,
+            upstream={"generation_contract": generation_contract},
+            rules=qa_rules,
+            evidence=evidence,
+        )
+        if not valid:
+            raise RuntimeError(
+                f"TRELLIS multiview QA certificate mismatch for {asset_id}: "
+                + ", ".join(reasons)
             )
     return qa
 
