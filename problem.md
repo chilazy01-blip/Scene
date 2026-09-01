@@ -56,7 +56,9 @@
 | P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 已完成 | 高 | 生成子流、精确数量门、临时准入、显式生命周期与三资产/双风格审核库已闭环 |
 | P014 | 测试以快速单测为主，缺少真实集成与故障恢复验证 | 已完成 | 高 | 四层验证、P001-P013 负向矩阵、7 类 chaos 与机器 release/status manifest 已闭环 |
 | P015 | 三条流程和多份文档缺少统一事实源 | 已完成 | 中高 | 图生/文生统一为 SceneRequest 前端，后续只走 V2；动态事实由机器生成 |
-| P016 | WebUI 只是启动面板，尚不是可恢复的任务控制系统 | 待解决 | 中低 | 服务重启后缺少事务状态、队列和任务重新关联 |
+| P016 | WebUI 只是启动面板，尚不是可恢复的任务控制系统 | 已完成 | 中低 | SQLite WAL、事务队列、systemd/cgroup 重连和 V2 DAG/资产审核已闭环 |
+| P017 | 大型资产库缺少可扩展的分层索引与批量检索 | 待解决 | 高 | 当前 `AssetRegistry.find()` 会为每个对象线性扫描完整 manifest，无法支撑十万级资产和低延迟选型 |
+| P018 | 风格匹配尚未形成材质/纹理级检索与可控重材质闭环 | 待解决 | 高 | 当前主要依赖粗粒度 style 标签软重排，库资产视觉 embedding 未参与评分，也没有材质槽位兼容契约 |
 
 状态只使用：`待讨论`、`待解决`、`处理中`、`验证中`、`已完成`、`真实阻塞`。
 
@@ -437,6 +439,85 @@
 - 明确展示诊断运行与正式交付、当前资源门原因、资产候选和人工批准状态。
 - 若开放远程访问，再补认证、CSRF、路径 allowlist、请求体、并发和速率限制。
 
+### P017：大型资产库缺少可扩展的分层索引与批量检索
+
+#### 价值判断与当前证据
+
+这是接入大型资产库前必须解决的问题。当前 `AssetRegistry.find()` 对每个场景对象遍历完整 JSON
+manifest，逐项检查类别、生命周期、文件存在性、尺寸和 style，再对全部候选排序；同一对象还可能在
+锚点选择和最终解析阶段重复检索。二十个审核资产时影响很小，扩大到十万或百万资产后，线性扫描、
+同步文件系统探测和重复打分会放大为明显延迟。
+
+但检索本身不是当前长链耗时的唯一来源。真正的收益来自高资产命中率：一旦命中已审核资产，就应
+跳过 Flux/TRELLIS 生成、turntable、重复代理构建和大部分资产级 QA，只保留布局、场景级关系验证和
+装配。因此目标不能只是“搜索快”，还必须让常见类别尽量走资产复用快速路径。
+
+#### 处理方向
+
+1. **离线摄取，在线只查索引。** 每个资产入库时一次性生成规范化 metadata、内容哈希、canonical
+   front/up、尺寸与比例、能力标签、碰撞/关系代理、LOD、审核状态、多视图预览和向量描述；在线检索
+   禁止打开全部 GLB，也不为每个候选运行模型。
+2. **先硬过滤，再近邻召回，最后精排。**
+   - 第 0 层用倒排/bitmap 过滤类别、生命周期、QA、许可、尺寸策略、手性、pair role、透明/动画能力、
+     relation capability 和面数/纹理预算。
+   - 第 1 层使用 ANN 从文本、多视图外观、形状和材质向量中召回约 100--500 个候选。
+   - 第 2 层只对约 20--50 个候选执行现有 SceneDNA、尺寸适配、功能面和关系兼容精排。
+   - 第 3 层在房间级候选集合上做一致性与多样性优化，避免逐对象最优造成整屋风格冲突或机械重复。
+3. **批量查询与内容寻址缓存。** SceneBrief 解析一次后，合并相同类别/约束查询并行检索所有对象；以
+   `query_contract_hash + index_version` 缓存 Top-K，并接入 P005/P008 的哈希链和 DAG。索引更新只失效
+   受影响的 posting/vector，不让整个场景重跑。
+4. **冷热分层。** 高频类别与风格保存在本地 SSD 热库，长尾资产位于温库/远端冷库；SceneBrief 完成后
+   预取 Top-K，最终确定前只传小预览和 metadata，避免大 GLB I/O 抢占生成链资源。
+5. **确定性检索替代逐资产 LLM 判断。** LLM 只负责把用户要求解析成结构化查询；后续选择使用可重放的
+   硬约束、向量检索和精排。每次交付保存候选 ID、各层分数、索引版本和淘汰原因。
+
+#### 完成标准
+
+- 建立至少十万条目的代表性基准库或等价合成压力集，验证增量建索引、删除/更新和内容哈希失效。
+- 人工标注查询集上的兼容资产 `Recall@50 >= 0.98`；所有安全/功能硬约束不得因 ANN 漏检而被绕过。
+- 在目标机器热缓存条件下，单个完整房间的批量检索 `p95 <= 1 s`；记录冷启动、p50/p95/p99、索引
+  内存、磁盘 I/O 和最终资产命中率。该数值须实测校准，不能只用理论复杂度宣称完成。
+- 常见类别的审核资产命中率应达到可预注册的目标（首轮建议 `>= 85%`）；未命中时才进入 P013 缺失
+  资产生成子流，且新审核资产自动回灌索引。
+- 检索结果必须可复现：相同 SceneBrief、资产快照、索引版本和代码版本得到相同候选与选择解释。
+
+### P018：风格匹配尚未形成材质/纹理级检索与可控重材质闭环
+
+#### 价值判断与当前证据
+
+这个问题有价值，而且能进一步减少 TRELLIS 重生成。当前 SceneDNA 已把 palette、material、form 等
+facet 纳入软评分，但审核资产主要仍提供粗粒度 `styles`；库资产评分结果还明确记录
+`visual_embedding_evaluated=false`。因此它目前适合作为少量候选的约束感知重排器，尚不能证明已经
+实现材质和纹理层面的视觉匹配。
+
+#### 处理方向
+
+1. **建立材质级资产描述。** 入库时为每个 material slot 记录语义角色（如柜体、门板、把手、软包、
+   玻璃）、PBR map、颜色 Lab 分布、roughness/metallic 分布、纹理向量、真实纹理尺度、texel density、
+   UV 质量、平铺能力、透明/双面要求和许可来源。
+2. **把“风格相似”拆成三条有序路径。**
+   - 精确复用：几何、材质和纹理均匹配，直接使用审核资产。
+   - 可控重材质：几何与 UV 合格，只替换允许的材质实例或纹理包，不重新生成几何。
+   - 重新生成：只有形体、拓扑、UV 或材质槽位无法满足要求时，才进入 P013/TRELLIS。
+3. **语义兼容先于颜色相似。** 先硬门禁材质槽位适用性、UV、透明度和功能要求，再比较 palette、
+   材质类别、粗糙度/金属度和纹理视觉向量；禁止用全局色调迁移把木纹贴到布艺、植物或金属件。
+4. **场景级协调。** 单件最相似不等于整屋协调，应同时约束主色/辅色、木材家族、金属饰面和重复纹理
+   密度，并保留少量变化。参考图存在时使用多视图/局部区域向量，而不是只比较整图 embedding。
+5. **缓存重材质衍生资产。** 使用
+   `geometry_hash + material_package_hash + slot_binding + uv_transform + renderer_version` 形成衍生键；
+   经审核后回灌资产库，后续场景可直接复用，且不得改变碰撞代理、canonical front 和关系能力声明。
+
+#### 完成标准
+
+- 建立覆盖木材、金属、织物、玻璃等常见材质和槽位误用的正负测试；不兼容材质必须被硬门禁拒绝。
+- 对“原资产直接使用 / 可控重材质 / 重新生成”做同几何、同相机盲评，分别报告材质正确率、风格偏好率
+  和失败类型，不能只凭 embedding 分数验收。
+- 重材质后自动验证 PBR 引用、UV、缺失纹理、texel density、色彩空间、透明/双面设置以及 GLB 打包；
+  重新运行场景关系与视觉门，证明几何、朝向和功能没有回归。
+- 记录三条路径的命中率和 p95 耗时。几何可复用时，材质匹配与衍生资产构建必须显著快于 TRELLIS
+  重生成，并由实测数据给出加速比。
+- 默认启用前，材质/纹理索引、模型版本和衍生资产都进入 P005/P008/P009 的内容哈希、DAG 与环境锁。
+
 ## 5. 研究能力的启用边界
 
 以下内容有研究价值，但暂不作为“默认链缺陷”直接修复：
@@ -460,8 +541,12 @@
 5. **降低交付成本（P010）：** 做类别感知减面、实例化与纹理压缩，以低于 100 MB 为首阶段目标。
 6. **提升资产与视觉（P012-P013）：** 正式化缺失资产子流水线，扩充审核库，之后优化材质、灯光和相机。
 7. **升级研究证明（P011）：** 接 exact predicate、局部细化和跨资产统计，成熟后再讨论默认启用。
-8. **长期收敛（P015-P016）：** 统一图生/文生/V2 核心与事实源；有多人使用需求时再升级 WebUI。
-9. 每完成一个问题立即记录断点；任一验收失败都保留证据、更新假设并继续迭代，不能用局部通过代替完成。
+8. **资产检索快速路径（P017）：** 在继续扩大资产数量前先完成离线摄取、硬过滤、ANN 召回、精排、
+   批量缓存和十万级压力测试；否则资产越多，当前线性扫描越慢。
+9. **材质与纹理闭环（P018）：** 建立材质槽位契约和材质库，先复用、再低成本重材质，只有不兼容时
+   才重新生成；用盲评与全链验收决定是否默认开启。
+10. **长期收敛（P015-P016）：** 统一核心已完成；有多人使用需求时再升级 WebUI。
+11. 每完成一个问题立即记录断点；任一验收失败都保留证据、更新假设并继续迭代，不能用局部通过代替完成。
 
 ## 7. 完成断点记录
 
@@ -1050,6 +1135,53 @@
 - 未解决风险：图片 adapter 当前保存可追溯 soft binding，并用 prompt 形成 brief，但尚未把图像解析器输出
   的结构化观察逐字段合并进 SceneBrief；这属于前端观测质量演进，不能重新引入第二套布局核心。
 - 下一入口：P016，把 WebUI 从 JSON 文件 + 内存 Popen 面板升级为 SQLite WAL 的可恢复任务控制面。
+
+### 断点 CP-20260901-17：P016 已完成
+
+- 完成时间：2026-09-01。
+- 根因：旧 WebUI 把 job 写为松散 JSON，并仅在进程内保存 `Popen`；服务器重启时失去 return code、
+  cgroup 和阶段上下文，只能产生 `unknown_after_server_restart`。它也不保存 stage attempt、artifact hash、
+  资源门或生成资产人工审批。
+- 修改文件：新增 `sage/webui/job_store.py`、`controller.py`、`audit_control_plane.py` 和
+  `tests/test_webui_control_plane.py`；修改 WebUI server/UI/README，并让 legacy adapter 接收明确 profile。
+  实现提交为 `4552063`。
+- 持久控制面：SQLite 强制 WAL 和 foreign keys，事务表覆盖 jobs、stages、attempts、logs、artifacts、
+  asset_reviews、events；旧 JSON 只做非破坏性一次导入。launch claim 在 `BEGIN IMMEDIATE` 内限制总并发
+  和单一 heavy job，资源未满足时保存 `waiting_for_resources` 与 P007 broker/RAM/I/O/disk/GPU reason，
+  刷新时自动重试。
+- systemd/cgroup 恢复：任务使用稳定 `scene-webui-<id>.service`、MemoryHigh/MemoryMax/TasksMax 与日志
+  append 路径，数据库保存 unit、MainPID 和 ControlGroup。启动时/查询时按 unit 的
+  ActiveState/SubState/Result/ExecMainStatus 重连；`RemainAfterExit=yes` 允许服务器停机期间已完成的任务
+  恢复成功终态，取消对已卸载 transient unit 幂等。
+- V2 对接：控制面从 P008 `run_dag.json` 事务导入 11 stage、每次 attempt、input/output key、资源峰值
+  与真实 artifact hash；文件与 DAG 声明不符会标为 invalid binding。`asset_resolution.json` 候选分别
+  保存 generation status 与人工 pending/approved/rejected，不用“生成成功”冒充入库批准。
+- UI/安全：明确显示诊断与正式交付、资源门原因、阶段进度、资产候选和批准按钮。输出路径限制在配置
+  allowlist，请求体限制 1 MiB；server 强制 loopback，拒绝 `0.0.0.0`，因此当前不暴露一个缺少 auth/
+  CSRF 的远程入口。
+- 新增/修改测试：WAL 与新控制器对象重连、运行中 unit/cgroup、停机期间完成、DAG/attempt/artifact
+  导入、资产人工批准、繁忙资源原因、原子 heavy queue、missing unit orphan、幂等 cancel、profile、路径
+  allowlist 和拒绝远程绑定，共 7 项控制面测试。
+- 执行命令：定向 WebUI unittest；V2/root 全量 unittest；compileall、Node JS syntax、diff check；两次
+  真实 loopback HTTP 服务启停；真实 user-systemd 运行中重连、完成态重连和取消/清理；最终 SQLite
+  机器审计。
+- 验证结果：V2 354/354、根测试 19/19，共 373/373 全部通过。HTTP 重启后 production job 保持原 id、
+  profile、plan 和警告；第二个控制器进程实际重连 PID 2948270 的运行中 unit。初版短任务因 transient
+  unit 被卸载成为 orphaned，失败证据保留；加入 RemainAfterExit 后 `/bin/true` 跨进程恢复为
+  `succeeded/returnCode=0`。最终无运行中测试 unit。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p016_webui_control_20260901_v1`。
+- 关键文件 SHA-256：最终 SQLite
+  `9ccd5f640ab8d18d11b0d18d460a279beed97a01a68c870e29b660d94043c591`；控制面审计
+  `346d9e3cd7dcb16ad5bbce3b316b0d49d1e2ed1de07ee18eae49487b22a0786e`，报告自身 content hash
+  `7e7b2ad3aa97645db91c2301b59bf2e4c0252f6b09cd27aba2267285fe85908f`。
+- 人工检查结论：最终审计 `ok=true`、无缺表，实际保存 11 stages、7 attempts、13 artifacts、21 asset
+  reviews、10 log bindings 和 28 events；已有生成客厅资产显示独立人工状态，其中一项显式 approved、
+  其余 pending。保留的 orphaned 行是修复前负例，不是当前活动任务。
+- 未解决风险：当前只允许单机 loopback；若未来确需多人远程使用，必须新增正式认证、CSRF token、
+  代理信任边界和按身份审计，不能只把 host 改为 `0.0.0.0`。SQLite 队列适合单机控制面，不宣称为
+  多节点分布式调度器。
+- 下一入口：P001-P016 已按顺序全部完成；后续新增问题应分配新 ID，不应继续修改这些已冻结证据。
 
 每完成一个问题，按以下模板追加：
 
