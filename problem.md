@@ -52,7 +52,7 @@
 | P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 已完成 | 高 | 七类核心文档已有可执行强契约与规范化哈希，production 启动前强制核验四类运行时锁 |
 | P010 | 最终 GLB 面数和体积明显过高 | 已完成 | 高 | 当前卧室已降至 88.7MB/992,676 faces，P001-P003、四条关系和多通道视觉 A/B 无回归 |
 | P011 | 关系几何证书仍不是严格精确谓词证明 | 已完成 | 中高 | native expansion exact 谓词、局部 SDF 细化、全顶点 containment、持久目标索引和真实失败率已闭环 |
-| P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 待解决 | 中 | 材质同质、噪点、曝光和遮挡降低成片质量 |
+| P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 已完成 | 中 | 双 profile、双机位覆盖搜索、最终分辨率对象掩码和成片质量门已闭环 |
 | P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 待解决 | 高 | 结构可加载不等于数量、形态、朝向和能力合格 |
 | P014 | 测试以快速单测为主，缺少真实集成与故障恢复验证 | 待解决 | 高 | 测试全过仍不能证明 Blender/TRELLIS/恢复链可靠 |
 | P015 | 三条流程和多份文档缺少统一事实源 | 待解决 | 中高 | V2、旧图生、旧文生以及文档口径仍在漂移 |
@@ -870,6 +870,50 @@
   过滤仍是带量化 tolerance 的浮点保守步骤，不能描述为整条连续几何的全 exact 证明；逐三角 ctypes
   narrow phase 也有性能开销。最细 2cm SDF 后仍可能保留 ambiguous，但会触发三角升级而非静默放行。
 - 下一入口：P012，分离关系证据与最终展示 profile，并建立相机、曝光、噪声、材质和裁切的量化门。
+
+### 断点 CP-20260901-13：P012 已完成
+
+- 完成时间：2026-09-01。
+- 根因：旧流程复用诊断渲染参数，缺少展示图与关系证据图的用途隔离；固定机位没有按 required-object、
+  关系可见性和裁切联合选优；全图黑像素比例会掩盖面积较小但纯黑的窗洞，且第一次材质修复没有处理
+  纹理链接到 Principled Base Color 的窗户材质。候选方形 mask 也不能作为 4:3 最终成片的严格裁切证据。
+- 修改文件：新增 `showcase_render.py`、`blender_render_showcase.py`、`render_showcase_delivery.py` 和
+  `tests/test_showcase_render.py`。实现提交为 `f30d814`。
+- 渲染与相机：关系证据固定 Eevee Next、768x768、64 samples、AgX、5500K、独立主体；最终展示固定
+  Cycles、1024x768、64 samples、denoise、AgX Medium High Contrast、5200K、exposure 0.15。自动评估
+  16 个四边/角落机位后选择 `south_2` 与 `east_0`，required、complete 和 relation pair coverage 均为
+  1.0，且来自不同房间侧面。
+- 质量门：最终成片同尺寸对象索引 mask 与投影边界共同检查裁切；逐图记录过曝、全图近黑、中间调、
+  平坦区域残差噪声和均值亮度。窗户单独按 `architecture.windows` 语义 mask 计算，修复纹理窗材质的
+  深蓝灰 screen 下限后，次视图窗体 15,287 个可见像素中的近黑比例为
+  `0.0000654150585464774`，不再被全图统计掩盖。两个视图均无 required-object 裁切、过曝比例为 0，
+  平坦区域残差分别为 `0.0018569368` 与 `0.0016945772`。
+- 新增/修改测试：固定且分离的 profile、裁切惩罚与关系可见性、互补双机位选择、白帧/裁切拒绝、
+  “全图正常但可见窗户纯黑”负例，共 5 项 P012 定向测试。
+- 执行命令：资源门先检查四张 GPU 的显存/利用率/计算进程、主机 RAM 与数据盘；只有四卡均
+  `16MiB/49140MiB, 0%` 且无计算进程、RAM available 230GiB、磁盘可用 6.4TiB 后才运行 Blender。
+  回归使用 `tree-sage-flow2`：
+  `python -m unittest discover -s sage/experiments/codex_trellis_scene_v2/tests -t .`、
+  `python -m unittest discover -s tests -p 'test_*.py'`、`python -m compileall -q
+  sage/experiments/codex_trellis_scene_v2` 和 `git diff --check`。
+- 验证结果：质量报告 `ok=true`、0 failures；V2 330/330、仓库根 12/12，共 342/342，compileall 与
+  `git diff --check` 通过。最终实际使用 OPTIX；人工逐张检查两张展示图和两张隔离关系图并接受。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p012_showcase_quality_20260901_v2`。
+- 关键文件 SHA-256：质量报告
+  `1783ae36c943fa80859578bfd1c2e381563412ffe482c41cb9a25f3b45077f56`；渲染 manifest
+  `0ea3536907c2f602b6fc9d619e555f7f9d4873b34a86a579549d7e2862c80f66`；人工复核
+  `4678049acc0976b1f7e0d606093a8af3d53d59ec36f74a00fb3fa1b701f25690`；hero/secondary 分别为
+  `c6ee06fdee3f3f327659a9db34864c305313af6af577e988bec30651d4528961`、
+  `f300916c6e3bc1688d5d5f24a2b23d9e22271a3e0caaa19fef77f91de6cfe36a`。
+- 人工检查结论：hero 中床、双床头柜、衣柜、书桌椅、书架和装饰均清晰，构图稳定；secondary
+  提供互补方向并明确显示窗户。三层书排均可见于书架内部，椅子与书桌相邻关系无歧义。木材、织物、
+  墙漆、陶瓷、植物、金属和深色软包可区分，窗户为可辨识深蓝黑而非纯黑洞。
+- 未解决风险：secondary 保留了较大的前景门扇，生成桌面仍有可见重建划痕；这两项不影响覆盖、裁切或
+  关系证据，但仍限制照片级写实度。平坦区域残差只是图像空间噪声 proxy，不是 path-tracer variance；
+  人工审核因此仍是最终 profile 的强制步骤。
+- 下一入口：P013，建立缺失资产从合同、2D QA、TRELLIS、多视图/几何/能力验收到生命周期与长期资产库
+  准入的正式闭环。
 
 每完成一个问题，按以下模板追加：
 
