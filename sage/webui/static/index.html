@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TreeSAGE Local Control</title>
+    <title>Scene V2 Local Control</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <header class="topbar">
       <div>
-        <h1>TreeSAGE Control</h1>
+        <h1>Scene V2 Control</h1>
         <p id="runtimeStatus">正在连接本地服务</p>
       </div>
       <button id="refreshJobs" class="secondary">刷新任务</button>
@@ -61,7 +61,7 @@
           <div class="form-head">
             <div>
               <h2 id="formTitle">图生场景</h2>
-              <p id="modeNote">image2 物体图 + Trellis2 资产 + 三阶段布局 + critic</p>
+              <p id="modeNote">参考图 soft observation -> SceneRequest/SceneBrief -> V2 核心</p>
             </div>
             <label class="switch">
               <input id="runNow" type="checkbox" />
@@ -116,6 +116,13 @@
           </div>
 
           <div class="option-grid">
+            <label>
+              运行用途
+              <select id="deliveryProfile">
+                <option value="diagnostic">诊断运行</option>
+                <option value="production">正式交付</option>
+              </select>
+            </label>
             <label class="checkbox-row">
               <input id="useCritic" type="checkbox" checked />
               <span>critic</span>

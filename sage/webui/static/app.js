@@ -50,6 +50,7 @@ function collectPayload() {
     copyReusedAssets: fieldValue("copyReusedAssets"),
     wholeWindowCurtainCluster: fieldValue("wholeWindowCurtainCluster"),
     planOnly: fieldValue("planOnly"),
+    deliveryProfile: fieldValue("deliveryProfile"),
     runNow: fieldValue("runNow"),
   };
 }
@@ -80,11 +81,12 @@ function renderWarnings(warnings) {
 function renderPlan(plan) {
   const lines = [];
   lines.push(plan.implemented ? "配置可创建任务" : "当前配置仅预留接口");
+  lines.push(`运行用途：${plan.profileKind === "formal_delivery" ? "正式交付" : "诊断"} (${plan.profile || "unknown"})`);
   if (plan.outputDir) lines.push(`输出目录：${plan.outputDir}`);
   if (plan.mode === "text_to_scene" && plan.assetStrategy === "generate_from_scratch") {
-    lines.push("资产链路：风格规格 -> image2 单物体图 -> QA -> Trellis2 -> 纹理选择 -> Blender");
+    lines.push("资产链路：SceneBrief -> V2 缺失资产合同 -> Trellis2 -> 准入 -> Blender");
   } else if (plan.assetStrategy === "asset_library") {
-    lines.push("资产链路：风格规格 -> 资产库复用 -> 纹理选择 -> Blender");
+    lines.push("资产链路：SceneBrief -> 审核资产库 -> V2 布局/验收");
   }
   $("planSummary").textContent = lines.join("\n");
   renderWarnings(plan.warnings || []);
@@ -133,6 +135,46 @@ function renderJobs(jobs) {
     created.textContent = job.createdAt || "";
     item.appendChild(created);
 
+    const profile = document.createElement("span");
+    profile.textContent = job.profile === "production" ? "正式交付" : `诊断运行 (${job.profile || "unknown"})`;
+    item.appendChild(profile);
+
+    const gate = document.createElement("span");
+    const gateData = job.resourceGate || {};
+    gate.textContent = gateData.accepted === false
+      ? `资源门：等待 · ${(gateData.reasons || []).join(", ")}`
+      : gateData.accepted === true ? "资源门：通过" : "资源门：尚未评估";
+    item.appendChild(gate);
+
+    if ((job.stages || []).length) {
+      const stage = document.createElement("span");
+      const done = job.stages.filter((entry) => entry.status === "committed").length;
+      stage.textContent = `阶段：${done}/${job.stages.length}`;
+      item.appendChild(stage);
+    }
+
+    for (const asset of job.assetCandidates || []) {
+      const review = document.createElement("div");
+      review.className = "asset-review";
+      review.textContent = `资产 ${asset.candidate_id} · 生成 ${asset.generation_status} · 人工 ${asset.approval_status}`;
+      if (asset.approval_status !== "not_required") {
+        for (const status of ["approved", "rejected"]) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "secondary compact";
+          button.textContent = status === "approved" ? "批准" : "拒绝";
+          button.addEventListener("click", async () => {
+            await api(`/api/jobs/${job.id}/assets/${encodeURIComponent(asset.candidate_id)}/review`, {
+              method: "POST", body: JSON.stringify({ status, reviewer: "local_user" }),
+            });
+            await loadJobs();
+          });
+          review.appendChild(button);
+        }
+      }
+      item.appendChild(review);
+    }
+
     const output = job.plan && job.plan.outputDir ? job.plan.outputDir : "";
     if (output) {
       const code = document.createElement("code");
@@ -158,8 +200,8 @@ function setMode(mode) {
   $("textSceneFields").classList.toggle("hidden", imageMode);
   $("formTitle").textContent = imageMode ? "图生场景" : "文生场景";
   $("modeNote").textContent = imageMode
-    ? "image2 物体图 + Trellis2 资产 + 三阶段布局 + critic"
-    : "文本 brief + room grammar + image2 物体图 + Trellis2 资产";
+    ? "参考图 soft observation -> SceneRequest/SceneBrief -> V2 核心"
+    : "文本 -> SceneRequest/SceneBrief -> V2 核心";
   previewCommand().catch((error) => setStatus(error.message));
 }
 

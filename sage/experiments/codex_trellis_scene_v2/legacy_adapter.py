@@ -24,6 +24,7 @@ def _parser(flow_id: str) -> argparse.ArgumentParser:
     parser.add_argument("--prompt-preset")
     parser.add_argument("--flux-image", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--profile", choices=("plan", "development", "production", "benchmark"))
     parser.add_argument("--room-type")
     parser.add_argument("--model")
     parser.add_argument("--asset-strategy", choices=("generate_from_scratch", "asset_library"))
@@ -82,7 +83,7 @@ def adapt_legacy_args(flow_id: str, argv: Sequence[str]) -> argparse.Namespace:
         raise ValueError("--flux-image is required by the image front end")
     strategy = old.asset_strategy or "generate_from_scratch"
     asset_mode = "reuse" if strategy == "asset_library" else ("plan" if old.plan_only else "trellis2")
-    profile = "plan" if old.plan_only else "development"
+    profile = "plan" if old.plan_only else (old.profile or "development")
     request = SceneRequest.create(
         prompt=prompt,
         output_dir=old.output_dir,

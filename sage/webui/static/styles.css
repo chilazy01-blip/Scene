@@ -280,6 +280,19 @@ input[type="radio"] {
   overflow: auto;
 }
 
+.asset-review {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+}
+
+button.compact {
+  padding: 0.25rem 0.55rem;
+  min-height: auto;
+}
+
 .job {
   border: 1px solid var(--line);
   border-radius: 6px;

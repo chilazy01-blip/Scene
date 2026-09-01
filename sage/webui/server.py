@@ -5,9 +5,6 @@ import argparse
 import json
 import os
 import re
-import shlex
-import signal
-import subprocess
 import sys
 import time
 import uuid
@@ -16,6 +13,14 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
+
+try:
+    from sage.webui.controller import JobController
+    from sage.webui.job_store import JobStore
+except ModuleNotFoundError:  # direct ``python sage/webui/server.py`` launch
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from sage.webui.controller import JobController
+    from sage.webui.job_store import JobStore
 
 
 WEBUI_DIR = Path(__file__).resolve().parent
@@ -35,11 +40,36 @@ DEFAULT_WEBUI_DATA_ROOT = Path(
     os.environ.get("SAGE_WEBUI_DATA_ROOT", str(DEFAULT_SAGE_DATA_ROOT / "webui"))
 ).expanduser().resolve()
 JOBS_DIR = Path(os.environ.get("SAGE_WEBUI_JOBS_DIR", str(DEFAULT_WEBUI_DATA_ROOT / "jobs"))).resolve()
+JOBS_DB = Path(os.environ.get("SAGE_WEBUI_JOBS_DB", str(DEFAULT_WEBUI_DATA_ROOT / "jobs.sqlite3"))).resolve()
 DEFAULT_OUTPUT_ROOT = Path(os.environ.get("SAGE_WEBUI_OUTPUT_ROOT", str(DEFAULT_WEBUI_DATA_ROOT / "runs"))).resolve()
 DEFAULT_ASSET_SOURCE_ROOT = Path(os.environ.get("SAGE_WEBUI_ASSET_SOURCE_ROOT", str(DEFAULT_WEBUI_DATA_ROOT / "source_images"))).resolve()
 DEFAULT_CODEX_MODEL = os.environ.get("SAGE_CODEX_MODEL", "gpt-5.6-sol")
 
-RUNNING_PROCS: dict[str, subprocess.Popen[bytes]] = {}
+_STORE: JobStore | None = None
+_CONTROLLER: JobController | None = None
+
+
+def control_plane() -> tuple[JobStore, JobController]:
+    global _STORE, _CONTROLLER
+    if _STORE is None:
+        _STORE = JobStore(JOBS_DB)
+        # Non-destructive one-time compatibility import. Historical JSON remains
+        # evidence; SQLite becomes authoritative after insertion.
+        for path in sorted(JOBS_DIR.glob("*.json")):
+            old = read_json_file(path, {})
+            if isinstance(old, dict) and old.get("id") and _STORE.get_job(str(old["id"])) is None:
+                old.setdefault("createdAt", utc_stamp())
+                old.setdefault("status", "created")
+                old.setdefault("payload", {})
+                old.setdefault("plan", {})
+                old.setdefault("warnings", [])
+                _STORE.create_job(old)
+    if _CONTROLLER is None:
+        _CONTROLLER = JobController(
+            _STORE, workspace_root=WORKSPACE_ROOT, jobs_dir=JOBS_DIR,
+            broker_state=DEFAULT_WEBUI_DATA_ROOT / "heavy_job_broker.json",
+        )
+    return _STORE, _CONTROLLER
 
 
 def utc_stamp() -> str:
@@ -62,23 +92,6 @@ def read_json_file(path: Path, default: Any) -> Any:
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         return default
-
-
-def write_json_file(path: Path, payload: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_bytes(json_bytes(payload))
-    tmp.replace(path)
-
-
-def job_file(job_id: str) -> Path:
-    if not re.fullmatch(r"[A-Za-z0-9_.-]+", job_id):
-        raise ValueError("invalid job id")
-    return JOBS_DIR / f"{job_id}.json"
-
-
-def command_preview(command: list[str]) -> str:
-    return " ".join(shlex.quote(part) for part in command)
 
 
 def bool_payload(payload: dict[str, Any], key: str, default: bool) -> bool:
@@ -108,8 +121,13 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
     mode = str(payload.get("mode") or "image_to_scene")
     asset_strategy = str(payload.get("assetStrategy") or "generate_from_scratch")
     scene_name = sanitize_label(payload.get("sceneName"), fallback=mode)
-    output_root = Path(str(payload.get("outputRoot") or DEFAULT_OUTPUT_ROOT)).expanduser()
+    output_root = Path(str(payload.get("outputRoot") or DEFAULT_OUTPUT_ROOT)).expanduser().resolve()
+    if output_root != DEFAULT_OUTPUT_ROOT and DEFAULT_OUTPUT_ROOT not in output_root.parents:
+        raise ValueError(f"outputRoot must stay inside allowlisted root: {DEFAULT_OUTPUT_ROOT}")
     output_dir = output_root / f"{scene_name}_{job_id}" if job_id else output_root / f"{scene_name}_<job_id>"
+    profile = "plan" if bool_payload(payload, "planOnly", False) else (
+        "production" if str(payload.get("deliveryProfile") or "diagnostic") == "production" else "development"
+    )
     warnings: list[str] = []
     reserved: list[str] = []
 
@@ -124,6 +142,8 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
             text_prompt or "<text-prompt>",
             "--output-dir",
             str(output_dir),
+            "--profile",
+            profile,
             "--asset-strategy",
             asset_strategy,
             "--asset-pipeline",
@@ -189,6 +209,7 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
             if trellis_library:
                 command.extend(["--trellis-asset-library-dir", trellis_library])
             else:
+                command.extend(["--trellis-asset-library-dir", "<asset-library-manifest>"])
                 warnings.append("选择了资产库模式，但未填写 Trellis2 rigid asset library 路径。")
             if alias_file:
                 command.extend(["--reuse-asset-alias-file", alias_file])
@@ -199,14 +220,11 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
             source_image_dir = str(payload.get("assetSourceImageDir") or "").strip()
             if source_image_dir:
                 command.extend(["--asset-source-image-dir", source_image_dir])
-                command.append("--asset-source-image-required")
-                command.append("--asset-source-image-qa-strict")
-            else:
-                command.extend(["--asset-source-image-dir", "<asset-source-image-dir>"])
-                warnings.append("文生场景从 0 生成资产需要先提供 image2 单物体图目录；不会自动回退到 Flux。")
-            reserved.append("image2_source_image_generation")
+                warnings.append("assetSourceImageDir 是旧前端兼容输入；V2 资产生成与准入由核心自行管理。")
         return {
             "mode": mode,
+            "profile": profile,
+            "profileKind": "formal_delivery" if profile == "production" else "diagnostic",
             "implemented": True,
             "assetStrategy": asset_strategy,
             "command": command,
@@ -226,6 +244,8 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
         reference_image or "<reference-image>",
         "--output-dir",
         str(output_dir),
+        "--profile",
+        profile,
         "--no-layout-template-context",
         "--trellis-pipeline-type",
         str(payload.get("trellisPipelineType") or "512"),
@@ -257,7 +277,7 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
     if asset_source_dir:
         command.extend(["--asset-source-image-dir", asset_source_dir])
     elif asset_strategy == "generate_from_scratch":
-        warnings.append("未填写 image2 物体图目录；如果流程没有提前生成 source_images，Trellis2 资产生成会缺少输入。")
+        pass
 
     human_constraints = str(payload.get("humanConstraintsFile") or "").strip()
     if human_constraints:
@@ -272,6 +292,7 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
             if bool_payload(payload, "copyReusedAssets", True):
                 command.append("--copy-reused-assets")
         else:
+            command.extend(["--reuse-asset-dir", "<asset-library-manifest>"])
             warnings.append("选择了资产库模式，但未填写 Trellis2 rigid asset library 路径。")
         if alias_file:
             command.extend(["--reuse-asset-alias-file", alias_file])
@@ -289,6 +310,8 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
 
     return {
         "mode": mode,
+        "profile": profile,
+        "profileKind": "formal_delivery" if profile == "production" else "diagnostic",
         "implemented": True,
         "assetStrategy": asset_strategy,
         "command": command,
@@ -298,76 +321,13 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
     }
 
 
-def refresh_job(job: dict[str, Any]) -> dict[str, Any]:
-    job_id = str(job.get("id") or "")
-    proc = RUNNING_PROCS.get(job_id)
-    if proc is not None:
-        code = proc.poll()
-        if code is None:
-            job["status"] = "running"
-        else:
-            job["status"] = "succeeded" if code == 0 else "failed"
-            job["returnCode"] = code
-            job["finishedAt"] = job.get("finishedAt") or utc_stamp()
-            RUNNING_PROCS.pop(job_id, None)
-            write_json_file(job_file(job_id), job)
-    elif job.get("status") == "running" and job.get("pid"):
-        try:
-            os.kill(int(job["pid"]), 0)
-            job["status"] = "running_external"
-        except OSError:
-            job["status"] = "unknown_after_server_restart"
-            job["finishedAt"] = job.get("finishedAt") or utc_stamp()
-            write_json_file(job_file(job_id), job)
-    return job
-
-
-def start_job(job: dict[str, Any]) -> dict[str, Any]:
-    command = job.get("plan", {}).get("command")
-    if not isinstance(command, list) or not command:
-        job["status"] = "blocked"
-        job.setdefault("warnings", []).append("No runnable command is available for this job.")
-        return job
-    if "<reference-image>" in command:
-        job["status"] = "blocked"
-        job.setdefault("warnings", []).append("Reference image path is missing.")
-        return job
-    if "<text-prompt>" in command:
-        job["status"] = "blocked"
-        job.setdefault("warnings", []).append("Text prompt is missing.")
-        return job
-    if "<asset-source-image-dir>" in command:
-        job["status"] = "blocked"
-        job.setdefault("warnings", []).append("image2 source image directory is missing.")
-        return job
-
-    log_dir = JOBS_DIR / str(job["id"])
-    log_dir.mkdir(parents=True, exist_ok=True)
-    stdout_path = log_dir / "stdout.log"
-    stderr_path = log_dir / "stderr.log"
-    stdout = stdout_path.open("ab")
-    stderr = stderr_path.open("ab")
-    proc = subprocess.Popen(
-        [str(part) for part in command],
-        cwd=str(WORKSPACE_ROOT),
-        stdout=stdout,
-        stderr=stderr,
-        start_new_session=True,
-    )
-    RUNNING_PROCS[str(job["id"])] = proc
-    job["status"] = "running"
-    job["pid"] = proc.pid
-    job["logs"] = {"stdout": str(stdout_path), "stderr": str(stderr_path)}
-    job["startedAt"] = utc_stamp()
-    return job
-
-
 def config_payload() -> dict[str, Any]:
     return {
         "app": "TreeSAGE Local Control",
+        "controlPlane": {"schema": "scene-webui-control-plane/v1", "sqlite": str(JOBS_DB), "journalMode": "WAL", "remoteAccess": False},
         "modes": [
             {"id": "image_to_scene", "label": "图生场景", "enabled": True},
-            {"id": "text_to_scene", "label": "文生场景", "enabled": True, "status": "mvp"},
+            {"id": "text_to_scene", "label": "文生场景", "enabled": True},
         ],
         "assetStrategies": [
             {"id": "generate_from_scratch", "label": "从 0 生成资产", "enabled": True},
@@ -402,6 +362,7 @@ def config_payload() -> dict[str, Any]:
             "GET /api/jobs",
             "GET /api/jobs/{id}",
             "POST /api/jobs/{id}/cancel",
+            "POST /api/jobs/{id}/assets/{candidate}/review",
         ],
     }
 
@@ -422,6 +383,8 @@ class SageWebHandler(SimpleHTTPRequestHandler):
 
     def read_json(self) -> dict[str, Any]:
         length = int(self.headers.get("Content-Length") or "0")
+        if length > 1024 * 1024:
+            raise ValueError("request body exceeds 1 MiB limit")
         if length <= 0:
             return {}
         raw = self.rfile.read(length)
@@ -439,21 +402,18 @@ class SageWebHandler(SimpleHTTPRequestHandler):
                 self.send_json(config_payload())
                 return
             if path == "/api/jobs":
-                JOBS_DIR.mkdir(parents=True, exist_ok=True)
-                jobs = []
-                for item in sorted(JOBS_DIR.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
-                    job = refresh_job(read_json_file(item, {}))
-                    if isinstance(job, dict):
-                        jobs.append(job)
+                store, controller = control_plane()
+                jobs = [controller.refresh(job["id"]) for job in store.list_jobs()]
                 self.send_json({"jobs": jobs[:80]})
                 return
             if path.startswith("/api/jobs/"):
                 job_id = path.rsplit("/", 1)[-1]
-                job = read_json_file(job_file(job_id), None)
+                store, controller = control_plane()
+                job = store.get_job(job_id)
                 if not isinstance(job, dict):
                     self.send_json({"error": "job not found"}, HTTPStatus.NOT_FOUND)
                     return
-                self.send_json(refresh_job(job))
+                self.send_json(controller.refresh(job_id))
                 return
             if path == "/":
                 self.path = "/index.html"
@@ -480,31 +440,40 @@ class SageWebHandler(SimpleHTTPRequestHandler):
                     "plan": plan,
                     "warnings": plan.get("warnings", []),
                 }
+                store, controller = control_plane()
+                store.create_job(job)
                 if bool_payload(payload, "runNow", False) and plan.get("implemented"):
-                    job = start_job(job)
-                write_json_file(job_file(job_id), job)
+                    job = controller.start(job_id)
+                else:
+                    job = store.get_job(job_id) or job
                 self.send_json(job, HTTPStatus.CREATED)
+                return
+            if path.startswith("/api/jobs/") and "/assets/" in path and path.endswith("/review"):
+                parts = path.strip("/").split("/")
+                job_id, candidate_id = parts[2], parts[4]
+                payload = self.read_json()
+                store, _ = control_plane()
+                store.review_asset(job_id, candidate_id, str(payload.get("status") or "pending"), str(payload.get("reviewer") or "local_user"), str(payload.get("notes") or ""))
+                self.send_json(store.get_job(job_id))
                 return
             if path.startswith("/api/jobs/") and path.endswith("/cancel"):
                 job_id = path.split("/")[-2]
-                job = read_json_file(job_file(job_id), None)
+                store, controller = control_plane()
+                job = store.get_job(job_id)
                 if not isinstance(job, dict):
                     self.send_json({"error": "job not found"}, HTTPStatus.NOT_FOUND)
                     return
-                proc = RUNNING_PROCS.get(job_id)
-                if proc is not None and proc.poll() is None:
-                    os.killpg(proc.pid, signal.SIGTERM)
-                    job["status"] = "cancelled"
-                    job["finishedAt"] = utc_stamp()
-                    RUNNING_PROCS.pop(job_id, None)
-                else:
-                    job["status"] = "cancel_requested"
-                write_json_file(job_file(job_id), job)
-                self.send_json(job)
+                self.send_json(controller.cancel(job_id))
                 return
             self.send_json({"error": "not found"}, HTTPStatus.NOT_FOUND)
         except Exception as exc:
             self.send_json({"error": f"{type(exc).__name__}: {exc}"}, HTTPStatus.INTERNAL_SERVER_ERROR)
+
+
+def validate_bind_host(host: str) -> str:
+    if host not in {"127.0.0.1", "::1", "localhost"}:
+        raise ValueError("remote binding is disabled; authentication and CSRF are intentionally not exposed")
+    return host
 
 
 def main() -> None:
@@ -513,7 +482,11 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=8787)
     args = parser.parse_args()
 
+    validate_bind_host(args.host)
+
     JOBS_DIR.mkdir(parents=True, exist_ok=True)
+    _, controller = control_plane()
+    controller.reattach_all()
     server = ThreadingHTTPServer((args.host, args.port), SageWebHandler)
     print(f"TreeSAGE Web UI: http://{args.host}:{args.port}", flush=True)
     server.serve_forever()
