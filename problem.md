@@ -44,7 +44,7 @@
 | P001 | 床尾拖鞋没有形成正确的左右鞋实例组 | 已完成 | 高 | 已恢复 pair contract、人体左右角色、单侧镜像与床锚点朝向 |
 | P002 | 西墙衣柜的功能面朝向墙外 | 已完成 | 高 | 已按实际西墙接触面重算 yaw，柜门朝向室内 |
 | P003 | 最终交付审计未覆盖全场景既有语义回归 | 已完成 | 高 | target/whole-scene 双门已覆盖 typed graph、实例组、朝向、support、opening、操作净空、关系几何和 GLB 变换 |
-| P004 | 当前成果无法从一个受控代码版本完整复现 | 处理中 | 最高 | 正在冻结正式源码、外部 TRELLIS 补丁、模型与运行环境，并执行干净检出验证 |
+| P004 | 当前成果无法从一个受控代码版本完整复现 | 已完成 | 最高 | 正式源码、外部补丁、模型/环境指纹已冻结，干净检出 CPU、Blender 与最终审计复现通过 |
 | P005 | QA、缓存和恢复证书没有闭合内容哈希链 | 待解决 | 最高 | 同名资产被替换后旧审核仍可能放行 |
 | P006 | “运行成功”与“完整可交付”没有统一机器定义 | 待解决 | 最高 | 默认 CLI 只做 plan，诊断结果容易被误认为正式交付 |
 | P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 待解决 | 最高 | 进程名白名单和每请求新线程不能可靠防止资源竞争 |
@@ -568,6 +568,49 @@
   朝向会明确失败而不是近似通过。更强 schema 与动态能力证书分别归入 P009/P013。
 - 下一入口：P004，先分类 dirty worktree，建立不含模型、缓存、运行产物和用户临时文件的受控 release
   snapshot，并从干净 checkout 复现 CPU 回归与无资产重生成 Blender smoke。
+
+### 断点 CP-20260901-05：P004 已完成
+
+- 完成时间：2026-09-01
+- 根因：当前分支 HEAD 只包含早期实验提交，关系几何、SceneDNA、资源门、专项卧室构建、完整交付审计、
+  Blender 工具及大量负向测试仍散落在工作树；外部 TRELLIS.2 虽有确定基准提交，实际运行还依赖 5 个
+  未提交的 DINOv3/SDPA 兼容修改。只记录主仓库 HEAD 或外部提交号都不能恢复真实运行时。
+- 修改范围：精确纳入 108 个正式源码/测试/文档文件，新增
+  `release_manifest.py`、manifest 负向回归和 byte-exact 的外部 TRELLIS compatibility patch bundle；明确
+  排除三组 `examples/` 用户输入、`local_models/`、`.env`、模型、缓存、GLB/Blend 和全部运行产物。
+  密钥模式与危险扩展名扫描均为空，未使用 `git add -A`。
+- 受控版本：候选源码提交 `d120064c6efa4b2a3d95fffe578b58e80791e747`；manifest byte-exact 修复提交
+  `d812910390f11d182dd69ef9c12797ece2fed1cf`；正式 annotated tag 为
+  `scene-v2-p004-20260901`，指向包含本断点的最终发布提交。
+- 外部与模型冻结：TRELLIS.2 基准提交
+  `75fbf0183001ed9876c8dbb35de6b68552ee08bd`；5 个本地修改文件全部逐文件 SHA-256，解码补丁
+  SHA-256 为 `f79915a7eaeaa6c1895e3744cf18e74a973f5e47711698168162d766d72b6747`。TRELLIS 主模型
+  74 个文件、16,385,131,413 bytes，完整逐文件 content fingerprint 为
+  `22cda4b351ab87884530038d64126edd6ed650942c5466b0497c024b7a4ea605`。
+- 环境冻结：orchestrator/trellis Python 均为 3.10.20，PyTorch `2.12.1+cu130`、CUDA build 13.0；两套
+  `pip freeze` 指纹分别为 `d49b7cd63b10029f698d3c3e4d23b2d5ace1eac4ed8d47175446eb4db55f3dc4` 和
+  `041341de14ce0f94a5b51b3029d28500e55c642fcd5ee1c166d244435e582400`。Blender 4.3.2 binary
+  SHA-256 为 `23fa8e83d8152f11246d7172819baa5a00e8e1e706dbc204cc85912db3f368c4`；SDPA、sparse backend
+  与 HF cache 只从显式安全白名单采集。当前受控沙箱无法与 NVIDIA driver 通信，manifest 如实记录
+  `nvidia-smi returncode=9`，没有伪造 GPU 可用状态；P004 的强制验证本身不需要重新运行 GPU/TRELLIS。
+- 干净检出验证：候选独立 worktree 无未提交项；V2 293/293、仓库根 12/12，共 305/305；compileall 与
+  `git diff --check` 通过。资源门为可用内存 231.15 GiB、Dirty+Writeback 0.0003 GiB、blocked 最高 1、
+  I/O wait 0.50%。Blender 在 `MemoryHigh=12G/MemoryMax=16G` cgroup 中复用既有 20 项资产装配成功，
+  没有调用 FLUX/TRELLIS；输出 33 geometry，GLB world-transform 审计通过，且 GLB SHA-256 与 P003
+  正式产物相同：`817c35961f359a817f96e13e710f8bcec6767f1e80e422b0682afe9b31c5cdf7`。
+- 审计复现：从干净检出执行 `--phase reaudit-existing`，`target_feature_ok/whole_scene_ok/typed_graph/
+  support/opening/operation_clearance/glb_world_transform` 全部为 true，源/输出 GLB 哈希一致，明确记录
+  `asset_regeneration_performed=false`。
+- 证据目录：候选失败 manifest 保留在
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p004_release_verification_d120064_candidate`；修正后的正式发布证据
+  写入 `/data/wsj/main/scene_runs/codex_trellis_v2/p004_release_verification_final`，旧目录不覆盖。
+- 人工检查：干净检出 Blender center preview 已查看，书架三排书、书桌椅、衣柜、床和拖鞋均存在，
+  与 P003 视觉证据一致；P004 不以重渲染改善画面为目标。
+- 未解决风险：release tag 尚未推送远端；远程 Git 凭据不属于本问题授权范围。manifest 已冻结可复现
+  输入，但 GPU driver 当前不可见，因此真实 TRELLIS nightly 重生成属于 P014，而不是 P004 的 CPU/
+  无生成 Blender 门。
+- 下一入口：P005，从统一规范化 content key 开始闭合 generation、asset、multiview QA 和恢复证书哈希链，
+  首先补“替换 GLB、替换参考图、改变 seed/模型/参数”三类负向测试。
 
 每完成一个问题，按以下模板追加：
 
