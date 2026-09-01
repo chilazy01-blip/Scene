@@ -5,12 +5,60 @@ from __future__ import annotations
 import fcntl
 import json
 import os
+import subprocess
 import tempfile
 import time
 from pathlib import Path
 from typing import Any, Callable
 
 from .resource_health import sample_resource_health
+
+
+def _nvidia_smi_snapshot(gpu_index: int) -> dict[str, Any]:
+    gpu_result = subprocess.run(
+        [
+            "nvidia-smi",
+            f"--id={gpu_index}",
+            "--query-gpu=name,memory.total,memory.used,temperature.gpu",
+            "--format=csv,noheader,nounits",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=5.0,
+    )
+    fields = [item.strip() for item in gpu_result.stdout.strip().split(",")]
+    if len(fields) != 4:
+        raise RuntimeError(f"unexpected nvidia-smi GPU row: {gpu_result.stdout!r}")
+    process_result = subprocess.run(
+        [
+            "nvidia-smi",
+            f"--id={gpu_index}",
+            "--query-compute-apps=pid",
+            "--format=csv,noheader,nounits",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=5.0,
+    )
+    process_pids = sorted(
+        {
+            int(line.strip())
+            for line in process_result.stdout.splitlines()
+            if line.strip().isdigit()
+        }
+    )
+    return {
+        "available": True,
+        "provider": "nvidia-smi",
+        "gpu_index": int(gpu_index),
+        "name": fields[0],
+        "memory_total_bytes": int(float(fields[1]) * 1024**2),
+        "memory_used_bytes": int(float(fields[2]) * 1024**2),
+        "temperature_c": int(float(fields[3])),
+        "process_pids": process_pids,
+    }
 
 
 def nvml_snapshot(gpu_index: int = 0) -> dict[str, Any]:
@@ -43,7 +91,19 @@ def nvml_snapshot(gpu_index: int = 0) -> dict[str, Any]:
         pynvml.nvmlShutdown()
         return result
     except Exception as exc:
-        return {"available": False, "gpu_index": gpu_index, "error": f"{type(exc).__name__}: {exc}"}
+        try:
+            result = _nvidia_smi_snapshot(gpu_index)
+            result["nvml_error"] = f"{type(exc).__name__}: {exc}"
+            return result
+        except Exception as fallback_exc:
+            return {
+                "available": False,
+                "gpu_index": gpu_index,
+                "error": f"{type(exc).__name__}: {exc}",
+                "fallback_error": (
+                    f"{type(fallback_exc).__name__}: {fallback_exc}"
+                ),
+            }
 
 
 def cgroup_snapshot() -> dict[str, Any]:

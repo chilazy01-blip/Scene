@@ -73,10 +73,20 @@ def inspect_glb(path: Path) -> dict[str, Any]:
         loaded = trimesh.load(path, force="scene")
         bounds = loaded.bounds.tolist() if loaded.bounds is not None else None
         extents = loaded.extents.tolist() if loaded.extents is not None else None
+        vertex_count = sum(
+            len(getattr(geometry, "vertices", ()))
+            for geometry in loaded.geometry.values()
+        )
+        face_count = sum(
+            len(getattr(geometry, "faces", ()))
+            for geometry in loaded.geometry.values()
+        )
         report.update(
             {
                 "trimesh_load_ok": True,
                 "geometry_count": len(loaded.geometry),
+                "vertex_count": vertex_count,
+                "face_count": face_count,
                 "bounds": bounds,
                 "raw_extents": extents,
             }

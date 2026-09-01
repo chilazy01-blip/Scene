@@ -227,7 +227,12 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             resume_staged_assets=resume,
             trellis_model_fingerprint=str(getattr(args, "trellis_model_fingerprint", "unfrozen-local-trellis-model")),
             rmbg_model_fingerprint=str(getattr(args, "rmbg_model_fingerprint", "unfrozen-local-rmbg-model")),
-        generation_code_version=str(getattr(args, "generation_code_version", "unfrozen-scene-v2-code")),
+            generation_code_version=str(
+                getattr(args, "generation_code_version", "unfrozen-scene-v2-code")
+            ),
+            require_generated_asset_admission=(
+                str(getattr(args, "profile", "development")) == "production"
+            ),
     )
     write_json(
         output_dir / "instance_group_asset_resolution.json",

@@ -6,6 +6,7 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+from .asset_admission import build_count_contract
 from .composition import camera_requirements_from_prompt, render_requirements_from_prompt
 from .constraint_scopes import ground_constraint_scopes
 from .dimensions import dimension_policy_for_category
@@ -275,6 +276,16 @@ def build_asset_generation_spec(
             "source": "asset_semantic_form_registry_and_requested_dimensions",
         }
     )
+    raw_count_contract = obj.get("count_contract")
+    count_contract = None
+    if isinstance(raw_count_contract, dict):
+        count_contract = build_count_contract(
+            component_category=str(
+                raw_count_contract.get("component_category") or category
+            ),
+            expected_count=int(raw_count_contract.get("expected_count", 0) or 0),
+            arrangement=str(raw_count_contract.get("arrangement") or "single_row"),
+        )
     return {
         "schema": "codex_trellis_single_asset_spec_v1",
         "category": category,
@@ -293,6 +304,7 @@ def build_asset_generation_spec(
         "target_proportion_ratio_w_l_h": ratios,
         "dimension_handling": "metadata_for_post_generation_adaptation",
         "integrated_component_requirements": component_requirements,
+        "count_contract": count_contract,
         "source_requirements": {
             "scene_prompt_used_for": [
                 "category",
@@ -316,6 +328,16 @@ def render_asset_prompt(spec: dict[str, Any]) -> str:
     ]
     if appearance:
         clauses.append(appearance)
+    count_contract = spec.get("count_contract")
+    if isinstance(count_contract, dict):
+        expected = int(count_contract["expected_count"])
+        component = str(count_contract["component_category"]).replace("_", " ")
+        clauses.append(
+            f"exactly {expected} distinct {component}{'s' if expected != 1 else ''} "
+            f"in one {str(count_contract['arrangement']).replace('_', ' ')}; "
+            "the same complete group must be visible from front and back; "
+            "side views must show no second row or hidden duplicate group"
+        )
     for requirement in spec.get("integrated_component_requirements", []):
         if not isinstance(requirement, dict):
             continue

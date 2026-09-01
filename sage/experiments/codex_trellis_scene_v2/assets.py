@@ -11,6 +11,7 @@ from typing import Any
 from urllib import request as urlrequest
 from urllib.error import HTTPError, URLError
 
+from .asset_admission import build_missing_asset_subflow_contract
 from .content_chain import (
     build_generation_contract,
     content_hash,
@@ -91,8 +92,16 @@ def _post_json(url: str, payload: dict[str, Any], timeout: float = 30.0) -> tupl
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with _opener().open(req, timeout=timeout) as response:
-        return response.status, json.loads(response.read().decode("utf-8"))
+    try:
+        with _opener().open(req, timeout=timeout) as response:
+            return response.status, json.loads(response.read().decode("utf-8"))
+    except HTTPError as exc:
+        body = exc.read()
+        try:
+            decoded = json.loads(body.decode("utf-8")) if body else {}
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            decoded = {"error": body.decode("utf-8", errors="replace")}
+        return exc.code, decoded
 
 
 def bridge_health(trellis_url: str) -> dict[str, Any]:
@@ -145,6 +154,9 @@ class AssetRegistry:
             if pair_role and str(item.get("pair_role") or "") != pair_role:
                 continue
             if str(item.get("qa_status", "approved")) != "approved":
+                continue
+            lifecycle = str(item.get("lifecycle_status") or "")
+            if lifecycle and lifecycle != "curated":
                 continue
             raw_path = item.get("glb_path") or item.get("asset_path")
             if not raw_path:
@@ -673,6 +685,7 @@ def resolve_assets(
     trellis_model_fingerprint: str = "unfrozen-local-trellis-model",
     rmbg_model_fingerprint: str = "unfrozen-local-rmbg-model",
     generation_code_version: str = "unfrozen-scene-v2-code",
+    require_generated_asset_admission: bool = False,
 ) -> dict[str, Any]:
     registry = AssetRegistry(manifest_path)
     multiview_semantic_scorer = (
@@ -941,6 +954,9 @@ def resolve_assets(
                 obj["included_components"] = deepcopy(matched["included_components"])
             obj["asset_id"] = str(matched.get("asset_id") or source.stem)
             obj["asset_source"] = "curated_library"
+            obj["asset_lifecycle_status"] = str(
+                matched.get("lifecycle_status") or "curated"
+            )
             obj["scene_dna_score"] = deepcopy(matched.get("_scene_dna_score"))
             if matched.get("asset_family_id"):
                 obj["asset_family_id"] = str(matched["asset_family_id"])
@@ -1009,6 +1025,7 @@ def resolve_assets(
                     "category": obj["category"],
                     "status": "reused",
                     "asset_id": obj["asset_id"],
+                    "asset_lifecycle_status": obj["asset_lifecycle_status"],
                     "source": str(source),
                     "staged": str(destination) if mode != "plan" else None,
                     "requested_dimensions": requested_dimensions,
@@ -1091,6 +1108,9 @@ def resolve_assets(
         obj["asset_prompt"] = prompt
         obj["asset_generation_key"] = generation_key
         obj["asset_generation_contract"] = generation_contract
+        obj["missing_asset_subflow_contract"] = build_missing_asset_subflow_contract(
+            spec, generation_contract
+        )
         obj["asset_generation_strategy"] = (
             "generate_unique_asset" if reuse_from is None else "reuse_generated_asset"
         )
@@ -1112,6 +1132,9 @@ def resolve_assets(
                 "requested_dimensions": deepcopy(obj["requested_dimensions"]),
                 "generation_key": generation_key,
                 "generation_contract": deepcopy(generation_contract),
+                "missing_asset_subflow_contract": deepcopy(
+                    obj["missing_asset_subflow_contract"]
+                ),
                 "strategy": obj["asset_generation_strategy"],
                 "reuse_from_object_id": reuse_from,
                 "asset_generation_spec": deepcopy(spec),
@@ -1542,6 +1565,8 @@ def resolve_assets(
                 generation_call_index += 1
                 obj["asset_id"] = f"generated_{obj['id']}_{metadata['job_id']}"
                 obj["asset_source"] = "trellis2_staging"
+                obj["asset_lifecycle_status"] = "generated_for_run"
+                obj["temporary_admission_status"] = "required_before_production_assembly"
                 generated_units[generation_key] = {
                     "path": destination,
                     "asset_id": obj["asset_id"],
@@ -1630,6 +1655,7 @@ def resolve_assets(
         else:
             obj["asset_id"] = f"planned_{obj['category']}"
             obj["asset_source"] = "missing_generation_plan"
+            obj["asset_lifecycle_status"] = "generated_for_run"
             metadata = None
             status = "planned_missing"
             obj["source_dimensions"] = None
@@ -1670,6 +1696,13 @@ def resolve_assets(
                 "generation_strategy": obj.get("asset_generation_strategy"),
                 "generation_reuse_from": obj.get("asset_generation_reuse_from"),
                 "asset_generation_spec": deepcopy(obj.get("asset_generation_spec")),
+                "missing_asset_subflow_contract": deepcopy(
+                    obj.get("missing_asset_subflow_contract")
+                ),
+                "asset_lifecycle_status": obj.get("asset_lifecycle_status"),
+                "temporary_admission_status": obj.get(
+                    "temporary_admission_status"
+                ),
                 "bridge_input_prompt": obj.get("asset_prompt"),
                 "final_flux_prompt": obj.get("final_flux_prompt"),
                 "scene_dna_2d_candidate_selection": deepcopy(
@@ -1739,6 +1772,11 @@ def resolve_assets(
         "component_resolution_ok": component_resolution_ok,
         "missing_count": sum(1 for item in results if item["status"] == "planned_missing"),
         "generated_count": sum(1 for item in results if item["status"] == "generated"),
+        "generated_for_run_count": sum(
+            1
+            for item in results
+            if item.get("asset_lifecycle_status") == "generated_for_run"
+        ),
         "unique_generated_count": generation_call_index,
         "resumed_generated_instance_count": resumed_instance_count,
         "resumed_generation_key_count": len(resumable_generation_keys),
@@ -1754,8 +1792,25 @@ def resolve_assets(
             for item in architecture_results
             if item["status"] == "parametric_fallback"
         ),
+        "generated_asset_admission_required": bool(
+            require_generated_asset_admission
+        ),
+        "generated_asset_admission_complete": not any(
+            item.get("status") == "generated"
+            and item.get("asset_lifecycle_status") != "scene_specific_approved"
+            for item in results
+        ),
         "ready_for_assembly": component_resolution_ok
-        and all(item["status"] in {"generated", "reused"} for item in results),
+        and all(item["status"] in {"generated", "reused"} for item in results)
+        and (
+            not require_generated_asset_admission
+            or not any(
+                item.get("status") == "generated"
+                and item.get("asset_lifecycle_status")
+                != "scene_specific_approved"
+                for item in results
+            )
+        ),
         "dimension_resolution": {
             "accepted_count": sum(
                 1

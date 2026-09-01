@@ -2806,6 +2806,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--heavy-job-lease-ttl", type=float, default=120.0)
     parser.add_argument("--gpu-index", type=int, default=0)
     parser.add_argument(
+        "--maximum-cgroup-memory-gib",
+        type=float,
+        default=16.0,
+        help=(
+            "Largest finite memory.max accepted by the heavy-job resource gate. "
+            "Set this explicitly to the service MemoryMax when a model needs more "
+            "than the conservative 16 GiB default."
+        ),
+    )
+    parser.add_argument(
         "--require-bounded-cgroup",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -2851,6 +2861,9 @@ def main() -> None:
         gpu_index=int(args.gpu_index),
         require_nvml=bool(args.require_nvml_admission),
         require_bounded_cgroup=bool(args.require_bounded_cgroup),
+        maximum_cgroup_memory_bytes=int(
+            float(args.maximum_cgroup_memory_gib) * 1024**3
+        ),
     )
     httpd = ThreadingHTTPServer((args.host, args.port), build_handler(jobs, runtime, broker))
     print(f"[trellis2] serving on http://{args.host}:{args.port}", flush=True)

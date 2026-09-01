@@ -585,6 +585,37 @@ class SceneDNATest(unittest.TestCase):
         self.assertEqual(post_mock.call_count, 2)
         self.assertEqual(result["job_id"], "job-after-restart")
 
+    def test_trellis_request_does_not_retry_admission_rejection(self) -> None:
+        obj = {"id": "box", "asset_prompt": "one isolated storage box"}
+        with tempfile.TemporaryDirectory() as tmp, patch(
+            "sage.experiments.codex_trellis_scene_v2.assets._post_json",
+            return_value=(
+                429,
+                {
+                    "error": "heavy job admission rejected",
+                    "retryable": False,
+                    "admission": {"status": "cgroup_limit_missing"},
+                },
+            ),
+        ) as post_mock, patch(
+            "sage.experiments.codex_trellis_scene_v2.assets.time.sleep"
+        ) as sleep_mock:
+            with self.assertRaisesRegex(RuntimeError, "cgroup_limit_missing"):
+                generate_trellis_asset(
+                    obj,
+                    Path(tmp) / "box.glb",
+                    trellis_url="http://127.0.0.1:8082",
+                    seed=1,
+                    timeout=2,
+                    steps=1,
+                    texture_size=64,
+                    decimation_target=100,
+                    pipeline_type="512",
+                    preprocess_image=False,
+                )
+        self.assertEqual(post_mock.call_count, 1)
+        sleep_mock.assert_not_called()
+
     def test_resolver_writes_2d_candidate_audit_into_certificate(self) -> None:
         brief = build_baseline_brief(
             "A warm modern bedroom with exactly one storage box."
