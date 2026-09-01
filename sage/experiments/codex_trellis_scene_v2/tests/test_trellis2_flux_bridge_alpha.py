@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from io import BytesIO
 from argparse import Namespace
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -71,6 +72,29 @@ class Trellis2FluxBridgeAlphaTest(unittest.TestCase):
                     "retryable": True,
                 },
             )
+
+    def test_broker_backpressure_returns_http_429_without_worker(self) -> None:
+        jobs = JobStore()
+        runtime = SimpleNamespace(
+            args=SimpleNamespace(exit_after_metadata_responses=0, output_dir=".")
+        )
+        broker = MagicMock()
+        broker.acquire.return_value = {
+            "accepted": False,
+            "status": "queue_full",
+            "retryable": True,
+        }
+        handler = build_handler(jobs, runtime, broker)
+        instance = handler.__new__(handler)
+        instance.path = "/generate"
+        instance.headers = {"Content-Length": "2"}
+        instance.rfile = BytesIO(b"{}")
+        instance._send_json = MagicMock()
+        instance.do_POST()
+        status, payload = instance._send_json.call_args.args
+        self.assertEqual(status, 429)
+        self.assertEqual(payload["admission"]["status"], "queue_full")
+        self.assertEqual(jobs._jobs, {})
 
     def test_opt_in_scene_dna_scoring_releases_cached_pipeline(self) -> None:
         class FakeCuda:

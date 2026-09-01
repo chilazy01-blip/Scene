@@ -125,7 +125,7 @@ def _terminate(process: subprocess.Popen[Any] | None) -> None:
         process.wait()
 
 
-def _wait_for_concurrency_gate(output: Path) -> None:
+def _wait_for_concurrency_gate(output: Path, stability_seconds: float) -> None:
     last_summary = ""
     clear_started: float | None = None
     while True:
@@ -135,11 +135,11 @@ def _wait_for_concurrency_gate(output: Path) -> None:
                 clear_started = time.monotonic()
                 print(
                     f"[{_utc_now()}] foreign geometry clear; starting "
-                    f"{CONCURRENCY_CLEAR_STABILITY_SECONDS:.0f}s stability window",
+                    f"{stability_seconds:.0f}s stability window",
                     flush=True,
                 )
             clear_seconds = time.monotonic() - clear_started
-            if clear_seconds < CONCURRENCY_CLEAR_STABILITY_SECONDS:
+            if clear_seconds < stability_seconds:
                 time.sleep(30)
                 continue
             append_health_checkpoint(
@@ -364,7 +364,9 @@ def run(args: argparse.Namespace) -> None:
     bridge_log = output / "logs" / "trellis_bridge_book_regeneration_v2.log"
     bridge_log.parent.mkdir(parents=True, exist_ok=True)
     try:
-        _wait_for_concurrency_gate(output)
+        _wait_for_concurrency_gate(
+            output, float(args.concurrency_clear_stability_seconds)
+        )
         with bridge_log.open("a", encoding="utf-8") as bridge_handle:
             bridge = subprocess.Popen(
                 _bridge_command(args),
@@ -461,6 +463,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--cuda-visible-devices",
         default="0",
         help="Physical CUDA device list exposed to the TRELLIS bridge (default: 0).",
+    )
+    parser.add_argument(
+        "--concurrency-clear-stability-seconds",
+        type=float,
+        default=CONCURRENCY_CLEAR_STABILITY_SECONDS,
+        help="Configurable legacy preflight window; broker leases remain authoritative.",
     )
     return parser
 

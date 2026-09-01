@@ -45,6 +45,7 @@ from sage.experiments.codex_trellis_scene_v2.scene_dna_vnext import (
     assess_2d_generability,
     select_vnext_candidate,
 )
+from sage.experiments.codex_trellis_scene_v2.heavy_job_broker import HeavyJobBroker
 
 
 class JobStore:
@@ -52,8 +53,8 @@ class JobStore:
         self._lock = threading.Lock()
         self._jobs: dict[str, dict[str, Any]] = {}
 
-    def create(self) -> str:
-        job_id = uuid.uuid4().hex
+    def create(self, job_id: str | None = None) -> str:
+        job_id = job_id or uuid.uuid4().hex
         with self._lock:
             self._jobs[job_id] = {"status": "processing", "created_at": time.time()}
         return job_id
@@ -2391,7 +2392,11 @@ def json_bytes(payload: dict[str, Any]) -> bytes:
     return json.dumps(payload).encode("utf-8")
 
 
-def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
+def build_handler(
+    jobs: JobStore,
+    runtime: Trellis2BridgeRuntime,
+    broker: HeavyJobBroker | None = None,
+):
     metadata_delivery_lock = threading.Lock()
     metadata_delivery_count = 0
     recycle_pending = threading.Event()
@@ -2463,6 +2468,7 @@ def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
                         "trellis_model": runtime.args.trellis_model,
                         "flux_server_url": runtime.args.flux_server_url,
                         "flux_profile": runtime.args.flux_profile,
+                        "heavy_job_broker": broker.snapshot() if broker else None,
                     },
                 )
                 return
@@ -2539,9 +2545,31 @@ def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 payload = json.loads(self.rfile.read(length).decode("utf-8") or "{}")
-                job_id = jobs.create()
+                job_id = uuid.uuid4().hex
+                admission = broker.acquire(job_id) if broker else {"accepted": True}
+                if not admission.get("accepted"):
+                    self._send_json(
+                        429,
+                        {
+                            "error": "heavy job admission rejected",
+                            "retryable": bool(admission.get("retryable", True)),
+                            "admission": admission,
+                        },
+                    )
+                    return
+                jobs.create(job_id)
 
                 def worker() -> None:
+                    heartbeat_stop = threading.Event()
+                    heartbeat_thread = None
+                    if broker is not None:
+                        def pulse() -> None:
+                            interval = max(1.0, broker.lease_ttl_seconds / 3.0)
+                            while not heartbeat_stop.wait(interval):
+                                if not broker.heartbeat(job_id):
+                                    return
+                        heartbeat_thread = threading.Thread(target=pulse, daemon=True)
+                        heartbeat_thread.start()
                     try:
                         glb_path = runtime.generate(payload, job_id)
                         metadata_path = Path(runtime.args.output_dir) / f"{job_id}.json"
@@ -2574,6 +2602,11 @@ def build_handler(jobs: JobStore, runtime: Trellis2BridgeRuntime):
                         )
                         print(f"[trellis2] job {job_id} failed:\n{trace}", flush=True)
                     finally:
+                        heartbeat_stop.set()
+                        if heartbeat_thread is not None:
+                            heartbeat_thread.join(timeout=1.0)
+                        if broker is not None:
+                            broker.release(job_id)
                         runtime.cleanup_after_job()
 
                 threading.Thread(target=worker, daemon=True).start()
@@ -2765,6 +2798,23 @@ def parse_args() -> argparse.Namespace:
             "responses. Use only under a restart supervisor; zero disables it."
         ),
     )
+    parser.add_argument(
+        "--heavy-job-lease-state",
+        default="",
+        help="Shared JSON lease state; defaults under --output-dir.",
+    )
+    parser.add_argument("--heavy-job-lease-ttl", type=float, default=120.0)
+    parser.add_argument("--gpu-index", type=int, default=0)
+    parser.add_argument(
+        "--require-bounded-cgroup",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument(
+        "--require-nvml-admission",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
     parser.add_argument("--remesh", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--remesh-band", type=int, default=1)
     parser.add_argument("--remesh-project", type=int, default=0)
@@ -2794,7 +2844,15 @@ def main() -> None:
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     jobs = JobStore()
     runtime = Trellis2BridgeRuntime(args)
-    httpd = ThreadingHTTPServer((args.host, args.port), build_handler(jobs, runtime))
+    lease_path = Path(args.heavy_job_lease_state) if args.heavy_job_lease_state else Path(args.output_dir) / "heavy_job_lease.json"
+    broker = HeavyJobBroker(
+        lease_path,
+        lease_ttl_seconds=float(args.heavy_job_lease_ttl),
+        gpu_index=int(args.gpu_index),
+        require_nvml=bool(args.require_nvml_admission),
+        require_bounded_cgroup=bool(args.require_bounded_cgroup),
+    )
+    httpd = ThreadingHTTPServer((args.host, args.port), build_handler(jobs, runtime, broker))
     print(f"[trellis2] serving on http://{args.host}:{args.port}", flush=True)
     httpd.serve_forever()
 

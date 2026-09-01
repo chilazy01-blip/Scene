@@ -47,7 +47,7 @@
 | P004 | 当前成果无法从一个受控代码版本完整复现 | 已完成 | 最高 | 正式源码、外部补丁、模型/环境指纹已冻结，干净检出 CPU、Blender 与最终审计复现通过 |
 | P005 | QA、缓存和恢复证书没有闭合内容哈希链 | 已完成 | 最高 | generation、候选、staged、pilot 与四视图 QA 已形成规范化内容链，任一绑定输入变化都会失效 |
 | P006 | “运行成功”与“完整可交付”没有统一机器定义 | 已完成 | 最高 | 四类 profile 与统一终态机已落地，只有 production 全部必需阶段闭合才可 deliverable=true |
-| P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 待解决 | 最高 | 进程名白名单和每请求新线程不能可靠防止资源竞争 |
+| P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 已完成 | 最高 | lease broker 已统一 NVML/RAM/I/O/disk/cgroup admission，单 GPU 限一任务并以 429 背压 |
 | P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 待解决 | 高 | 上游输入变化后，下游旧产物可能未被正确失效 |
 | P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 待解决 | 高 | 旧字段、旧轴向或环境漂移可能被新代码静默接受 |
 | P010 | 最终 GLB 面数和体积明显过高 | 待解决 | 高 | 当前卧室约 252 MB，不适合规模化与实时使用 |
@@ -678,6 +678,33 @@
   失败而不是静默跳过。GPU/Blender nightly 的真实成功路径纳入 P014。
 - 下一入口：P007，建立基于 GPU/RAM/I/O/disk/cgroup lease 的统一 heavy-job broker，并用并发、外部 GPU
   占用和 worker 异常三类测试验证背压、TTL 与回收。
+
+### 断点 CP-20260901-08：P007 已完成
+
+- 完成时间：2026-09-01
+- 根因：bridge 使用 `ThreadingHTTPServer`，每个 `/generate` 都无条件创建 daemon worker；外围 runner 的
+  进程名白名单和固定 3600 秒稳定窗既看不到任意 CUDA 进程，也无法阻止两个 HTTP 请求同时加载模型。
+- 修改文件：新增 `heavy_job_broker.py` 与 `tests/test_heavy_job_broker.py`；修改
+  `trellis2_flux_bridge_server.py`、`run_sdf_bedroom_trellis_batch.py` 和 bridge 测试。
+- Broker：用 `flock` + 原子 JSON 保存单 GPU active lease；记录 owner PID、job、GPU index、TTL、acquire/
+  heartbeat/release 时间。每个已接受 worker 只有一个 heartbeat，finally 必定 release；过期 heartbeat 或死亡
+  PID 可被后续请求回收，活 lease 不会被抢占。
+- 资源门：每次 admission 联合检查 `resource_health` 的 RAM、Dirty/Writeback、blocked、I/O wait、data/tmp
+  disk，NVML 的 GPU 名称、显存、温度和 compute/graphics PID，以及当前 cgroup 的
+  `memory.high/max/current`。正式 bridge 默认要求 NVML 成功且 `memory.max<=16GiB`；不可见 GPU、无界
+  cgroup、外部 GPU PID 或系统压力均安全拒绝。
+- 并发与背压：broker 的机器限制为 `max_active=1,max_queue=0`；已有活 lease 时 `/generate` 返回 HTTP 429
+  和结构化 `queue_full/retryable`，不会创建 JobStore 项或 worker thread。`/health` 暴露 broker snapshot。
+- 配置：lease 文件、TTL、GPU index、NVML/cgroup 强门均有 CLI；旧 3600 秒 stability window 改为
+  `--concurrency-clear-stability-seconds`，只作 legacy preflight，broker lease 才是权威门。systemd supervisor
+  继续强制 `MemoryHigh=12G/MemoryMax=16G`、OOMPolicy 和独立日志。
+- 负向测试：两个并发请求只有第一个取得 lease；外部 GPU PID 被拒；模拟 worker 死亡/heartbeat 超时后
+  lease 可恢复；HTTP 429 路径不创建 job。测试完全使用 probe 注入，不加载 CUDA/TRELLIS。
+- 验证结果：V2 302/302、仓库根 12/12，共 314/314；server/broker compileall 与 `git diff --check`
+  通过。没有启动或打断任何真实 GPU 任务。
+- 未解决风险：当前选择零长度等待队列，调用方需按 429 重试；这是明确背压策略，不是无限线程。跨主机
+  分布式队列不在单机 P007 范围内。阶段 attempt 与 broker lease 的统一持久化关联进入 P008。
+- 下一入口：P008，把全流程变成显式阶段 DAG，以输入/输出 hash 自动计算失效范围并原子提交 attempt。
 
 每完成一个问题，按以下模板追加：
 
