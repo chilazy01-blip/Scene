@@ -54,7 +54,7 @@
 | P011 | 关系几何证书仍不是严格精确谓词证明 | 已完成 | 中高 | native expansion exact 谓词、局部 SDF 细化、全顶点 containment、持久目标索引和真实失败率已闭环 |
 | P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 已完成 | 中 | 双 profile、双机位覆盖搜索、最终分辨率对象掩码和成片质量门已闭环 |
 | P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 已完成 | 高 | 生成子流、精确数量门、临时准入、显式生命周期与三资产/双风格审核库已闭环 |
-| P014 | 测试以快速单测为主，缺少真实集成与故障恢复验证 | 待解决 | 高 | 测试全过仍不能证明 Blender/TRELLIS/恢复链可靠 |
+| P014 | 测试以快速单测为主，缺少真实集成与故障恢复验证 | 已完成 | 高 | 四层验证、P001-P013 负向矩阵、7 类 chaos 与机器 release/status manifest 已闭环 |
 | P015 | 三条流程和多份文档缺少统一事实源 | 待解决 | 中高 | V2、旧图生、旧文生以及文档口径仍在漂移 |
 | P016 | WebUI 只是启动面板，尚不是可恢复的任务控制系统 | 待解决 | 中低 | 服务重启后缺少事务状态、队列和任务重新关联 |
 
@@ -964,6 +964,55 @@
   未声称通用视觉模型可自动可靠计数。
 - 下一入口：P014，建立提交级、CPU integration、Blender headless、nightly GPU 四层测试与 chaos
   恢复矩阵，并自动生成 release/status manifest。
+
+### 断点 CP-20260901-15：P014 已完成
+
+- 完成时间：2026-09-01。
+- 根因：原 343 项回归主要运行在进程内模拟对象上，没有把真实主链、Blender 产物和 GPU 生成证据纳入
+  同一终态；测试数量靠文档人工抄写。第一次真实 CPU integration 立即发现“exactly five books in one
+  row”被错误物化为五个互相碰撞的 `book_stack`，第一次 Blender integration 又证明 Blender 即使脚本
+  抛异常也可能以 0 退出，不能只看进程退出码。
+- 修改文件：新增 `verification.py`、`blender_headless_integration.py` 和
+  `tests/test_verification.py`；修改 `policies.py`、`brief.py` 和 `tests/test_asset_admission.py`。实现提交为
+  `7f379b9`。
+- 四层体系：commit 层机器执行 V2/根测试、compileall、diff check 并从 unittest 输出解析数量；CPU
+  integration 真实执行 rules -> SceneBrief -> architecture -> typed graph -> asset plan -> layout -> repair/
+  validation；Blender headless 在有限 cgroup 中实际建模、打光、渲染并复读 160x160 PNG；nightly GPU
+  验证真实 TRELLIS pilot、bridge done metadata、GLB 与内容证书绑定，不接受仅声明 `actual_gpu`。
+- chaos 与负向覆盖：机器 catalog 强制 P001-P013 每项解析到一个具体负向测试，并覆盖 bridge 中断、
+  GLB/metadata 半写、QA 后 GLB 替换、GPU 抢占、disk/I/O 压力、systemd stale lease、旧输出污染 7 类
+  chaos；缺项、方法改名、手工测试数、硬件证据缺失或 hash 变化都会使 `release_eligible=false`。
+- 集成中修复：新增 grouped component count 解析；“five books in one row”现在只产生一个
+  `book_stack`，并携带 `book/expected_count=5/single_row` 合同。修复后同一完整 CPU 主链从 18 对象、4 个
+  `support_object_collision` 变为 14 对象、0 hard/soft violations、`validation_ok=true`。
+- Blender 验收：第一轮真实脚本因 factory reset 后 `scene.world=None` 抛异常，但 Blender 返回 0；第二轮
+  显式创建 world，并由报告检查所需对象、160x160 尺寸、非平帧方差和 PNG hash，最终 `ok=true`，而非
+  采信 systemd/Blender 退出码。
+- 新增/修改测试：负向 catalog 完整性、半写 artifact pair、替换后的 binding、旧目录污染、缺少真实
+  GPU 标志/硬件证据、拒绝手工测试数，以及 grouped book count 不产生五个碰撞实例；共 5 个新测试，
+  另复用并机器核对 13 个问题负测和 7 个 chaos test id。
+- 执行命令：`verification --run` 实际运行完整 unittest、compileall、diff check，并读取真实 CPU、
+  Blender、GPU 内容证据生成唯一 status manifest；Blender 使用 systemd `MemoryHigh=4G/MemoryMax=6G`，
+  nightly GPU 复用本轮刚完成且内容证书闭合的真实 P013 TRELLIS 运行。
+- 验证结果：机器 status `release_eligible=true`、0 failures，四层均 passed；commit 层自动计数为 V2
+  348/348 + 根 12/12 = 360/360，另有 CPU/Blender/GPU 各 1 个真实 integration 证据。catalog 为
+  P001-P013 13/13、chaos 7/7 可解析；compileall 与 diff check 通过。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p014_verification_20260901_v1`。
+- 关键文件 SHA-256：release/status manifest
+  `667e6d6fee80de452aa75d42c27bfa0d76072f2b8ead98460ea64a57521b9bc0`；commit tier
+  `ac0536f7abb5241ece93f8a967d43b7f75e48fd4386ec344dfd39ce0bd3d116c`；CPU summary
+  `f9eea4621795c077a905f25ce107d16929230cc8c33d152e19ccdedf3feb8e1a`；Blender report/PNG 分别为
+  `5c1e6a1120d2f4fce4686ddbde07a3619ddcf83d4dd3c5c636fefe0d3133e84e`、
+  `60fc96cf715a0382909b70b38b92c3159e6f9b50be000e574e88ba0936d159b9`。
+- 人工检查结论：真实 CPU 失败证据保留并明确定位五书碰撞；修复后输出 count contract 与单一资产组。
+  Blender smoke 图可见蓝色立方体、明暗层次与完整边界，未用空白 PNG 冒充渲染成功。nightly GPU 使用
+  P013 实际 19.3MB TRELLIS GLB，不是 mock。
+- 未解决风险：本地 nightly 入口已机器化并有真实证据，但尚未绑定特定云 CI；GPU runner 仍必须满足
+  P007 资源门，资源繁忙时应延期而不是并发抢占。Blender smoke 验证基础 I/O/渲染，不替代 P012 的
+  全场景成片质量门。
+- 下一入口：P015，建立唯一事实源、共享核心边界、旧 Flow2 adapter 与自动生成的用户入口/架构/运行/
+  研究状态，消除 README、AGENT 与实验文档漂移。
 
 每完成一个问题，按以下模板追加：
 
