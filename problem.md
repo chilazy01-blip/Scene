@@ -55,7 +55,7 @@
 | P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 已完成 | 中 | 双 profile、双机位覆盖搜索、最终分辨率对象掩码和成片质量门已闭环 |
 | P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 已完成 | 高 | 生成子流、精确数量门、临时准入、显式生命周期与三资产/双风格审核库已闭环 |
 | P014 | 测试以快速单测为主，缺少真实集成与故障恢复验证 | 已完成 | 高 | 四层验证、P001-P013 负向矩阵、7 类 chaos 与机器 release/status manifest 已闭环 |
-| P015 | 三条流程和多份文档缺少统一事实源 | 待解决 | 中高 | V2、旧图生、旧文生以及文档口径仍在漂移 |
+| P015 | 三条流程和多份文档缺少统一事实源 | 已完成 | 中高 | 图生/文生统一为 SceneRequest 前端，后续只走 V2；动态事实由机器生成 |
 | P016 | WebUI 只是启动面板，尚不是可恢复的任务控制系统 | 待解决 | 中低 | 服务重启后缺少事务状态、队列和任务重新关联 |
 
 状态只使用：`待讨论`、`待解决`、`处理中`、`验证中`、`已完成`、`真实阻塞`。
@@ -1013,6 +1013,43 @@
   全场景成片质量门。
 - 下一入口：P015，建立唯一事实源、共享核心边界、旧 Flow2 adapter 与自动生成的用户入口/架构/运行/
   研究状态，消除 README、AGENT 与实验文档漂移。
+
+### 断点 CP-20260901-16：P015 已完成
+
+- 完成时间：2026-09-01。
+- 根因：V2 已具备正式资产、关系、布局、装配和验收契约，但三个历史入口仍默认执行各自的大型实现；
+  根 README 与 WebUI 文档仍把旧 Flow2 称为主链，CLI 默认值、模型锁和测试数在多处人工复制。
+- 修改文件：新增 `core_domain.py`、`legacy_adapter.py`、`project_facts.py`、
+  `tests/test_core_domain.py`，修改 V2 `pipeline.py` 与三个旧入口；重写根 README，新增真实架构、运行手册、
+  研究状态和 ADR。实现提交为 `299b5cf`。
+- 统一边界：text/image 前端只构造内容寻址 `SceneRequest`；图片作为有路径/字节/hash 的 soft input 绑定，
+  prompt 硬事实保持独立。`SceneBrief` 之后的 assets、typed relations、layout、repair、assembly、acceptance
+  全部固定由 V2 拥有，请求 hash 进入 expand DAG 输入。resume 会拒绝不同请求。
+- 旧链策略：`run_tree_sage_text_scene.py`、`run_selfmade_trellis_scene.py`、
+  `run_tree_sage_scene.py` 默认经 adapter 进入 V2；旧算法只在显式 `--legacy-engine` 时执行。不能映射的
+  新算法开关会由 argparse 拒绝，避免静默混跑。
+- 单一事实源：`project_facts.py` 直接读取当前 CLI parser、stage DAG、schema、`runtime_lock.json` 和机器
+  release manifest，输出带自身 content hash 的 defaults/schema/model fingerprint/test counts/status 快照；
+  手写文档不再复制动态数字。
+- 新增/修改测试：两个文本前端共享域对象、图片内容变化使请求 hash 失效、未知旧算法参数拒绝、三个
+  旧入口均有 adapter 门、facts 与 live parser/runtime lock 一致，以及用户文档不复制动态计数，共 6 项。
+- 执行命令：V2 unittest discovery、根 unittest discovery、compileall、diff check；并真实执行一条
+  rules/plan V2 主链，随后从 P014 status 生成项目事实快照。
+- 验证结果：V2 354/354、根测试 12/12 全部通过；真实 plan 为
+  `profile_complete=true`、`terminal_status=plan_complete_non_deliverable`、0 hard/soft violation。请求 hash
+  `0781ac...83bab` 与 DAG expand 输入完全相同；事实快照正确绑定 P014 的 release-eligible 机器证据。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p015_single_core_20260901_v1`。
+- 关键文件 SHA-256：`scene_request.json`
+  `603c00640b371ae4909e0643484aabde382906094d15e90e52707a33e7049961`；`run_dag.json`
+  `a393f3163113a9a16354bf22f55b753495537922194a11339c04ba9363dd713d`；`run_summary.json`
+  `247d2108b69736258e7a83e1f460986513da6de4b0837d3c3e0668361bc34800`；`project_facts.json`
+  `f35e72c4b559932b3cee3ebe0b1c1a124066669c666fb427e02f82849158e910`。
+- 人工检查结论：根 README 现在只给出一个正式入口，architecture/runbook/research/ADR 的职责边界一致；
+  facts 中测试数明确来自已绑定的旧验证 manifest，不冒充本次新增代码已经重新获得 release eligibility。
+- 未解决风险：图片 adapter 当前保存可追溯 soft binding，并用 prompt 形成 brief，但尚未把图像解析器输出
+  的结构化观察逐字段合并进 SceneBrief；这属于前端观测质量演进，不能重新引入第二套布局核心。
+- 下一入口：P016，把 WebUI 从 JSON 文件 + 内存 Popen 面板升级为 SQLite WAL 的可恢复任务控制面。
 
 每完成一个问题，按以下模板追加：
 
