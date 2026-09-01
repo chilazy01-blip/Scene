@@ -51,7 +51,7 @@
 | P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 已完成 | 高 | 11 阶段 content-addressed DAG 已接入 pipeline，resume 精确复用/失效并原子记录 attempt |
 | P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 已完成 | 高 | 七类核心文档已有可执行强契约与规范化哈希，production 启动前强制核验四类运行时锁 |
 | P010 | 最终 GLB 面数和体积明显过高 | 已完成 | 高 | 当前卧室已降至 88.7MB/992,676 faces，P001-P003、四条关系和多通道视觉 A/B 无回归 |
-| P011 | 关系几何证书仍不是严格精确谓词证明 | 待解决 | 中高 | 当前三角终检可信，但浮点与粗 SDF 模糊区仍需分级 |
+| P011 | 关系几何证书仍不是严格精确谓词证明 | 已完成 | 中高 | native expansion exact 谓词、局部 SDF 细化、全顶点 containment、持久目标索引和真实失败率已闭环 |
 | P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 待解决 | 中 | 材质同质、噪点、曝光和遮挡降低成片质量 |
 | P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 待解决 | 高 | 结构可加载不等于数量、形态、朝向和能力合格 |
 | P014 | 测试以快速单测为主，缺少真实集成与故障恢复验证 | 待解决 | 高 | 测试全过仍不能证明 Blender/TRELLIS/恢复链可靠 |
@@ -824,6 +824,52 @@
   P010 第一阶段交付阻塞。
 - 下一入口：P011，引入 native exact-predicate 能力探测、SDF ambiguous 局部细化、静态目标 BVH 缓存
   和误差上界；backend 不可用时必须明确标为 `floating_point_verified`。
+
+### 断点 CP-20260901-12：P011 已完成
+
+- 完成时间：2026-09-01。
+- 根因：旧三角终检只有 Python 浮点窄相位，目标 cKDTree 只在单次 audit 内存中复用；碰撞查询直接使用
+  固定 2cm SDF，证书没有记录 capability 内容 hash、完整误差界或可靠的 containment 点基。更重要的是，
+  旧书排 containment 只检查 8,000 个随机表面点；改为全 mesh 顶点后，真实发现下层书排有 85/293,604
+  个顶点越过含 1cm clearance 的边界，最大越界 0.000074703m，证明旧证书确有采样漏检。
+- 修改文件：新增 `native_exact_predicates.cpp`、`exact_predicates.py` 和
+  `p011_relation_benchmark.py`；修改 `mesh_verifier.py`、`relation_geometry.py`、
+  `relation_geometry_bridge.py`、`relation_solver.py`、`build_sdf_complex_bedroom.py` 及对应测试。实现提交为
+  `6fdcc8b`。
+- 精确谓词：服务器没有 CGAL、Boost.Multiprecision 或 GMP 开发头文件，因此实现自包含 C++17
+  error-free binary64 expansion 的 `orient2d/orient3d`，以 `-fno-fast-math -ffp-contract=off` 编译并在
+  加载时自检。native source SHA-256 为
+  `bed013d603b0e600a38f71a96524e1bc6aad922aa1348796dac2abebdb5f0a6a`，冻结共享库 SHA-256 为
+  `ba2f00060e7f83144d730e672c8a52f59f1939392adba8911e84f0b923bee0b8`。不可构建、显式禁用或单对输入
+  超范围时均降级并明确写 `floating_point_verified`；零候选只写
+  `conservative_broad_phase_verified`，不虚构 exact predicate 已执行。
+- SDF 与 containment：多级代理先用 4cm coarse 排除明显分离点，所有 negative/ambiguous 点为安全性
+  都局部查询 2cm fine；2% 阈值只标记高模糊升级，不再用于跳过少量可疑点。真实四条关系的 8 个方向
+  均发生局部细化，64,000 个查询最终残留 1,349 个 conservative ambiguous（2.1078125%），全部继续由
+  三角终检覆盖。`full_containment` 改为凸 box 对全部 mesh 顶点的有符号余量分类，记录 binary64 数值
+  误差界；下层书排目标局部最小修复为 +0.000074713m，中层数值边界收敛为 -1e-8m，修复后四条关系
+  4/4 接受。
+- hash、误差界和缓存：关系 contract/证书显式绑定 source/target capability canonical hash、双侧 proxy
+  build hash、姿态、点基和点数；记录 proxy discretization、关系 tolerance、分类 numeric error 和三角
+  broad-phase tolerance。静态目标三角、AABB、中心/半径和空间索引以 mesh 内容 hash、姿态和 tolerance 为
+  key 原子落盘；真实基准第二轮 13/13 命中持久缓存。
+- 真实统计：最终优化卧室 GLB 上冻结桌椅、三层书架容器、杯/桌、植物/斗柜、闹钟/床头柜和双灯/床头柜
+  9 个非穿透/接触容差案例，并从同一真实网格构造椅桌、书架侧板、杯桌、植物斗柜 4 个穿透负例。
+  13/13 与预期一致，失败率 0；四个负例分别执行 383、3、22、2 个 native exact 三角对并检出相交。
+  `supported_by` 的导出视觉网格保留微小接触间隙，因此正确期望是 tolerance 内支撑且不穿透，不把
+  “表面必须精确相交”误写成验收条件。
+- 验证结果：V2 325/325、仓库根 12/12，共 337/337；native Fraction 真值 oracle、近共线、共面、穿越、
+  candidate budget、显式 fallback、跨调用缓存、低/高 ambiguous 细化、capability 失效和全顶点 solver
+  均有测试。C++ 额外以 `-Wall -Wextra -Wpedantic` 编译无警告，compileall 与 `git diff --check` 通过。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p011_exact_geometry_20260901_v2`。
+- 关键文件 SHA-256：最终基准报告
+  `22a24478e6102ca54cca327682ef3487653172932eca4035692e268e139b7782`；native library 如上。
+- 未解决风险：13 个冻结案例只够形成 integration gate，不足以替换默认 repair；报告明确保持
+  `default_repair_replacement.recommended=false`，后续需扩展 nightly 跨资产集。三角 broad phase 和退化面
+  过滤仍是带量化 tolerance 的浮点保守步骤，不能描述为整条连续几何的全 exact 证明；逐三角 ctypes
+  narrow phase 也有性能开销。最细 2cm SDF 后仍可能保留 ambiguous，但会触发三角升级而非静默放行。
+- 下一入口：P012，分离关系证据与最终展示 profile，并建立相机、曝光、噪声、材质和裁切的量化门。
 
 每完成一个问题，按以下模板追加：
 
