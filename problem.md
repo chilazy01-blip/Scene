@@ -50,7 +50,7 @@
 | P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 已完成 | 最高 | lease broker 已统一 NVML/RAM/I/O/disk/cgroup admission，单 GPU 限一任务并以 429 背压 |
 | P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 已完成 | 高 | 11 阶段 content-addressed DAG 已接入 pipeline，resume 精确复用/失效并原子记录 attempt |
 | P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 已完成 | 高 | 七类核心文档已有可执行强契约与规范化哈希，production 启动前强制核验四类运行时锁 |
-| P010 | 最终 GLB 面数和体积明显过高 | 待解决 | 高 | 当前卧室约 252 MB，不适合规模化与实时使用 |
+| P010 | 最终 GLB 面数和体积明显过高 | 已完成 | 高 | 当前卧室已降至 88.7MB/992,676 faces，P001-P003、四条关系和多通道视觉 A/B 无回归 |
 | P011 | 关系几何证书仍不是严格精确谓词证明 | 待解决 | 中高 | 当前三角终检可信，但浮点与粗 SDF 模糊区仍需分级 |
 | P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 待解决 | 中 | 材质同质、噪点、曝光和遮挡降低成片质量 |
 | P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 待解决 | 高 | 结构可加载不等于数量、形态、朝向和能力合格 |
@@ -777,6 +777,53 @@
   失败。远程 artifact store/容器镜像签名仍不在 P009 范围。
 - 下一入口：P010，在保持 P001-P009 全部语义、关系、资产 QA 与视觉证据不回归的前提下，为最终 GLB
   建立分资产预算、可逆优化、几何/材质审计和小于 100MB 的正式交付门。
+
+### 断点 CP-20260901-11：P010 已完成
+
+- 完成时间：2026-09-01
+- 根因：源 GLB 共有 3,409,625 faces/252,390,276 bytes；开放书架与三排书占约 197 万面，且所有类别
+  沿用接近统一的高面数预算。单纯激进 collapse 会让碎片化 TRELLIS 表面出现孔洞/翻面；Blender
+  `export_apply` 下直接链接重复 mesh 又会破坏床头柜材质和实例 mask，不能只按文件大小选结果。
+- 修改文件：新增 `scene_delivery_optimization.py`、`blender_optimize_scene_delivery.py`、
+  `blender_render_optimization_closeups.py` 和 `tests/test_scene_delivery_optimization.py`；优化
+  `mesh_verifier.py` broad phase，用逐三角个体半径与向量化 AABB 过滤消除大三角导致的巨量假候选。
+  实现提交为 `9ad031f647dbc0699a15ae4c634d5771608a3aca`。
+- 预算策略：按类别基准、法线曲率 proxy 与三向投影 silhouette complexity 分配预算，并在总场景上限内
+  归一化。最终保护完整 496,326-face 开放书架和完整 89,999-face 衣柜；三排结构简单的五本书各保留约
+  19.7k faces，其余资产按曲面/轮廓复杂度分配。所有 decimate 后局部/世界 canonical bounds 恢复，UV
+  层、材质槽、有限法线、零面积面和 1024 texture cap 逐 mesh 审计。
+- 失败候选：v1 因 4mm bounds 门拒收；v2/v3 仍有衣柜边界或书架孔洞；v4 达到约 95.6MB/1M faces，
+  但重复 mesh 两次 decimate 产生不同拓扑；v5 强制实例共享后床头柜变白且 instance mask 归属不稳；v6
+  对非流形碎片全局重算法线导致多资产翻面；v7 衣柜细节退化；v8 的 10k-face 书排轮廓过碎。全部目录
+  保留为负面证据，正式交付只认 v9。
+- 实例化/压缩边界：重复资产 mesh-link 现为显式实验开关，默认因材质和 mask 回归关闭；没有用错误实例
+  结果冒充优化。v9 在不依赖 Draco/meshopt/KTX2 的条件下已达到第一阶段硬目标；这些压缩和额外 LOD
+  仍标记 deferred，不虚构支持。碰撞代理与 capability 证书未改，旧关系证书只作上游证据；优化后的视觉
+  三角网格另行重验。
+- 验证结果：最终 GLB 88,715,276 bytes、992,676 faces、33 geometry/33 nodes，较源文件体积减少
+  64.85%、faces 减少 70.89%；trimesh 可加载。20/20 对象 bounds 通过 3mm center/6mm extent 门；
+  P001-P003 whole-scene audit 为 true；桌椅 `tucked_under` 和三排书 `contained_in` 四组视觉网格均
+  `complete=true/intersects=false/candidate_pair_count=0`。
+- 视觉验收：源/优化 RGB、depth、20 个 required instance mask 均通过；尺度感知全场 silhouette 加权 IoU
+  `0.937548`，关系关键对象 best IoU 均过 0.84，完整书架为 1.0、衣柜约 0.984。相同 768px 近景人工
+  检查确认三层各五本书仍完整位于柜格内，椅座/扶手/轮脚仍清楚位于桌面与开口关系中；减面后的细节更
+  棱角化，但没有对象缺失、穿插、朝向或关系退化。V2 315/315、仓库根 12/12，共 327/327；compileall
+  与 `git diff --check` 通过。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/sdf_complex_bedroom_optimized_p010_20260901_v9`。
+- 关键文件 SHA-256：GLB
+  `eed1f5db3488fd41fee336b274ce9ed10f5fe0987d50b1d5139228d0c218ea9e`；优化几何审计
+  `544a8b26e37e448b1beeca15291b517c63512ad5fa0fc3fb3365869c18a87fa1`；渲染 A/B
+  `b3de931da374ff606f36ac2705fcdbf1261aab750e763e28d7bfff97df256254`；最终交付审计
+  `94566c059e05a9b55994cc566b7e68bbfafb1f0b513838fd0acf087c3be40ae1`；书架/书排近景
+  `abe7af67c58e31622118d093a8c28691a80d69ef732892869874aa6260a8ddf7`；桌椅近景
+  `1d80b7a2e8f3f691357038e408fbaa9da49c32c7b754499ec37301b7f571faf1`。
+- 未解决风险：当前 silhouette 门是 512px 多视图尺度感知 proxy，不是连续屏幕空间 Hausdorff 证明；
+  collapse 会让近看表面更棱角化。更严格 exact predicate 属于 P011，材质/相机成片改善属于 P012；
+  glTF 层 mesh+material 安全实例化、meshopt/Draco/KTX2 和额外 LOD 可继续降低传输/实时成本，但不再是
+  P010 第一阶段交付阻塞。
+- 下一入口：P011，引入 native exact-predicate 能力探测、SDF ambiguous 局部细化、静态目标 BVH 缓存
+  和误差上界；backend 不可用时必须明确标为 `floating_point_verified`。
 
 每完成一个问题，按以下模板追加：
 
