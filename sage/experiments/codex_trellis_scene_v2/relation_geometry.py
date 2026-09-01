@@ -69,7 +69,9 @@ def transform_points(points: np.ndarray, matrix: np.ndarray) -> np.ndarray:
     return points @ matrix[:3, :3].T + matrix[:3, 3]
 
 
-def _slot_index(capability: dict[str, Any], collection: str) -> dict[str, dict[str, Any]]:
+def _slot_index(
+    capability: dict[str, Any], collection: str
+) -> dict[str, dict[str, Any]]:
     return {
         str(slot["id"]): slot
         for slot in capability.get(collection, [])
@@ -137,6 +139,8 @@ def compile_relation_geometry(
         "relation_type": relation_type,
         "source_asset_id": str(source_capability.get("asset_id") or ""),
         "target_asset_id": str(target_capability.get("asset_id") or ""),
+        "source_capability_hash": content_hash(source_capability),
+        "target_capability_hash": content_hash(target_capability),
         "target_slot_collection": collection,
         "target_slot_id": slot_id,
         "evaluator": evaluator,
@@ -152,7 +156,9 @@ def compile_relation_geometry(
     return contract
 
 
-def _points_in_box(points: np.ndarray, minimum: np.ndarray, maximum: np.ndarray) -> np.ndarray:
+def _points_in_box(
+    points: np.ndarray, minimum: np.ndarray, maximum: np.ndarray
+) -> np.ndarray:
     return np.all((points >= minimum) & (points <= maximum), axis=1)
 
 
@@ -186,16 +192,42 @@ def _relation_predicate(
     if evaluator in {"full_containment", "partial_entry"}:
         minimum = np.asarray(slot["min_m"], dtype=np.float64)
         maximum = np.asarray(slot["max_m"], dtype=np.float64)
+        coordinate_scale = max(
+            (
+                float(np.max(np.abs(points_target_local)))
+                if len(points_target_local)
+                else 0.0
+            ),
+            float(np.max(np.abs(minimum))),
+            float(np.max(np.abs(maximum))),
+            1.0,
+        )
+        numeric_error = float(np.finfo(np.float64).eps * coordinate_scale * 16.0)
         if evaluator == "full_containment":
             clearance = float(slot.get("clearance_m", 0.0))
-            inside = _points_in_box(
-                points_target_local, minimum + clearance, maximum - clearance
+            classified_minimum = minimum + clearance
+            classified_maximum = maximum - clearance
+            lower_margin = points_target_local - classified_minimum
+            upper_margin = classified_maximum - points_target_local
+            signed_clearance = np.min(
+                np.concatenate((lower_margin, upper_margin), axis=1), axis=1
             )
+            inside = signed_clearance >= -numeric_error
+            boundary = np.abs(signed_clearance) <= numeric_error
             fraction = float(np.mean(inside)) if len(inside) else 0.0
             return {
                 "ok": bool(len(inside) and np.all(inside)),
                 "inside_fraction": fraction,
                 "required_inside_fraction": 1.0,
+                "inside_count": int(np.count_nonzero(inside)),
+                "outside_count": int(np.count_nonzero(~inside)),
+                "boundary_count": int(np.count_nonzero(boundary)),
+                "minimum_signed_clearance_m": (
+                    float(np.min(signed_clearance)) if len(signed_clearance) else None
+                ),
+                "inside_outside_classifier": "analytic_convex_box_binary64_v1",
+                "classification_complete": True,
+                "classification_numeric_error_bound_m": numeric_error,
             }
         inside = _points_in_box(points_target_local, minimum, maximum)
         fraction = float(np.mean(inside)) if len(inside) else 0.0
@@ -216,7 +248,9 @@ def _relation_predicate(
             portal_projection = float(np.dot(portal_corner, outward))
             depths = portal_projection - points_target_local @ outward
             maximum_depth = float(np.max(depths)) if len(depths) else None
-            depth_ok = bool(maximum_depth is not None and maximum_depth >= minimum_depth)
+            depth_ok = bool(
+                maximum_depth is not None and maximum_depth >= minimum_depth
+            )
         return {
             "ok": bool(fraction + 1e-12 >= required and depth_ok),
             "inside_fraction": fraction,
@@ -224,6 +258,9 @@ def _relation_predicate(
             "maximum_entry_depth_m": maximum_depth,
             "minimum_entry_depth_m": minimum_depth,
             "entry_depth_ok": depth_ok,
+            "inside_outside_classifier": "analytic_box_binary64_v1",
+            "classification_complete": True,
+            "classification_numeric_error_bound_m": numeric_error,
         }
 
     plane = _bounded_plane_metrics(points_target_local, slot)
@@ -257,31 +294,132 @@ def _collision_direction(
     other_world_from_local: np.ndarray,
     proxy: DistanceProxy | None,
     tolerance: float,
+    *,
+    ambiguous_refinement_threshold: float = 0.02,
 ) -> dict[str, Any]:
     if proxy is None:
         return {"complete": False, "deep_count": None, "minimum_distance_m": None}
     points_other_local = transform_points(
         points_world, np.linalg.inv(other_world_from_local)
     )
-    distances = np.asarray(proxy.query(points_other_local), dtype=np.float64)
-    metadata = getattr(proxy, "metadata", {})
-    uncertainty = float(
-        metadata.get("max_discretization_error_m", 0.0)
-        if isinstance(metadata, dict)
-        else 0.0
+    manifest = getattr(proxy, "manifest", {})
+    proxy_levels = getattr(proxy, "levels", {})
+    level_entries = (
+        list(manifest.get("levels", []))
+        if isinstance(manifest, dict) and isinstance(proxy_levels, dict)
+        else []
     )
-    deep_threshold = -(tolerance + uncertainty)
-    deep = distances < deep_threshold
-    ambiguous = (distances < 0.0) & ~deep
+    ordered_levels = [
+        str(entry["name"])
+        for entry in sorted(
+            level_entries, key=lambda item: float(item["pitch_m"]), reverse=True
+        )
+        if str(entry.get("name") or "") in proxy_levels
+    ]
+    if not ordered_levels:
+        ordered_levels = [""]
+
+    def query(level_name: str, points: np.ndarray) -> tuple[np.ndarray, float, float]:
+        if level_name:
+            selected = proxy_levels[level_name]
+            result = np.asarray(proxy.query(points, level=level_name), dtype=np.float64)
+            level_metadata = getattr(selected, "metadata", {})
+            pitch = float(selected.pitch)
+        else:
+            result = np.asarray(proxy.query(points), dtype=np.float64)
+            level_metadata = getattr(proxy, "metadata", {})
+            pitch = float(proxy.pitch)
+        uncertainty_value = float(
+            level_metadata.get("max_discretization_error_m", 0.0)
+            if isinstance(level_metadata, dict)
+            else 0.0
+        )
+        return result.copy(), pitch, uncertainty_value
+
+    distances, initial_pitch, initial_uncertainty = query(
+        ordered_levels[0], points_other_local
+    )
+    uncertainty_by_point = np.full(
+        len(distances), initial_uncertainty, dtype=np.float64
+    )
+    pitch_by_point = np.full(len(distances), initial_pitch, dtype=np.float64)
+
+    def masks() -> tuple[np.ndarray, np.ndarray]:
+        deep_mask = distances < -(tolerance + uncertainty_by_point)
+        ambiguous_mask = (distances < 0.0) & ~deep_mask
+        return deep_mask, ambiguous_mask
+
+    deep, ambiguous = masks()
+    initial_ambiguous_count = int(np.count_nonzero(ambiguous))
+    initial_ambiguous_fraction = (
+        float(initial_ambiguous_count / len(distances)) if len(distances) else 0.0
+    )
+    refinement_levels: list[dict[str, Any]] = []
+    refined_indices = np.nonzero(ambiguous)[0]
+    # The coarse outer proxy is useful for rejecting clearly separated points,
+    # but every negative/uncertain sample is refined when a smaller-pitch level
+    # exists so the new hierarchy never weakens the former finest-level check.
+    # The threshold remains explicit as the policy signal for high-ambiguity
+    # escalation and reporting.
+    if len(refined_indices):
+        for level_name in ordered_levels[1:]:
+            if not len(refined_indices):
+                break
+            refined_distances, pitch, uncertainty = query(
+                level_name, points_other_local[refined_indices]
+            )
+            distances[refined_indices] = refined_distances
+            uncertainty_by_point[refined_indices] = uncertainty
+            pitch_by_point[refined_indices] = pitch
+            refinement_levels.append(
+                {
+                    "level": level_name,
+                    "pitch_m": pitch,
+                    "uncertainty_m": uncertainty,
+                    "sample_count": int(len(refined_indices)),
+                }
+            )
+            deep, ambiguous = masks()
+            refined_indices = np.nonzero(ambiguous)[0]
+    finest_queried_pitch = (
+        float(refinement_levels[-1]["pitch_m"]) if refinement_levels else initial_pitch
+    )
+    maximum_active_pitch = (
+        float(np.max(pitch_by_point)) if len(pitch_by_point) else initial_pitch
+    )
+    final_uncertainty = (
+        float(np.max(uncertainty_by_point)) if len(uncertainty_by_point) else 0.0
+    )
+    deep_threshold = -(tolerance + final_uncertainty)
     return {
         "complete": True,
         "sample_count": int(len(distances)),
         "deep_count": int(np.count_nonzero(deep)),
         "ambiguous_count": int(np.count_nonzero(ambiguous)),
+        "ambiguous_fraction": (
+            float(np.count_nonzero(ambiguous) / len(distances))
+            if len(distances)
+            else 0.0
+        ),
         "minimum_distance_m": float(np.min(distances)) if len(distances) else None,
-        "proxy_pitch_m": float(proxy.pitch),
-        "proxy_uncertainty_m": uncertainty,
+        "proxy_pitch_m": maximum_active_pitch,
+        "finest_queried_pitch_m": finest_queried_pitch,
+        "proxy_uncertainty_m": final_uncertainty,
         "deep_penetration_threshold_m": deep_threshold,
+        "local_refinement": {
+            "trigger_threshold_fraction": float(ambiguous_refinement_threshold),
+            "triggered": bool(refinement_levels),
+            "initial_level": ordered_levels[0] or None,
+            "initial_pitch_m": initial_pitch,
+            "initial_uncertainty_m": initial_uncertainty,
+            "initial_ambiguous_count": initial_ambiguous_count,
+            "initial_ambiguous_fraction": initial_ambiguous_fraction,
+            "threshold_exceeded": bool(
+                initial_ambiguous_fraction > ambiguous_refinement_threshold
+            ),
+            "levels": refinement_levels,
+            "residual_ambiguous_count": int(np.count_nonzero(ambiguous)),
+        },
     }
 
 
@@ -325,6 +463,10 @@ def evaluate_relation_geometry(
     source_proxy: DistanceProxy | None = None,
     target_proxy: DistanceProxy | None = None,
     proxy_hashes: dict[str, str] | None = None,
+    capability_hashes: dict[str, str] | None = None,
+    predicate_points_local: np.ndarray | None = None,
+    predicate_point_basis: str = "surface_samples",
+    ambiguous_refinement_threshold: float = 0.02,
 ) -> GeometryEvaluation:
     """Evaluate relation semantics and bilateral non-penetration."""
 
@@ -334,7 +476,12 @@ def evaluate_relation_geometry(
     target_points_local = np.asarray(target_points_local, dtype=np.float64)
     source_world = transform_points(source_points_local, source_matrix)
     target_world = transform_points(target_points_local, target_matrix)
-    relation_source_local = _anchor_relation_points(contract, source_points_local)
+    predicate_input = (
+        source_points_local
+        if predicate_points_local is None
+        else np.asarray(predicate_points_local, dtype=np.float64)
+    )
+    relation_source_local = _anchor_relation_points(contract, predicate_input)
     relation_source_world = transform_points(relation_source_local, source_matrix)
     source_in_target = transform_points(
         relation_source_world, np.linalg.inv(target_matrix)
@@ -343,10 +490,18 @@ def evaluate_relation_geometry(
     predicate = _relation_predicate(contract, source_in_target)
     tolerance = float(contract["tolerance_m"])
     source_to_target = _collision_direction(
-        source_world, target_matrix, target_proxy, tolerance
+        source_world,
+        target_matrix,
+        target_proxy,
+        tolerance,
+        ambiguous_refinement_threshold=ambiguous_refinement_threshold,
     )
     target_to_source = _collision_direction(
-        target_world, source_matrix, source_proxy, tolerance
+        target_world,
+        source_matrix,
+        source_proxy,
+        tolerance,
+        ambiguous_refinement_threshold=ambiguous_refinement_threshold,
     )
     collision_complete = bool(
         source_to_target["complete"] and target_to_source["complete"]
@@ -357,16 +512,35 @@ def evaluate_relation_geometry(
         and target_to_source["deep_count"] == 0
     )
     conservative = contract.get("verification_policy") == "conservative_bilateral"
-    collision_ok = no_deep_collision if conservative else bool(
-        (not source_to_target["complete"] or source_to_target["deep_count"] == 0)
-        and (not target_to_source["complete"] or target_to_source["deep_count"] == 0)
+    collision_ok = (
+        no_deep_collision
+        if conservative
+        else bool(
+            (not source_to_target["complete"] or source_to_target["deep_count"] == 0)
+            and (
+                not target_to_source["complete"] or target_to_source["deep_count"] == 0
+            )
+        )
     )
     inputs = {
         "contract_hash": contract["contract_hash"],
         "source_pose": source_matrix.round(12).tolist(),
         "target_pose": target_matrix.round(12).tolist(),
         "proxy_hashes": dict(proxy_hashes or {}),
+        "capability_hashes": dict(
+            capability_hashes
+            or {
+                "source": str(contract.get("source_capability_hash") or ""),
+                "target": str(contract.get("target_capability_hash") or ""),
+            }
+        ),
+        "predicate_point_basis": predicate_point_basis,
+        "predicate_point_count": int(len(relation_source_local)),
     }
+    proxy_error_bound = max(
+        float(source_to_target.get("proxy_uncertainty_m") or 0.0),
+        float(target_to_source.get("proxy_uncertainty_m") or 0.0),
+    )
     certificate = {
         "schema": GEOMETRY_CERTIFICATE_SCHEMA,
         "accepted": bool(predicate["ok"] and collision_ok),
@@ -376,7 +550,11 @@ def evaluate_relation_geometry(
             "target_asset_id": contract["target_asset_id"],
             "target_slot_id": contract["target_slot_id"],
         },
-        "predicate": predicate,
+        "predicate": {
+            **predicate,
+            "point_basis": predicate_point_basis,
+            "point_count": int(len(relation_source_local)),
+        },
         "collision": {
             "complete": collision_complete,
             "policy": contract["verification_policy"],
@@ -385,6 +563,13 @@ def evaluate_relation_geometry(
         },
         "inputs": inputs,
         "inputs_hash": content_hash(inputs),
+        "quantified_error_bounds": {
+            "proxy_discretization_m": proxy_error_bound,
+            "relation_tolerance_m": tolerance,
+            "predicate_numeric_m": float(
+                predicate.get("classification_numeric_error_bound_m") or 0.0
+            ),
+        },
     }
     certificate["certificate_hash"] = content_hash(certificate)
     return GeometryEvaluation(bool(certificate["accepted"]), certificate)
@@ -397,11 +582,28 @@ def certificate_is_fresh(
     source_pose: dict[str, Any] | np.ndarray | None,
     target_pose: dict[str, Any] | np.ndarray | None,
     proxy_hashes: dict[str, str] | None = None,
+    capability_hashes: dict[str, str] | None = None,
+    predicate_point_basis: str = "surface_samples",
+    predicate_point_count: int | None = None,
 ) -> bool:
+    existing_inputs = certificate.get("inputs", {})
     inputs = {
         "contract_hash": contract["contract_hash"],
         "source_pose": pose_matrix(source_pose).round(12).tolist(),
         "target_pose": pose_matrix(target_pose).round(12).tolist(),
         "proxy_hashes": dict(proxy_hashes or {}),
+        "capability_hashes": dict(
+            capability_hashes
+            or {
+                "source": str(contract.get("source_capability_hash") or ""),
+                "target": str(contract.get("target_capability_hash") or ""),
+            }
+        ),
+        "predicate_point_basis": predicate_point_basis,
+        "predicate_point_count": int(
+            predicate_point_count
+            if predicate_point_count is not None
+            else existing_inputs.get("predicate_point_count", 0)
+        ),
     }
     return bool(certificate.get("inputs_hash") == content_hash(inputs))

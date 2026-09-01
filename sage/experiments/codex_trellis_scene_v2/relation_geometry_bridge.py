@@ -13,6 +13,7 @@ from .mesh_verifier import (
     PreparedTriangleMesh,
     intersection_tolerance,
     prepare_triangle_mesh,
+    prepare_triangle_mesh_cached,
     verify_mesh_intersection,
 )
 from .multilevel_proxy import load_multilevel_proxy, mesh_content_hash
@@ -20,6 +21,7 @@ from .relation_geometry import (
     RELATION_SLOT_TYPES,
     DistanceProxy,
     compile_relation_geometry,
+    content_hash,
     evaluate_relation_geometry,
     pose_matrix,
 )
@@ -44,6 +46,7 @@ class RuntimeGeometryAsset:
     proxy: DistanceProxy
     proxy_hash: str
     mesh: trimesh.Trimesh | None = None
+    capability_hash: str = ""
 
 
 def load_runtime_geometry_asset(
@@ -65,15 +68,14 @@ def load_runtime_geometry_asset(
     actual_mesh_hash = mesh_content_hash(mesh)
     if expected_mesh_hash != level_mesh_hash or expected_mesh_hash != actual_mesh_hash:
         raise ValueError("proxy is stale for the normalized runtime mesh")
-    points, _ = trimesh.sample.sample_surface(
-        mesh, int(surface_sample_count), seed=17
-    )
+    points, _ = trimesh.sample.sample_surface(mesh, int(surface_sample_count), seed=17)
     return RuntimeGeometryAsset(
         capability=capability,
         surface_points_local=np.asarray(points, dtype=np.float64),
         proxy=proxy,
         proxy_hash=str(proxy.manifest["build_hash"]),
         mesh=mesh,
+        capability_hash=content_hash(capability),
     )
 
 
@@ -170,6 +172,8 @@ def evaluate_geometry_bindings(
     plan: dict[str, Any],
     binding: dict[str, Any],
     runtime_assets: dict[str, RuntimeGeometryAsset],
+    *,
+    static_target_bvh_cache_directory: Path | None = None,
 ) -> dict[str, Any]:
     """Opt-in geometry audit for any supported relation primitive."""
 
@@ -191,16 +195,25 @@ def evaluate_geometry_bindings(
         relation_type = str(relation_binding["relation_type"])
         _require_hard_relation(plan, source_id, relation_type, target_id)
         if source_id not in objects or target_id not in objects:
-            raise KeyError(f"geometry binding endpoint is missing: {source_id}, {target_id}")
+            raise KeyError(
+                f"geometry binding endpoint is missing: {source_id}, {target_id}"
+            )
         source_object = objects[source_id]
         target_object = objects[target_id]
         source_asset_id = str(
-            relation_binding.get("source_asset_id") or source_object.get("asset_id") or ""
+            relation_binding.get("source_asset_id")
+            or source_object.get("asset_id")
+            or ""
         )
         target_asset_id = str(
-            relation_binding.get("target_asset_id") or target_object.get("asset_id") or ""
+            relation_binding.get("target_asset_id")
+            or target_object.get("asset_id")
+            or ""
         )
-        if source_asset_id not in runtime_assets or target_asset_id not in runtime_assets:
+        if (
+            source_asset_id not in runtime_assets
+            or target_asset_id not in runtime_assets
+        ):
             raise KeyError(
                 f"runtime geometry asset is missing: {source_asset_id}, {target_asset_id}"
             )
@@ -233,6 +246,24 @@ def evaluate_geometry_bindings(
                 "source": source_asset.proxy_hash,
                 "target": target_asset.proxy_hash,
             },
+            capability_hashes={
+                "source": source_asset.capability_hash
+                or content_hash(source_asset.capability),
+                "target": target_asset.capability_hash
+                or content_hash(target_asset.capability),
+            },
+            predicate_points_local=(
+                np.asarray(source_asset.mesh.vertices, dtype=np.float64)
+                if contract["evaluator"] == "full_containment"
+                and source_asset.mesh is not None
+                else None
+            ),
+            predicate_point_basis=(
+                "all_mesh_vertices_convex_slot"
+                if contract["evaluator"] == "full_containment"
+                and source_asset.mesh is not None
+                else "surface_samples"
+            ),
         )
         certificate = evaluation.certificate
         triangle_policy = str(
@@ -257,9 +288,7 @@ def evaluate_geometry_bindings(
                 )
                 target_pose_key = tuple(
                     float(value)
-                    for row in np.asarray(
-                        pose_matrix(target_pose)
-                    ).round(12)
+                    for row in np.asarray(pose_matrix(target_pose)).round(12)
                     for value in row
                 )
                 cache_key = (
@@ -270,11 +299,19 @@ def evaluate_geometry_bindings(
                 prepared_target = prepared_target_cache.get(cache_key)
                 target_cache_hit = prepared_target is not None
                 if prepared_target is None:
-                    prepared_target = prepare_triangle_mesh(
-                        target_asset.mesh,
-                        transform=target_pose,
-                        tolerance=pair_tolerance,
-                    )
+                    if static_target_bvh_cache_directory is not None:
+                        prepared_target = prepare_triangle_mesh_cached(
+                            target_asset.mesh,
+                            transform=target_pose,
+                            tolerance=pair_tolerance,
+                            cache_directory=static_target_bvh_cache_directory,
+                        )
+                    else:
+                        prepared_target = prepare_triangle_mesh(
+                            target_asset.mesh,
+                            transform=target_pose,
+                            tolerance=pair_tolerance,
+                        )
                     prepared_target_cache[cache_key] = prepared_target
                 triangle_report = verify_mesh_intersection(
                     source_asset.mesh,
@@ -331,10 +368,16 @@ def reconcile_layout_validation_with_geometry_audit(
         if str(report.get("relation_type")) not in GEOMETRY_WAIVABLE_AABB_RELATIONS:
             continue
         triangle = report.get("triangle_verification")
-        if not isinstance(triangle, dict) or not triangle.get("complete") or triangle.get("intersects"):
+        if (
+            not isinstance(triangle, dict)
+            or not triangle.get("complete")
+            or triangle.get("intersects")
+        ):
             continue
         certificate = report.get("certificate")
-        collision = certificate.get("collision") if isinstance(certificate, dict) else None
+        collision = (
+            certificate.get("collision") if isinstance(certificate, dict) else None
+        )
         if not isinstance(collision, dict) or not collision.get("complete"):
             continue
         if any(

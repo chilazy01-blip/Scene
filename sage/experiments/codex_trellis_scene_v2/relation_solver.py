@@ -23,7 +23,9 @@ from .relation_geometry import (
 RELATION_SOLVER_SCHEMA = "codex_trellis_relation_geometry_solver_v1"
 
 
-def _axis_values(lower: float, upper: float, preferred: float, step: float) -> list[float]:
+def _axis_values(
+    lower: float, upper: float, preferred: float, step: float
+) -> list[float]:
     if lower > upper + 1e-12:
         return []
     preferred = min(max(preferred, lower), upper)
@@ -31,7 +33,13 @@ def _axis_values(lower: float, upper: float, preferred: float, step: float) -> l
         return sorted({float(lower), float(preferred), float(upper)})
     values = list(np.arange(lower, upper + step * 0.5, step, dtype=np.float64))
     values.extend((lower, preferred, upper, (lower + upper) / 2.0))
-    return sorted({round(float(value), 9) for value in values if lower - 1e-9 <= value <= upper + 1e-9})
+    return sorted(
+        {
+            round(float(value), 9)
+            for value in values
+            if lower - 1e-9 <= value <= upper + 1e-9
+        }
+    )
 
 
 def _yaw_values(slot: dict[str, Any], preferred: float) -> list[float]:
@@ -86,7 +94,9 @@ def generate_relation_candidates(
             lower = minimum + clearance - bounds_min
             upper = maximum - clearance - bounds_max
             axes = [
-                _axis_values(lower[index], upper[index], preferred_xyz[index], translation_step_m)
+                _axis_values(
+                    lower[index], upper[index], preferred_xyz[index], translation_step_m
+                )
                 for index in range(3)
             ]
             translations = (
@@ -112,7 +122,10 @@ def generate_relation_candidates(
                 maximum = np.asarray(slot["max_m"], dtype=np.float64) - bounds_min
                 axes = [
                     _axis_values(
-                        minimum[index], maximum[index], preferred_xyz[index], translation_step_m
+                        minimum[index],
+                        maximum[index],
+                        preferred_xyz[index],
+                        translation_step_m,
                     )
                     for index in range(3)
                 ]
@@ -217,6 +230,18 @@ def optimize_relation_pose(
             target_pose=target_matrix,
             source_proxy=source_proxy,
             target_proxy=target_proxy,
+            predicate_points_local=(
+                np.asarray(source_mesh.vertices, dtype=np.float64)
+                if contract["evaluator"] == "full_containment"
+                and source_mesh is not None
+                else None
+            ),
+            predicate_point_basis=(
+                "all_mesh_vertices_convex_slot"
+                if contract["evaluator"] == "full_containment"
+                and source_mesh is not None
+                else "surface_samples"
+            ),
         )
         if evaluation.accepted:
             vector = np.asarray([candidate[axis] for axis in ("x", "y", "z")])
@@ -224,13 +249,18 @@ def optimize_relation_pose(
                 candidate["yaw_degrees"]
                 - float(preferred.get("yaw_degrees", preferred.get("yaw", 0.0)))
             )
-            score = float(np.linalg.norm(vector - preferred_vector) + 0.05 * abs(yaw_delta))
+            score = float(
+                np.linalg.norm(vector - preferred_vector) + 0.05 * abs(yaw_delta)
+            )
             accepted.append((score, candidate, evaluation))
         else:
             if not evaluation.certificate["predicate"]["ok"]:
                 rejection_counts["relation_predicate"] += 1
             if not evaluation.certificate["collision"]["complete"] or any(
-                int(evaluation.certificate["collision"][direction].get("deep_count") or 0)
+                int(
+                    evaluation.certificate["collision"][direction].get("deep_count")
+                    or 0
+                )
                 for direction in ("source_to_target", "target_to_source")
             ):
                 rejection_counts["collision"] += 1

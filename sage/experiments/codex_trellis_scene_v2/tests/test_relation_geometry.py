@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import unittest
+from types import SimpleNamespace
 
 import numpy as np
 
 from sage.experiments.codex_trellis_scene_v2.relation_geometry import (
+    _collision_direction,
     certificate_is_fresh,
     compile_relation_geometry,
     evaluate_relation_geometry,
@@ -12,7 +14,9 @@ from sage.experiments.codex_trellis_scene_v2.relation_geometry import (
 
 
 class BoxProxy:
-    def __init__(self, minimum: tuple[float, float, float], maximum: tuple[float, float, float]):
+    def __init__(
+        self, minimum: tuple[float, float, float], maximum: tuple[float, float, float]
+    ):
         self.minimum = np.asarray(minimum, dtype=np.float64)
         self.maximum = np.asarray(maximum, dtype=np.float64)
         self.pitch = 0.001
@@ -113,6 +117,78 @@ class RelationCompilationTest(unittest.TestCase):
 
 
 class RelationEvaluationTest(unittest.TestCase):
+    def test_high_ambiguous_fraction_refines_only_ambiguous_points(self) -> None:
+        class RefiningProxy:
+            manifest = {
+                "levels": [
+                    {"name": "coarse", "pitch_m": 0.02},
+                    {"name": "fine", "pitch_m": 0.005},
+                ]
+            }
+            levels = {
+                "coarse": SimpleNamespace(
+                    pitch=0.02, metadata={"max_discretization_error_m": 0.02}
+                ),
+                "fine": SimpleNamespace(
+                    pitch=0.005, metadata={"max_discretization_error_m": 0.005}
+                ),
+            }
+            pitch = 0.005
+
+            def query(
+                self, points: np.ndarray, *, level: str | None = None
+            ) -> np.ndarray:
+                if level == "coarse":
+                    return np.full(len(points), -0.01, dtype=np.float64)
+                return np.full(len(points), 0.003, dtype=np.float64)
+
+        result = _collision_direction(
+            np.zeros((20, 3)), np.eye(4), RefiningProxy(), 0.001
+        )
+        self.assertTrue(result["local_refinement"]["triggered"])
+        self.assertEqual(result["local_refinement"]["levels"][0]["sample_count"], 20)
+        self.assertEqual(result["ambiguous_count"], 0)
+        self.assertEqual(result["proxy_pitch_m"], 0.005)
+
+    def test_low_ambiguous_fraction_still_refines_for_safety(self) -> None:
+        class SparseAmbiguousProxy:
+            manifest = {
+                "levels": [
+                    {"name": "coarse", "pitch_m": 0.02},
+                    {"name": "fine", "pitch_m": 0.005},
+                ]
+            }
+            levels = {
+                "coarse": SimpleNamespace(
+                    pitch=0.02, metadata={"max_discretization_error_m": 0.02}
+                ),
+                "fine": SimpleNamespace(
+                    pitch=0.005, metadata={"max_discretization_error_m": 0.005}
+                ),
+            }
+            pitch = 0.005
+
+            def query(
+                self, points: np.ndarray, *, level: str | None = None
+            ) -> np.ndarray:
+                if level == "coarse":
+                    result = np.ones(len(points), dtype=np.float64)
+                    result[0] = -0.01
+                    return result
+                return np.full(len(points), -0.02, dtype=np.float64)
+
+        result = _collision_direction(
+            np.zeros((100, 3)),
+            np.eye(4),
+            SparseAmbiguousProxy(),
+            0.001,
+            ambiguous_refinement_threshold=0.02,
+        )
+        self.assertTrue(result["local_refinement"]["triggered"])
+        self.assertFalse(result["local_refinement"]["threshold_exceeded"])
+        self.assertEqual(result["local_refinement"]["levels"][0]["sample_count"], 1)
+        self.assertEqual(result["deep_count"], 1)
+
     def test_cup_supported_by_desk(self) -> None:
         source = capability("cup", "cup")
         target = capability(
@@ -176,7 +252,10 @@ class RelationEvaluationTest(unittest.TestCase):
             BoxProxy((-0.4, 0.2, 0), (0.4, 0.22, 0.5)),
         ]
         frame_points = np.concatenate(
-            [box_surface_points(tuple(box.minimum), tuple(box.maximum), 3) for box in frame_boxes]
+            [
+                box_surface_points(tuple(box.minimum), tuple(box.maximum), 3)
+                for box in frame_boxes
+            ]
         )
         result = evaluate_relation_geometry(
             contract,
@@ -207,7 +286,9 @@ class RelationEvaluationTest(unittest.TestCase):
         chair_bounds = ((-0.2, -0.2, 0), (0.2, 0.2, 0.5))
         chair_points = box_surface_points(*chair_bounds)
         desk_top = BoxProxy((-0.6, -0.4, 0.72), (0.6, 0.4, 0.78))
-        desk_points = box_surface_points(tuple(desk_top.minimum), tuple(desk_top.maximum))
+        desk_points = box_surface_points(
+            tuple(desk_top.minimum), tuple(desk_top.maximum)
+        )
         accepted = evaluate_relation_geometry(
             contract,
             source_points_local=chair_points,
@@ -263,7 +344,9 @@ class RelationEvaluationTest(unittest.TestCase):
         chair_bounds = ((-0.2, -0.3, 0), (0.2, 0.3, 0.6))
         chair_points = box_surface_points(*chair_bounds)
         desk_proxy = BoxProxy((-0.6, -0.4, 0.72), (0.6, 0.4, 0.78))
-        desk_points = box_surface_points(tuple(desk_proxy.minimum), tuple(desk_proxy.maximum))
+        desk_points = box_surface_points(
+            tuple(desk_proxy.minimum), tuple(desk_proxy.maximum)
+        )
         accepted = evaluate_relation_geometry(
             contract,
             source_points_local=chair_points,
@@ -346,6 +429,64 @@ class RelationEvaluationTest(unittest.TestCase):
                 proxy_hashes={"source": "a", "target": "b"},
             )
         )
+
+    def test_certificate_binds_capability_hashes(self) -> None:
+        source = capability("book", "book")
+        target = capability(
+            "shelf",
+            "shelf",
+            containment_volumes=[
+                {"id": "bay", "min_m": [-1, -1, 0], "max_m": [1, 1, 1]}
+            ],
+        )
+        contract = compile_relation_geometry(
+            {"type": "contained_in", "target_slot_id": "bay"}, source, target
+        )
+        points = box_surface_points((-0.1, -0.1, 0.1), (0.1, 0.1, 0.3))
+        result = evaluate_relation_geometry(
+            contract,
+            source_points_local=points,
+            target_points_local=box_surface_points((2, 2, 2), (3, 3, 3)),
+            source_proxy=BoxProxy((-0.1, -0.1, 0.1), (0.1, 0.1, 0.3)),
+            target_proxy=BoxProxy((2, 2, 2), (3, 3, 3)),
+            capability_hashes={"source": "source-v1", "target": "target-v1"},
+        )
+        self.assertFalse(
+            certificate_is_fresh(
+                result.certificate,
+                contract=contract,
+                source_pose=None,
+                target_pose=None,
+                capability_hashes={"source": "source-v2", "target": "target-v1"},
+            )
+        )
+
+    def test_full_containment_can_use_complete_mesh_vertex_basis(self) -> None:
+        source = capability("book", "book")
+        target = capability(
+            "shelf",
+            "shelf",
+            containment_volumes=[
+                {"id": "bay", "min_m": [-1, -1, 0], "max_m": [1, 1, 1]}
+            ],
+        )
+        contract = compile_relation_geometry(
+            {"type": "contained_in", "target_slot_id": "bay"}, source, target
+        )
+        sampled_inside = box_surface_points((-0.1, -0.1, 0.1), (0.1, 0.1, 0.3))
+        vertices_with_one_outside = np.vstack((sampled_inside, [[1.1, 0.0, 0.2]]))
+        result = evaluate_relation_geometry(
+            contract,
+            source_points_local=sampled_inside,
+            target_points_local=box_surface_points((2, 2, 2), (3, 3, 3)),
+            source_proxy=BoxProxy((-0.1, -0.1, 0.1), (0.1, 0.1, 0.3)),
+            target_proxy=BoxProxy((2, 2, 2), (3, 3, 3)),
+            predicate_points_local=vertices_with_one_outside,
+            predicate_point_basis="all_mesh_vertices_convex_slot",
+        )
+        self.assertFalse(result.accepted)
+        self.assertEqual(result.certificate["predicate"]["outside_count"], 1)
+        self.assertTrue(result.certificate["predicate"]["classification_complete"])
 
 
 if __name__ == "__main__":

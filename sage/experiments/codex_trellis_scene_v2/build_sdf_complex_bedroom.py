@@ -149,9 +149,9 @@ def _atomic_write_json(path: Path, payload: Any) -> None:
     ) as temporary:
         temporary_path = Path(temporary.name)
         temporary.write(
-            (json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True) + "\n").encode(
-                "utf-8"
-            )
+            (
+                json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+            ).encode("utf-8")
         )
         temporary.flush()
         os.fsync(temporary.fileno())
@@ -189,7 +189,13 @@ def _process_tree_rss_gib(root_pid: int) -> float:
                     values[key] = value.strip().split()[0]
             pid = int(values["Pid"])
             processes[pid] = (int(values["PPid"]), int(values.get("VmRSS", "0")))
-        except (FileNotFoundError, KeyError, PermissionError, ProcessLookupError, ValueError):
+        except (
+            FileNotFoundError,
+            KeyError,
+            PermissionError,
+            ProcessLookupError,
+            ValueError,
+        ):
             continue
     members = {int(root_pid)}
     changed = True
@@ -297,7 +303,9 @@ def _run_monitored_subprocess(
                     os.fsync(log_handle.fileno())
                     os.killpg(process.pid, signal.SIGTERM)
                     break
-                remaining = monitor_interval_seconds - (time.monotonic() - sample_started)
+                remaining = monitor_interval_seconds - (
+                    time.monotonic() - sample_started
+                )
                 if remaining > 0:
                     time.sleep(remaining)
             return_code = process.wait()
@@ -322,7 +330,9 @@ def _run_monitored_subprocess(
         raise
     finally:
         ended_utc = _utc_now()
-        signal_number = -return_code if return_code is not None and return_code < 0 else None
+        signal_number = (
+            -return_code if return_code is not None and return_code < 0 else None
+        )
         checkpoint = {
             "schema": SCHEMA,
             "stage": stage,
@@ -331,14 +341,18 @@ def _run_monitored_subprocess(
             "elapsed_seconds": float(time.monotonic() - started_monotonic),
             "command": command,
             "log": str(log_path),
-            "exit_code": return_code if return_code is not None and return_code >= 0 else None,
+            "exit_code": (
+                return_code if return_code is not None and return_code >= 0 else None
+            ),
             "signal": signal_number,
             "last_rss_gib": float(last_rss_gib),
             "maximum_rss_gib": float(maximum_rss_gib),
             "termination_reason": termination_reason,
             "launch_health": launch_health,
             "error": error,
-            "ok": bool(return_code == 0 and termination_reason is None and error is None),
+            "ok": bool(
+                return_code == 0 and termination_reason is None and error is None
+            ),
         }
         _atomic_write_json(checkpoint_path, checkpoint)
     if return_code != 0 or termination_reason is not None:
@@ -450,9 +464,7 @@ def _trellis_capability(asset_id: str, trellis_asset_dir: Path) -> dict[str, Any
 def _require_trellis_multiview_qa(trellis_asset_dir: Path) -> dict[str, Any]:
     qa_path = trellis_asset_dir / "multiview_qa.json"
     if not qa_path.is_file():
-        raise FileNotFoundError(
-            f"TRELLIS multiview QA gate is missing: {qa_path}"
-        )
+        raise FileNotFoundError(f"TRELLIS multiview QA gate is missing: {qa_path}")
     qa = read_json(qa_path)
     if qa.get("schema") != "codex_trellis_multiview_qa_v2":
         raise RuntimeError(
@@ -647,7 +659,10 @@ def _reconcile_soft_wall_facing(plan: dict[str, Any]) -> list[dict[str, Any]]:
     wall_changes: list[dict[str, Any]] = []
     for obj in objects:
         constraint = obj.get("facing_constraint")
-        if not isinstance(constraint, dict) or str(constraint.get("mode")) != "into_room":
+        if (
+            not isinstance(constraint, dict)
+            or str(constraint.get("mode")) != "into_room"
+        ):
             continue
         if str(obj.get("wall_constraint_strength") or "hard") == "hard":
             continue
@@ -656,7 +671,10 @@ def _reconcile_soft_wall_facing(plan: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         previous_preference = str(obj.get("preferred_wall") or "")
         previous_constraint_wall = str(constraint.get("wall") or previous_preference)
-        if actual_wall == previous_preference and actual_wall == previous_constraint_wall:
+        if (
+            actual_wall == previous_preference
+            and actual_wall == previous_constraint_wall
+        ):
             continue
         obj["preferred_wall"] = actual_wall
         obj["resolved_wall"] = actual_wall
@@ -692,7 +710,9 @@ def _repair_inherited_scene_contracts(
         for item in plan.get("objects", [])
         if isinstance(item, dict) and item.get("id")
     ]
-    groups = [item for item in plan.get("instance_groups", []) if isinstance(item, dict)]
+    groups = [
+        item for item in plan.get("instance_groups", []) if isinstance(item, dict)
+    ]
     if not any(str(item.get("group_id")) == "explicit_slipper_pair" for item in groups):
         generated = deterministic_pair_groups(
             str(plan.get("description") or ""), objects, {"slipper": 2}
@@ -766,7 +786,8 @@ def _pose_from_matrix(matrix: np.ndarray) -> dict[str, float]:
         "x": float(matrix[0, 3]),
         "y": float(matrix[1, 3]),
         "z": float(matrix[2, 3]),
-        "yaw": math.degrees(math.atan2(float(matrix[1, 0]), float(matrix[0, 0]))) % 360.0,
+        "yaw": math.degrees(math.atan2(float(matrix[1, 0]), float(matrix[0, 0])))
+        % 360.0,
     }
 
 
@@ -808,10 +829,14 @@ def prepare_stage(
             raise FileNotFoundError(pilot_report_path)
         pilot_report = read_json(pilot_report_path)
         if not bool(pilot_report.get("ok")):
-            raise RuntimeError(f"TRELLIS pilot report is not successful: {pilot_report_path}")
+            raise RuntimeError(
+                f"TRELLIS pilot report is not successful: {pilot_report_path}"
+            )
         inspection = pilot_report.get("inspection") or {}
         if not bool(inspection.get("trimesh_load_ok")):
-            raise RuntimeError(f"TRELLIS GLB failed structural inspection: {source_glb}")
+            raise RuntimeError(
+                f"TRELLIS GLB failed structural inspection: {source_glb}"
+            )
         capability = _trellis_capability(asset_id, trellis_asset_dir)
         capabilities[asset_id] = capability
         staged_glb = staged / f"{spec['object_id']}.glb"
@@ -1207,7 +1232,12 @@ def geometry_relation_stage(
         "schema": RELATION_GEOMETRY_BINDING_SCHEMA,
         "relations": [relation_binding],
     }
-    audit = evaluate_geometry_bindings(plan, binding, runtime)
+    audit = evaluate_geometry_bindings(
+        plan,
+        binding,
+        runtime,
+        static_target_bvh_cache_directory=output / "static_target_bvh_cache",
+    )
     report = {
         "schema": SCHEMA,
         "stage": "geometry_relation",
@@ -1252,7 +1282,9 @@ def _finalize_geometry_stage(output: Path) -> dict[str, Any]:
         "opt_in": True,
         "ok": all(bool(item["accepted"]) for item in relation_items),
         "relation_count": len(relation_items),
-        "accepted_relation_count": sum(bool(item["accepted"]) for item in relation_items),
+        "accepted_relation_count": sum(
+            bool(item["accepted"]) for item in relation_items
+        ),
         "relations": relation_items,
         "assembled_from_isolated_relation_subprocesses": True,
     }
@@ -1366,7 +1398,9 @@ def geometry_stage(
             output=output,
             stage=f"relation_{relation_id}",
             log_path=output / "logs" / f"relation_{relation_id}.log",
-            checkpoint_path=output / "checkpoints" / f"relation_{relation_id}.exit.json",
+            checkpoint_path=output
+            / "checkpoints"
+            / f"relation_{relation_id}.exit.json",
         )
     report = _finalize_geometry_stage(output)
     append_health_checkpoint(
@@ -1441,7 +1475,11 @@ def assemble_stage(
         "sdf_books_2",
         "sdf_books_3",
     )
-    missing = [prefix for prefix in required_prefixes if not any(prefix in node for node in nodes)]
+    missing = [
+        prefix
+        for prefix in required_prefixes
+        if not any(prefix in node for node in nodes)
+    ]
     plan = read_json(output / "layout_plan_final.json")
     relation_audit = read_json(output / "relation_geometry_audit.json")
     final_plan_audit = _whole_scene_regression_audit(plan, relation_audit)
@@ -1592,7 +1630,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--assembler",
         type=Path,
-        default=Path(__file__).parents[2] / "scripts" / "blender_assemble_sage_scene.py",
+        default=Path(__file__).parents[2]
+        / "scripts"
+        / "blender_assemble_sage_scene.py",
     )
     return parser
 
