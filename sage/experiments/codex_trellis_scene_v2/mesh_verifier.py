@@ -355,14 +355,28 @@ def verify_mesh_intersection(
         )
         for local_first_index, nearby in enumerate(nearby_lists):
             first_index = query_start + local_first_index
-            for second_index in nearby:
-                second_index = int(second_index)
-                if not np.all(
-                    (first_max[first_index] + tolerance >= second_min[second_index])
-                    & (second_max[second_index] + tolerance >= first_min[first_index])
-                ):
-                    continue
-                candidate_count += 1
+            nearby_indices = np.asarray(nearby, dtype=np.int64)
+            if not len(nearby_indices):
+                continue
+            center_delta = second_centers[nearby_indices] - first_centers[first_index]
+            individual_radius = (
+                first_radii[first_index] + second_radii[nearby_indices] + tolerance
+            )
+            sphere_keep = np.einsum("ij,ij->i", center_delta, center_delta) <= (
+                individual_radius * individual_radius
+            )
+            nearby_indices = nearby_indices[sphere_keep]
+            if not len(nearby_indices):
+                continue
+            aabb_keep = np.all(
+                (first_max[first_index] + tolerance >= second_min[nearby_indices])
+                & (second_max[nearby_indices] + tolerance >= first_min[first_index]),
+                axis=1,
+            )
+            candidate_indices = nearby_indices[aabb_keep]
+            candidate_count += len(candidate_indices)
+            for second_index_value in candidate_indices:
+                second_index = int(second_index_value)
                 if tested_count >= maximum_candidate_pairs:
                     complete = False
                     break
