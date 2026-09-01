@@ -49,7 +49,7 @@
 | P006 | “运行成功”与“完整可交付”没有统一机器定义 | 已完成 | 最高 | 四类 profile 与统一终态机已落地，只有 production 全部必需阶段闭合才可 deliverable=true |
 | P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 已完成 | 最高 | lease broker 已统一 NVML/RAM/I/O/disk/cgroup admission，单 GPU 限一任务并以 429 背压 |
 | P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 已完成 | 高 | 11 阶段 content-addressed DAG 已接入 pipeline，resume 精确复用/失效并原子记录 attempt |
-| P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 待解决 | 高 | 旧字段、旧轴向或环境漂移可能被新代码静默接受 |
+| P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 已完成 | 高 | 七类核心文档已有可执行强契约与规范化哈希，production 启动前强制核验四类运行时锁 |
 | P010 | 最终 GLB 面数和体积明显过高 | 待解决 | 高 | 当前卧室约 252 MB，不适合规模化与实时使用 |
 | P011 | 关系几何证书仍不是严格精确谓词证明 | 待解决 | 中高 | 当前三角终检可信，但浮点与粗 SDF 模糊区仍需分级 |
 | P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 待解决 | 中 | 材质同质、噪点、曝光和遮挡降低成片质量 |
@@ -734,6 +734,49 @@
   Schema 强类型与 migration 由 P009 处理。
 - 下一入口：P009，冻结核心对象 schema、单位/坐标/手性契约和运行环境 preflight，旧 schema 只能显式
   迁移或拒绝。
+
+### 断点 CP-20260901-10：P009 已完成
+
+- 完成时间：2026-09-01
+- 根因：主流程以宽松字典传递 SceneBrief、图、布局和审计；旧方向字段可与新 `yaw` 并存，资产 Y-up/
+  Z-up 边界、右手系和 canonical front 没有同一机器契约。P004 虽冻结了环境证据，production 启动时却
+  没有把当前可执行文件、依赖、TRELLIS 补丁、模型和 Blender 工具逐项与冻结值复验。
+- 修改文件：新增 `contracts.py`、`runtime_lock.json`、`runtime_preflight.py` 和
+  `tests/test_contracts.py`；修改 `cli.py`、`pipeline.py`、`stage_dag.py`。实现提交为
+  `ecdb929625d2582a35677256813d7f4a99b3e695`。
+- 强契约：SceneBrief、TypedSceneGraph、Asset/QA Certificate、LayoutPlan、Relation Certificate、
+  RunManifest、FinalDeliveryAudit 七类文档均有精确 schema、必需字段、引用/计数/哈希验证。文档使用禁止
+  NaN、稳定排序的规范化 JSON 生成 SHA-256；RunManifest 每次原子保存都重算自哈希。坐标契约固定米制、
+  右手 Z-up、绕 +Z 逆时针 yaw，只允许显式 Y-up/Z-up 资产边界和四个平面 canonical-front 轴，坐标契约
+  未知字段拒绝。
+- migration：只有已注册的 `codex_trellis_layout_plan_v1/v2` 可显式迁移；v1 的 `yaw_degrees` 转为 `yaw`
+  并补齐坐标/资产轴契约。未知 schema 和其他没有注册迁移器的文档安全拒绝，不做猜测性兼容。
+- runtime preflight：锁定 orchestrator `tree-sage-flow2`、TRELLIS `trellis2`、research `simgen` 三个
+  Python 环境的解释器/Python/pip-freeze 指纹（前两者另锁 PyTorch/CUDA build），并锁定 P004 release
+  manifest、TRELLIS commit 与工作树补丁、74 文件模型 fingerprint、Blender 4.3.2 二进制、装配和诊断
+  渲染脚本。production 在读取 Prompt 或启动阶段前强制执行，任一漂移即保存失败报告并中止。
+- 负向测试：旧 `rotation_y`、错误 cm 单位、错误世界/资产轴、Y-up 到 Z-up 映射矛盾、缺少
+  `instance_groups`、orphan group、未知坐标字段、篡改 content hash、未知 schema/未注册 migration、缺失
+  research 环境和 runtime lock 未知字段均不能通过。
+- 验证结果：V2 311/311、仓库根 12/12，共 323/323；compileall 与 `git diff --check` 通过。真实 plan
+  smoke 首次与同参数 resume 均成功，第二次 7 个已执行阶段 attempt 数仍全为 1、`layout_resumed=true`。
+  完整 runtime preflight 实际重读 74/74 模型文件（16,385,131,413 bytes）并核验三个环境、TRELLIS
+  补丁、Blender 工具，`ok=true,reasons=[]`；没有启动 GPU、FLUX、TRELLIS 或 Blender。
+- 新产物目录：契约/resume smoke 为
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p009_contract_smoke_20260901_v2`；完整环境证据为
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p009_contract_acceptance_20260901_v1/runtime_preflight_full.json`。
+- 关键文件 SHA-256：完整 preflight
+  `f753a6bfe54441730b4d494482e4c8898d520ef5c95f610a5795851465c66754`；resolved SceneBrief
+  `3445b00763d83f6b14236b464b642e98bf7e077691e7b9d774f47687f3bd5e84`；TypedSceneGraph
+  `fc3aebefb776ec0592a23010f6b534e0dd980304e9104327e8a3a33d97b5f09b`；LayoutPlan
+  `f3dc40e4420a7925b465f54bb8312d6b91c919a227954b9deab8f37f14a8f8c7`；RunManifest
+  `7dfe2c01f88d57da8443223c74643a038d81b0753d8c0391175bc1513c35c989`。
+- 人工检查结论：本项改变的是语义/运行环境可执行门，不改变 mesh、材质或构图；JSON 契约、失败模式和
+  resume attempt 已逐项检查，不用新渲染冒充 schema 验收。
+- 未解决风险：runtime lock 是单机绝对路径锁，迁移到新机器必须显式生成并审核新锁；这属于预期的安全
+  失败。远程 artifact store/容器镜像签名仍不在 P009 范围。
+- 下一入口：P010，在保持 P001-P009 全部语义、关系、资产 QA 与视觉证据不回归的前提下，为最终 GLB
+  建立分资产预算、可逆优化、几何/材质审计和小于 100MB 的正式交付门。
 
 每完成一个问题，按以下模板追加：
 
