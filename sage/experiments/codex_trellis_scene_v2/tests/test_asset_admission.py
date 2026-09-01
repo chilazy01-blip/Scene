@@ -19,6 +19,7 @@ from sage.experiments.codex_trellis_scene_v2.content_chain import (
     file_binding,
 )
 from sage.experiments.codex_trellis_scene_v2.brief import (
+    build_baseline_brief,
     build_asset_generation_spec,
     render_asset_prompt,
 )
@@ -63,6 +64,17 @@ def count_evidence(contract: dict, count: int = 5) -> dict:
 
 
 class AssetCountContractTest(unittest.TestCase):
+    def test_grouped_book_count_is_one_asset_not_five_colliding_instances(self) -> None:
+        brief = build_baseline_brief(
+            "A bedroom with exactly five books in one single row."
+        )
+        books = [
+            obj for obj in brief["objects"] if obj["category"] == "book_stack"
+        ]
+        self.assertEqual(len(books), 1)
+        self.assertEqual(books[0]["count_contract"]["expected_count"], 5)
+        self.assertEqual(brief["explicit_category_counts"]["book_stack"], 1)
+
     def test_generation_spec_and_prompt_preserve_explicit_count_contract(self) -> None:
         spec = build_asset_generation_spec(
             {

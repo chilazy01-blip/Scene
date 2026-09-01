@@ -20,6 +20,7 @@ from .policies import (
     FUNCTIONAL_FRONT_CLEARANCE,
     OBJECT_DEFINITIONS,
     detect_explicit_category_counts,
+    detect_grouped_component_count_contracts,
     detect_room_type,
     detect_styles,
     room_policy,
@@ -1242,6 +1243,10 @@ def build_baseline_brief(
     policy = room_policy(room_type)
     styles = detect_styles(prompt)
     explicit_counts = detect_explicit_category_counts(prompt)
+    grouped_component_counts = detect_grouped_component_count_contracts(prompt)
+    for grouped_category in grouped_component_counts:
+        if grouped_category in explicit_counts:
+            explicit_counts[grouped_category] = 1
     explicit = list(explicit_counts)
     objects = deepcopy(policy["objects"])
     lowered_prompt = prompt.lower()
@@ -1273,6 +1278,17 @@ def build_baseline_brief(
                     required=True,
                     priority=60,
                 )
+            )
+        if category in grouped_component_counts:
+            grouped_objects = [
+                item for item in objects if str(item["category"]) == category
+            ]
+            if len(grouped_objects) != 1:
+                raise ValueError(
+                    f"grouped component contract requires one {category} asset"
+                )
+            grouped_objects[0]["count_contract"] = deepcopy(
+                grouped_component_counts[category]
             )
     _apply_prompt_support_relationships(objects, prompt)
     for obj in objects:
@@ -1310,6 +1326,7 @@ def build_baseline_brief(
         "architecture": deepcopy(policy["architecture"]),
         "explicit_categories": explicit,
         "explicit_category_counts": explicit_counts,
+        "explicit_component_count_contracts": grouped_component_counts,
         "policy_optional_suppressed": suppress_policy_optional,
         "under_specified": under_specified,
         "objects": objects,

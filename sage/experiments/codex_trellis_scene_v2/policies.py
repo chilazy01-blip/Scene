@@ -751,3 +751,35 @@ def detect_explicit_category_counts(text: str) -> dict[str, int]:
                 requested = max(requested, pair_count * pair_instance_count)
         counts[category] = requested
     return counts
+
+
+def detect_grouped_component_count_contracts(text: str) -> dict[str, dict[str, object]]:
+    """Detect counts that describe members of one generated asset, not instances."""
+
+    lowered = text.lower()
+    contracts: dict[str, dict[str, object]] = {}
+    grouped_book_patterns = (
+        r"(?:exactly\s+)?(\d+|one|two|three|four|five|six)\s+books?\s+in\s+(?:one|a)\s+(?:single\s+)?(?:straight\s+)?row",
+        r"(?:one|a)\s+(?:single\s+)?(?:straight\s+)?row\s+of\s+(?:exactly\s+)?(\d+|one|two|three|four|five|six)\s+books?",
+    )
+    for pattern in grouped_book_patterns:
+        match = re.search(pattern, lowered)
+        if match:
+            raw = match.group(1)
+            count = int(raw) if raw.isdigit() else _COUNT_WORDS[raw]
+            contracts["book_stack"] = {
+                "component_category": "book",
+                "expected_count": count,
+                "arrangement": "single_row",
+            }
+            break
+    chinese = re.search(r"(?:正好|恰好)?([一二三四五六七]|\d+)本书(?:排成|组成)?(?:一|1)排", text)
+    if chinese:
+        raw = chinese.group(1)
+        count = int(raw) if raw.isdigit() else _COUNT_WORDS[raw]
+        contracts["book_stack"] = {
+            "component_category": "book",
+            "expected_count": count,
+            "arrangement": "single_row",
+        }
+    return contracts
