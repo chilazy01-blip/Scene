@@ -53,7 +53,7 @@
 | P010 | 最终 GLB 面数和体积明显过高 | 已完成 | 高 | 当前卧室已降至 88.7MB/992,676 faces，P001-P003、四条关系和多通道视觉 A/B 无回归 |
 | P011 | 关系几何证书仍不是严格精确谓词证明 | 已完成 | 中高 | native expansion exact 谓词、局部 SDF 细化、全顶点 containment、持久目标索引和真实失败率已闭环 |
 | P012 | 诊断渲染可用，但最终视觉表现和相机质量不足 | 已完成 | 中 | 双 profile、双机位覆盖搜索、最终分辨率对象掩码和成片质量门已闭环 |
-| P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 待解决 | 高 | 结构可加载不等于数量、形态、朝向和能力合格 |
+| P013 | 缺失资产生成与长期资产库仍未形成正式闭环 | 已完成 | 高 | 生成子流、精确数量门、临时准入、显式生命周期与三资产/双风格审核库已闭环 |
 | P014 | 测试以快速单测为主，缺少真实集成与故障恢复验证 | 待解决 | 高 | 测试全过仍不能证明 Blender/TRELLIS/恢复链可靠 |
 | P015 | 三条流程和多份文档缺少统一事实源 | 待解决 | 中高 | V2、旧图生、旧文生以及文档口径仍在漂移 |
 | P016 | WebUI 只是启动面板，尚不是可恢复的任务控制系统 | 待解决 | 中低 | 服务重启后缺少事务状态、队列和任务重新关联 |
@@ -914,6 +914,56 @@
   人工审核因此仍是最终 profile 的强制步骤。
 - 下一入口：P013，建立缺失资产从合同、2D QA、TRELLIS、多视图/几何/能力验收到生命周期与长期资产库
   准入的正式闭环。
+
+### 断点 CP-20260901-14：P013 已完成
+
+- 完成时间：2026-09-01。
+- 根因：原生成链只把 GLB 可加载与一次人工多视图结论当作可用条件，没有把 2D 候选、精确部件数量、
+  正反面同组、侧面层数、尺寸/正面/拓扑/capability 串成一个内容绑定的准入合同；场景成功与长期入库
+  也没有不同生命周期。实跑另暴露 bridge 的 16 GiB 门值、缺失 `pynvml` 与客户端重试 429 会造成
+  空转，离线缓存变量和已安装 attention backend 也会漂移。
+- 修改文件：新增 `asset_admission.py`、`p013_asset_admission_audit.py`、
+  `tests/test_asset_admission.py`；修改 `brief.py`、`assets.py`、`pipeline.py`、`pilot_asset.py`、
+  `heavy_job_broker.py`、bridge 与相应测试。实现提交为 `526ee0c`。
+- 完整子流：正式合同依次绑定 asset contract、2D alpha/semantic/count QA、TRELLIS、四视图、尺寸、
+  canonical front、拓扑清理、capability 和临时入场证书。production 装配会拒绝仍为
+  `generated_for_run` 的生成资产；registry 只复用 `curated`（兼容无 lifecycle 的旧清单）。
+- 数量与生命周期：`exactly five books` 被编译成机器 count contract；正反面必须同一组五个成员，侧面
+  最大一层且禁止第二排。生命周期固定为 `generated_for_run -> scene_specific_approved ->
+  candidate_for_curation -> curated`，可转 rejected/deprecated，禁止单场景成功跳过独立审核自动入库。
+- 真实资产验证：复查三组旧书排时，`book_row_trellis2_002` 的正反面实际显示 10 本且侧面为两层，
+  推翻旧 QA 文本并由 `multiview_count` 门拒绝；资源健康后通过本地 TRELLIS.2 新生成
+  `book_row_trellis2_004`，四视图确认同一组恰好五本、无第二排。生成服务 GPU0 独占，峰值约
+  11.99 GiB VRAM，systemd unit 最终 `inactive/dead, Result=success, ExecMainStatus=0`。
+- 资源与恢复修复：bridge 新增显式 `--maximum-cgroup-memory-gib` 并仍要求有限 cgroup；NVML 包缺失时
+  只读回退到 `nvidia-smi`，继续保留外部 GPU PID 拒绝门；HTTP 429 响应被解析为终态错误，不再被
+  `URLError` 继承关系误判为无限重试。本次实际离线运行使用本地 DINO/TRELLIS/RMBG 缓存和 PyTorch
+  SDPA，没有联网下载。
+- 新增/修改测试：精确五本通过、10-for-5、正反组不一致、侧面第二排、prompt 合同保留、GLB-only
+  不足、生命周期禁止跳转/显式晋升、三资产双风格覆盖、registry 不复用候选、32 GiB 有界门、
+  `nvidia-smi` 回退和 429 不重试，共 13 个直接负向/合同检查。
+- 执行命令：真实 TRELLIS 与 Blender 四视图均经 RAM/disk/GPU/cgroup 门串行运行；回归使用
+  `python -m unittest discover -s sage/experiments/codex_trellis_scene_v2/tests -t .`、
+  `python -m unittest discover -s tests -p 'test_*.py'`、`python -m compileall -q
+  sage/experiments/codex_trellis_scene_v2` 与 `git diff --check`。
+- 验证结果：P013 审计 `ok=true`；4 个真实候选中 3 个 scene-specific approved 并经独立步骤 curated，
+  1 个 count 拒绝。`book_stack` 覆盖为 3 个审核资产、3 个不同内容 hash、3 个 style signature，超过
+  至少 3 资产/2 风格标准；V2 343/343、根测试 12/12，共 355/355，compileall/diff check 通过。
+- 新产物目录：
+  `/data/wsj/main/scene_runs/codex_trellis_v2/p013_asset_admission_20260901_v1`。
+- 关键文件 SHA-256：准入审计
+  `446f16ecd084175732259cb293d1b288e98699dfe06dcc42074214a203bbad3f`；审核库 manifest
+  `7c9e5f5bda2647d906f44801011f70e5331c90adb941544211796a6eb6dd46de`；新 GLB
+  `aa141c074ca1f38b41eb29d265752af3c84e16b14199af80057b3a32023d5ab7`；新 pilot report
+  `e47db82e04f7aa75c8a3334b51270bd428f5a75400063ce28be8d0edb1b3b4c2`；新四视图 contact
+  `08304f9b1b38ef24092071edc009e5a15a8b5da05e35ac7e17f99418663ee544`。
+- 人工检查结论：三张 2D 来源各为隔离、透明背景、正好五本书；新 004 的 +/-y 清楚显示同一组五本，
+  +/-x 仅显示同一排书籍深度差。旧 002 明确可见复制后的 10 本/双层，保留为拒收证据而未美化结论。
+- 未解决风险：当前高频覆盖只正式验证 `book_stack` 一类，许可证范围诚实限定为 internal research；
+  新 004 的侧轮廓深度不均，不适合要求齐平书脊的场景。count evidence 目前由人工或校准实例分割提供，
+  未声称通用视觉模型可自动可靠计数。
+- 下一入口：P014，建立提交级、CPU integration、Blender headless、nightly GPU 四层测试与 chaos
+  恢复矩阵，并自动生成 release/status manifest。
 
 每完成一个问题，按以下模板追加：
 
