@@ -9,7 +9,7 @@ from .architecture import plan_architecture
 from .assets import resolve_assets
 from .brief import expand_prompt
 from .constraint_scopes import evaluate_constraint_scope_envelopes
-from .content_chain import file_binding
+from .content_chain import content_hash, file_binding
 from .delivery_status import apply_profile_defaults, evaluate_terminal_status
 from .io_utils import read_json, write_json
 from .planner import codex_layout, codex_repair_layout, rules_layout
@@ -17,6 +17,7 @@ from .repair import deterministic_repair
 from .runtime import assemble_with_blender, run_mujoco_proxy, write_preview_svg
 from .scene_render_acceptance import render_and_evaluate_scene
 from .scene_graph import build_typed_scene_graph
+from .stage_dag import StageDAG
 from .validator import validate_layout
 
 
@@ -25,7 +26,7 @@ def prepare_output_dir(path: Path, overwrite: bool, resume: bool = False) -> Non
         raise ValueError("--overwrite and --resume are mutually exclusive")
     if path.exists() and any(path.iterdir()):
         if resume:
-            required = (path / "selected_prompt.txt", path / "scene_brief.json")
+            required = (path / "selected_prompt.txt", path / "run_dag.json")
             missing = [str(item) for item in required if not item.is_file()]
             if missing:
                 raise FileNotFoundError(
@@ -52,17 +53,29 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     if not prompt:
         raise ValueError("--prompt or --prompt-file is required")
     selected_prompt_path = output_dir / "selected_prompt.txt"
+    dag = StageDAG(output_dir / "run_dag.json")
     if resume:
         checkpoint_prompt = selected_prompt_path.read_text(encoding="utf-8").strip()
         if checkpoint_prompt != prompt:
             raise ValueError(
                 "Resume prompt does not match the interrupted run's selected_prompt.txt"
             )
-        brief = read_json(output_dir / "scene_brief.json")
-        if not isinstance(brief, dict) or not isinstance(brief.get("objects"), list):
-            raise ValueError("Interrupted scene_brief.json is not a valid scene checkpoint")
     else:
         selected_prompt_path.write_text(prompt + "\n", encoding="utf-8")
+    expand_inputs = {"prompt": prompt, "prompt_sha256": content_hash(prompt)}
+    expand_config = {
+        "room_type": args.room_type,
+        "mode": str(args.expander),
+        "model": str(args.model),
+        "hard_min_objects": args.hard_min_scene_objects,
+        "target_max_objects": args.target_max_scene_objects,
+        "max_auto_inferred_objects": args.max_auto_inferred_assets,
+    }
+    expand_attempt = dag.begin("expand", inputs=expand_inputs, config=expand_config)
+    expanded_path = output_dir / "scene_brief_expanded.json"
+    if expand_attempt["reused"]:
+        brief = read_json(expanded_path)
+    else:
         brief = expand_prompt(
             prompt,
             output_dir,
@@ -73,16 +86,36 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             target_max_objects=args.target_max_scene_objects,
             max_auto_inferred_objects=args.max_auto_inferred_assets,
         )
+        write_json(expanded_path, brief)
+        dag.commit(
+            "expand",
+            int(expand_attempt["attempt"]["attempt"]),
+            outputs={"selected_prompt": selected_prompt_path, "scene_brief": expanded_path},
+        )
     constraint_scope_envelopes = evaluate_constraint_scope_envelopes(brief)
-    architecture_plan = plan_architecture(
-        brief,
-        floor_material_override=getattr(args, "floor_material", None),
-        wall_material_override=getattr(args, "wall_material", None),
-        accent_wall_override=getattr(args, "accent_wall", None),
-        accent_wall_material_override=getattr(args, "accent_wall_material", None),
-        window_wall_override=getattr(args, "window_wall", None),
+    architecture_inputs = {"brief_hash": content_hash(brief)}
+    architecture_config = {
+        "floor": getattr(args, "floor_material", None),
+        "wall": getattr(args, "wall_material", None),
+        "accent_wall": getattr(args, "accent_wall", None),
+        "accent_material": getattr(args, "accent_wall_material", None),
+        "window_wall": getattr(args, "window_wall", None),
+    }
+    architecture_attempt = dag.begin(
+        "architecture", inputs=architecture_inputs, config=architecture_config
     )
-    brief["scene_graph"] = build_typed_scene_graph(brief, architecture_plan)
+    if architecture_attempt["reused"]:
+        architecture_plan = read_json(output_dir / "architecture_plan.json")
+        brief = read_json(output_dir / "scene_brief_architecture.json")
+    else:
+        architecture_plan = plan_architecture(
+            brief,
+            floor_material_override=getattr(args, "floor_material", None),
+            wall_material_override=getattr(args, "wall_material", None),
+            accent_wall_override=getattr(args, "accent_wall", None),
+            accent_wall_material_override=getattr(args, "accent_wall_material", None),
+            window_wall_override=getattr(args, "window_wall", None),
+        )
     write_json(
         output_dir / "semantic_grounding.json",
         brief.get("semantic_grounding", {}),
@@ -100,47 +133,77 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         constraint_scope_envelopes,
     )
     write_json(output_dir / "architecture_plan.json", architecture_plan)
+    write_json(output_dir / "scene_brief_architecture.json", brief)
+    if not architecture_attempt["reused"]:
+        dag.commit(
+            "architecture",
+            int(architecture_attempt["attempt"]["attempt"]),
+            outputs={
+                "architecture": output_dir / "architecture_plan.json",
+                "scene_brief": output_dir / "scene_brief_architecture.json",
+            },
+        )
+    graph_attempt = dag.begin(
+        "scene_graph",
+        inputs={"brief_hash": content_hash(brief), "architecture_hash": content_hash(architecture_plan)},
+        config={"builder": "typed_scene_graph_v1"},
+    )
+    if graph_attempt["reused"]:
+        brief = read_json(output_dir / "scene_brief.json")
+    else:
+        brief["scene_graph"] = build_typed_scene_graph(brief, architecture_plan)
     write_json(output_dir / "scene_graph_initial.json", brief["scene_graph"])
     write_json(output_dir / "scene_brief.json", brief)
+    if not graph_attempt["reused"]:
+        dag.commit(
+            "scene_graph",
+            int(graph_attempt["attempt"]["attempt"]),
+            outputs={
+                "scene_graph": output_dir / "scene_graph_initial.json",
+                "scene_brief": output_dir / "scene_brief.json",
+            },
+        )
 
+    asset_config = {
+        "mode": str(args.asset_mode),
+        "seed": int(args.seed),
+        "steps": int(args.steps),
+        "texture_size": int(args.texture_size),
+        "decimation_target": int(args.decimation_target),
+        "pipeline_type": str(args.trellis_pipeline_type),
+        "model_fingerprint": str(getattr(args, "trellis_model_fingerprint", "")),
+        "code_version": str(getattr(args, "generation_code_version", "")),
+    }
+    asset_plan_attempt = dag.begin(
+        "asset_plan", inputs={"brief_hash": content_hash(brief)}, config=asset_config
+    )
+    # Asset resolution always executes its content-certificate verification.
+    # With valid checkpoints it performs no model generation; skipping this
+    # read-only verification would let a replaced GLB bypass P005 on resume.
     asset_report = resolve_assets(
-        brief,
-        output_dir,
-        mode=str(args.asset_mode),
-        manifest_path=Path(args.asset_library_manifest).expanduser() if args.asset_library_manifest else None,
-        trellis_url=str(args.trellis_url),
-        seed=int(args.seed),
-        timeout=float(args.asset_timeout),
-        steps=int(args.steps),
-        texture_size=int(args.texture_size),
-        decimation_target=int(args.decimation_target),
-        pipeline_type=str(args.trellis_pipeline_type),
-        preprocess_image=bool(args.trellis_preprocess_image),
-        max_new_assets=int(args.max_new_assets),
-        scene_dna_mode=str(getattr(args, "scene_dna_mode", "relation_aware")),
-        blender_bin=Path(args.blender_bin).expanduser(),
-        scene_dna_multiview=bool(
-            getattr(args, "scene_dna_multiview", True)
-        ),
-        scene_dna_multiview_resolution=int(
-            getattr(args, "scene_dna_multiview_resolution", 420)
-        ),
-        scene_dna_semantic_model=getattr(
-            args, "scene_dna_multiview_semantic_model", None
-        ),
-        scene_dna_semantic_device=str(
-            getattr(args, "scene_dna_multiview_semantic_device", "cpu")
-        ),
-        resume_staged_assets=resume,
-        trellis_model_fingerprint=str(
-            getattr(args, "trellis_model_fingerprint", "unfrozen-local-trellis-model")
-        ),
-        rmbg_model_fingerprint=str(
-            getattr(args, "rmbg_model_fingerprint", "unfrozen-local-rmbg-model")
-        ),
-        generation_code_version=str(
-            getattr(args, "generation_code_version", "unfrozen-scene-v2-code")
-        ),
+            brief,
+            output_dir,
+            mode=str(args.asset_mode),
+            manifest_path=Path(args.asset_library_manifest).expanduser() if args.asset_library_manifest else None,
+            trellis_url=str(args.trellis_url),
+            seed=int(args.seed),
+            timeout=float(args.asset_timeout),
+            steps=int(args.steps),
+            texture_size=int(args.texture_size),
+            decimation_target=int(args.decimation_target),
+            pipeline_type=str(args.trellis_pipeline_type),
+            preprocess_image=bool(args.trellis_preprocess_image),
+            max_new_assets=int(args.max_new_assets),
+            scene_dna_mode=str(getattr(args, "scene_dna_mode", "relation_aware")),
+            blender_bin=Path(args.blender_bin).expanduser(),
+            scene_dna_multiview=bool(getattr(args, "scene_dna_multiview", True)),
+            scene_dna_multiview_resolution=int(getattr(args, "scene_dna_multiview_resolution", 420)),
+            scene_dna_semantic_model=getattr(args, "scene_dna_multiview_semantic_model", None),
+            scene_dna_semantic_device=str(getattr(args, "scene_dna_multiview_semantic_device", "cpu")),
+            resume_staged_assets=resume,
+            trellis_model_fingerprint=str(getattr(args, "trellis_model_fingerprint", "unfrozen-local-trellis-model")),
+            rmbg_model_fingerprint=str(getattr(args, "rmbg_model_fingerprint", "unfrozen-local-rmbg-model")),
+        generation_code_version=str(getattr(args, "generation_code_version", "unfrozen-scene-v2-code")),
     )
     write_json(
         output_dir / "instance_group_asset_resolution.json",
@@ -164,11 +227,62 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     brief["scene_graph"] = build_typed_scene_graph(brief, architecture_plan)
     write_json(output_dir / "scene_graph_resolved.json", brief["scene_graph"])
     write_json(output_dir / "scene_brief_resolved.json", brief)
+    asset_resolution_path = output_dir / "asset_resolution.json"
+    generation_plan_path = output_dir / "missing_asset_generation_plan.json"
+    if not asset_plan_attempt["reused"]:
+        dag.commit(
+            "asset_plan",
+            int(asset_plan_attempt["attempt"]["attempt"]),
+            outputs={
+                "asset_resolution": asset_resolution_path,
+                "generation_plan": generation_plan_path,
+                "scene_brief_resolved": output_dir / "scene_brief_resolved.json",
+            },
+        )
+    asset_generate_attempt = dag.begin(
+        "asset_generate",
+        inputs={"asset_report_hash": content_hash(asset_report)},
+        config=asset_config,
+    )
+    if not asset_generate_attempt["reused"]:
+        generated_outputs = {"asset_resolution": asset_resolution_path}
+        staged_dir = output_dir / "assets_staged"
+        if staged_dir.is_dir():
+            for staged_path in sorted(staged_dir.iterdir()):
+                if staged_path.is_file() and staged_path.suffix.lower() in {".glb", ".json"}:
+                    generated_outputs[f"staged/{staged_path.name}"] = staged_path
+        dag.commit(
+            "asset_generate",
+            int(asset_generate_attempt["attempt"]["attempt"]),
+            outputs=generated_outputs,
+        )
+    asset_qa_attempt = dag.begin(
+        "asset_qa",
+        inputs={"asset_report_hash": content_hash(asset_report)},
+        config={"ready_for_assembly": bool(asset_report.get("ready_for_assembly"))},
+    )
+    if not asset_qa_attempt["reused"]:
+        dag.commit(
+            "asset_qa",
+            int(asset_qa_attempt["attempt"]["attempt"]),
+            outputs={"asset_resolution": asset_resolution_path},
+        )
 
     plan_path = output_dir / "layout_plan_final.json"
     validation_path = output_dir / "validation_final.json"
     layout_resumed = False
-    if resume and plan_path.is_file() and validation_path.is_file():
+    layout_inputs = {
+        "brief_hash": content_hash(brief),
+        "asset_report_hash": content_hash(asset_report),
+    }
+    layout_config = {
+        "planner": str(args.planner),
+        "model": str(args.model),
+        "repair_iterations": int(args.repair_iterations),
+        "codex_repair": bool(args.codex_repair),
+    }
+    layout_attempt = dag.begin("layout", inputs=layout_inputs, config=layout_config)
+    if layout_attempt["reused"]:
         checkpoint_plan = read_json(plan_path)
         checkpoint_validation = read_json(validation_path)
         if (
@@ -227,6 +341,12 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     if isinstance(plan.get("scene_graph"), dict):
         write_json(output_dir / "scene_graph_final.json", plan["scene_graph"])
     write_json(output_dir / "validation_final.json", validation)
+    if not layout_attempt["reused"]:
+        dag.commit(
+            "layout",
+            int(layout_attempt["attempt"]["attempt"]),
+            outputs={"layout": plan_path, "validation": validation_path},
+        )
     write_json(
         output_dir / "instance_group_resolution.json",
         plan.get(
@@ -242,49 +362,6 @@ def run_pipeline(args: Any) -> dict[str, Any]:
     )
     preview_path = output_dir / "layout_preview.svg"
     write_preview_svg(plan, preview_path)
-
-    assembly_report = None
-    scene_render_acceptance = None
-    scene_glb = None
-    scene_render = None
-    scene_render_front_center = None
-    if bool(args.assemble):
-        if args.asset_mode == "plan" or not asset_report["ready_for_assembly"]:
-            raise RuntimeError("Assembly requires --asset-mode reuse or trellis2 with all assets ready")
-        scene_glb = output_dir / "scene_codex_trellis_v2.glb"
-        scene_render = output_dir / "scene_front_45.png" if bool(args.render_preview) else None
-        scene_render_front_center = (
-            output_dir / "scene_front_center_45.png" if bool(args.render_preview) else None
-        )
-        assembly_report = assemble_with_blender(
-            plan_path,
-            Path(asset_report["asset_dir"]),
-            scene_glb,
-            blender_bin=Path(args.blender_bin).expanduser(),
-            preview_image=scene_render,
-            preview_image_center=scene_render_front_center,
-        )
-        write_json(output_dir / "assembly_report.json", assembly_report)
-        if bool(getattr(args, "scene_render_acceptance", False)):
-            scene_render_acceptance = render_and_evaluate_scene(
-                blender_bin=Path(args.blender_bin).expanduser(),
-                scene_glb=scene_glb,
-                plan_path=plan_path,
-                asset_dir=Path(asset_report["asset_dir"]),
-                output_dir=output_dir / "scene_render_acceptance",
-                resolution=int(
-                    getattr(args, "scene_render_acceptance_resolution", 512)
-                ),
-            )
-
-    mujoco_report = None
-    if bool(args.mujoco_check):
-        mujoco_report = run_mujoco_proxy(
-            plan,
-            output_dir,
-            python_bin=Path(args.mujoco_python).expanduser(),
-        )
-        write_json(output_dir / "mujoco_check.json", mujoco_report)
 
     profile = str(getattr(args, "profile", "development"))
     relation_report_path = output_dir / "relation_geometry_audit.json"
@@ -304,6 +381,93 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                 "declared_relation_count": len(declared_relations),
             },
         )
+    if relation_report_path.is_file():
+        relation_attempt = dag.begin(
+            "relation_geometry",
+            inputs={"layout_hash": content_hash(plan)},
+            config={"certificate_schema": "relation_geometry"},
+        )
+        if not relation_attempt["reused"]:
+            dag.commit(
+                "relation_geometry",
+                int(relation_attempt["attempt"]["attempt"]),
+                outputs={"audit": relation_report_path},
+            )
+
+    assembly_report = None
+    scene_render_acceptance = None
+    scene_glb = None
+    scene_render = None
+    scene_render_front_center = None
+    assembly_attempt = None
+    render_attempt = None
+    if bool(args.assemble):
+        if args.asset_mode == "plan" or not asset_report["ready_for_assembly"]:
+            raise RuntimeError("Assembly requires --asset-mode reuse or trellis2 with all assets ready")
+        scene_glb = output_dir / "scene_codex_trellis_v2.glb"
+        scene_render = output_dir / "scene_front_45.png" if bool(args.render_preview) else None
+        scene_render_front_center = (
+            output_dir / "scene_front_center_45.png" if bool(args.render_preview) else None
+        )
+        assembly_attempt = dag.begin(
+            "assemble",
+            inputs={"layout_hash": content_hash(plan), "asset_report_hash": content_hash(asset_report)},
+            config={"blender": str(args.blender_bin)},
+        )
+        if assembly_attempt["reused"]:
+            assembly_report = read_json(output_dir / "assembly_report.json")
+        else:
+            assembly_report = assemble_with_blender(
+                plan_path,
+                Path(asset_report["asset_dir"]),
+                scene_glb,
+                blender_bin=Path(args.blender_bin).expanduser(),
+                preview_image=scene_render,
+                preview_image_center=scene_render_front_center,
+            )
+            write_json(output_dir / "assembly_report.json", assembly_report)
+            dag.commit(
+                "assemble",
+                int(assembly_attempt["attempt"]["attempt"]),
+                outputs={
+                    "assembly_report": output_dir / "assembly_report.json",
+                    "scene_glb": scene_glb,
+                },
+            )
+        if bool(getattr(args, "scene_render_acceptance", False)):
+            render_attempt = dag.begin(
+                "render_acceptance",
+                inputs={"scene_glb": file_binding(scene_glb)},
+                config={"resolution": int(getattr(args, "scene_render_acceptance_resolution", 512))},
+            )
+            render_report_path = output_dir / "scene_render_acceptance" / "scene_render_acceptance_report.json"
+            if render_attempt["reused"]:
+                scene_render_acceptance = read_json(render_report_path)
+            else:
+                scene_render_acceptance = render_and_evaluate_scene(
+                    blender_bin=Path(args.blender_bin).expanduser(),
+                    scene_glb=scene_glb,
+                    plan_path=plan_path,
+                    asset_dir=Path(asset_report["asset_dir"]),
+                    output_dir=output_dir / "scene_render_acceptance",
+                    resolution=int(
+                        getattr(args, "scene_render_acceptance_resolution", 512)
+                    ),
+                )
+                dag.commit(
+                    "render_acceptance",
+                    int(render_attempt["attempt"]["attempt"]),
+                    outputs={"report": render_report_path},
+                )
+
+    mujoco_report = None
+    if bool(args.mujoco_check):
+        mujoco_report = run_mujoco_proxy(
+            plan,
+            output_dir,
+            python_bin=Path(args.mujoco_python).expanduser(),
+        )
+        write_json(output_dir / "mujoco_check.json", mujoco_report)
 
     summary = {
         "schema": "codex_trellis_scene_v2_summary",
@@ -533,6 +697,18 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             },
         )
     final_hash_audit = read_json(final_hash_audit_path) if final_hash_audit_path.is_file() else None
+    if final_hash_audit_path.is_file():
+        delivery_attempt = dag.begin(
+            "delivery_audit",
+            inputs={"audit_hash": content_hash(final_hash_audit)},
+            config={"schema": "scene-v2-final-hash-audit/v1"},
+        )
+        if not delivery_attempt["reused"]:
+            dag.commit(
+                "delivery_audit",
+                int(delivery_attempt["attempt"]["attempt"]),
+                outputs={"final_delivery_audit": final_hash_audit_path},
+            )
     stages = {
         "scene_brief": (output_dir / "scene_brief_resolved.json").is_file(),
         "architecture": (output_dir / "architecture_plan.json").is_file(),

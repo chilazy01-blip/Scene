@@ -48,7 +48,7 @@
 | P005 | QA、缓存和恢复证书没有闭合内容哈希链 | 已完成 | 最高 | generation、候选、staged、pilot 与四视图 QA 已形成规范化内容链，任一绑定输入变化都会失效 |
 | P006 | “运行成功”与“完整可交付”没有统一机器定义 | 已完成 | 最高 | 四类 profile 与统一终态机已落地，只有 production 全部必需阶段闭合才可 deliverable=true |
 | P007 | 重任务资源门和 TRELLIS bridge 缺少统一调度 | 已完成 | 最高 | lease broker 已统一 NVML/RAM/I/O/disk/cgroup admission，单 GPU 限一任务并以 429 背压 |
-| P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 待解决 | 高 | 上游输入变化后，下游旧产物可能未被正确失效 |
+| P008 | 流程恢复仍依赖文件存在，缺少显式阶段 DAG | 已完成 | 高 | 11 阶段 content-addressed DAG 已接入 pipeline，resume 精确复用/失效并原子记录 attempt |
 | P009 | Schema、坐标契约和运行环境缺少强约束与锁定 | 待解决 | 高 | 旧字段、旧轴向或环境漂移可能被新代码静默接受 |
 | P010 | 最终 GLB 面数和体积明显过高 | 待解决 | 高 | 当前卧室约 252 MB，不适合规模化与实时使用 |
 | P011 | 关系几何证书仍不是严格精确谓词证明 | 待解决 | 中高 | 当前三角终检可信，但浮点与粗 SDF 模糊区仍需分级 |
@@ -705,6 +705,35 @@
 - 未解决风险：当前选择零长度等待队列，调用方需按 429 重试；这是明确背压策略，不是无限线程。跨主机
   分布式队列不在单机 P007 范围内。阶段 attempt 与 broker lease 的统一持久化关联进入 P008。
 - 下一入口：P008，把全流程变成显式阶段 DAG，以输入/输出 hash 自动计算失效范围并原子提交 attempt。
+
+### 断点 CP-20260901-09：P008 已完成
+
+- 完成时间：2026-09-01
+- 根因：旧 resume 分别用 `scene_brief.json`、staged 文件、`layout_plan_final.json` 和 `ok=true` 作存在性
+  判断，没有统一依赖图；上游配置变化时无法可靠计算下游失效范围，运行中断也没有原子 attempt 边界。
+- 修改文件：新增 `stage_dag.py` 与 `tests/test_stage_dag.py`，修改 `pipeline.py`。
+- DAG：固定 11 阶段 `expand→architecture→scene_graph→asset_plan→asset_generate→asset_qa→layout→
+  relation_geometry→assemble→render_acceptance→delivery_audit`。每个 attempt 记录 schema、规范化 inputs/config
+  hash、依赖 output keys、状态、起止时间、耗时、逐输出路径/bytes/SHA-256 和进程/cgroup 资源峰值。
+- 原子性：begin 先原子写 `running`；commit 只有在全部声明输出可读取并完成哈希后原子切换
+  `committed`；异常/中断 attempt 永不复用，下一次使用新 attempt 编号。输出被替换后即使路径不变也不可
+  复用；下游记录 `invalidated_by`，旧 attempt 保留为证据而不参与当前 output key。
+- Pipeline：resume 现在必须有 `run_dag.json`；expand、architecture、scene graph、layout、Blender assembly
+  和 render acceptance 使用 DAG 复用。资产阶段仍每次运行 P005 的只读证书核验，但证书有效时不做模型
+  生成；staged GLB/JSON 全部纳入 asset_generate 输出 hash。relation/final delivery audit 也进入同一 DAG。
+- 单测：任一 11 阶段模拟中断后只创建该阶段 attempt 2，所有上游仍可复用；改变 asset_plan 输入只失效
+  自身及下游；失败 attempt 的残缺输出不进入下一 attempt；提交后篡改任一输出立即使 reuse=false。
+- 真实 smoke：`p008_stage_dag_smoke_20260901_v2` 首次 rules/plan 成功；完全相同 resume 后 7 个已执行
+  阶段 attempt 数全部保持 1、`layout_resumed=true`。只把 seed 2400 改成 2401 后，expand/architecture/
+  scene_graph 仍为 1，asset_plan/asset_generate/asset_qa/layout 精确变为 attempt 2，未触发模型或 Blender。
+- 验证结果：V2 305/305、仓库根 12/12，共 317/317；compileall、`git diff --check` 与两轮真实 CLI
+  smoke 通过。
+- 新产物目录：`/data/wsj/main/scene_runs/codex_trellis_v2/p008_stage_dag_smoke_20260901_v2`；v1 保留为
+  发现 architecture 对 brief 有隐式 mutation、导致错误下游失效的失败证据，未覆盖。
+- 未解决风险：远程/多机 artifact store 不在当前单机 DAG 范围；当前原子性依赖同一文件系统 rename。
+  Schema 强类型与 migration 由 P009 处理。
+- 下一入口：P009，冻结核心对象 schema、单位/坐标/手性契约和运行环境 preflight，旧 schema 只能显式
+  迁移或拒绝。
 
 每完成一个问题，按以下模板追加：
 
