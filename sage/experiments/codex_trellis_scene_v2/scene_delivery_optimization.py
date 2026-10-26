@@ -31,7 +31,11 @@ CATEGORY_BASE_BUDGET = {
     "wardrobe": 100_000,
     "table_lamp": 18_000,
     "dresser": 22_000,
-    "nightstand": 18_000,
+    # Nightstands occupy a large, rectilinear silhouette in room-scale views.
+    # Aggressive collapse creates visible drawer/front-edge loss even when the
+    # bounding box remains exact, so keep a higher category floor than generic
+    # small tables.
+    "nightstand": 40_000,
     "door": 15_000,
     "desk": 25_000,
     "clock": 15_000,
@@ -39,7 +43,9 @@ CATEGORY_BASE_BUDGET = {
     "slipper": 15_000,
     "window": 10_000,
     "mug": 8_000,
-    "wall_art": 7_000,
+    # Thin framed art becomes unstable in near-edge/top silhouettes sooner than
+    # its small face count suggests.
+    "wall_art": 10_000,
     "area_rug": 1_000,
 }
 

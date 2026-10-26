@@ -10,6 +10,9 @@ from pathlib import Path
 
 import bpy
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from blender_surface_guard import surface_snapshot, compare_surfaces
+
 
 def parse_args() -> argparse.Namespace:
     argv = sys.argv
@@ -39,20 +42,46 @@ def optimize_one(source: Path, output: Path, target_faces: int) -> dict[str, obj
     if not objects:
         raise RuntimeError(f"Imported asset contains no mesh: {source}")
     before_faces = polygon_count(objects)
-    ratio = min(1.0, max(0.01, float(target_faces) / max(float(before_faces), 1.0)))
-
-    if ratio < 0.999:
-        for obj in objects:
-            if len(obj.data.polygons) < 16:
-                continue
-            bpy.context.view_layer.objects.active = obj
-            obj.select_set(True)
-            modifier = obj.modifiers.new(name="CuratedDecimate", type="DECIMATE")
-            modifier.decimate_type = "COLLAPSE"
-            modifier.ratio = ratio
-            modifier.use_collapse_triangulate = True
-            bpy.ops.object.modifier_apply(modifier=modifier.name)
-            obj.select_set(False)
+    requested_ratio = min(1.0, max(0.01, float(target_faces) / max(float(before_faces), 1.0)))
+    reference = surface_snapshot(objects)
+    attempts = []
+    selected = False
+    # Preserve the source and every rejected candidate. A face target cannot
+    # override surface/UV preservation. Relax only the reduction amount.
+    ratios = sorted(set([requested_ratio, max(requested_ratio, .25), max(requested_ratio, .5), max(requested_ratio, .75), 1.0]))
+    output.parent.mkdir(parents=True, exist_ok=True)
+    if output.exists():
+        raise FileExistsError(f"Refusing to overwrite optimized asset: {output}")
+    for index, ratio in enumerate(ratios):
+        if index:
+            clear_scene(); bpy.ops.import_scene.gltf(filepath=str(source)); objects = mesh_objects()
+        if ratio < .999:
+            for obj in objects:
+                if len(obj.data.polygons) < 16:
+                    continue
+                bpy.context.view_layer.objects.active = obj
+                obj.select_set(True)
+                modifier = obj.modifiers.new(name="CuratedDecimate", type="DECIMATE")
+                modifier.decimate_type = "COLLAPSE"
+                modifier.ratio = ratio
+                modifier.use_collapse_triangulate = True
+                bpy.ops.object.modifier_apply(modifier=modifier.name)
+                obj.select_set(False)
+        candidate = surface_snapshot(objects)
+        audit = compare_surfaces(reference, candidate)
+        candidate_path = output.with_name(output.stem + f".attempt_{index:02d}.glb")
+        if candidate_path.exists():
+            raise FileExistsError(candidate_path)
+        bpy.ops.export_scene.gltf(filepath=str(candidate_path), export_format="GLB", export_apply=True, export_materials="EXPORT")
+        attempt = dict(ratio=ratio, faces=polygon_count(objects), candidate=str(candidate_path), surface_audit=audit)
+        attempts.append(attempt)
+        output.with_suffix('.attempts.json').write_text(json.dumps(attempts, indent=2) + "\n")
+        del candidate
+        if audit['passed']:
+            selected = True
+            break
+    if not selected:
+        raise RuntimeError("No candidate preserved source surface and UVs, including no-reduction fallback")
 
     after_faces = polygon_count(objects)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -69,6 +98,9 @@ def optimize_one(source: Path, output: Path, target_faces: int) -> dict[str, obj
         "after_faces": after_faces,
         "target_faces": target_faces,
         "ratio": round(ratio, 8),
+        "target_faces_reached": after_faces <= target_faces,
+        "surface_guard_passed": True,
+        "attempts": attempts,
         "output_bytes": output.stat().st_size,
     }
 

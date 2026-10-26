@@ -1,0 +1,218 @@
+{
+  "schema": "pre-expert-branch1-github-checkpoint/v1",
+  "created_utc": "2026-10-26T15:31:40.652619+00:00",
+  "source_head": "d689981afec4dff17c3827378c486198e2510230",
+  "source_branch": "experiment/reference-soft-layout-prior",
+  "planned_checkpoint_branch": "checkpoint/expert-before-branch1-20261026",
+  "planned_experiment_branch": "experiment/expert-branch1-20261026",
+  "native_cumulative_steps": 239138,
+  "qualified_new_generated_grasp_episodes": 2,
+  "qualified_bottle_episodes": 0,
+  "qualified_book_episodes": 0,
+  "unmeasured_draft": "strategies/bottle_v011.py",
+  "files": [
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/FINAL_REVIEW.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/FINAL_REVIEW.json",
+      "sha256": "9e82f38ea7a953833db71a3eeb79dd27ecd48c73920a71c85f9f79d2385c73b7",
+      "bytes": 49872
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/DATASET_MANIFEST.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/DATASET_MANIFEST.json",
+      "sha256": "fccfc3039d12fe7d8fce7f228ce33b0e875af9aa35b0987ff2b77bc1ed7f9eb0",
+      "bytes": 26568
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/FINAL_ARTIFACT_CHECK.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/FINAL_ARTIFACT_CHECK.json",
+      "sha256": "cbb03c072ef7cf3ef0e9695fa17e4c98df8a029fd6c5e4065e0e74e075f6dd0b",
+      "bytes": 805
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/ROBOT_DATA_SCHEMA.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/ROBOT_DATA_SCHEMA.json",
+      "sha256": "d51c585c34a82a9ea2525f6bccc11ab48f2992b509d62f03fd3334398e0a9e7d",
+      "bytes": 23456
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/AUTHORIZATION.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/AUTHORIZATION.json",
+      "sha256": "1728abf020ee9d191bf2e8b5b7e9f854c4dbdfc4e743fb2bbb26224797721dd4",
+      "bytes": 734
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/PLAN.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/PLAN.json",
+      "sha256": "834671c679182ac9b31b3f381a41554c74f5e530bc2e35fe258a488cba1f826f",
+      "bytes": 1874
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/COST_FINAL_SNAPSHOT.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/COST_FINAL_SNAPSHOT.json",
+      "sha256": "2bb45e25f95848c2b567be166653cb00e4249f251a846b59bf78a793effc7f51",
+      "bytes": 8742
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/TASK_SCOPE_DISCLOSURE.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/TASK_SCOPE_DISCLOSURE.json",
+      "sha256": "6561152ed21272938abe773419ee3bedf51069c16505dea6dafa3cffd57dc863",
+      "bytes": 1448
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/CASE_ADMISSION_REGISTRY.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/CASE_ADMISSION_REGISTRY.json",
+      "sha256": "b3e3e3b0963a37d27af57b22397d2c39283912bb8abf2ac715dd8327434c003e",
+      "bytes": 2621
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/EXPERT_FINAL_RECONCILIATION.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/EXPERT_FINAL_RECONCILIATION.json",
+      "sha256": "3eee3ffc93baf11fda88b5e0e74e49d3ababd196e0c41c6d3c5928eacd69d160",
+      "bytes": 2615
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/CASE.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s02_v004/CASE.json",
+      "sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+      "bytes": 12416
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/PROTOCOL.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s02_v004/PROTOCOL.json",
+      "sha256": "131f12c696dea7d6175f8287f32efa16b9c2a04a7527b77d4f09ab648d681806",
+      "bytes": 160467
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/MEASUREMENTS.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s02_v004/MEASUREMENTS.json",
+      "sha256": "4591543be864741abe8af242567d048cdef4f004b26e9f1a62f00b0ce2900f92",
+      "bytes": 6634
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/FINAL_VERIFICATION.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s02_v004/FINAL_VERIFICATION.json",
+      "sha256": "640826ac7c7a53ba7403294e5e210b1257b76913b96d0f675ef8c630b4ca4db3",
+      "bytes": 4663
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/CASE.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s03_v004/CASE.json",
+      "sha256": "a3201f433f10b0254d5933a964daa531b8a07167c3d461c899eefedd214f5aab",
+      "bytes": 12372
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/PROTOCOL.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s03_v004/PROTOCOL.json",
+      "sha256": "dba342f2ae44d711a6f2f15e87fe506c35608d43b7bf682ab87a6ffccabab1ac",
+      "bytes": 160467
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/MEASUREMENTS.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s03_v004/MEASUREMENTS.json",
+      "sha256": "0d676ec271af49932113ee1e642e50126cf2c1474f5776ea1c735727ca8e351c",
+      "bytes": 6616
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/FINAL_VERIFICATION.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s03_v004/FINAL_VERIFICATION.json",
+      "sha256": "26dd1bb1eb62b6d88e360141649ff64d14bbf0833e6b8caf47dc7dd8fdd0aa00",
+      "bytes": 4849
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/CASE.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s02_v010/CASE.json",
+      "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+      "bytes": 12643
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/PROTOCOL.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s02_v010/PROTOCOL.json",
+      "sha256": "ccc2b8a4fa95fcbb923c6abfd4da1d487eae6100f2602db6ae76be32a14daab2",
+      "bytes": 160485
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/MEASUREMENTS.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s02_v010/MEASUREMENTS.json",
+      "sha256": "0d957317e071cef56925607ae5cf4906745f2a1951370a60991c1a1897c9e425",
+      "bytes": 44877
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+      "sha256": "4e4e01ace975ec9d77b658d280addd0895bef78d74827f9e4485435d5eea288d",
+      "bytes": 3531
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/CASE.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s03_v010/CASE.json",
+      "sha256": "2e6e5e43892a065e0336f6c5b47c08d56691e573857718265a32e47e4847905d",
+      "bytes": 12543
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/PROTOCOL.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s03_v010/PROTOCOL.json",
+      "sha256": "3d58a1566bacefbbe4a0cc80910a31390b546b7de9c9871f7f9409ccbd3c9f16",
+      "bytes": 160485
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/MEASUREMENTS.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s03_v010/MEASUREMENTS.json",
+      "sha256": "6e1e5d80ca5856efec7e1b1c82a376e0d4605b45c69e18a9297c702094b1bb3f",
+      "bytes": 43064
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/FINAL_VERIFICATION.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s03_v010/FINAL_VERIFICATION.json",
+      "sha256": "516b7fb1a7a443be0afbf58d593b6783c70398d2f894dbdfbf85e4cb0d0f1551",
+      "bytes": 3506
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/cup_v004.py",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/strategies/cup_v004.py",
+      "sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+      "bytes": 13082
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/bottle_v010.py",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/strategies/bottle_v010.py",
+      "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+      "bytes": 46225
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/bottle_v011.py",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/strategies/bottle_v011.py",
+      "sha256": "5917959ba56d2762a5542980aad516c8680281e55ac65d8f7d4cf9b309b0e815",
+      "bytes": 47371
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/READING_LOG.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/literature/READING_LOG.json",
+      "sha256": "e66cc9af4472e04223b6ff6d24387607bdf8816a18ddc38b89e7527965872b16",
+      "bytes": 30137
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/EXPERIENCE_CANDIDATES.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/literature/EXPERIENCE_CANDIDATES.json",
+      "sha256": "a047dcec8afc21e40e5bba3f75b76c865f6275510ef8a2fe2690ebd49ea9c9c1",
+      "bytes": 25550
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/IMPLEMENTATION_BACKLOG.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/literature/IMPLEMENTATION_BACKLOG.json",
+      "sha256": "51ce5926c28b94725b2be229625e23757bf4fa2c33ffee9f7f4ef3f5834145b2",
+      "bytes": 2435
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/REVIEW_COMPLETE.json",
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/literature/REVIEW_COMPLETE.json",
+      "sha256": "ab902a988c0e2c2bb416ff7a9a0fe08acfc80196da222084823ff9d8953d6113",
+      "bytes": 2814
+    }
+  ],
+  "external_data_roots": [
+    "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1",
+    "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1"
+  ],
+  "data_scope": "Source code, exact protocol/result metadata and dependency hashes. Full model assets/weights, raw trajectories, videos and paper HTML caches remain in local data roots; they are required for full native reproduction."
+}

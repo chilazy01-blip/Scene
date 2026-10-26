@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Sequence
 
 from .cli import build_parser
-from .core_domain import SceneRequest
+from .core_domain import DEFAULT_IMAGE_PROVIDER, IMAGE_PROVIDERS, SceneRequest
 from .pipeline import run_pipeline
 
 
@@ -28,6 +28,7 @@ def _parser(flow_id: str) -> argparse.ArgumentParser:
     parser.add_argument("--room-type")
     parser.add_argument("--model")
     parser.add_argument("--asset-strategy", choices=("generate_from_scratch", "asset_library"))
+    parser.add_argument("--image-provider", choices=IMAGE_PROVIDERS, default=DEFAULT_IMAGE_PROVIDER)
     parser.add_argument("--asset-pipeline")
     parser.add_argument("--asset-source-image-dir")
     parser.add_argument("--trellis-asset-library-dir")
@@ -91,6 +92,7 @@ def adapt_legacy_args(flow_id: str, argv: Sequence[str]) -> argparse.Namespace:
         room_type=old.room_type,
         profile=profile,
         asset_mode=asset_mode,
+        image_provider=old.image_provider,
         reference_image=old.flux_image,
         adapter=f"legacy:{flow_id}",
         compatibility_notes=(
@@ -102,6 +104,7 @@ def adapt_legacy_args(flow_id: str, argv: Sequence[str]) -> argparse.Namespace:
         "--output-dir", str(old.output_dir),
         "--profile", profile,
         "--asset-mode", asset_mode,
+        "--image-provider", old.image_provider,
     ]
     if old.room_type:
         v2_argv += ["--room-type", old.room_type]

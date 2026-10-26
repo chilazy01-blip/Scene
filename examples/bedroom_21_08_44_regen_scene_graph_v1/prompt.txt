@@ -1,0 +1,7 @@
+Reconstruct this static bedroom scene as a 3D room from the reference image.
+
+Identify the main visible furniture, wall-mounted objects, tabletop objects, floor objects, lighting, and decor. Use stable object ids, image bounding boxes, object categories, concise descriptions, approximate dimensions, support relations, wall relations, and pose hints suitable for TreeSAGE Flow2.
+
+Treat bedding, pillows, blankets, and the folded throw as integrated details of the bed asset unless a separate rigid object is clearly required. Treat small tabletop items such as the alarm clock, mug, potted plant, and desk lamp as separate supported objects when visible. Include the desk, office chair, wardrobe, bed, nightstands, wall art, wall shelf, window, curtain panels, curtain rod, area rug, and slippers if visible.
+
+Do not include people. Do not invent objects outside the visible room. Prefer a compact but complete scene graph that can drive 3D asset generation and spatial layout.

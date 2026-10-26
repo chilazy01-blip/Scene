@@ -1,0 +1,61 @@
+Generate one isolated front-view source image for each object.
+
+double_bed.png
+  prompt: wooden double bed frame with low rectangular headboard, white bedding, blue pillows and blue folded bed runner integrated, object only
+
+left_nightstand.png
+  prompt: small wooden bedside nightstand with one drawer, black pull handle, open lower shelf, object only
+
+right_nightstand.png
+  prompt: small wooden bedside nightstand with one drawer, black pull handle, open lower shelf, object only
+
+wardrobe.png
+  prompt: large freestanding wooden wardrobe closet with four tall flat doors, black vertical handles, warm oak finish, object only
+
+desk.png
+  prompt: simple rectangular wooden writing desk with side panel legs, warm oak finish, object only
+
+office_chair.png
+  prompt: black mesh ergonomic office chair with armrests, five caster wheels, swivel base, object only
+
+floating_shelf.png
+  prompt: minimal thin wooden floating wall shelf, warm oak finish, object only
+
+framed_landscape_art.png
+  prompt: rectangular framed landscape painting showing lake and trees, wood frame, object only
+
+window.png
+  prompt: white framed rectangular residential window with sill, object only
+
+left_curtain.png
+  prompt: dark blue hanging curtain panel with gathered folds and tieback, object only
+
+right_curtain.png
+  prompt: dark blue hanging curtain panel with gathered folds and tieback, object only
+
+curtain_rod.png
+  prompt: wooden curtain rod with round finials, object only
+
+desk_lamp.png
+  prompt: white adjustable desk task lamp with round base, angled arm and conical shade, object only
+
+bedside_table_lamp.png
+  prompt: small bedside table lamp with white fabric drum shade and slim base, object only
+
+alarm_clock.png
+  prompt: small black vintage twin bell alarm clock, round face, object only
+
+potted_plant.png
+  prompt: small leafy green houseplant in a white cylindrical pot, object only
+
+white_mug.png
+  prompt: plain white ceramic coffee mug with handle, object only
+
+area_rug.png
+  prompt: large light beige rectangular area rug with subtle woven pattern, thin flat floor covering, object only
+
+left_slipper.png
+  prompt: single dark navy house slipper with white horizontal stripes, object only
+
+right_slipper.png
+  prompt: single dark navy house slipper with white horizontal stripes, object only

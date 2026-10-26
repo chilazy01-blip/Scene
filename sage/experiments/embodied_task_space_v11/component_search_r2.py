@@ -1,0 +1,41 @@
+"""Component-preserving search with unchanged witness-aware trust and bounds."""
+import time
+import numpy as np
+from .component_compiler_r2 import Compiler as Base
+from sage.experiments.embodied_task_space_v7.witness_trust_r1 import update_radius
+from sage.experiments.embodied_task_space_v5.minimax_acceptance_r1 import measures
+from .component_acceptance_r1 import accept_step
+from sage.experiments.embodied_task_space_v6.certified_local_qp_r1 import solve_qp
+
+class Compiler(Base):
+    def solve(self,x,callback,deadline):
+        self.deadline=deadline;current=self.evaluate(x);self.current=current;callback('initial',dict(geometry=current['meta'],initialization='frozen_whole_path_or_source_anchor'),current['arrays']);records=[]
+        selected=set(range(0,self.map.n,self.spec['search_stride']))
+        selected.update(t for b in self.map.offsets[1:] for t in range(int(b)-25,int(b)));trust=self.spec['trust_rad'];stop_selected=set()
+        for iteration in range(self.spec['max_iterations']):
+            if current['meta']['passed']:return dict(passed=True,iterations=records),current['arrays']
+            self.check_time(self.spec['audit_reserve_seconds']);self.current=current
+            witness_count_before=len(self.contact_witnesses.current_ticks)+len(self.contact_witnesses.stopping_states)
+            selected.update(v['tick'] for v in current['bad']);stop_selected.update(current['worst']);selected.update(t for t,s in stop_selected)
+            linear=self.linearize_hierarchy(x,selected,stop_selected);record=dict(iteration=iteration,trust=trust,accepted=False,solvers=[],trials=[])
+            self.check_time(self.spec['audit_reserve_seconds'])
+            cost,A,low,high=self.problem(x,linear,trust)
+            seconds=min(self.spec['lp_seconds'],self.deadline-time.monotonic()-self.spec['audit_reserve_seconds'])
+            diagonal=self.hessian(cost)
+            primal,dual,info=solve_qp(diagonal,cost,A,low,high,seconds)
+            record['solvers'].append(dict(level='local_qp',**info));callback.problem(iteration,'local_qp',A,low,high,cost,primal,dual,info,diagonal)
+            step=primal[:self.map.size] if info['passed'] else None
+            if step is None:
+                record['status']='numerical_subproblem_not_admitted';records.append(record);callback(iteration,record,None);return dict(passed=False,reason='numerical_subproblem_not_admitted',iterations=records),current['arrays']
+            for scale in self.spec['step_scales']:
+                self.check_time(self.spec['audit_reserve_seconds']);delta=step*scale;proposal=x+delta;hard=self.map.residual(proposal);prediction=self.predict_vector(current,linear,delta);predicted=float(current['vector']@current['vector']-prediction@prediction)
+                candidate=self.evaluate(proposal);decision=accept_step(current,candidate,hard,self.spec['contact_tolerance']);record['trials'].append(dict(scale=scale,geometry=candidate['meta'],decision=decision,predicted_reduction=predicted));callback.trial(iteration,scale,candidate['meta'],candidate['arrays'],decision)
+                if decision['accepted']:
+                    x=proposal;current=candidate;record['accepted']=True;record['scale']=scale;break
+            witness_count_after=len(self.contact_witnesses.current_ticks)+len(self.contact_witnesses.stopping_states)
+            next_trust,reason=update_radius(trust,record['accepted'],record.get('scale'),witness_count_after-witness_count_before,self.spec['trust_rad'],self.spec['min_trust_rad'])
+            record['trust_update']=dict(before=trust,after=next_trust,reason=reason,new_witnesses=witness_count_after-witness_count_before)
+            trust=next_trust
+            record['incumbent_worst_violation']=measures(current)[0];record['incumbent_merit']=current['meta']['merit'];records.append(record);callback(iteration,record,None)
+            if trust<self.spec['min_trust_rad']:break
+        return dict(passed=bool(current['meta']['passed']),reason='all_original_gates_passed' if current['meta']['passed'] else 'bounded_local_refinement_search_without_qualified_path',iterations=records),current['arrays']

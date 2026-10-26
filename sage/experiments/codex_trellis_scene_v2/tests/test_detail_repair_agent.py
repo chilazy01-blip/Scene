@@ -97,6 +97,40 @@ class DetailRepairAgentTest(unittest.TestCase):
         self.assertFalse(evidence["triggered"], evidence)
         self.assertEqual(evidence["supporting_views"], ["+x"])
 
+    def test_equal_width_failed_sofa_platform_is_rejected_without_overhang(self) -> None:
+        report = _report(hard=True)
+        report["structure_gate"]["lower_to_upper_footprint_area_ratio"] = 5.000076
+        for axis in ("+x", "-x", "+y", "-y"):
+            report["views"][axis].update(
+                lower_full_width_row_fraction=1.0,
+                lower_overhang_ratio=1.0,
+            )
+
+        evidence = generic_connected_platform_evidence(report)
+        updated = apply_generic_connected_platform_gate(report)
+
+        self.assertTrue(evidence["triggered"], evidence)
+        self.assertTrue(evidence["layered_full_width_trigger"])
+        self.assertEqual(evidence["overhang_supporting_views"], [])
+        self.assertFalse(updated["hard_geometry_gate_passed"])
+        self.assertFalse(updated["automated_pixel_multiview_pass"])
+        self.assertEqual(
+            updated["acceptance"], "rejected_connected_platform_geometry"
+        )
+
+    def test_full_width_closed_box_without_layered_footprint_anomaly_passes(self) -> None:
+        report = _report(hard=True)
+        report["structure_gate"]["lower_to_upper_footprint_area_ratio"] = 1.05
+        for axis in ("+x", "-x", "+y", "-y"):
+            report["views"][axis].update(
+                lower_full_width_row_fraction=1.0,
+                lower_overhang_ratio=1.0,
+            )
+
+        evidence = generic_connected_platform_evidence(report)
+
+        self.assertFalse(evidence["triggered"], evidence)
+
     def test_tessellation_aware_cap_requires_exceptionally_strong_evidence(self) -> None:
         report = _report(hard=True)
         report["generic_connected_platform_evidence"] = {

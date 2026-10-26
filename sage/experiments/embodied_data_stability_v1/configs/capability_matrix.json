@@ -1,0 +1,74 @@
+{
+  "schema": "embodied-s0-capability-matrix/v1",
+  "frozen_at": "2026-10-14T00:00:00+08:00",
+  "policy": {
+    "run_in_candidate_native_environment_first": true,
+    "weights_must_not_change": true,
+    "all_attempts_enter_denominator": true,
+    "component_cases_are_not_training_episodes": true,
+    "source_success_and_project_quality_are_reported_separately": true
+  },
+  "common_metrics": [
+    "termination_code",
+    "base_height_m",
+    "base_tilt_deg",
+    "base_linear_speed_mps",
+    "forbidden_contact_count",
+    "physics_warning_count",
+    "controller_saturation_fraction",
+    "wall_seconds",
+    "sim_seconds"
+  ],
+  "cases": [
+    {
+      "id": "stand_hold",
+      "purpose": "native balance and reset baseline",
+      "target": {"hold_s": 10.0},
+      "gates": {"fall": false, "min_base_height_m": 0.6, "max_base_tilt_deg": 15.0},
+      "budget": {"max_attempts": 2, "max_sim_seconds_per_attempt": 15, "max_wall_seconds_per_attempt": 300}
+    },
+    {
+      "id": "walk_stop_forward",
+      "purpose": "native walk-to-stop transition",
+      "target": {"forward_displacement_m": 0.5, "post_stop_hold_s": 2.0},
+      "gates": {"max_endpoint_error_m": 0.1, "max_terminal_speed_mps": 0.1, "max_base_tilt_deg": 15.0},
+      "budget": {"max_attempts": 2, "max_sim_seconds_per_attempt": 30, "max_wall_seconds_per_attempt": 600}
+    },
+    {
+      "id": "turn_stop",
+      "purpose": "heading command and stable stop",
+      "target": {"yaw_change_deg": 45.0, "post_stop_hold_s": 2.0},
+      "gates": {"max_yaw_error_deg": 10.0, "max_terminal_speed_mps": 0.1, "max_base_tilt_deg": 15.0},
+      "budget": {"max_attempts": 2, "max_sim_seconds_per_attempt": 30, "max_wall_seconds_per_attempt": 600}
+    },
+    {
+      "id": "lateral_20cm_regression",
+      "purpose": "retain the scientifically closed old-walker failure as a common regression case",
+      "target": {"body_lateral_displacement_m": 0.2, "post_stop_hold_s": 2.0},
+      "gates": {"max_endpoint_error_m": 0.02, "max_terminal_speed_mps": 0.1, "max_base_tilt_deg": 15.0, "min_base_height_m": 0.6, "max_nonfloor_room_contacts": 0},
+      "budget": {"max_attempts": 2, "max_sim_seconds_per_attempt": 30, "max_wall_seconds_per_attempt": 600}
+    },
+    {
+      "id": "upper_body_balance",
+      "purpose": "upper-body motion while preserving balance",
+      "target": {"native_supported_upper_body_reference": true, "post_motion_hold_s": 2.0},
+      "gates": {"fall": false, "max_base_tilt_deg": 15.0, "min_base_height_m": 0.6},
+      "budget": {"max_attempts": 2, "max_sim_seconds_per_attempt": 30, "max_wall_seconds_per_attempt": 600}
+    },
+    {
+      "id": "light_payload_hold",
+      "purpose": "light-load contact and balance admission",
+      "target": {"candidate_native_light_payload": true, "hold_s": 3.0},
+      "gates": {"object_dropped": false, "fall": false, "max_base_tilt_deg": 15.0},
+      "budget": {"max_attempts": 2, "max_sim_seconds_per_attempt": 45, "max_wall_seconds_per_attempt": 900}
+    },
+    {
+      "id": "complete_pick_carry_place",
+      "purpose": "full-task evidence; never replace with component success",
+      "target": {"stages": ["approach", "align", "grasp", "lift", "carry", "stop", "place", "release", "retreat"]},
+      "gates": {"object_state_writes": 0, "hidden_constraints": 0, "manual_interventions": 0, "terminal_release": true, "terminal_stable_support": true},
+      "budget": {"max_attempts": 2, "max_sim_seconds_per_attempt": 300, "max_wall_seconds_per_attempt": 900}
+    }
+  ]
+}
+

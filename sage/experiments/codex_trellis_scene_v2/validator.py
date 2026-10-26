@@ -5,6 +5,7 @@ from copy import deepcopy
 from typing import Any
 
 from .composition import evaluate_composition
+from .asset_usage import asset_usage_violations
 from .dimensions import AXES
 from .instance_groups import validate_instance_groups
 from .orientation import evaluate_facing, evaluate_relation_facing
@@ -297,6 +298,9 @@ def _architecture_violations(
         window_start, window_end = _opening_interval(window)
         sill = float(window.get("sill_height", 0.0))
         for obj in blocking_objects:
+            from .furnishing_groups import allowed_window_treatment
+            if allowed_window_treatment(obj, window):
+                continue
             if _wall_distance(obj, room, wall) > 0.38:
                 continue
             x0, y0, x1, y1 = aabb(obj)
@@ -341,7 +345,7 @@ def _architecture_violations(
     }
 
 
-def walkway_exists(plan: dict[str, Any], floor_objects: list[dict[str, Any]]) -> bool:
+def walkway_status(plan: dict[str, Any], floor_objects: list[dict[str, Any]]) -> dict[str, Any]:
     room = plan["room"]
     width = float(room["width"])
     length = float(room["length"])
@@ -374,16 +378,21 @@ def walkway_exists(plan: dict[str, Any], floor_objects: list[dict[str, Any]]) ->
         )
         return ranked[0][1] if ranked else None
 
-    start = nearest_free(width - 0.35, 0.75)
+    doors = plan.get('architecture', {}).get('doors', [])
+    door = doors[0] if doors else {'wall': 'east', 'center': .75}
+    center = float(door.get('center', .75))
+    entry = {'west': (.35, center), 'east': (width-.35, center),
+             'south': (center, .35), 'north': (center, length-.35)}[door.get('wall', 'east')]
+    start = nearest_free(*entry)
     goal = nearest_free(width / 2.0, length / 2.0)
     if not start or not goal:
-        return False
+        return {'exists': False, 'barrier_cells': nx*ny, 'frontier_distance': nx+ny, 'reachable_cells': 0}
     queue = deque([start])
     visited = {start}
     while queue:
         current = queue.popleft()
         if current == goal:
-            return True
+            return {'exists': True, 'barrier_cells': 0, 'frontier_distance': 0, 'reachable_cells': len(visited)}
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             neighbor = current[0] + dx, current[1] + dy
             if not (0 <= neighbor[0] < nx and 0 <= neighbor[1] < ny):
@@ -392,13 +401,34 @@ def walkway_exists(plan: dict[str, Any], floor_objects: list[dict[str, Any]]) ->
                 continue
             visited.add(neighbor)
             queue.append(neighbor)
-    return False
+    # A 0/1 traversal estimates how many blocked cells separate the connected
+    # regions. It guides joint repair even when moving the farther obstruction
+    # alone cannot enlarge the entry region. It never changes the pass/fail gate.
+    costs = {start: 0}; pending = deque([start])
+    while pending:
+        current = pending.popleft()
+        for dx,dy in ((1,0),(-1,0),(0,1),(0,-1)):
+            neighbor = current[0]+dx, current[1]+dy
+            if not (0 <= neighbor[0] < nx and 0 <= neighbor[1] < ny):
+                continue
+            penalty = int(neighbor in blocked)
+            value = costs[current]+penalty
+            if value < costs.get(neighbor, nx*ny):
+                costs[neighbor] = value
+                (pending.append if penalty else pending.appendleft)(neighbor)
+    return {'exists': False, 'barrier_cells': costs.get(goal,nx*ny),
+            'frontier_distance': min(abs(p[0]-goal[0])+abs(p[1]-goal[1]) for p in visited),
+            'reachable_cells': len(visited)}
+
+
+def walkway_exists(plan: dict[str, Any], floor_objects: list[dict[str, Any]]) -> bool:
+    return walkway_status(plan, floor_objects)['exists']
 
 
 def _facing_violations(
     objects: list[dict[str, Any]], relations: list[Any], room: dict[str, Any],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    violations: list[dict[str, Any]] = []
+    violations = [failure for obj in objects for failure in asset_usage_violations(obj, room)]
     wall_statuses = [
         status for obj in objects if (status := evaluate_facing(obj, room))
     ]
@@ -860,6 +890,8 @@ def validate_layout(plan: dict[str, Any]) -> dict[str, Any]:
             max_dimension_scale_anisotropy = max(
                 max_dimension_scale_anisotropy, max(scales) - min(scales)
             )
+    from .furnishing_groups import evaluate_groups
+    violations.extend(evaluate_groups(plan))
     composition_violations, composition_metrics = evaluate_composition(plan)
     violations.extend(composition_violations)
     for obj in objects:

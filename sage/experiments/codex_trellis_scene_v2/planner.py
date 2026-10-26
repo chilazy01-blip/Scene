@@ -69,6 +69,8 @@ def rules_layout(brief: dict[str, Any]) -> dict[str, Any]:
         if spec.get("placement_type") == "support":
             continue
         x, y, yaw = _rule_pose(str(brief["room_type"]), str(spec["id"]), room)
+        if spec.get("initial_pose"):
+            x, y, yaw = (float(spec["initial_pose"][k]) for k in ("x", "y", "yaw"))
         obj = deepcopy(spec)
         placement_type = str(obj.get("placement_type", "floor"))
         z = float(obj.get("mount_height") or 0.0) if placement_type == "wall" else 0.0
@@ -98,7 +100,7 @@ def rules_layout(brief: dict[str, Any]) -> dict[str, Any]:
             {
                 "x": float(support["x"]) + dx,
                 "y": float(support["y"]) + dy,
-                "z": float(support["dimensions"]["height"]),
+                "z": float(support.get("z", 0.0)) + float(support["dimensions"]["height"]),
                 "yaw": float(support.get("yaw", 0.0)),
             }
         )
@@ -120,9 +122,12 @@ def rules_layout(brief: dict[str, Any]) -> dict[str, Any]:
         "object_budget": deepcopy(brief["object_budget"]),
         "camera_requirements": deepcopy(brief.get("camera_requirements", {})),
         "render_requirements": deepcopy(brief.get("render_requirements", {})),
+        "furnishing_groups": deepcopy(brief.get("furnishing_groups", {})),
         "planner": "deterministic_rules",
         "orientation_resolution": orientation_changes,
     }
+    from .furnishing_groups import place_groups
+    place_groups(plan)
     if isinstance(brief.get("scene_graph"), dict):
         plan["scene_graph"] = materialize_scene_graph(
             brief["scene_graph"], plan["objects"]
@@ -198,6 +203,7 @@ def _layout_prompt(brief: dict[str, Any]) -> str:
                 "asset_canonical_front",
                 "asset_orientation",
                 "asset_affordance",
+                "usage_constraints",
                 "facing_constraint",
                 "instance_group_id",
                 "instance_group_role",

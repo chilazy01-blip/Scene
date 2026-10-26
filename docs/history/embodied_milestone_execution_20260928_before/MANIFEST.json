@@ -1,0 +1,31 @@
+{
+  "at": 1790604548.6450698,
+  "reason": "Preserve intermediate approved/running documents before scientific close and diagnosis update",
+  "files": [
+    {
+      "source": "AGENT.md",
+      "snapshot": "docs/history/embodied_milestone_execution_20260928_before/AGENT.md",
+      "sha256": "e552d73f718f6eea012e0731dc67916715c00708e62f0777986d605ab2cddce3"
+    },
+    {
+      "source": "docs/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+      "snapshot": "docs/history/embodied_milestone_execution_20260928_before/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+      "sha256": "bef5e8308d044af9c110a52087383d562f8ae21878de3a38d8f0938a66f61fe6"
+    },
+    {
+      "source": "docs/EMBODIED_DATA_ROADMAP_20260926.md",
+      "snapshot": "docs/history/embodied_milestone_execution_20260928_before/EMBODIED_DATA_ROADMAP_20260926.md",
+      "sha256": "3622c9923b43a95fecf8548b1048fc68b0436e1075b35cba06ceb1c1268d8a3c"
+    },
+    {
+      "source": "docs/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+      "snapshot": "docs/history/embodied_milestone_execution_20260928_before/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+      "sha256": "7ec5ac9c900242479ab68d25ea54eda26666c9b6ae3a3badf510565f025bc356"
+    },
+    {
+      "source": "docs/EMBODIED_FULL_BODY_GOALS_20260928.md",
+      "snapshot": "docs/history/embodied_milestone_execution_20260928_before/EMBODIED_FULL_BODY_GOALS_20260928.md",
+      "sha256": "7dbd40698e652591c995896b098f7969592672f69bf64b7e66ee0f0a82ad6dcb"
+    }
+  ]
+}

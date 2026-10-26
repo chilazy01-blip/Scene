@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render four local-axis views for selected SAGE assets."""
+"""Render auditable local-axis views for selected SAGE assets."""
 
 from __future__ import annotations
 
@@ -14,13 +14,32 @@ import numpy as np
 from mathutils.bvhtree import BVHTree
 from mathutils import Matrix, Vector
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from blender_mesh_bounds import mesh_bbox_world
+
 
 TARGET_TYPES = {"MESH", "CURVE", "SURFACE", "META", "FONT"}
-VIEW_SPECS = {
+STANDARD_VIEW_SPECS = {
     "+x": ((2.8, 0.0, 1.25), (0.0, 0.0, 0.18)),
     "-x": ((-2.8, 0.0, 1.25), (0.0, 0.0, 0.18)),
     "+y": ((0.0, 2.8, 1.25), (0.0, 0.0, 0.18)),
     "-y": ((0.0, -2.8, 1.25), (0.0, 0.0, 0.18)),
+}
+
+# These opt-in cameras deliberately sit below the usual product-photography
+# eye line.  They are evidence cameras, not attractive showcase cameras: the
+# low views expose fused plinths while the under views make the complete lower
+# surface inspectable.  The default profile remains the historical four-view
+# contract so existing certificates are not silently reinterpreted.
+LOW_UNDER_VIEW_SPECS = {
+    "low_+x": ((2.8, 0.0, -0.12), (0.0, 0.0, 0.02)),
+    "low_-x": ((-2.8, 0.0, -0.12), (0.0, 0.0, 0.02)),
+    "low_+y": ((0.0, 2.8, -0.12), (0.0, 0.0, 0.02)),
+    "low_-y": ((0.0, -2.8, -0.12), (0.0, 0.0, 0.02)),
+    "under_+x": ((1.7, 0.0, -2.25), (0.0, 0.0, -0.12)),
+    "under_-x": ((-1.7, 0.0, -2.25), (0.0, 0.0, -0.12)),
+    "under_+y": ((0.0, 1.7, -2.25), (0.0, 0.0, -0.12)),
+    "under_-y": ((0.0, -1.7, -2.25), (0.0, 0.0, -0.12)),
 }
 
 
@@ -36,6 +55,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--object-ids", required=True)
     parser.add_argument("--resolution", type=int, default=520)
+    parser.add_argument("--engine", choices=("eevee", "cycles_cpu"), default="eevee")
     parser.add_argument("--transparent", action="store_true")
     parser.add_argument("--fit-requested-dimensions", action="store_true")
     parser.add_argument(
@@ -44,6 +64,12 @@ def parse_args() -> argparse.Namespace:
         help="Write low-resolution face/depth/normal evidence aligned with every RGB view.",
     )
     parser.add_argument("--evidence-resolution", type=int, default=128)
+    parser.add_argument(
+        "--view-profile",
+        choices=("standard", "low_under", "all"),
+        default="standard",
+        help="Select the historical cardinal views, diagnostic low/under views, or both.",
+    )
     return parser.parse_args(argv)
 
 
@@ -53,21 +79,6 @@ def clear_scene() -> None:
 
 def renderable_objects() -> list[bpy.types.Object]:
     return [obj for obj in bpy.context.scene.objects if obj.type in TARGET_TYPES]
-
-
-def mesh_bbox_world(objects: list[bpy.types.Object]) -> tuple[Vector, Vector]:
-    corners: list[Vector] = []
-    for obj in objects:
-        if obj.type not in TARGET_TYPES:
-            continue
-        for corner in obj.bound_box:
-            corners.append(obj.matrix_world @ Vector(corner))
-    if not corners:
-        raise RuntimeError("No renderable geometry found.")
-    return (
-        Vector((min(c.x for c in corners), min(c.y for c in corners), min(c.z for c in corners))),
-        Vector((max(c.x for c in corners), max(c.y for c in corners), max(c.z for c in corners))),
-    )
 
 
 def layered_footprint_metrics(objects: list[bpy.types.Object]) -> dict:
@@ -136,12 +147,18 @@ def setup_lighting(*, style_audit: bool = False) -> None:
     add_area_light("TopLight", (0.0, 0.0, 4.8), 1200.0 * multiplier, 5.0)
 
 
-def setup_render(output: Path, resolution: int, *, transparent: bool = False) -> None:
+def setup_render(output: Path, resolution: int, *, transparent: bool = False, engine: str = "eevee") -> None:
     scene = bpy.context.scene
-    try:
-        scene.render.engine = "BLENDER_EEVEE_NEXT"
-    except Exception:
-        scene.render.engine = "BLENDER_EEVEE"
+    if engine == "cycles_cpu":
+        scene.render.engine = "CYCLES"
+        scene.cycles.device = "CPU"
+        scene.cycles.samples = 32
+        scene.cycles.use_denoising = True
+    else:
+        try:
+            scene.render.engine = "BLENDER_EEVEE_NEXT"
+        except Exception:
+            scene.render.engine = "BLENDER_EEVEE"
     scene.render.resolution_x = resolution
     scene.render.resolution_y = resolution
     scene.render.resolution_percentage = 100
@@ -427,6 +444,8 @@ def render_asset(
     fit_requested_dimensions: bool = False,
     geometry_evidence: bool = False,
     evidence_resolution: int = 128,
+    view_specs: dict | None = None,
+    engine: str = "eevee",
 ) -> tuple[dict[str, str], dict, dict]:
     object_id = str(obj_plan["id"])
     clear_scene()
@@ -461,11 +480,12 @@ def render_asset(
             "normalized_z_max": round(float(evidence_index["normalized_z_max"]), 9),
             "views": {},
         }
-    for axis, (location, target) in VIEW_SPECS.items():
+    selected_view_specs = view_specs or STANDARD_VIEW_SPECS
+    for axis, (location, target) in selected_view_specs.items():
         camera = add_camera(f"Camera_{axis}", location, target)
         fit_orthographic_camera(camera, mesh_objects)
         output = object_dir / f"{axis.replace('+', 'plus_').replace('-', 'minus_')}.png"
-        setup_render(output, resolution, transparent=transparent)
+        setup_render(output, resolution, transparent=transparent, engine=engine)
         bpy.ops.render.render(write_still=True)
         paths[axis] = str(output)
         if evidence_index is not None:
@@ -493,11 +513,18 @@ def main() -> None:
     object_ids = [object_id for object_id in requested if object_id in by_id]
     args.output_dir.mkdir(parents=True, exist_ok=True)
     manifest = {
+        "schema": "scene_asset_turntable_manifest_v2",
+        "view_profile": str(args.view_profile),
         "views": {},
         "normalization": {},
         "geometry_evidence": {},
         "missing": [],
     }
+    view_specs = {
+        "standard": STANDARD_VIEW_SPECS,
+        "low_under": LOW_UNDER_VIEW_SPECS,
+        "all": {**STANDARD_VIEW_SPECS, **LOW_UNDER_VIEW_SPECS},
+    }[str(args.view_profile)]
     for object_id in object_ids:
         asset_path = args.asset_dir / f"{object_id}.glb"
         if not asset_path.exists():
@@ -512,6 +539,8 @@ def main() -> None:
             fit_requested_dimensions=bool(args.fit_requested_dimensions),
             geometry_evidence=bool(args.geometry_evidence),
             evidence_resolution=int(args.evidence_resolution),
+            view_specs=view_specs,
+            engine=args.engine,
         )
         manifest["views"][object_id] = paths
         manifest["normalization"][object_id] = normalization

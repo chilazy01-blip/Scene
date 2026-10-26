@@ -12,6 +12,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from .content_chain import file_binding, make_artifact_certificate
+from .detail_face_localizer import apply_generic_connected_platform_gate
 
 
 VIEW_AXES = ("+x", "-x", "+y", "-y")
@@ -109,6 +110,17 @@ def structure_profile_for_object(
             "maximum_lower_overhang_ratio": None,
             "maximum_lower_full_width_row_fraction": None,
             "evidence": "semantic_form_contract:skeletal_support",
+        },
+        "upholstered_seating": {
+            "profile": "upholstered_seating",
+            "compact_silhouette_required": False,
+            "minimum_bbox_fill": None,
+            "maximum_detached_ratio": 0.08,
+            "maximum_internal_hole_ratio": None,
+            "maximum_lower_overhang_ratio": None,
+            "maximum_lower_full_width_row_fraction": 0.92,
+            "maximum_lower_to_upper_footprint_area_ratio": 4.0,
+            "evidence": "semantic_form_contract:upholstered_seating",
         },
         "slender_radial": {
             "profile": "slender_radial",
@@ -665,7 +677,10 @@ def evaluate_multiview_manifest(
         automated_score = 0.75 * mean_style + 0.25 * reference_score
     threshold = float(contract.get("selection_policy", {}).get("minimum_harmony_score", 0.55))
     anisotropy = float(normalization.get("axis_scale_anisotropy", 1.0) or 1.0)
-    scale_gate_passed = anisotropy <= 4.0
+    scale_gate_maximum = float(
+        semantic_form_contract.get("maximum_axis_scale_anisotropy", 4.0) or 4.0
+    )
+    scale_gate_passed = anisotropy <= scale_gate_maximum
     hard_geometry_gate_passed = bool(
         silhouette_structure_pass
         and consistency["passes"]
@@ -688,7 +703,7 @@ def evaluate_multiview_manifest(
             )
         )
     )
-    return {
+    report = {
         "schema": "scene_dna_generated_asset_multiview_v1",
         "object_id": object_id,
         "category": category,
@@ -730,9 +745,14 @@ def evaluate_multiview_manifest(
         "opposite_view_consistency": consistency,
         "normalization": normalization,
         "scale_anisotropy_gate": {
-            "maximum": 4.0,
+            "maximum": scale_gate_maximum,
             "actual": round(anisotropy, 6),
             "passes": scale_gate_passed,
+            "source": (
+                "semantic_form_contract"
+                if "maximum_axis_scale_anisotropy" in semantic_form_contract
+                else "legacy_general_limit"
+            ),
         },
         "reference_appearance": reference,
         "semantic_style_multiview": semantic_style,
@@ -763,6 +783,10 @@ def evaluate_multiview_manifest(
             ),
         ],
     }
+    # This gate is part of ordinary generated-asset admission, not merely the
+    # optional detail-repair experiment.  It catches a platform even when the
+    # generated mesh fuses it into the furniture body.
+    return apply_generic_connected_platform_gate(report)
 
 
 def _write_contact_sheet(view_paths: dict[str, str], output_path: Path) -> None:

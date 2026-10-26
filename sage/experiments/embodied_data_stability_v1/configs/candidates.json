@@ -1,0 +1,474 @@
+{
+  "schema": "embodied-s0-candidates-input/v1",
+  "frozen_at": "2026-10-14T00:00:00+08:00",
+  "path_variables": {
+    "WORKSPACE": "/data/wsj/main",
+    "SCENE_REPO": "/data/wsj/main/scene",
+    "HISTORICAL_NATIVE_RUN": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/payload_data_20261009/native_parallel_12h_20261011",
+    "SOURCE_A_ROOT": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/payload_data_20261009/native_parallel_12h_20261011/branches/A/source",
+    "SOURCE_A_ENV": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/payload_data_20261009/native_parallel_12h_20261011/shared/env37",
+    "SOURCE_A_PYTHON": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/cpu_env/bin/python",
+    "GROOT_SNAPSHOT": "/data/wsj/main/scene_handoffs/embodied_dual_end_effector_audit_20260925_v1/sources/groot"
+  },
+  "candidates": [
+    {
+      "id": "groot_wbc_sonic",
+      "display_name": "GR00T Whole-Body Control / GEAR-SONIC",
+      "role": "priority_whole_body_candidate",
+      "source": {
+        "repository": "NVlabs/GR00T-WholeBodyControl",
+        "commit": "b042411fae38ee4d1af9aac82a37a1f8d14d6dd0",
+        "url": "https://github.com/NVlabs/GR00T-WholeBodyControl/tree/b042411fae38ee4d1af9aac82a37a1f8d14d6dd0",
+        "local_form": "pinned_static_admission_slice; full checkout and weights not staged"
+      },
+      "artifacts": [
+        {
+          "id": "source_pin",
+          "kind": "source_identity",
+          "path": "${S0_RUN}/staging/groot_wbc_sonic/PIN.json",
+          "type": "file",
+          "required_for": ["s0_inventory"],
+          "json_assertions": {
+            "/repository": "NVlabs/GR00T-WholeBodyControl",
+            "/commit": "b042411fae38ee4d1af9aac82a37a1f8d14d6dd0",
+            "/static_admission_slice_ready": true
+          }
+        },
+        {
+          "id": "license_snapshot",
+          "kind": "license_evidence",
+          "path": "${S0_RUN}/staging/groot_wbc_sonic/source/LICENSE",
+          "type": "file",
+          "required_for": ["s0_inventory"]
+        },
+        {
+          "id": "native_entrypoint_definition",
+          "kind": "entrypoint",
+          "path": "${S0_RUN}/staging/groot_wbc_sonic/NATIVE_ENTRYPOINT.json",
+          "type": "file",
+          "required_for": ["s0_inventory"],
+          "json_assertions": {"/entrypoint_defined": true}
+        },
+        {
+          "id": "full_source_snapshot",
+          "kind": "source_tree",
+          "path": "${S0_RUN}/staging/groot_wbc_sonic/PIN.json",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "json_assertions": {"/full_source_snapshot_ready": true}
+        },
+        {
+          "id": "native_entrypoint_executable",
+          "kind": "entrypoint",
+          "path": "${S0_RUN}/staging/groot_wbc_sonic/NATIVE_ENTRYPOINT.json",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "json_assertions": {"/locally_executable": true}
+        },
+        {
+          "id": "weight_manifest",
+          "kind": "weights",
+          "path": "${S0_RUN}/staging/groot_wbc_sonic/WEIGHTS.json",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "json_assertions": {"/selected_weight_ready": true}
+        },
+        {
+          "id": "native_environment_lock",
+          "kind": "dependencies",
+          "path": "${S0_RUN}/staging/groot_wbc_sonic/environment.lock.json",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "json_assertions": {"/ready_for_native_reproduction": true}
+        }
+      ],
+      "licenses": [
+        {
+          "scope": "source_code",
+          "evidence_path": "${S0_RUN}/staging/groot_wbc_sonic/source/LICENSE",
+          "expected_markers": ["Apache License 2.0"],
+          "declared_status": "evidence_present_manual_review_required",
+          "manual_review_required": true,
+          "notes": "Pinned snapshot declares Apache-2.0 for source; component and notice review remains required."
+        },
+        {
+          "scope": "model_weights",
+          "evidence_path": "${S0_RUN}/staging/groot_wbc_sonic/source/decoupled_wbc/sim2mujoco/resources/robots/g1/policy/NVIDIA Open Model License",
+          "expected_markers": ["NVIDIA OPEN MODEL LICENSE AGREEMENT"],
+          "declared_status": "evidence_present_manual_review_required",
+          "manual_review_required": true,
+          "notes": "Weight bytes are not staged, and separate-component terms must be reviewed."
+        },
+        {
+          "scope": "robot_model_and_assets",
+          "evidence_path": "${S0_RUN}/staging/groot_wbc_sonic/ASSET_LICENSES.json",
+          "expected_markers": [],
+          "declared_status": "unresolved",
+          "manual_review_required": true
+        }
+      ],
+      "distribution": {
+        "declared_status": "unresolved_internal_only",
+        "decision_basis": "Source and weight license text exists, but weights, robot assets, dependency notices, and redistribution obligations are not yet staged and reviewed."
+      },
+      "contract_evidence": {
+        "identity.repository": [
+          {"path": "${S0_RUN}/staging/groot_wbc_sonic/CONTROL_CONTRACT.json", "pointer": "/identity/repository"}
+        ],
+        "identity.commit": [
+          {"path": "${S0_RUN}/staging/groot_wbc_sonic/CONTROL_CONTRACT.json", "pointer": "/identity/commit"}
+        ],
+        "robot.model_dimensions": [
+          {"path": "${S0_RUN}/staging/groot_wbc_sonic/CONTROL_CONTRACT.json", "pointer": "/robot/model_dimensions"}
+        ],
+        "robot.joint_and_actuator_order": [
+          {"path": "${S0_RUN}/staging/groot_wbc_sonic/CONTROL_CONTRACT.json", "pointer": "/robot/joint_and_actuator_order"}
+        ],
+        "policy.raw_interfaces": [
+          {"path": "${S0_RUN}/staging/groot_wbc_sonic/CONTROL_CONTRACT.json", "pointer": "/policy/raw_interfaces"}
+        ],
+        "observation.fields_order_units": [
+          {"path": "${S0_RUN}/staging/groot_wbc_sonic/CONTROL_CONTRACT.json", "pointer": "/observation/fields_order_units"}
+        ],
+        "action.duration_and_hold_semantics": [
+          {"path": "${S0_RUN}/staging/groot_wbc_sonic/CONTROL_CONTRACT.json", "pointer": "/action/duration_and_hold_semantics"}
+        ],
+        "control.native_transition_semantics": [
+          {"path": "${S0_RUN}/staging/groot_wbc_sonic/CONTROL_CONTRACT.json", "pointer": "/control/native_transition_semantics"}
+        ]
+      },
+      "historical_claim_boundary": "Pinned static source slice and entrypoint evidence only; no complete checkout, native execution, or candidate acceptance is claimed."
+    },
+    {
+      "id": "source_a_g1_manipulation",
+      "display_name": "G1 Manipulation Challenge Source A",
+      "role": "known_complete_task_internal_reference",
+      "source": {
+        "repository": "supat-roong/g1-manipulation-challenge",
+        "commit": "4a3a426c9c42eb68af7e5447ba2a82a111780056",
+        "url": "https://github.com/supat-roong/g1-manipulation-challenge/tree/4a3a426c9c42eb68af7e5447ba2a82a111780056",
+        "local_form": "frozen_source_weights_environment_and_historical_run"
+      },
+      "artifacts": [
+        {
+          "id": "source_contract",
+          "kind": "source_identity",
+          "path": "${HISTORICAL_NATIVE_RUN}/branches/A/SOURCE_CONTRACT.json",
+          "type": "file",
+          "required_for": ["s0_inventory", "s1_native_reproduction"],
+          "expected_sha256": "ba1b7908a104f4a367d52ede7811b4dbcd38ad0e443f7975c9856457631844eb",
+          "json_assertions": {
+            "/repo": "supat-roong/g1-manipulation-challenge",
+            "/commit": "4a3a426c9c42eb68af7e5447ba2a82a111780056"
+          }
+        },
+        {
+          "id": "source_tree",
+          "kind": "source_tree",
+          "path": "${SOURCE_A_ROOT}",
+          "type": "directory",
+          "required_for": ["s0_inventory", "s1_native_reproduction"]
+        },
+        {
+          "id": "native_entrypoint",
+          "kind": "entrypoint",
+          "path": "${SOURCE_A_ROOT}/run.py",
+          "type": "file",
+          "required_for": ["s0_inventory", "s1_native_reproduction"],
+          "expected_sha256": "f19e61310432657d2a1e2bc5806e740fde8d73d575f6883889b969e0dfb24316"
+        },
+        {
+          "id": "robot_model",
+          "kind": "robot_model",
+          "path": "${SOURCE_A_ROOT}/g1.xml",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "expected_sha256": "f2fed7e512b12f9817b37e95885b14ee182788bcf1eb4491e12aef382dcc5eab"
+        },
+        {
+          "id": "walker_weight",
+          "kind": "weights",
+          "path": "${SOURCE_A_ROOT}/walker.onnx",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "expected_sha256": "bdcbe1a754502d1a31f3d4cdcddfc95f9fe7ab3586f3ad08f154f3a2ce502fa8"
+        },
+        {
+          "id": "walker_external_data",
+          "kind": "weights",
+          "path": "${SOURCE_A_ROOT}/walker.onnx.data",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "expected_sha256": "490486facd6b5429ba57b98e7ef586749019080fa94840303884046bd51b8271"
+        },
+        {
+          "id": "reacher_weight",
+          "kind": "weights",
+          "path": "${SOURCE_A_ROOT}/right_reacher.onnx",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "expected_sha256": "f7f5db4de51ee26336ad33fa05578e1ca78a65c2301a273290ccba311a62e83e"
+        },
+        {
+          "id": "frozen_dependencies",
+          "kind": "dependencies",
+          "path": "${SOURCE_A_ENV}",
+          "type": "directory",
+          "required_for": ["s1_native_reproduction"]
+        },
+        {
+          "id": "python_runtime",
+          "kind": "runtime",
+          "path": "${SOURCE_A_PYTHON}",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"]
+        },
+        {
+          "id": "historical_native_success",
+          "kind": "historical_evidence",
+          "path": "${HISTORICAL_NATIVE_RUN}/jobs/A_native_02/RESULT.json",
+          "type": "file",
+          "required_for": ["s0_inventory"],
+          "json_assertions": {
+            "/source_success": true,
+            "/source_result/ok/pick": true,
+            "/source_result/ok/transport": true,
+            "/source_result/ok/place": true
+          }
+        },
+        {
+          "id": "historical_quality_boundary",
+          "kind": "historical_evidence",
+          "path": "${HISTORICAL_NATIVE_RUN}/reports/A_native_02_FULL_QUALITY.json",
+          "type": "file",
+          "required_for": ["s0_inventory"],
+          "json_assertions": {
+            "/production_accepted": false
+          }
+        }
+      ],
+      "licenses": [
+        {
+          "scope": "source_code",
+          "evidence_path": "${SOURCE_A_ROOT}/LICENSE",
+          "expected_markers": [],
+          "declared_status": "unresolved",
+          "manual_review_required": true,
+          "notes": "No license file is present in the frozen source tree."
+        },
+        {
+          "scope": "model_weights",
+          "evidence_path": "${SOURCE_A_ROOT}/LICENSE",
+          "expected_markers": [],
+          "declared_status": "unresolved",
+          "manual_review_required": true
+        },
+        {
+          "scope": "robot_model_and_assets",
+          "evidence_path": "${SOURCE_A_ROOT}/LICENSE",
+          "expected_markers": [],
+          "declared_status": "unresolved",
+          "manual_review_required": true
+        }
+      ],
+      "distribution": {
+        "declared_status": "internal_only",
+        "decision_basis": "Pinned source, weights, and native success evidence exist, but no license evidence is present in the frozen source tree."
+      },
+      "contract_evidence": {
+        "identity.repository": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/identity/repository"}
+        ],
+        "identity.commit": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/identity/commit"}
+        ],
+        "robot.model_dimensions": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/robot/model_dimensions"}
+        ],
+        "robot.joint_and_actuator_order": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/robot/joint_and_actuator_order"}
+        ],
+        "robot.actuator_types_gains_limits": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/robot/actuator_types_gains_limits"}
+        ],
+        "simulation.engine_and_version": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/simulation/engine_and_version"}
+        ],
+        "simulation.physics_timestep_s": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/simulation/physics_timestep_s"}
+        ],
+        "runtime.dependencies": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/runtime/dependencies"}
+        ],
+        "policy.raw_interfaces": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/policy/raw_interfaces"}
+        ],
+        "observation.fields_order_units": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/observation/fields_order_units"}
+        ],
+        "observation.normalization_and_history": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/observation/normalization_and_history"}
+        ],
+        "action.duration_and_hold_semantics": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/action/duration_and_hold_semantics"}
+        ],
+        "control.physics_low_high_frequencies": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/control/physics_low_high_frequencies"}
+        ],
+        "control.native_transition_semantics": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/control/native_transition_semantics"}
+        ],
+        "failure.reset_and_recovery": [
+          {"path": "${S0_RUN}/staging/source_a_g1_manipulation/CONTROL_CONTRACT.json", "pointer": "/failure/reset_and_recovery"}
+        ]
+      },
+      "historical_claim_boundary": "A_native_02 reproduced source success, but failed the later penetration/production-quality gate; it is an internal research baseline, not qualified production data."
+    },
+    {
+      "id": "unitree_rl_lab",
+      "display_name": "Unitree RL Lab",
+      "role": "locomotion_baseline_only",
+      "source": {
+        "repository": "unitreerobotics/unitree_rl_lab",
+        "commit": "4960b84732b0c2ec593dccbfe963fda1bcd7b1e3",
+        "url": "https://github.com/unitreerobotics/unitree_rl_lab/tree/4960b84732b0c2ec593dccbfe963fda1bcd7b1e3",
+        "local_form": "pinned complete source archive with shipped locomotion weights; runtime and external robot asset unresolved"
+      },
+      "artifacts": [
+        {
+          "id": "source_pin",
+          "kind": "source_identity",
+          "path": "${S0_RUN}/staging/unitree_rl_lab/PIN.json",
+          "type": "file",
+          "required_for": ["s0_inventory", "s1_native_reproduction"],
+          "json_assertions": {
+            "/repository": "unitreerobotics/unitree_rl_lab",
+            "/commit": "4960b84732b0c2ec593dccbfe963fda1bcd7b1e3",
+            "/full_source_snapshot_ready": true
+          }
+        },
+        {
+          "id": "full_source_checkout",
+          "kind": "source_tree",
+          "path": "${S0_RUN}/staging/unitree_rl_lab/source",
+          "type": "directory",
+          "required_for": ["s1_native_reproduction"]
+        },
+        {
+          "id": "native_entrypoint_definition",
+          "kind": "entrypoint",
+          "path": "${S0_RUN}/staging/unitree_rl_lab/NATIVE_ENTRYPOINT.json",
+          "type": "file",
+          "required_for": ["s0_inventory"],
+          "json_assertions": {"/entrypoint_defined": true}
+        },
+        {
+          "id": "native_entrypoint_executable",
+          "kind": "entrypoint",
+          "path": "${S0_RUN}/staging/unitree_rl_lab/NATIVE_ENTRYPOINT.json",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "json_assertions": {"/locally_executable": true}
+        },
+        {
+          "id": "weight_manifest",
+          "kind": "weights",
+          "path": "${S0_RUN}/staging/unitree_rl_lab/WEIGHTS.json",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "json_assertions": {"/selected_weight_ready": true}
+        },
+        {
+          "id": "native_environment_lock",
+          "kind": "dependencies",
+          "path": "${S0_RUN}/staging/unitree_rl_lab/environment.lock.json",
+          "type": "file",
+          "required_for": ["s1_native_reproduction"],
+          "json_assertions": {"/ready_for_native_reproduction": true}
+        }
+      ],
+      "licenses": [
+        {
+          "scope": "source_code",
+          "evidence_path": "${S0_RUN}/staging/unitree_rl_lab/source/LICENCE",
+          "expected_markers": ["Apache License"],
+          "declared_status": "evidence_present_manual_review_required",
+          "manual_review_required": true
+        },
+        {
+          "scope": "model_weights",
+          "evidence_path": "${S0_RUN}/staging/unitree_rl_lab/ASSET_LICENSES.json",
+          "expected_markers": [],
+          "declared_status": "unresolved",
+          "manual_review_required": true
+        },
+        {
+          "scope": "robot_model_and_assets",
+          "evidence_path": "${S0_RUN}/staging/unitree_rl_lab/ASSET_LICENSES.json",
+          "expected_markers": [],
+          "declared_status": "unresolved",
+          "manual_review_required": true
+        }
+      ],
+      "distribution": {
+        "declared_status": "unresolved_internal_only",
+        "decision_basis": "Pinned source and shipped velocity ONNX are staged, but weight scope and external robot-description redistribution terms still need manual review."
+      },
+      "contract_evidence": {
+        "identity.repository": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/identity/repository"}
+        ],
+        "identity.commit": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/identity/commit"}
+        ],
+        "robot.model_dimensions": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/robot/model_dimensions"}
+        ],
+        "robot.joint_and_actuator_order": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/robot/joint_and_actuator_order"}
+        ],
+        "robot.actuator_types_gains_limits": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/robot/actuator_types_gains_limits"}
+        ],
+        "simulation.engine_and_version": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/simulation/engine_and_version"}
+        ],
+        "simulation.physics_timestep_s": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/simulation/physics_timestep_s"}
+        ],
+        "policy.raw_interfaces": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/policy/raw_interfaces"}
+        ],
+        "observation.fields_order_units": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/observation/fields_order_units"}
+        ],
+        "observation.normalization_and_history": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/observation/normalization_and_history"}
+        ],
+        "action.duration_and_hold_semantics": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/action/duration_and_hold_semantics"}
+        ],
+        "control.physics_low_high_frequencies": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/control/physics_low_high_frequencies"}
+        ],
+        "control.native_transition_semantics": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/control/native_transition_semantics"}
+        ],
+        "task.stage_and_transition_predicates": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/task/stage_and_transition_predicates"}
+        ],
+        "hooks.checkpoint_and_replay": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/hooks/checkpoint_and_replay"}
+        ],
+        "failure.stop_codes_and_taxonomy": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/failure/stop_codes_and_taxonomy"}
+        ],
+        "failure.reset_and_recovery": [
+          {"path": "${S0_RUN}/staging/unitree_rl_lab/CONTROL_CONTRACT.json", "pointer": "/failure/reset_and_recovery"}
+        ]
+      },
+      "historical_claim_boundary": "Locomotion comparator only; it must not be reported as a complete manipulation expert."
+    }
+  ]
+}
+

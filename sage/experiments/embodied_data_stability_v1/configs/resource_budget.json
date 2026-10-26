@@ -1,0 +1,66 @@
+{
+  "schema": "embodied-s0-resource-budget/v1",
+  "s0_audit": {
+    "physics_attempts": 0,
+    "policy_forwards": 0,
+    "render_passes": 0,
+    "training_updates": 0,
+    "network_allowed": false,
+    "gpu_required": false,
+    "max_wall_seconds": 120,
+    "max_output_bytes": 67108864
+  },
+  "s1_native_reproduction_proposal": {
+    "authorized": true,
+    "authorization_basis": "User approved autonomous implementation through the bounded S3 smoke point on 2026-10-14; this does not authorize the 20-episode batch.",
+    "max_attempts_per_case": 2,
+    "max_sim_seconds_per_attempt": 300,
+    "max_wall_seconds_per_attempt": 900,
+    "candidate_profiles": {
+      "source_a_g1_manipulation": {
+        "cpu_cores_max": 4,
+        "memory_bytes_max": 6442450944,
+        "gpu_count_max": 0,
+        "disk_bytes_max": 10737418240,
+        "resource_contract_complete": true
+      },
+      "groot_wbc_sonic": {
+        "cpu_cores_max": null,
+        "memory_bytes_max": null,
+        "gpu_count_max": 1,
+        "disk_bytes_max": null,
+        "resource_contract_complete": false
+      },
+      "unitree_rl_lab": {
+        "cpu_cores_max": null,
+        "memory_bytes_max": null,
+        "gpu_count_max": 1,
+        "disk_bytes_max": null,
+        "resource_contract_complete": false
+      }
+    }
+  },
+  "s2_adapter_smoke": {
+    "authorized": true,
+    "max_attempts": 3,
+    "max_sim_seconds_per_attempt": 300,
+    "max_wall_seconds_per_attempt": 900,
+    "render_passes": 0,
+    "training_updates": 0
+  },
+  "s3_task_smoke": {
+    "authorized": true,
+    "max_attempts": 3,
+    "max_sim_seconds_per_attempt": 300,
+    "max_wall_seconds_per_attempt": 900,
+    "bulk_rgbd_allowed": false,
+    "training_updates": 0,
+    "mandatory_pause_after_smoke": true
+  },
+  "long_run": {
+    "authorized": false,
+    "twenty_episode_batch_allowed": false,
+    "bulk_rgbd_allowed": false
+  }
+}
+

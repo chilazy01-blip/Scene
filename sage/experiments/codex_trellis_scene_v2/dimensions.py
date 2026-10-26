@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import math
 from typing import Any
+
+from sage.scripts.mesh_dimension_contract import runtime_mesh_fit_audit
 
 
 AXES = ("width", "length", "height")
@@ -11,6 +14,35 @@ DEFAULT_DIMENSION_POLICY: dict[str, Any] = {
     "mode": "fixed_physical",
     "relative_tolerance": 0.08,
     "enforce_at_assembly": True,
+}
+
+
+# Generated meshes do not carry trustworthy physical source dimensions until
+# Blender has imported the actual GLB.  Deformation-sensitive objects therefore
+# need a second, runtime mesh-fit contract in addition to the ordinary
+# requested/source dimension policy.  The contract is intentionally expressed
+# by deformation behavior rather than by one failing asset ID, so new seating
+# categories can opt into the same safety boundary.
+DEFORMATION_SENSITIVE_MESH_FIT: dict[str, dict[str, Any]] = {
+    "upholstered_seating": {
+        "maximum_axis_scale_anisotropy": 2.0,
+        "violation": "reject_and_regenerate",
+    },
+    "skeletal_seating": {
+        "maximum_axis_scale_anisotropy": 2.25,
+        "violation": "reject_and_regenerate",
+    },
+}
+
+
+DEFORMATION_BEHAVIOR_BY_CATEGORY = {
+    "sofa": "upholstered_seating",
+    "loveseat": "upholstered_seating",
+    "accent_chair": "skeletal_seating",
+    "dining_chair": "skeletal_seating",
+    "office_chair": "skeletal_seating",
+    "stool": "skeletal_seating",
+    "ottoman": "upholstered_seating",
 }
 
 
@@ -48,9 +80,15 @@ OPENING_FIT_CATEGORIES = {"door", "window"}
 
 
 def dimension_policy_for_category(category: str) -> dict[str, Any]:
+    runtime_mesh_fit = deepcopy(
+        DEFORMATION_SENSITIVE_MESH_FIT.get(
+            DEFORMATION_BEHAVIOR_BY_CATEGORY.get(category, ""), {}
+        )
+    )
     if category in OPENING_FIT_CATEGORIES:
-        return {
+        result = {
             "mode": "opening_fit",
+            "mesh_normalization": "declared_axis_adaptation",
             "axis_scale_ranges": {
                 "width": [0.50, 2.00],
                 "length": [0.50, 2.00],
@@ -58,34 +96,53 @@ def dimension_policy_for_category(category: str) -> dict[str, Any]:
             },
             "enforce_at_assembly": True,
         }
+        if runtime_mesh_fit:
+            result["runtime_mesh_fit"] = runtime_mesh_fit
+        return result
     if category in MODULAR_CATEGORIES:
-        return {
+        result = {
             "mode": "modular",
             "relative_tolerance": 0.06,
             "enforce_at_assembly": True,
         }
+        if runtime_mesh_fit:
+            result["runtime_mesh_fit"] = runtime_mesh_fit
+        return result
     if category in AXIS_SCALABLE_POLICIES:
-        return {
+        result = {
             "mode": "axis_scalable",
+            "mesh_normalization": "declared_axis_adaptation",
             "axis_scale_ranges": deepcopy(AXIS_SCALABLE_POLICIES[category]),
             "locked_axis_tolerance": 0.06,
             "enforce_at_assembly": True,
         }
+        if runtime_mesh_fit:
+            result["runtime_mesh_fit"] = runtime_mesh_fit
+        return result
     if category in UNIFORM_SCALABLE_CATEGORIES:
-        return {
+        result = {
             "mode": "uniform_scalable",
             "uniform_scale_range": [0.85, 1.15],
             "anisotropy_tolerance": 0.06,
             "enforce_at_assembly": True,
         }
-    return deepcopy(DEFAULT_DIMENSION_POLICY)
+        if runtime_mesh_fit:
+            result["runtime_mesh_fit"] = runtime_mesh_fit
+        return result
+    result = deepcopy(DEFAULT_DIMENSION_POLICY)
+    if runtime_mesh_fit:
+        result["runtime_mesh_fit"] = runtime_mesh_fit
+    return result
 
 
 def _dimensions(value: Any) -> dict[str, float] | None:
     if not isinstance(value, dict) or not all(axis in value for axis in AXES):
         return None
-    result = {axis: float(value[axis]) for axis in AXES}
-    if any(result[axis] <= 0.0 for axis in AXES):
+    try:
+        result = {axis: float(value[axis]) for axis in AXES}
+    except (TypeError, ValueError):
+        return None
+    if any(not math.isfinite(result[axis]) or result[axis] <= 0.0 for axis in AXES):
         return None
     return result
 
@@ -125,7 +182,7 @@ def _result(
         "max_requested_error": (
             round(_max_relative_error(effective, requested), 6) if effective else None
         ),
-        "requires_runtime_bounds_check": requires_runtime_bounds_check,
+        "requires_runtime_bounds_check": bool(accepted or requires_runtime_bounds_check),
         "reason": reason,
     }
 
@@ -150,6 +207,19 @@ def resolve_dimension_adaptation(
             effective=requested,
             reason="manifest source dimensions are missing; verify imported bounds at assembly",
             requires_runtime_bounds_check=True,
+        )
+
+    # A category template is a selection preference, not a user measurement.
+    # Unmarked requests and architectural opening dimensions remain strict.
+    if policy.get("request_origin") == "inferred_category_prior" and mode != "opening_fit":
+        return _result(
+            accepted=True,
+            status="inferred_prior_replaced_by_source_dimensions",
+            policy=policy,
+            requested=requested,
+            source=source,
+            effective=source,
+            reason="no explicit dimensions were supplied; preserve canonical source size and verify actual mesh",
         )
 
     requested_scale = _scale_factors(source, requested)

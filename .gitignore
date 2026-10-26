@@ -30,3 +30,7 @@ tmp/
 !examples/**/reference_*.png
 examples/**/source_images/
 
+
+# Local runtime diagnostics and model weight links
+MUJOCO_LOG.TXT
+/local_models/**/ckpts

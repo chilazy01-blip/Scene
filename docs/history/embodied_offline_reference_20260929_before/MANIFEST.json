@@ -1,0 +1,30 @@
+{
+  "at": 1790618865.6811056,
+  "files": [
+    {
+      "source": "/data/wsj/main/scene/AGENT.md",
+      "archive": "/data/wsj/main/scene/docs/history/embodied_offline_reference_20260929_before/AGENT.md",
+      "sha256": "09908145965857487b114ddf9405b2354f2d0c4a33fce994dad59c3e7f1fe98d"
+    },
+    {
+      "source": "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+      "archive": "/data/wsj/main/scene/docs/history/embodied_offline_reference_20260929_before/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+      "sha256": "9591609747d11e2b2952cba0d2faabab1f251e39d4994c11611a9de7ea1e2935"
+    },
+    {
+      "source": "/data/wsj/main/scene/docs/EMBODIED_FULL_BODY_GOALS_20260928.md",
+      "archive": "/data/wsj/main/scene/docs/history/embodied_offline_reference_20260929_before/EMBODIED_FULL_BODY_GOALS_20260928.md",
+      "sha256": "351a07a206ec31f4e362cf7319e5e0a70669c433bf92062a39c9f4952171ceeb"
+    },
+    {
+      "source": "/data/wsj/main/scene/docs/EMBODIED_DATA_ROADMAP_20260926.md",
+      "archive": "/data/wsj/main/scene/docs/history/embodied_offline_reference_20260929_before/EMBODIED_DATA_ROADMAP_20260926.md",
+      "sha256": "4d4818bd0f914b58b74bcf4e8af800ebf3c0f2bfec475bfafde20dd623a8efc5"
+    },
+    {
+      "source": "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+      "archive": "/data/wsj/main/scene/docs/history/embodied_offline_reference_20260929_before/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+      "sha256": "679ef7c31f98116bc09f42b90c8ade0c64db09336b2cd1526f4ef69c4af4eb93"
+    }
+  ]
+}

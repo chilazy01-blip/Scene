@@ -124,7 +124,8 @@ def apply_camera_shell(spec: dict) -> None:
     hidden = {spec.get("hidden_wall"), spec.get("secondary_hidden_wall")}
     for obj in renderables():
         side = wall_side(obj)
-        obj.hide_render = bool(side and side in hidden)
+        mounted_wall = str(obj.get("scene_mounted_wall", ""))
+        obj.hide_render = bool((side and side in hidden) or mounted_wall in hidden)
         obj.hide_viewport = obj.hide_render
 
 

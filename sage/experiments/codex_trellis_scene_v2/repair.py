@@ -16,6 +16,71 @@ from .spatial_constraints import (
 from .validator import aabb, door_clearance_box, footprint, overlap, walkway_exists
 
 
+def _repair_walkway(plan: dict[str, Any]) -> list[dict[str, Any]]:
+    """Bounded beam search when several objects jointly disconnect circulation."""
+    from .validator import validate_layout, walkway_status
+    from .furnishing_groups import place_groups
+    floor = lambda p: [o for o in p['objects'] if o.get('placement_type', 'floor') == 'floor']
+    if walkway_exists(plan, floor(plan)):
+        return []
+    original = {o['id']: (o['x'], o['y']) for o in floor(plan)}
+    base_hard = sum(v['severity'] == 'hard' and v['type'] != 'main_walkway'
+                    for v in validate_layout(plan)['violations'])
+    if base_hard:
+        return []
+    beam = [(deepcopy(plan), (), 0.)]
+    seen = set()
+    solutions = []
+    for depth in range(3):
+        ranked = []
+        for state, changed, distance in beam:
+            objects = floor(state)
+            for obj in sorted(objects, key=lambda o: (o.get('priority', 50), o['id'])):
+                if obj['id'] in changed:
+                    continue
+                positions = sorted(set(_candidate_positions(obj, state['room'])),
+                    key=lambda xy: ((xy[0]-obj['x'])**2+(xy[1]-obj['y'])**2, xy))
+                tested = 0
+                for x, y in positions:
+                    candidate = deepcopy(obj);candidate.update(x=x, y=y)
+                    if not _inside(candidate, state['room']) or _blocked(candidate,
+                        [o for o in objects if o['id'] != obj['id']], door_clearance_box(state), _window_exclusion_boxes(state,obj)):
+                        continue
+                    tested += 1
+                    if tested > 36:
+                        break
+                    next_state = deepcopy(state)
+                    target = next(o for o in next_state['objects'] if o['id'] == obj['id'])
+                    target.update(x=x, y=y)
+                    apply_facing_constraints(next_state['objects'], next_state['room'])
+                    apply_relation_facing_constraints(next_state['objects'], next_state.get('relations', []))
+                    place_groups(next_state)
+                    signature = tuple((o['id'], round(o['x'],4), round(o['y'],4), round(o.get('yaw',0),4)) for o in floor(next_state))
+                    if signature in seen:
+                        continue
+                    seen.add(signature)
+                    status = walkway_status(next_state, floor(next_state))
+                    traveled = distance + ((x-obj['x'])**2+(y-obj['y'])**2)*max(1,obj.get('priority',50))/50.
+                    moved = changed + (obj['id'],)
+                    if status['exists']:
+                        violations = validate_layout(next_state)['violations']
+                        if sum(v['severity']=='hard' for v in violations) > base_hard:
+                            continue
+                        solutions.append(((sum(v['severity']=='soft' for v in violations),traveled,len(moved),signature),next_state,moved))
+                        continue
+                    ranked.append(((status['barrier_cells'], status['frontier_distance'], -status['reachable_cells'], traveled, signature), next_state, moved, traveled))
+        beam = [(s,m,d) for _,s,m,d in sorted(ranked,key=lambda r:r[0])[:4]]
+        if not beam:
+            break
+    if solutions:
+        _,winner,moved = min(solutions,key=lambda r:r[0])
+        plan['objects'] = winner['objects']
+        return [dict(object_id=i, **{'from':original[i]},
+            to=next((o['x'],o['y']) for o in plan['objects'] if o['id']==i),
+            reason='bounded_joint_walkway_repair') for i in moved]
+    return []
+
+
 def _wall_constraint_is_hard(obj: dict[str, Any]) -> bool:
     if not obj.get("preferred_wall"):
         return False
@@ -434,6 +499,9 @@ def deterministic_repair(plan: dict[str, Any], iteration: int = 1) -> dict[str, 
             "instance_group_postprocess": deepcopy(instance_group_resolution),
         }
     )
+    from .furnishing_groups import place_groups
+    place_groups(repaired)
+    changes.extend(_repair_walkway(repaired))
     if isinstance(repaired.get("scene_graph"), dict):
         repaired["scene_graph"] = materialize_scene_graph(
             repaired["scene_graph"], repaired["objects"]

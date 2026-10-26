@@ -1,0 +1,53 @@
+{
+  "purpose": "2026-09-27 documentation consolidation before conversation handoff; historical snapshots, not current execution instructions",
+  "files": [
+    {
+      "source": "AGENT.md",
+      "archive": "AGENT.md",
+      "sha256": "4e4a5dd0a1b3e6d5d6752078df770ed0ac657385057af6973a4a204af372cb5f",
+      "bytes": 521432
+    },
+    {
+      "source": "README.md",
+      "archive": "README.md",
+      "sha256": "213cf773ef782662ce98fc76bb6b0fcd85fa01f1abe7f5e52ccc7ebcd597d9e5",
+      "bytes": 1957
+    },
+    {
+      "source": "docs/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+      "archive": "EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+      "sha256": "28d065aef74b75c0a24fcc5b1460e43fc40a0dae86efd1a682a767c1e68476a8",
+      "bytes": 48440
+    },
+    {
+      "source": "docs/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+      "archive": "EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+      "sha256": "a4d76115890a327e93237bd2bbfbc1047c4c431af3efb56b87c2b292f3d9c2be",
+      "bytes": 38569
+    },
+    {
+      "source": "docs/EMBODIED_DATA_ROADMAP_20260926.md",
+      "archive": "EMBODIED_DATA_ROADMAP_20260926.md",
+      "sha256": "b6befa74a7d78e269f5b6aad1f843fdbc04ed4ea63871961ad474b7e3d99856a",
+      "bytes": 11485
+    },
+    {
+      "source": "docs/EMBODIED_CAPABILITY_RESULTS_20260926.md",
+      "archive": "EMBODIED_CAPABILITY_RESULTS_20260926.md",
+      "sha256": "6d54790d1e2c9d377e4ddcd030c1296ea585f3555a3ccb3e1e4c71915726d45b",
+      "bytes": 9034
+    },
+    {
+      "source": "docs/EMBODIED_TRAINING_DATA_20260927.md",
+      "archive": "EMBODIED_TRAINING_DATA_20260927.md",
+      "sha256": "3b8e22ed74c165bc6b3efc8062edec7a2b0452f88975a8105ccae2ff448085e0",
+      "bytes": 5312
+    },
+    {
+      "source": "docs/EMBODIED_MULTIMODAL_DATA_20260927.md",
+      "archive": "EMBODIED_MULTIMODAL_DATA_20260927.md",
+      "sha256": "585523a49bbf5a6ddb1663313c8b7a8ce9b6035586a11d46773767a38db14096",
+      "bytes": 3992
+    }
+  ]
+}

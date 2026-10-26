@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from sage.experiments.codex_trellis_scene_v2.content_chain import file_binding
+from sage.experiments.codex_trellis_scene_v2.legacy_adapter import adapt_legacy_args
 from sage.webui.controller import JobController, SystemdBackend, unit_name
 from sage.webui.job_store import JobStore
 from sage.webui.server import DEFAULT_OUTPUT_ROOT, build_flow_plan, validate_bind_host
@@ -135,6 +136,35 @@ class WebUIControlPlaneTest(unittest.TestCase):
         self.assertEqual(validate_bind_host("127.0.0.1"), "127.0.0.1")
         with self.assertRaises(ValueError):
             validate_bind_host("0.0.0.0")
+
+    def test_image_provider_survives_webui_adapter_and_job_restart(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            reference = root / "reference.png"
+            reference.write_bytes(b"image-reference")
+            for mode, flow in (("text_to_scene", "flow2_text"), ("image_to_scene", "flow2_image")):
+                for selected in (None, "builtin_imagegen", "flux1-schnell"):
+                    payload = {"mode": mode, "textPrompt": "a study", "prompt": "a study", "referenceImage": str(reference), "planOnly": True}
+                    if selected is not None:
+                        payload["imageProvider"] = selected
+                    expected = selected or "builtin_imagegen"
+                    plan = build_flow_plan(payload, job_id=f"{mode}-{selected}")
+                    args = adapt_legacy_args(flow, plan["command"][2:])
+                    self.assertEqual(plan["imageProvider"], expected)
+                    self.assertEqual(args.image_provider, expected)
+                    self.assertEqual(args.scene_request.as_document()["image_provider"], expected)
+                    job = self.make_job(root / "output")
+                    job.update(id=f"{mode}-{selected}", payload=payload, plan=plan)
+                    store = JobStore(root / "jobs.sqlite3")
+                    store.create_job(job)
+                    reloaded = JobStore(store.path).get_job(job["id"])
+                    self.assertEqual(reloaded["plan"]["imageProvider"], expected)
+                    self.assertEqual(reloaded["plan"]["command"], plan["command"])
+
+    def test_unknown_image_provider_is_rejected_before_task_creation(self):
+        for value in ("openai_image_api", "flux2-klein", "", ["builtin_imagegen"]):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "unsupported image provider"):
+                build_flow_plan({"mode": "text_to_scene", "textPrompt": "a study", "imageProvider": value})
 
     def test_stopping_an_already_unloaded_transient_unit_is_idempotent(self):
         completed = Mock(returncode=5, stderr="Unit example.service not loaded.", stdout="")

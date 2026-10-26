@@ -25,29 +25,48 @@ def generic_connected_platform_evidence(
     """Detect a broad platform even when TRELLIS fuses it into one mesh."""
 
     structure = report.get("structure_gate", {})
+    evaluated = bool(report.get("evaluated"))
     footprint_ratio = float(
         structure.get("lower_to_upper_footprint_area_ratio", 0.0) or 0.0
     )
-    supporting_views = []
+    full_width_views = []
+    overhang_views = []
     for axis, view in report.get("views", {}).items():
         full_width = float(view.get("lower_full_width_row_fraction", 0.0) or 0.0)
         overhang = float(view.get("lower_overhang_ratio", 0.0) or 0.0)
-        if (
-            full_width >= float(minimum_lower_full_width_fraction)
-            and overhang >= float(minimum_lower_overhang_ratio)
-        ):
-            supporting_views.append(str(axis))
-    triggered = bool(
-        footprint_ratio > float(maximum_layered_footprint_ratio)
+        if full_width >= float(minimum_lower_full_width_fraction):
+            full_width_views.append(str(axis))
+        if overhang >= float(minimum_lower_overhang_ratio):
+            overhang_views.append(str(axis))
+    supporting_views = sorted(set(full_width_views) & set(overhang_views))
+    # A connected platform need not overhang the furniture body.  The failed
+    # sofa had the same apparent width as the sofa, so its overhang ratio was
+    # 1.0 even though the normalized lower footprint was 5.0x the upper one.
+    # Require independent 3D layering plus agreement in at least two views;
+    # do not let the absence of overhang exonerate an equal-width slab.
+    layered_full_width_trigger = bool(
+        evaluated
+        and footprint_ratio > float(maximum_layered_footprint_ratio)
+        and len(full_width_views) >= int(minimum_supporting_views)
+    )
+    overhang_trigger = bool(
+        evaluated
+        and footprint_ratio > float(maximum_layered_footprint_ratio)
         and len(supporting_views) >= int(minimum_supporting_views)
+    )
+    triggered = bool(
+        layered_full_width_trigger or overhang_trigger
     )
     return {
         "schema": "scene_detail_generic_connected_platform_evidence_v1",
-        "evaluated": bool(report.get("evaluated")),
+        "evaluated": evaluated,
         "triggered": triggered,
         "lower_to_upper_footprint_area_ratio": round(footprint_ratio, 6),
         "maximum_layered_footprint_ratio": float(maximum_layered_footprint_ratio),
-        "supporting_views": sorted(supporting_views),
+        "supporting_views": sorted(full_width_views),
+        "overhang_supporting_views": sorted(supporting_views),
+        "layered_full_width_trigger": layered_full_width_trigger,
+        "overhang_trigger": overhang_trigger,
         "minimum_supporting_views": int(minimum_supporting_views),
         "minimum_lower_full_width_fraction": float(minimum_lower_full_width_fraction),
         "minimum_lower_overhang_ratio": float(minimum_lower_overhang_ratio),
@@ -58,7 +77,7 @@ def generic_connected_platform_evidence(
 def apply_generic_connected_platform_gate(
     report: dict[str, Any],
 ) -> dict[str, Any]:
-    """Add the opt-in generic platform evidence to a multiview report copy."""
+    """Apply the default fail-closed connected-platform geometry gate."""
 
     updated = deepcopy(report)
     evidence = generic_connected_platform_evidence(updated)
@@ -66,17 +85,25 @@ def apply_generic_connected_platform_gate(
     structure = updated.get("structure_gate")
     if isinstance(structure, dict):
         existing_limit = structure.get("maximum_lower_to_upper_footprint_area_ratio")
-        if existing_limit is None:
-            structure["maximum_lower_to_upper_footprint_area_ratio"] = evidence[
-                "maximum_layered_footprint_ratio"
-            ]
-            structure["lower_platform_passed"] = not evidence["triggered"]
-            structure["lower_platform_evidence"] = (
-                "generic_normalized_3d_layered_footprint+multiview_lower_silhouette"
-            )
-            if evidence["triggered"]:
-                updated["hard_geometry_gate_passed"] = False
-                updated["structure_gate_passed"] = False
+        generic_limit = float(evidence["maximum_layered_footprint_ratio"])
+        structure["maximum_lower_to_upper_footprint_area_ratio"] = (
+            generic_limit
+            if existing_limit is None
+            else min(float(existing_limit), generic_limit)
+        )
+        structure["lower_platform_passed"] = bool(
+            structure.get("lower_platform_passed", True)
+            and not evidence["triggered"]
+        )
+        structure["lower_platform_evidence"] = (
+            "normalized_3d_layered_footprint+multiview_lower_silhouette+"
+            "default_connected_platform_gate"
+        )
+        if evidence["triggered"]:
+            updated["hard_geometry_gate_passed"] = False
+            updated["structure_gate_passed"] = False
+            updated["automated_pixel_multiview_pass"] = False
+            updated["acceptance"] = "rejected_connected_platform_geometry"
     return updated
 
 

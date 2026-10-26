@@ -1,0 +1,18 @@
+{
+  "at": 1791388008.259254,
+  "status": "blocked_pending_candidate5_scope_approval",
+  "current_scope": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/passive_damping_r1",
+  "physics_admitted": false,
+  "qualified_full_body_task_episodes": 0,
+  "fb2_boundary": "FB2 complete task plus synchronized observations/actions, independent audit, standard export and actual training reader",
+  "next_report_epoch": 1791401756.5606642,
+  "orchestrator_active": false,
+  "no_active_services": true,
+  "approval_pending": true,
+  "pending_decision": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/PENDING_CANDIDATE_SCOPE_DECISION_R1.json",
+  "last_report": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/FOUR_HOUR_REPORT_R1.json",
+  "data_preparation": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/fb2_delivery_preparation_r1/PLAN_R2.json",
+  "goal_status": "blocked",
+  "goal_complete": false,
+  "blocked_audit": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/SCOPE_BLOCKER_AUDIT_R3.json"
+}

@@ -23,6 +23,7 @@ from sage.server.trellis2_flux_bridge_server import (
     Trellis2BridgeRuntime,
     build_handler,
 )
+from ..asset_source_policy import validate_reference_evidence
 
 
 def _runtime(output_dir: Path | None = None) -> Trellis2BridgeRuntime:
@@ -235,6 +236,237 @@ class Trellis2FluxBridgeAlphaTest(unittest.TestCase):
             protected[0]["topology"][
                 "maximum_allowed_support_occupancy_ratio"
             ],
+        )
+
+    def test_connected_wide_sofa_base_is_rejected_even_when_fused(self) -> None:
+        rgba = np.zeros((256, 256, 4), dtype=np.uint8)
+        # Dark upholstered body and a full-width dark connector make the pale
+        # lower slab topologically continuous with the sofa.
+        rgba[45:165, 48:208, :3] = (90, 75, 65)
+        rgba[45:165, 48:208, 3] = 255
+        rgba[158:168, 34:222, :3] = (90, 75, 65)
+        rgba[158:168, 34:222, 3] = 255
+        rgba[168:198, 34:222, :3] = (232, 226, 216)
+        rgba[168:198, 34:222, 3] = 255
+        rgba[198:214, 58:70, :3] = (90, 75, 65)
+        rgba[198:214, 58:70, 3] = 255
+        rgba[198:214, 186:198, :3] = (90, 75, 65)
+        rgba[198:214, 186:198, 3] = 255
+
+        report = _runtime()._alpha_quality_report(
+            rgba,
+            "one complete sofa with visible legs; no platform or floor slab",
+        )
+
+        self.assertFalse(report["ok"], report)
+        self.assertIn("illegal_white_base_or_platform", report["reasons"])
+        connected = [
+            row
+            for row in report["white_base_artifact"]["candidates"]
+            if row["decision"] == "illegal_connected_base_candidate"
+        ]
+        self.assertTrue(connected, report["white_base_artifact"])
+        self.assertEqual(
+            connected[0]["topology"]["maximum_support_occupancy_ratio"],
+            1.0,
+        )
+
+    def test_dark_connected_sofa_base_fails_colour_independent_support_gap(self) -> None:
+        rgba = np.zeros((256, 256, 4), dtype=np.uint8)
+        rgba[45:165, 48:208, :3] = (75, 62, 55)
+        rgba[45:165, 48:208, 3] = 255
+        rgba[165:198, 34:222, :3] = (52, 45, 42)
+        rgba[165:198, 34:222, 3] = 255
+        rgba[198:214, 58:70, :3] = (52, 45, 42)
+        rgba[198:214, 58:70, 3] = 255
+        rgba[198:214, 186:198, :3] = (52, 45, 42)
+        rgba[198:214, 186:198, 3] = 255
+
+        report = _runtime()._alpha_quality_report(
+            rgba,
+            "one complete dark sofa with visible separated legs; no platform",
+        )
+
+        self.assertFalse(report["ok"], report)
+        self.assertIn(
+            "exposed_support_background_gap_missing", report["reasons"]
+        )
+        gap = report["exposed_support_background_gap"]
+        self.assertLess(
+            gap["open_column_fraction"], gap["minimum_open_column_fraction"]
+        )
+
+    def test_visible_separated_sofa_legs_pass_support_gap(self) -> None:
+        rgba = np.zeros((256, 256, 4), dtype=np.uint8)
+        rgba[45:165, 48:208, :3] = (75, 62, 55)
+        rgba[45:165, 48:208, 3] = 255
+        for x0 in (58, 92, 158, 192):
+            rgba[165:214, x0 : x0 + 10, :3] = (52, 45, 42)
+            rgba[165:214, x0 : x0 + 10, 3] = 255
+
+        report = _runtime()._alpha_quality_report(
+            rgba,
+            "one complete dark sofa with visible separated legs; no platform",
+        )
+
+        self.assertTrue(report["ok"], report)
+        gap = report["exposed_support_background_gap"]
+        self.assertGreaterEqual(
+            gap["open_column_fraction"], gap["minimum_open_column_fraction"]
+        )
+
+    def test_enforced_white_source_and_exact_normalized_preview(self) -> None:
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            rgba = np.full((128, 128, 4), 255, dtype=np.uint8)
+            rgba[:, :, 3] = 0
+            rgba[30:98, 42:86, :3] = (60, 55, 50)
+            rgba[30:98, 42:86, 3] = 255
+            runtime = _runtime(root)
+            runtime._save_prepared_rgba(
+                rgba,
+                root / "source.png",
+                "job",
+                "test",
+                object_text="one complete cabinet",
+                enforce_white_background=True,
+            )
+            metadata = runtime._read_alpha_metadata("job")
+            normalized = np.asarray(
+                Image.open(metadata["normalized_white_image_path"]).convert("RGB")
+            )
+            mask = np.asarray(Image.open(metadata["mask_path"]).convert("L"))
+
+        self.assertTrue(metadata["source_white_background"]["ok"], metadata)
+        self.assertTrue(metadata["source_white_background"]["conforms"], metadata)
+        self.assertTrue(metadata["white_background_isolation"]["ok"], metadata)
+        self.assertTrue(np.all(normalized[mask == 0] == 255))
+
+    def test_enforced_gray_source_background_is_rejected(self) -> None:
+        rgba = np.zeros((128, 128, 4), dtype=np.uint8)
+        rgba[:, :, :3] = (210, 210, 210)
+        rgba[30:98, 42:86, :3] = (60, 55, 50)
+        rgba[30:98, 42:86, 3] = 255
+
+        report = _runtime()._source_white_background_report(rgba, enforced=True)
+
+        self.assertFalse(report["ok"], report)
+        self.assertIn(
+            "source_background_not_uniform_near_white", report["reasons"]
+        )
+
+    def test_temporary_bridge_output_requires_persistent_evidence_root(self) -> None:
+        runtime = _runtime(Path("/tmp/scene-v2-volatile-evidence-test"))
+        runtime.args.persistent_evidence_dir = ""
+        with self.assertRaisesRegex(RuntimeError, "must be persistent"):
+            runtime._persistent_evidence_root("job")
+
+    def test_reference_evidence_survives_volatile_source_removal(self) -> None:
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            volatile = root / "volatile"
+            persistent = root / "persistent"
+            source = volatile / "source.png"
+            prepared = volatile / "prepared.png"
+            mask = volatile / "mask.png"
+            normalized = volatile / "normalized.png"
+            source.parent.mkdir(parents=True)
+            Image.new("RGB", (24, 24), "gray").save(source)
+            Image.new("RGBA", (24, 24), (80, 80, 80, 255)).save(prepared)
+            Image.new("L", (24, 24), 255).save(mask)
+            Image.new("RGB", (24, 24), "white").save(normalized)
+            runtime = _runtime(volatile)
+            runtime.args.persistent_evidence_dir = str(persistent)
+            with patch.object(
+                runtime, "_path_is_temporary_storage", return_value=False
+            ):
+                attempt = runtime._persist_reference_attempt_evidence(
+                    "parent-job",
+                    {
+                        "reference_job_id": "reference-job",
+                        "generated": True,
+                        "source_image_path": str(source),
+                        "prepared_image_path": str(prepared),
+                        "alpha_quality_ok": True,
+                        "alpha_metadata": {
+                            "source_image_path": str(source),
+                            "prepared_image_path": str(prepared),
+                            "mask_path": str(mask),
+                            "normalized_white_image_path": str(normalized),
+                            "source_white_background": {
+                                "enforced": True,
+                                "ok": True,
+                                "conforms": True,
+                            },
+                            "white_background_isolation": {
+                                "ok": True,
+                                "exact_white_for_all_alpha_zero_pixels": True,
+                                "trellis_input_uses_transparent_rgba": True,
+                                "normalized_white_rgb_path": str(normalized),
+                            },
+                            "alpha_quality": {"ok": True},
+                        },
+                    },
+                )
+            source.unlink()
+            prepared.unlink()
+            mask.unlink()
+            normalized.unlink()
+            validation = validate_reference_evidence(
+                attempt["persistent_evidence"]
+            )
+
+        self.assertTrue(validation["ok"], validation)
+
+    def test_promoted_direct_reference_keeps_generated_model_provenance(self) -> None:
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            persistent = root / "persistent"
+            runtime = _runtime(root / "runtime")
+            runtime.args.persistent_evidence_dir = str(persistent)
+            raw = root / "raw.png"
+            rgba = root / "rgba.png"
+            mask = root / "mask.png"
+            Image.new("RGB", (16, 16), "gray").save(raw)
+            Image.new("RGBA", (16, 16), (60, 60, 60, 255)).save(rgba)
+            Image.new("L", (16, 16), 255).save(mask)
+            with patch.object(
+                runtime, "_path_is_temporary_storage", return_value=False
+            ):
+                first = runtime._persist_reference_attempt_evidence(
+                    "first-job",
+                    {
+                        "reference_job_id": "flux-reference",
+                        "generated": True,
+                        "source_image_path": str(raw),
+                        "prepared_image_path": str(rgba),
+                        "alpha_metadata": {"mask_path": str(mask)},
+                    },
+                )
+                promoted_source = first["prepared_image_path"]
+                promoted_prepared = root / "promoted-rgba.png"
+                promoted_mask = root / "promoted-mask.png"
+                Image.new("RGBA", (16, 16), (60, 60, 60, 255)).save(
+                    promoted_prepared
+                )
+                Image.new("L", (16, 16), 255).save(promoted_mask)
+                promoted = runtime._persist_reference_attempt_evidence(
+                    "second-job",
+                    {
+                        "reference_job_id": "second-reference",
+                        "generated": False,
+                        "source_image_path": promoted_source,
+                        "prepared_image_path": str(promoted_prepared),
+                        "alpha_metadata": {"mask_path": str(promoted_mask)},
+                    },
+                )
+
+        self.assertEqual(
+            promoted["persistent_evidence"]["reference_origin"],
+            "persisted_flux_generated_reference",
+        )
+        self.assertIsNotNone(
+            promoted["persistent_evidence"]["upstream_reference"]
         )
 
     def test_detached_white_platform_is_detected_and_removed(self) -> None:

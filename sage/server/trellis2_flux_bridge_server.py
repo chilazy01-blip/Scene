@@ -6,9 +6,11 @@ from __future__ import annotations
 import argparse
 import ctypes
 import gc
+import hashlib
 import json
 import os
 import re
+import shutil
 import sys
 import threading
 import time
@@ -40,28 +42,80 @@ from sage.experiments.codex_trellis_scene_v2.scene_dna_semantic import (
 from sage.experiments.codex_trellis_scene_v2.alpha_hygiene import (
     audit_sanitized_alpha_edges,
     clean_chromatic_alpha_edges,
+    composite_on_review_background,
 )
 from sage.experiments.codex_trellis_scene_v2.scene_dna_vnext import (
     assess_2d_generability,
     select_vnext_candidate,
 )
 from sage.experiments.codex_trellis_scene_v2.heavy_job_broker import HeavyJobBroker
+from sage.experiments.codex_trellis_scene_v2.core_domain import IMAGE_PROVIDERS
+from sage.experiments.codex_trellis_scene_v2.native_alpha_normalization import (
+    EVIDENCE_SCHEMA as NATIVE_ALPHA_EVIDENCE_SCHEMA,
+    POLICY as NATIVE_ALPHA_POLICY,
+    decode_native_alpha,
+    normalization_content_key,
+    opacity_review_ok,
+    prepare_native_alpha_evidence,
+    write_immutable,
+)
+
+
+BRIDGE_IMAGE_PROVIDERS = (*IMAGE_PROVIDERS, "flux2-klein")
+
+
+def provider_route(path: str) -> tuple[str, str | None]:
+    """Expose a provider-scoped API without changing the asset resolver."""
+    if not path.startswith("/providers/"):
+        return path, None
+    parts = path.split("/", 3)
+    if len(parts) != 4 or parts[2] not in BRIDGE_IMAGE_PROVIDERS:
+        raise ValueError("Unknown image provider route")
+    return "/" + parts[3], parts[2]
 
 
 class JobStore:
-    def __init__(self) -> None:
+    def __init__(self, root: Path | None = None) -> None:
         self._lock = threading.Lock()
         self._jobs: dict[str, dict[str, Any]] = {}
+        self.root = root
+        if root is not None:
+            root.mkdir(parents=True, exist_ok=True)
+            for path in sorted(root.glob("*.json")):
+                record = json.loads(path.read_text(encoding="utf-8"))
+                if record.get("status") == "processing":
+                    record["status"] = "interrupted"
+                    record["interrupted_at"] = time.time()
+                self._jobs[path.stem] = record
+                self._persist(path.stem)
 
-    def create(self, job_id: str | None = None) -> str:
+    def _persist(self, job_id: str) -> None:
+        if self.root is None:
+            return
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", job_id):
+            raise ValueError("Invalid bridge job id")
+        path = self.root / f"{job_id}.json"
+        partial = path.with_suffix(".json.partial")
+        with partial.open("w", encoding="utf-8") as stream:
+            json.dump(self._jobs[job_id], stream, indent=2)
+            stream.flush()
+            os.fsync(stream.fileno())
+        partial.replace(path)
+
+    def create(self, job_id: str | None = None, **initial: Any) -> str:
         job_id = job_id or uuid.uuid4().hex
         with self._lock:
-            self._jobs[job_id] = {"status": "processing", "created_at": time.time()}
+            previous = self._jobs.get(job_id, {})
+            if previous and previous.get("status") not in {"interrupted", "waiting_for_image_provider"}:
+                raise ValueError("Only interrupted bridge jobs can be resumed")
+            self._jobs[job_id] = {**previous, **initial, "status": "processing", "created_at": previous.get("created_at", time.time())}
+            self._persist(job_id)
         return job_id
 
     def update(self, job_id: str, **payload: Any) -> None:
         with self._lock:
             self._jobs[job_id].update(payload)
+            self._persist(job_id)
 
     def get(self, job_id: str) -> dict[str, Any] | None:
         with self._lock:
@@ -149,6 +203,316 @@ class Trellis2BridgeRuntime:
         self._semantic_scorer = None
         self._anchor_scorer = None
         self._semantic_scorer_lock = threading.Lock()
+
+    @staticmethod
+    def _path_is_temporary_storage(path: Path) -> bool:
+        """Return whether ``path`` is under an OS volatile temporary root."""
+
+        resolved = path.expanduser().resolve()
+        return any(
+            resolved == root or resolved.is_relative_to(root)
+            for root in (Path("/tmp"), Path("/var/tmp"))
+        )
+
+    def _persistent_evidence_root(self, job_id: str | None = None) -> Path:
+        """Resolve fail-closed storage for raw/RGBA generation evidence.
+
+        The bridge output may deliberately live on fast temporary storage, but
+        source evidence must not disappear with that directory.  A temporary
+        output therefore requires an explicit non-temporary evidence root.
+        """
+
+        output_root = Path(self.args.output_dir).expanduser().resolve()
+        configured = str(
+            getattr(self.args, "persistent_evidence_dir", "") or ""
+        ).strip()
+        evidence_root = (
+            Path(configured).expanduser().resolve()
+            if configured
+            else output_root / "generation_evidence"
+        )
+        if self._path_is_temporary_storage(evidence_root):
+            raise RuntimeError(
+                "Flux/TRELLIS evidence storage must be persistent; "
+                "set --persistent-evidence-dir outside /tmp and /var/tmp"
+            )
+        evidence_root.mkdir(parents=True, exist_ok=True)
+        if job_id is None:
+            return evidence_root
+        job_root = evidence_root / str(job_id)
+        job_root.mkdir(parents=True, exist_ok=True)
+        return job_root
+
+    @staticmethod
+    def _evidence_file_record(path: Path) -> dict[str, Any]:
+        digest = hashlib.sha256()
+        with path.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        return {
+            "path": str(path.resolve()),
+            "bytes": path.stat().st_size,
+            "sha256": digest.hexdigest(),
+        }
+
+    @staticmethod
+    def _copy_evidence_file(source: Path, destination: Path, *, immutable: bool = False) -> Path:
+        source = source.expanduser().resolve()
+        destination = destination.expanduser().resolve()
+        if not source.is_file():
+            raise FileNotFoundError(source)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        if immutable:
+            write_immutable(destination, source.read_bytes())
+            return destination
+        if source != destination:
+            temporary = destination.with_name(destination.name + ".partial")
+            shutil.copy2(source, temporary)
+            temporary.replace(destination)
+        return destination
+
+    def _persisted_generated_reference_provenance(
+        self, path: Path
+    ) -> dict[str, Any] | None:
+        """Verify that a direct reference came from an earlier Flux attempt."""
+
+        path = path.expanduser().resolve()
+        if not path.is_file() or len(path.parents) < 2:
+            return None
+        job_root = path.parent.parent
+        manifest_path = job_root / "attempts" / f"{path.stem}.json"
+        if not manifest_path.is_file():
+            return None
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        if manifest.get("schema") not in {
+            "scene-v2-flux-trellis-reference-evidence/v1",
+            "scene-v2-image-trellis-reference-evidence/v2",
+            NATIVE_ALPHA_EVIDENCE_SCHEMA,
+        }:
+            return None
+        if manifest.get("reference_origin") not in {
+            "flux_generated",
+            "persisted_flux_generated_reference",
+            "builtin_imagegen_generated",
+            "persisted_builtin_imagegen_reference",
+            "reprocessed_builtin_imagegen_reference",
+        }:
+            return None
+        actual = self._evidence_file_record(path)
+        if manifest.get("schema") == NATIVE_ALPHA_EVIDENCE_SCHEMA:
+            if actual != (manifest.get("files") or {}).get("source_raw"):
+                return None
+        matches = any(
+            isinstance(record, dict)
+            and str(record.get("path") or "") == actual["path"]
+            and int(record.get("bytes", -1)) == actual["bytes"]
+            and str(record.get("sha256") or "") == actual["sha256"]
+            for record in (manifest.get("files") or {}).values()
+        )
+        if not matches:
+            return None
+        if manifest.get("schema") in {"scene-v2-image-trellis-reference-evidence/v2", NATIVE_ALPHA_EVIDENCE_SCHEMA}:
+            from sage.experiments.codex_trellis_scene_v2.asset_source_policy import validate_reference_evidence
+            if not validate_reference_evidence({**manifest, "manifest": self._evidence_file_record(manifest_path)})["ok"]:
+                return None
+        return {
+            "manifest": self._evidence_file_record(manifest_path),
+            "reference": actual,
+        }
+
+    def _persist_reference_attempt_evidence(
+        self,
+        parent_job_id: str,
+        attempt: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Copy one Flux/RMBG attempt into immutable, hash-bound storage."""
+
+        job_root = self._persistent_evidence_root(parent_job_id)
+        reference_job_id = re.sub(
+            r"[^A-Za-z0-9_.-]+",
+            "_",
+            str(attempt.get("reference_job_id") or parent_job_id),
+        )
+        files: dict[str, dict[str, Any]] = {}
+        native_normalization = (attempt.get("alpha_metadata") or {}).get("native_alpha_normalization")
+        native = isinstance(native_normalization, dict)
+        source_value = attempt.get("source_image_path")
+        replay_reference = attempt.get("replay_reference_evidence")
+        upstream_reference = replay_reference or (
+            self._persisted_generated_reference_provenance(
+                Path(str(source_value))
+            )
+            if source_value and not bool(attempt.get("generated"))
+            else None
+        )
+
+        if source_value:
+            source = Path(str(source_value))
+            suffix = source.suffix.lower() if source.suffix else ".png"
+            persisted = self._copy_evidence_file(
+                source,
+                job_root / "reference_images" / f"{reference_job_id}{suffix}",
+                immutable=native,
+            )
+            attempt["source_image_path"] = str(persisted)
+            files["source_rgb"] = self._evidence_file_record(persisted)
+
+        prepared_value = attempt.get("prepared_image_path")
+        if prepared_value:
+            prepared = Path(str(prepared_value))
+            persisted = self._copy_evidence_file(
+                prepared,
+                job_root / "reference_rgba" / f"{reference_job_id}.png",
+                immutable=native,
+            )
+            attempt["prepared_image_path"] = str(persisted)
+            files["prepared_rgba"] = self._evidence_file_record(persisted)
+
+        alpha_metadata = attempt.get("alpha_metadata")
+        if isinstance(alpha_metadata, dict):
+            alpha_metadata = json.loads(json.dumps(alpha_metadata))
+            if "source_rgb" in files:
+                alpha_metadata["source_image_path"] = files["source_rgb"]["path"]
+            if "prepared_rgba" in files:
+                alpha_metadata["prepared_image_path"] = files["prepared_rgba"]["path"]
+            mask_value = alpha_metadata.get("mask_path")
+            if mask_value:
+                mask = self._copy_evidence_file(
+                    Path(str(mask_value)),
+                    job_root / "reference_masks" / f"{reference_job_id}.png",
+                    immutable=native,
+                )
+                alpha_metadata["mask_path"] = str(mask)
+                files["alpha_mask"] = self._evidence_file_record(mask)
+            normalized_white_value = alpha_metadata.get(
+                "normalized_white_image_path"
+            )
+            if normalized_white_value:
+                normalized_white = self._copy_evidence_file(
+                    Path(str(normalized_white_value)),
+                    job_root / "reference_white_rgb" / f"{reference_job_id}.png",
+                    immutable=native,
+                )
+                alpha_metadata["normalized_white_image_path"] = str(
+                    normalized_white
+                )
+                isolation = alpha_metadata.get("white_background_isolation")
+                if isinstance(isolation, dict):
+                    isolation["normalized_white_rgb_path"] = str(normalized_white)
+                files["normalized_white_rgb"] = self._evidence_file_record(
+                    normalized_white
+                )
+            if native:
+                files["source_raw"] = files["source_rgb"]
+                normalization = alpha_metadata["native_alpha_normalization"]
+                normalization["records"]["source_raw"] = files["source_raw"]
+                for name in ("native_alpha_mask", "source_visible_white_rgb"):
+                    persisted = self._copy_evidence_file(
+                        Path(normalization["records"][name]["path"]),
+                        job_root / name / f"{reference_job_id}.png",
+                        immutable=True,
+                    )
+                    files[name] = self._evidence_file_record(persisted)
+                    normalization["records"][name] = files[name]
+                if normalization["content_key"] != normalization_content_key(normalization):
+                    raise ValueError("Native alpha normalization changed during persistence")
+                alpha_metadata["source_white_input_path"] = files["source_visible_white_rgb"]["path"]
+                alpha_metadata["source_white_background"]["source_image_path"] = files["source_visible_white_rgb"]["path"]
+                alpha_metadata["source_white_background"]["source_image_sha256"] = files["source_visible_white_rgb"]["sha256"]
+                normalization_path = job_root / "input_normalization_metadata" / f"{reference_job_id}.json"
+                write_immutable(normalization_path, json.dumps(normalization, indent=2).encode("utf-8"))
+                files["input_normalization_metadata"] = self._evidence_file_record(normalization_path)
+            alpha_path = job_root / "alpha_metadata" / f"{reference_job_id}.json"
+            alpha_path.parent.mkdir(parents=True, exist_ok=True)
+            partial = alpha_path.with_name(alpha_path.name + ".partial")
+            if native:
+                write_immutable(alpha_path, json.dumps(alpha_metadata, indent=2, ensure_ascii=False).encode("utf-8"))
+            else:
+                partial.write_text(json.dumps(alpha_metadata, indent=2, ensure_ascii=False), encoding="utf-8")
+                partial.replace(alpha_path)
+            files["alpha_metadata"] = self._evidence_file_record(alpha_path)
+            attempt["alpha_metadata"] = alpha_metadata
+
+        manifest = {
+            "schema": "scene-v2-flux-trellis-reference-evidence/v1",
+            "parent_job_id": str(parent_job_id),
+            "reference_job_id": reference_job_id,
+            "reference_origin": (
+                "flux_generated"
+                if bool(attempt.get("generated"))
+                else (
+                    "persisted_flux_generated_reference"
+                    if upstream_reference is not None
+                    else "direct_reference_requires_upstream_provenance"
+                )
+            ),
+            "upstream_reference": upstream_reference,
+            "files": files,
+            "complete": all(
+                name in files
+                for name in (
+                    "source_rgb",
+                    "prepared_rgba",
+                    "alpha_mask",
+                    "alpha_metadata",
+                    "normalized_white_rgb",
+                )
+            ),
+        }
+        provider_metadata = attempt.get("image_provider_metadata")
+        if attempt.get("image_provider") == "flux2-klein":
+            manifest["image_provider"] = "flux2-klein"
+        if attempt.get("image_provider") == "builtin_imagegen":
+            if not isinstance(provider_metadata, dict):
+                raise ValueError("Builtin source has no provider metadata")
+            provider_path = job_root / "provider_metadata" / f"{reference_job_id}.json"
+            provider_path.parent.mkdir(parents=True, exist_ok=True)
+            provider_partial = provider_path.with_suffix(".json.partial")
+            if native:
+                write_immutable(provider_path, json.dumps(provider_metadata, indent=2).encode("utf-8"))
+            else:
+                provider_partial.write_text(json.dumps(provider_metadata, indent=2), encoding="utf-8")
+                provider_partial.replace(provider_path)
+            files["image_provider_metadata"] = self._evidence_file_record(provider_path)
+            manifest.update({
+                "schema": NATIVE_ALPHA_EVIDENCE_SCHEMA if native else "scene-v2-image-trellis-reference-evidence/v2",
+                "reference_origin": (
+                    "reprocessed_builtin_imagegen_reference" if replay_reference
+                    else "builtin_imagegen_generated" if attempt.get("generated")
+                    else "persisted_builtin_imagegen_reference" if upstream_reference
+                    else "direct_reference_requires_upstream_provenance"
+                ),
+                "image_provider": "builtin_imagegen",
+                "image_provider_metadata": provider_metadata,
+            })
+            if replay_reference:
+                if not native:
+                    raise ValueError("Explicit raw replay requires native-alpha evidence")
+                manifest["replay_reference_evidence"] = upstream_reference
+                processing_contract = {
+                    "schema": "scene-v2-native-alpha-reprocessing-contract/v1",
+                    "native_alpha_normalization_content_key": alpha_metadata["native_alpha_normalization"]["content_key"],
+                    "source_raw_sha256": files["source_raw"]["sha256"],
+                    "original_request_sha256": provider_metadata["request_sha256"],
+                }
+                manifest["processing_contract"] = processing_contract
+                attempt["processing_contract"] = processing_contract
+        manifest_path = job_root / "attempts" / f"{reference_job_id}.json"
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        partial = manifest_path.with_name(manifest_path.name + ".partial")
+        if native:
+            write_immutable(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False).encode("utf-8"))
+        else:
+            partial.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+            partial.replace(manifest_path)
+        attempt["persistent_evidence"] = {
+            **manifest,
+            "manifest": self._evidence_file_record(manifest_path),
+        }
+        return attempt
 
     def cleanup_after_job(self) -> None:
         gc.collect()
@@ -293,7 +657,7 @@ class Trellis2BridgeRuntime:
         if mode == "gray":
             return ["simple solid light gray background"]
         if mode == "white":
-            return ["simple solid white background"]
+            return ["seamless pure white background (#FFFFFF)"]
         if mode == "contrast":
             return [
                 "solid saturated cyan background",
@@ -311,11 +675,22 @@ class Trellis2BridgeRuntime:
         clauses = []
         if contains(("plant", "potted", "pot", "vase")):
             clauses.append("A real plant pot is allowed; no extra saucer")
-        if contains(("cabinet", "dresser", "nightstand", "wardrobe", "chest", "table", "chair", "sofa", "bed")):
+        if contains(("chair", "sofa", "stool", "ottoman")):
+            clauses.append(
+                "Show visible separated supports or casters with white gaps beneath the body"
+            )
+        elif contains(("cabinet", "dresser", "nightstand", "wardrobe", "chest", "table", "bed")):
             clauses.append("Show furniture legs or bottom directly")
         if contains(("mirror",)):
             clauses.append("Mirror: glass and frame only")
-        if contains(("lamp", "lantern", "light")):
+        # "Light" alone also describes colors/materials and illumination.
+        # Only explicit luminaire nouns may allow the object's lamp base.
+        lamp_noun = re.search(
+            r"(?<![a-z])(?:lamps?|lanterns?|"
+            r"(?:floor|pendant|ceiling|table|desk|wall)[\s_-]+lights?)(?![a-z])",
+            text,
+        )
+        if lamp_noun:
             clauses.append("A built-in lamp base is allowed")
         if attempt > 0:
             clauses.append("Retry without staging geometry")
@@ -344,13 +719,168 @@ class Trellis2BridgeRuntime:
             raw = raw[4:]
         background = background_phrase or self._flux_background_phrases()[0]
         white_base_clause = self._white_base_prompt_clause(raw, attempt)
+        support_clause = f" {white_base_clause}." if white_base_clause else ""
         prompt = (
-            f"One isolated {raw}. Centered full-object 3/4 view; {background}. "
-            "No room, props, text, duplicate, platform, floor, or extra support."
+            f"One isolated {raw}. {background}; centered full-object 3/4 view. "
+            f"{support_clause} "
+            "White void only: no horizon, floor plane, contact shadow, reflection, "
+            "rug, platform, pedestal, plinth, base plate, props, text, or duplicate. "
+            "The background must remain visually separate from the entire object silhouette."
         )
-        if white_base_clause:
-            prompt += f" {white_base_clause}."
-        return prompt
+        return " ".join(prompt.split())
+
+    def _source_white_background_report(
+        self,
+        rgba: np.ndarray,
+        *,
+        enforced: bool,
+    ) -> dict[str, Any]:
+        """Audit the removed source backdrop before hidden RGB is destroyed.
+
+        FLUX cannot be expected to emit byte-exact #FFFFFF. This gate checks
+        that pixels classified as background are uniformly near-white; the
+        normalized preview below provides the byte-exact white contract.
+        """
+
+        alpha = rgba[:, :, 3]
+        background = alpha <= int(getattr(self.args, "white_background_alpha_max", 8))
+        pixels = rgba[:, :, :3][background].astype(np.float32)
+        minimum_samples = max(64, int(round(alpha.size * 0.02)))
+        limits = {
+            "minimum_channel": float(
+                getattr(self.args, "white_background_minimum_channel", 232.0)
+            ),
+            "maximum_chroma_range": float(
+                getattr(self.args, "white_background_maximum_chroma_range", 18.0)
+            ),
+            "minimum_near_white_fraction": float(
+                getattr(self.args, "white_background_minimum_fraction", 0.96)
+            ),
+            "maximum_median_deviation": float(
+                getattr(self.args, "white_background_maximum_median_deviation", 18.0)
+            ),
+        }
+        if len(pixels) < minimum_samples:
+            diagnostic_reasons = ["insufficient_removed_background_samples"]
+            return {
+                "schema": "scene-v2-source-white-background/v1",
+                "enforced": bool(enforced),
+                "ok": not enforced,
+                "conforms": False,
+                "reasons": diagnostic_reasons if enforced else [],
+                "diagnostic_reasons": diagnostic_reasons,
+                "sample_count": int(len(pixels)),
+                "minimum_sample_count": minimum_samples,
+                "limits": limits,
+            }
+
+        chroma = pixels.max(axis=1) - pixels.min(axis=1)
+        near_white = (
+            (pixels.min(axis=1) >= limits["minimum_channel"])
+            & (chroma <= limits["maximum_chroma_range"])
+        )
+        median = np.median(pixels, axis=0)
+        deviations = np.linalg.norm(pixels - median[None, :], axis=1)
+        near_white_fraction = float(np.mean(near_white))
+        median_deviation = float(np.median(deviations))
+        diagnostic_reasons: list[str] = []
+        if near_white_fraction < limits["minimum_near_white_fraction"]:
+            diagnostic_reasons.append("source_background_not_uniform_near_white")
+        if median_deviation > limits["maximum_median_deviation"]:
+            diagnostic_reasons.append("source_background_nonuniform")
+        conforms = not diagnostic_reasons
+        return {
+            "schema": "scene-v2-source-white-background/v1",
+            "enforced": bool(enforced),
+            "ok": bool(conforms or not enforced),
+            "conforms": conforms,
+            "reasons": diagnostic_reasons if enforced else [],
+            "diagnostic_reasons": diagnostic_reasons,
+            "sample_count": int(len(pixels)),
+            "minimum_sample_count": minimum_samples,
+            "median_background_rgb": [round(float(value), 3) for value in median],
+            "near_white_fraction": round(near_white_fraction, 6),
+            "median_rgb_deviation": round(median_deviation, 4),
+            "limits": limits,
+        }
+
+    def _exposed_support_background_gap_report(
+        self,
+        rgba: np.ndarray,
+        object_text: str | None,
+    ) -> dict[str, Any]:
+        """Require visible background to rise between explicitly exposed legs.
+
+        This colour-independent test catches a dark or textured connected
+        staging slab that a white-only base detector cannot see.
+        """
+
+        required = self._requires_exposed_furniture_supports(object_text)
+        report: dict[str, Any] = {
+            "schema": "scene-v2-exposed-support-background-gap/v1",
+            "required": required,
+            "ok": True,
+            "reasons": [],
+        }
+        if not required:
+            return report
+        foreground = rgba[:, :, 3] > int(getattr(self.args, "alpha_bbox_threshold", 24))
+        ys, xs = np.nonzero(foreground)
+        if not len(xs) or not len(ys):
+            report["ok"] = False
+            report["reasons"] = ["no_foreground_for_support_gap"]
+            return report
+        x0, x1 = int(xs.min()), int(xs.max()) + 1
+        y0, y1 = int(ys.min()), int(ys.max()) + 1
+        width = max(1, x1 - x0)
+        height = max(1, y1 - y0)
+        inset = int(
+            round(
+                width
+                * float(
+                    getattr(self.args, "support_gap_horizontal_inset_ratio", 0.10)
+                )
+            )
+        )
+        inner_x0 = min(x1 - 1, x0 + inset)
+        inner_x1 = max(inner_x0 + 1, x1 - inset)
+        minimum_depth_ratio = float(
+            getattr(self.args, "support_gap_minimum_depth_ratio", 0.11)
+        )
+        minimum_open_fraction = float(
+            getattr(self.args, "support_gap_minimum_open_column_fraction", 0.30)
+        )
+        minimum_depth = max(2, int(np.ceil(height * minimum_depth_ratio)))
+        crop = foreground[y0:y1, inner_x0:inner_x1]
+        open_depths: list[int] = []
+        for column in range(crop.shape[1]):
+            occupied = np.nonzero(crop[:, column])[0]
+            open_depths.append(
+                height
+                if len(occupied) == 0
+                else max(0, height - 1 - int(occupied[-1]))
+            )
+        qualifying = np.asarray(open_depths, dtype=np.int32) >= minimum_depth
+        open_fraction = float(np.mean(qualifying)) if len(qualifying) else 0.0
+        if open_fraction < minimum_open_fraction:
+            report["ok"] = False
+            report["reasons"].append("exposed_support_background_gap_missing")
+        report.update(
+            {
+                "foreground_bbox": [x0, y0, x1, y1],
+                "evaluated_horizontal_range": [inner_x0, inner_x1],
+                "minimum_gap_depth_ratio": minimum_depth_ratio,
+                "minimum_gap_depth_pixels": minimum_depth,
+                "minimum_open_column_fraction": minimum_open_fraction,
+                "open_column_fraction": round(open_fraction, 6),
+                "median_bottom_open_depth_ratio": (
+                    round(float(np.median(open_depths)) / float(height), 6)
+                    if open_depths
+                    else 0.0
+                ),
+            }
+        )
+        return report
 
     def _center_foreground_on_transparent_canvas(self, rgba: np.ndarray) -> np.ndarray:
         alpha = rgba[:, :, 3]
@@ -433,12 +963,153 @@ class Trellis2BridgeRuntime:
             time.sleep(1.0)
         raise TimeoutError(f"Flux job timed out after {self.args.flux_timeout}s")
 
+    def _image_provider(self, payload: dict[str, Any]) -> str:
+        provider = str(payload.get("image_provider", getattr(self.args, "image_provider", "builtin_imagegen")))
+        if provider not in BRIDGE_IMAGE_PROVIDERS:
+            raise ValueError(f"Unsupported image provider: {provider}")
+        if provider != "builtin_imagegen" and getattr(self.args, "flux_profile", provider) != provider:
+            raise ValueError("Selected FLUX provider does not match the configured model profile")
+        return provider
+
+    def image_provider_contract(self, provider: str) -> dict[str, Any]:
+        contract = {
+            "schema": "scene-image-provider-contract/v1",
+            "provider": provider,
+            "prompt_template_version": "isolated-white-v2-light-noun",
+            "background_mode": self.args.flux_background_mode,
+            "retry_count": self.args.flux_retry_count,
+            "native_alpha_normalization": json.loads(json.dumps(NATIVE_ALPHA_POLICY)),
+        }
+        if provider == "builtin_imagegen":
+            contract.update({
+                "transport": "codex_tool_spool/v1", "requested_model": None,
+                "backend_model_id": None, "model_identity_status": "unverified",
+                "seed_supported": False, "size_control_supported": False,
+            })
+        else:
+            contract.update({
+                "transport": "flux_http/v1", "requested_model": self.args.flux_profile,
+                "width": self.args.flux_width, "height": self.args.flux_height,
+                "steps": self.args.flux_steps, "guidance_scale": self.args.flux_guidance_scale,
+                "max_sequence_length": self.args.flux_max_sequence_length,
+            })
+        return contract
+
+    def _wait_for_builtin_image(
+        self, prompt: str, job_id: str, *, parent_job_id: str, specification: str, attempt: int
+    ) -> tuple[Path, dict[str, Any]]:
+        """Wait for the real Codex executor; keep accepted handles on disk."""
+        base = str(self.args.builtin_imagegen_url).rstrip("/")
+        timeout = float(self.args.builtin_imagegen_timeout)
+        root = self._persistent_evidence_root() / "provider_requests"
+        root.mkdir(parents=True, exist_ok=True)
+        handle_path = root / f"{job_id}.json"
+        request_payload = {
+            "prompt": prompt,
+            "provider": "builtin_imagegen",
+            "request_id": job_id,
+            "upstream_job_id": parent_job_id,
+            "specification": specification,
+            "attempt": attempt,
+            "requested_model": None,
+        }
+        if handle_path.is_file():
+            accepted = json.loads(handle_path.read_text(encoding="utf-8"))
+            if accepted.get("request") != request_payload or accepted.get("provider_url") != base:
+                raise ValueError("Persisted image provider request does not match this attempt")
+        else:
+            status, response = post_json(base + "/generate", request_payload, timeout=30.0)
+            if status != 202 or not response.get("job_id"):
+                raise RuntimeError(f"Builtin provider rejected request: {status} {response}")
+            accepted = {"request": request_payload, "provider_url": base, **response}
+            partial = handle_path.with_suffix(".json.partial")
+            partial.write_text(json.dumps(accepted, indent=2), encoding="utf-8")
+            partial.replace(handle_path)
+        provider_job_id = str(accepted["job_id"])
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            try:
+                status, body, content_type = get_bytes(base + f"/job/{provider_job_id}", timeout=30.0)
+            except (TimeoutError, URLError, ConnectionError):
+                time.sleep(1.0)
+                continue
+            if status == 200:
+                if not content_type.startswith("image/"):
+                    raise ValueError("Builtin provider returned a non-image completion")
+                meta_status, meta_bytes, _ = get_bytes(base + f"/job/{provider_job_id}/metadata", timeout=30.0)
+                if meta_status != 200:
+                    raise ValueError("Builtin provider completed without metadata")
+                metadata = json.loads(meta_bytes)
+                image_hash = hashlib.sha256(body).hexdigest()
+                if metadata.get("provider") != "builtin_imagegen" or metadata.get("job_id") != provider_job_id:
+                    raise ValueError("Builtin image metadata belongs to another provider/job")
+                if metadata.get("image_sha256") != image_hash:
+                    raise ValueError("Builtin image hash does not match provider metadata")
+                if metadata.get("prompt_sha256") != hashlib.sha256(prompt.encode("utf-8")).hexdigest():
+                    raise ValueError("Builtin image prompt binding mismatch")
+                if metadata.get("request_sha256") != accepted.get("request_sha256"):
+                    raise ValueError("Builtin image request binding mismatch")
+                if metadata.get("request_id") != job_id or metadata.get("upstream_job_id") != parent_job_id:
+                    raise ValueError("Builtin image reference binding mismatch")
+                image_path = root / f"{job_id}.png"
+                partial = image_path.with_suffix(".png.partial")
+                partial.write_bytes(body)
+                with Image.open(partial) as candidate:
+                    candidate.verify()
+                partial.replace(image_path)
+                return image_path, metadata
+            if status != 202:
+                raise RuntimeError(f"Builtin image job {provider_job_id} failed: {status} {body[:500]!r}")
+            time.sleep(1.0)
+        raise TimeoutError(f"waiting_for_image_provider: {provider_job_id}; resume handle {handle_path}")
+
     def _reference_candidates_for_payload(self, payload: dict[str, Any], job_id: str) -> Iterable[dict[str, Any]]:
+        provider = self._image_provider(payload)
+        replay = payload.get("replay_reference_evidence")
+        if replay is not None:
+            from sage.experiments.codex_trellis_scene_v2.asset_source_policy import validate_builtin_raw_artifact_evidence
+            if provider != "builtin_imagegen" or not isinstance(replay, dict):
+                raise ValueError("Raw replay requires builtin image evidence")
+            manifest_record = replay.get("manifest") or {}
+            manifest_path = Path(str(manifest_record.get("path") or ""))
+            if self._evidence_file_record(manifest_path) != manifest_record:
+                raise ValueError("Raw replay manifest binding mismatch")
+            original = json.loads(manifest_path.read_text(encoding="utf-8"))
+            failures = validate_builtin_raw_artifact_evidence({**original, "manifest": manifest_record})
+            if failures:
+                raise ValueError(f"Raw replay provenance rejected: {failures}")
+            raw = original["files"]["source_rgb"]
+            if replay.get("reference") != raw or self._evidence_file_record(Path(raw["path"])) != raw:
+                raise ValueError("Raw replay must select the original tool image")
+            if job_id in {original.get("parent_job_id"), original.get("reference_job_id")}:
+                raise ValueError("Raw replay requires a new job and attempt")
+            direct = payload.get("reference_image_path") or payload.get("input_image_path")
+            if direct and Path(str(direct)).resolve() != Path(raw["path"]).resolve():
+                raise ValueError("Direct reference conflicts with raw replay")
+            yield {
+                "source_image_path": Path(raw["path"]), "reference_job_id": job_id,
+                "generated": False, "attempt": 0, "prompt": None, "seed": None,
+                "image_provider": provider,
+                "image_provider_metadata": original["image_provider_metadata"],
+                "replay_reference_evidence": replay,
+                "enforce_white_background": True,
+            }
+            return
         direct = payload.get("reference_image_path") or payload.get("input_image_path")
         if direct:
             path = Path(str(direct))
             if not path.exists():
                 raise FileNotFoundError(f"reference image not found: {path}")
+            inherited_metadata = None
+            upstream = self._persisted_generated_reference_provenance(path)
+            if upstream:
+                upstream_manifest = json.loads(Path(upstream["manifest"]["path"]).read_text(encoding="utf-8"))
+                inherited_provider = upstream_manifest.get("image_provider", "flux1-schnell")
+                if inherited_provider != provider:
+                    raise ValueError("Direct reference provider conflicts with selected route")
+                path = Path(upstream_manifest["files"]["source_rgb"]["path"])
+                if inherited_provider == "builtin_imagegen":
+                    inherited_metadata = upstream_manifest["image_provider_metadata"]
             yield {
                 "source_image_path": path,
                 "reference_job_id": job_id,
@@ -446,6 +1117,9 @@ class Trellis2BridgeRuntime:
                 "attempt": 0,
                 "prompt": None,
                 "seed": payload.get("seed"),
+                "image_provider": provider,
+                "image_provider_metadata": inherited_metadata,
+                "enforce_white_background": upstream is not None,
             }
             return
         input_text = str(payload.get("input_text") or payload.get("prompt") or "").strip()
@@ -464,7 +1138,13 @@ class Trellis2BridgeRuntime:
             prompt = self._compose_flux_prompt(input_text, background, attempt)
             attempt_seed = base_seed + attempt * 9973
             reference_job_id = job_id if attempt == 0 else f"{job_id}_retry{attempt:02d}"
-            source_image_path = self._wait_for_flux_image(prompt, attempt_seed, reference_job_id)
+            provider_metadata = None
+            if provider == "builtin_imagegen":
+                source_image_path, provider_metadata = self._wait_for_builtin_image(
+                    prompt, reference_job_id, parent_job_id=job_id, specification=input_text, attempt=attempt
+                )
+            else:
+                source_image_path = self._wait_for_flux_image(prompt, attempt_seed, reference_job_id)
             yield {
                 "source_image_path": source_image_path,
                 "reference_job_id": reference_job_id,
@@ -472,7 +1152,10 @@ class Trellis2BridgeRuntime:
                 "attempt": attempt,
                 "prompt": prompt,
                 "background": background,
-                "seed": attempt_seed,
+                "seed": attempt_seed if provider != "builtin_imagegen" else None,
+                "requested_seed": attempt_seed,
+                "image_provider": provider,
+                "image_provider_metadata": provider_metadata,
             }
             if not self.args.alpha_quality_check and scene_dna_count <= 1:
                 break
@@ -770,6 +1453,17 @@ class Trellis2BridgeRuntime:
             if not clean:
                 raise RuntimeError("All SceneDNA reference candidates failed white-base QA")
             eligible = clean
+        if bool(getattr(self.args, "background_isolation_require_clean", False)):
+            isolated = [
+                item
+                for item in eligible
+                if not self._attempt_has_background_isolation_violation(item)
+            ]
+            if not isolated:
+                raise RuntimeError(
+                    "All SceneDNA reference candidates failed white-background isolation QA"
+                )
+            eligible = isolated
         alpha_ok = [item for item in eligible if bool(item.get("alpha_quality_ok"))]
         if alpha_ok:
             eligible = alpha_ok
@@ -1109,6 +1803,56 @@ class Trellis2BridgeRuntime:
             object_notes.append("For furniture, visible legs/body/bedding are legal; a display plinth or white platform under it is illegal.")
         return {"legal": legal, "illegal": illegal, "object_notes": object_notes}
 
+    @staticmethod
+    def _requires_exposed_furniture_supports(object_text: str | None) -> bool:
+        """Return whether the generation contract requires visible local supports.
+
+        This is intentionally narrower than a generic furniture-name check.
+        Closed boxes, cabinets, platform beds, lamp bases, and real plant pots
+        may legitimately have continuous lower bodies.  A sofa/chair prompt
+        that explicitly asks for visible or separated legs may not use that
+        ambiguity to excuse a broad connected staging slab.
+        """
+
+        text = " ".join(str(object_text or "").lower().replace("_", " ").split())
+        exposed_terms = (
+            "visible legs",
+            "separated legs",
+            "stable support legs",
+            "stable separated legs",
+            "furniture legs",
+        )
+        seating_terms = (
+            "sofa",
+            "chair",
+            "accent chair",
+            "dining chair",
+            "office chair",
+            "lounge chair",
+            "armchair",
+            "stool",
+            "ottoman",
+        )
+        explicit_continuous_support = any(
+            term in text
+            for term in (
+                "pedestal chair",
+                "pedestal stool",
+                "solid plinth",
+                "platform sofa",
+                "continuous designed base",
+            )
+        )
+        articulated_wheeled_support = (
+            "office chair" in text
+            and any(term in text for term in ("wheel", "wheeled", "caster"))
+        )
+        return any(term in text for term in exposed_terms) or (
+            any(term in text for term in seating_terms)
+            and not explicit_continuous_support
+            and not articulated_wheeled_support
+        )
+
     def _white_like_mask(self, rgba: np.ndarray) -> np.ndarray:
         rgb = rgba[:, :, :3].astype(np.uint8)
         try:
@@ -1319,6 +2063,10 @@ class Trellis2BridgeRuntime:
             "min_area_ratio": float(getattr(self.args, "white_base_min_area_ratio", 0.010)),
             "white_saturation_threshold": float(getattr(self.args, "white_base_saturation_threshold", 72.0)),
             "white_value_threshold": float(getattr(self.args, "white_base_value_threshold", 170.0)),
+            "connected_min_width_ratio": float(getattr(self.args, "connected_base_min_width_ratio", 0.72)),
+            "connected_max_height_ratio": float(getattr(self.args, "connected_base_max_height_ratio", 0.24)),
+            "connected_min_aspect_ratio": float(getattr(self.args, "connected_base_min_aspect_ratio", 6.0)),
+            "connected_min_bottom_ratio": float(getattr(self.args, "connected_base_min_bottom_ratio", 0.72)),
         }
         report: dict[str, Any] = {
             "enabled": enabled,
@@ -1345,6 +2093,9 @@ class Trellis2BridgeRuntime:
             "object_text": object_text,
             "bedlike_white_material_allowed": bedlike_context,
             "active_max_height_ratio": max_height_ratio,
+            "exposed_furniture_supports_required": (
+                self._requires_exposed_furniture_supports(object_text)
+            ),
         }
 
         fg_x0, fg_x1 = int(xs.min()), int(xs.max()) + 1
@@ -1390,16 +2141,35 @@ class Trellis2BridgeRuntime:
                 and bottom_ratio >= 0.86
                 and top_ratio >= limits["bottom_start_ratio"] - limits["top_slack_ratio"]
             )
+            connected_furniture_candidate = bool(
+                report["context"]["exposed_furniture_supports_required"]
+                and width_ratio >= limits["connected_min_width_ratio"]
+                and height_ratio <= limits["connected_max_height_ratio"]
+                and aspect_ratio >= limits["connected_min_aspect_ratio"]
+                and area_ratio >= limits["min_area_ratio"]
+                and bottom_ratio >= limits["connected_min_bottom_ratio"]
+                and top_ratio
+                >= limits["bottom_start_ratio"] - limits["top_slack_ratio"]
+            )
             topology = self._white_base_topology_report(
                 foreground,
                 candidate_bbox=[x0, y0, x1, y1],
                 foreground_bbox=[fg_x0, fg_y0, fg_x1, fg_y1],
             )
             stats["topology"] = topology
-            is_low_wide_base = color_geometry_candidate and bool(
+            disconnected_base = color_geometry_candidate and bool(
                 topology["separated_or_narrowly_supported"]
             )
-            if is_low_wide_base:
+            connected_base = connected_furniture_candidate and not bool(
+                topology["separated_or_narrowly_supported"]
+            )
+            is_low_wide_base = bool(disconnected_base or connected_base)
+            stats["connected_furniture_contract_candidate"] = (
+                connected_furniture_candidate
+            )
+            if connected_base:
+                stats["decision"] = "illegal_connected_base_candidate"
+            elif disconnected_base:
                 stats["decision"] = "illegal_base_candidate"
             elif color_geometry_candidate:
                 stats["decision"] = "protected_connected_subject_region"
@@ -1576,6 +2346,14 @@ class Trellis2BridgeRuntime:
         white_base_artifact = self._white_base_artifact_report(rgba, object_text)
         if not bool(white_base_artifact.get("ok", True)):
             reasons.extend(str(reason) for reason in white_base_artifact.get("reasons", []))
+        exposed_support_background_gap = self._exposed_support_background_gap_report(
+            rgba, object_text
+        )
+        if not bool(exposed_support_background_gap.get("ok", True)):
+            reasons.extend(
+                str(reason)
+                for reason in exposed_support_background_gap.get("reasons", [])
+            )
 
         score = 1.0
         score -= max(0.0, float(self.args.alpha_min_foreground_ratio) - foreground_ratio) * 8.0
@@ -1585,6 +2363,8 @@ class Trellis2BridgeRuntime:
             score -= 0.35
         if "illegal_white_base_or_platform" in reasons:
             score -= float(getattr(self.args, "white_base_score_penalty", 0.65))
+        if "exposed_support_background_gap_missing" in reasons:
+            score -= float(getattr(self.args, "support_gap_score_penalty", 0.65))
 
         return {
             "ok": not reasons,
@@ -1596,6 +2376,7 @@ class Trellis2BridgeRuntime:
             "bbox_area_ratio": round(bbox_area_ratio, 6),
             "bbox_fill_ratio": round(bbox_fill_ratio, 6),
             "white_base_artifact": white_base_artifact,
+            "exposed_support_background_gap": exposed_support_background_gap,
             "threshold": threshold,
             "limits": {
                 "min_foreground_ratio": float(self.args.alpha_min_foreground_ratio),
@@ -1614,6 +2395,9 @@ class Trellis2BridgeRuntime:
         return json.loads(path.read_text(encoding="utf-8"))
 
     def _alpha_metadata_ok(self, metadata: dict[str, Any]) -> bool:
+        normalization = metadata.get("native_alpha_normalization")
+        if isinstance(normalization, dict) and not opacity_review_ok(normalization):
+            return False
         if not self.args.alpha_quality_check:
             return True
         quality = metadata.get("alpha_quality")
@@ -1631,6 +2415,33 @@ class Trellis2BridgeRuntime:
         white_report = quality.get("white_base_artifact", {})
         return isinstance(white_report, dict) and not bool(white_report.get("ok", True))
 
+    @staticmethod
+    def _attempt_has_background_isolation_violation(
+        attempt: dict[str, Any],
+    ) -> bool:
+        metadata = attempt.get("alpha_metadata")
+        if not isinstance(metadata, dict):
+            return True
+        normalization = metadata.get("native_alpha_normalization")
+        if isinstance(normalization, dict) and not opacity_review_ok(normalization):
+            return True
+        source_white = metadata.get("source_white_background")
+        if not isinstance(source_white, dict):
+            return True
+        if bool(source_white.get("enforced")) and not bool(source_white.get("ok")):
+            return True
+        isolation = metadata.get("white_background_isolation")
+        if not isinstance(isolation, dict) or not bool(isolation.get("ok")):
+            return True
+        quality = metadata.get("alpha_quality")
+        quality = quality if isinstance(quality, dict) else {}
+        support_gap = quality.get("exposed_support_background_gap")
+        return bool(
+            isinstance(support_gap, dict)
+            and support_gap.get("required")
+            and not support_gap.get("ok")
+        )
+
     def _save_prepared_rgba(
         self,
         rgba: np.ndarray,
@@ -1638,8 +2449,23 @@ class Trellis2BridgeRuntime:
         job_id: str,
         method: str,
         object_text: str | None = None,
+        enforce_white_background: bool = False,
         extra: dict[str, Any] | None = None,
+        source_white_rgba: np.ndarray | None = None,
     ) -> Path:
+        source_white_background = self._source_white_background_report(
+            rgba if source_white_rgba is None else source_white_rgba,
+            enforced=enforce_white_background,
+        )
+        normalization = (extra or {}).get("native_alpha_normalization")
+        if isinstance(normalization, dict):
+            visible_record = normalization["records"]["source_visible_white_rgb"]
+            source_white_background.update(
+                input_semantics="native_alpha_visible_white",
+                source_image_path=visible_record["path"],
+                source_image_sha256=visible_record["sha256"],
+                alpha_max=int(getattr(self.args, "white_background_alpha_max", 8)),
+            )
         rgba, source_chroma_cleanup = clean_chromatic_alpha_edges(
             rgba,
             foreground_alpha_threshold=int(self.args.alpha_bbox_threshold),
@@ -1649,6 +2475,13 @@ class Trellis2BridgeRuntime:
             maximum_alpha_weight_removed_fraction=float(
                 getattr(self.args, "alpha_max_chroma_cleanup_removed_fraction", 0.12)
             ),
+        )
+        # Preserve QA in the original RMBG coordinate frame as evidence for
+        # the raw Flux image.  Recentring is useful for TRELLIS, but must not
+        # erase the fact that a suspicious support surface was present before
+        # that transform.
+        source_frame_alpha_quality = self._alpha_quality_report(
+            rgba, object_text
         )
         rgba = self._center_foreground_on_transparent_canvas(rgba)
         white_base_repair: dict[str, Any] = {
@@ -1694,6 +2527,12 @@ class Trellis2BridgeRuntime:
             )
         )
         rgba[:, :, :3][rgba[:, :, 3] == 0] = 0
+        hidden_rgb_nonzero_after_normalization = int(
+            np.count_nonzero(
+                (rgba[:, :, 3] == 0)
+                & np.any(rgba[:, :, :3] != 0, axis=2)
+            )
+        )
         background_estimate = source_chroma_cleanup.get("background_estimate", {})
         background_rgb = (
             background_estimate.get("background_rgb")
@@ -1731,6 +2570,20 @@ class Trellis2BridgeRuntime:
         Image.fromarray(alpha, mode="L").save(mask_path)
         foreground = float(np.count_nonzero(alpha > 16)) / float(alpha.size)
         quality = self._alpha_quality_report(rgba, object_text)
+        if isinstance(normalization, dict) and not opacity_review_ok(normalization):
+            quality["ok"] = False
+            quality["reasons"] = list(quality.get("reasons", [])) + ["native_alpha_opacity_review_required"]
+        if not bool(source_white_background.get("ok", True)):
+            quality["ok"] = False
+            quality["reasons"] = list(
+                dict.fromkeys(
+                    list(quality.get("reasons", []))
+                    + list(source_white_background.get("reasons", []))
+                )
+            )
+            quality["score"] = round(
+                max(-1.0, float(quality.get("score", 0.0)) - 0.65), 4
+            )
         quality["chroma_spill_hygiene"] = chroma_hygiene
         if not bool(chroma_hygiene.get("ok", True)):
             quality["ok"] = False
@@ -1740,13 +2593,65 @@ class Trellis2BridgeRuntime:
             quality["score"] = round(
                 max(-1.0, float(quality.get("score", 0.0)) - 0.65), 4
             )
+        normalized_white = (
+            Path(self.args.output_dir) / "reference_white_rgb" / f"{job_id}.png"
+        )
+        normalized_white.parent.mkdir(parents=True, exist_ok=True)
+        composite_on_review_background(
+            rgba,
+            background_rgb=(255, 255, 255),
+        ).save(normalized_white)
+        transparent = rgba[:, :, 3] == 0
+        normalized_pixels = np.asarray(
+            Image.open(normalized_white).convert("RGB"), dtype=np.uint8
+        )
+        exact_white_background = (
+            bool(np.all(normalized_pixels[transparent] == 255))
+            if np.any(transparent)
+            else False
+        )
+        white_background_isolation = {
+            "schema": "scene-v2-normalized-white-background-isolation/v1",
+            "ok": bool(
+                exact_white_background
+                and hidden_rgb_nonzero_after_normalization == 0
+                and quality.get("border_foreground_ratio", 1.0)
+                <= float(self.args.alpha_max_border_foreground_ratio)
+            ),
+            "normalized_white_rgb_path": str(normalized_white),
+            "exact_white_rgb": [255, 255, 255],
+            "exact_white_for_all_alpha_zero_pixels": exact_white_background,
+            "transparent_background_pixel_count": int(np.count_nonzero(transparent)),
+            "hidden_rgb_zeroed": hidden_rgb_nonzero_after_normalization == 0,
+            "hidden_rgb_normalized_pixel_count": final_hidden_rgb_zeroed,
+            "foreground_touches_border": bool(
+                quality.get("border_foreground_ratio", 1.0)
+                > float(self.args.alpha_max_border_foreground_ratio)
+            ),
+            "trellis_input_uses_transparent_rgba": True,
+        }
+        if not white_background_isolation["ok"]:
+            quality["ok"] = False
+            quality["reasons"] = list(
+                dict.fromkeys(
+                    list(quality.get("reasons", []))
+                    + ["white_background_isolation_failed"]
+                )
+            )
+            quality["score"] = round(
+                max(-1.0, float(quality.get("score", 0.0)) - 0.65), 4
+            )
         metadata = {
             "source_image_path": str(image_path),
             "prepared_image_path": str(prepared),
+            "normalized_white_image_path": str(normalized_white),
             "mask_path": str(mask_path),
             "foreground_ratio": foreground,
             "method": method,
             "object_text": object_text,
+            "source_frame_alpha_quality": source_frame_alpha_quality,
+            "source_white_background": source_white_background,
+            "white_background_isolation": white_background_isolation,
             "alpha_quality": quality,
             "white_base_repair": white_base_repair,
         }
@@ -1764,6 +2669,7 @@ class Trellis2BridgeRuntime:
         job_id: str,
         pipeline: Any,
         object_text: str | None = None,
+        enforce_white_background: bool = False,
     ) -> Path:
         if self.args.alpha_mode == "none":
             return image_path
@@ -1784,6 +2690,7 @@ class Trellis2BridgeRuntime:
             job_id,
             method="rembg",
             object_text=object_text,
+            enforce_white_background=enforce_white_background,
             extra={
                 "rembg_model": self.args.rmbg_model,
                 "trellis_rembg_args": getattr(pipeline, "_rembg_args", {}),
@@ -1858,12 +2765,23 @@ class Trellis2BridgeRuntime:
         image_path: Path,
         job_id: str,
         object_text: str | None = None,
+        enforce_white_background: bool = False,
     ) -> Path:
+        native = self._prepare_native_alpha_reference(image_path, job_id, object_text, enforce_white_background)
+        if native is not None:
+            return native
         image = Image.open(image_path).convert("RGBA")
         rgba = np.array(image, dtype=np.uint8)
         existing_alpha = rgba[:, :, 3]
         if np.any(existing_alpha < 255):
-            return self._save_prepared_rgba(rgba, image_path, job_id, method="existing_alpha")
+            return self._save_prepared_rgba(
+                rgba,
+                image_path,
+                job_id,
+                method="existing_alpha",
+                object_text=object_text,
+                enforce_white_background=enforce_white_background,
+            )
 
         rgb = rgba[:, :, :3].astype(np.float32)
         h, w = rgb.shape[:2]
@@ -1925,9 +2843,32 @@ class Trellis2BridgeRuntime:
             job_id,
             method="threshold",
             object_text=object_text,
+            enforce_white_background=enforce_white_background,
             extra={
                 "background_rgb_median": [float(x) for x in bg],
                 "alpha_threshold": float(self.args.alpha_threshold),
+            },
+        )
+
+    def _prepare_native_alpha_reference(
+        self, image_path: Path, job_id: str, object_text: str | None,
+        enforce_white_background: bool, review: dict[str, Any] | None = None,
+    ) -> Path | None:
+        native = prepare_native_alpha_evidence(
+            image_path, Path(self.args.output_dir), job_id, review=review,
+        )
+        if native is None:
+            return None
+        rgba, visible, normalization = native
+        audit_rgba = rgba.copy()
+        audit_rgba[:, :, :3] = visible
+        return self._save_prepared_rgba(
+            rgba, image_path, job_id, method="existing_alpha",
+            object_text=object_text, enforce_white_background=enforce_white_background,
+            source_white_rgba=audit_rgba,
+            extra={
+                "native_alpha_normalization": normalization,
+                "source_white_input_path": normalization["records"]["source_visible_white_rgb"]["path"],
             },
         )
 
@@ -1937,23 +2878,32 @@ class Trellis2BridgeRuntime:
         job_id: str,
         pipeline: Any,
         object_text: str | None = None,
+        enforce_white_background: bool = False,
+        native_alpha_review: dict[str, Any] | None = None,
     ) -> Path:
-        source = Image.open(image_path)
-        if source.mode == "RGBA" and np.any(np.array(source)[:, :, 3] < 255):
-            return self._save_prepared_rgba(
-                np.array(source.convert("RGBA"), dtype=np.uint8),
-                image_path,
-                job_id,
-                method="existing_alpha",
-                object_text=object_text,
-            )
+        native = self._prepare_native_alpha_reference(
+            image_path, job_id, object_text, enforce_white_background, native_alpha_review,
+        )
+        if native is not None:
+            return native
 
         if self.args.alpha_mode == "threshold":
-            return self._prepare_reference_with_threshold(image_path, job_id, object_text)
+            return self._prepare_reference_with_threshold(
+                image_path,
+                job_id,
+                object_text,
+                enforce_white_background,
+            )
         if self.args.alpha_mode == "none":
             return image_path
         try:
-            prepared = self._prepare_reference_with_rmbg(image_path, job_id, pipeline, object_text)
+            prepared = self._prepare_reference_with_rmbg(
+                image_path,
+                job_id,
+                pipeline,
+                object_text,
+                enforce_white_background,
+            )
             metadata = self._read_alpha_metadata(job_id)
             if self._alpha_metadata_ok(metadata):
                 return prepared
@@ -1965,12 +2915,22 @@ class Trellis2BridgeRuntime:
                 f"{quality.get('reasons', [])}",
                 flush=True,
             )
-            return self._prepare_reference_with_threshold(image_path, job_id, object_text)
+            return self._prepare_reference_with_threshold(
+                image_path,
+                job_id,
+                object_text,
+                enforce_white_background,
+            )
         except Exception as exc:
             if not self.args.alpha_fallback_threshold:
                 raise
             print(f"[trellis2] RMBG failed for {job_id}, using threshold fallback: {exc}", flush=True)
-            return self._prepare_reference_with_threshold(image_path, job_id, object_text)
+            return self._prepare_reference_with_threshold(
+                image_path,
+                job_id,
+                object_text,
+                enforce_white_background,
+            )
 
     def _mesh_count(self, value: Any) -> int | None:
         shape = getattr(value, "shape", None)
@@ -2095,11 +3055,29 @@ class Trellis2BridgeRuntime:
             return ["1024", "512"]
         return [requested_pipeline_type]
 
+    def reprocess_native_alpha_candidate_cpu(self, payload: dict[str, Any], job_id: str) -> Path:
+        """Replay a proven native-alpha raw artifact without model execution.
+
+        This route runs the production existing-alpha preparation and evidence
+        chain. An unreviewed opacity decision or failed QA remains a failure;
+        the new attempt evidence is retained by ``generate`` before rejection.
+        """
+        if not payload.get("replay_reference_evidence") or payload.get("scene_dna"):
+            raise ValueError("CPU native-alpha replay requires raw provenance and no SceneDNA scoring")
+        candidate = next(iter(self._reference_candidates_for_payload(payload, job_id)))
+        if decode_native_alpha(Path(candidate["source_image_path"])) is None:
+            raise ValueError("CPU replay requires native transparency; RGB must use normal RMBG admission")
+        return self.generate({**payload, "candidate_only": True}, job_id)
+
     def generate(self, payload: dict[str, Any], job_id: str) -> Path:
         output_dir = Path(self.args.output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
         output_glb = output_dir / f"{job_id}.glb"
         metadata_path = output_dir / f"{job_id}.json"
+        # Validate durable provenance storage before loading FLUX/TRELLIS or
+        # accepting any candidate.  A job cannot succeed with evidence that
+        # exists only in /tmp.
+        persistent_job_evidence_root = self._persistent_evidence_root(job_id)
 
         reference_attempts: list[dict[str, Any]] = []
         selected_attempt: dict[str, Any] | None = None
@@ -2119,6 +3097,9 @@ class Trellis2BridgeRuntime:
                     reference_job_id,
                     None,
                     object_text,
+                    enforce_white_background=bool(candidate.get("generated") or candidate.get("enforce_white_background"))
+                    and str(self.args.flux_background_mode) == "white",
+                    native_alpha_review=payload.get("native_alpha_review"),
                 )
                 metadata = self._read_alpha_metadata(reference_job_id)
                 attempt_report = {
@@ -2128,6 +3109,9 @@ class Trellis2BridgeRuntime:
                     "alpha_metadata": metadata,
                     "alpha_quality_ok": self._alpha_metadata_ok(metadata),
                 }
+                attempt_report = self._persist_reference_attempt_evidence(
+                    job_id, attempt_report
+                )
                 reference_attempts.append(attempt_report)
                 if attempt_report["alpha_quality_ok"]:
                     if not collect_scene_dna_candidates:
@@ -2159,6 +3143,13 @@ class Trellis2BridgeRuntime:
             usable_attempts = [a for a in reference_attempts if a.get("prepared_image_path")]
             if not usable_attempts:
                 raise RuntimeError(last_error or "No usable reference image was prepared")
+            usable_attempts = [
+                a for a in usable_attempts
+                if not isinstance(a.get("alpha_metadata", {}).get("native_alpha_normalization"), dict)
+                or opacity_review_ok(a["alpha_metadata"]["native_alpha_normalization"])
+            ]
+            if not usable_attempts:
+                raise RuntimeError("Native alpha opacity review required for all reference attempts")
             if bool(getattr(self.args, "white_base_require_clean", True)):
                 clean_attempts = [a for a in usable_attempts if not self._attempt_has_white_base_violation(a)]
                 if not clean_attempts:
@@ -2172,6 +3163,37 @@ class Trellis2BridgeRuntime:
                     ]
                     raise RuntimeError(f"All reference attempts failed white-base QA: {reasons}")
                 usable_attempts = clean_attempts
+            if bool(
+                getattr(self.args, "background_isolation_require_clean", False)
+            ):
+                isolated_attempts = [
+                    attempt
+                    for attempt in usable_attempts
+                    if not self._attempt_has_background_isolation_violation(attempt)
+                ]
+                if not isolated_attempts:
+                    reasons = [
+                        {
+                            "reference_job_id": attempt.get("reference_job_id"),
+                            "source_white_background": attempt.get(
+                                "alpha_metadata", {}
+                            ).get("source_white_background"),
+                            "white_background_isolation": attempt.get(
+                                "alpha_metadata", {}
+                            ).get("white_background_isolation"),
+                            "exposed_support_background_gap": attempt.get(
+                                "alpha_metadata", {}
+                            ).get("alpha_quality", {}).get(
+                                "exposed_support_background_gap"
+                            ),
+                        }
+                        for attempt in usable_attempts
+                    ]
+                    raise RuntimeError(
+                        "All reference attempts failed white-background isolation QA: "
+                        f"{reasons}"
+                    )
+                usable_attempts = isolated_attempts
             if self.args.alpha_require_quality:
                 reasons = [
                     a.get("alpha_metadata", {}).get("alpha_quality", {}).get("reasons", [])
@@ -2188,6 +3210,10 @@ class Trellis2BridgeRuntime:
                 flush=True,
             )
 
+        selected_normalization = selected_attempt.get("alpha_metadata", {}).get("native_alpha_normalization")
+        if isinstance(selected_normalization, dict) and not opacity_review_ok(selected_normalization):
+            raise RuntimeError("Native alpha opacity review required for selected reference")
+
         if bool(payload.get("candidate_only", False)):
             metadata_path.write_text(
                 json.dumps(
@@ -2199,13 +3225,23 @@ class Trellis2BridgeRuntime:
                         "input_text": payload.get("input_text"),
                         "seed": int(payload.get("seed", 1)),
                         "reference_attempts": reference_attempts,
-                        "selected_reference_job_id": selected_attempt.get(
+                        "image_provider_contract": payload.get("image_provider_contract"),
+                    "image_provider": selected_attempt.get("image_provider", "flux1-schnell"),
+                    "image_provider_metadata": selected_attempt.get("image_provider_metadata"),
+                    "selected_reference_job_id": selected_attempt.get(
                             "reference_job_id"
                         ),
                         "reference_image_path": selected_attempt.get(
                             "prepared_image_path"
                         ),
                         "scene_dna_candidate_selection": scene_dna_candidate_selection,
+                        "persistent_evidence_root": str(
+                            persistent_job_evidence_root
+                        ),
+                        "processing_contract": selected_attempt.get("processing_contract"),
+                        "selected_reference_evidence": selected_attempt.get(
+                            "persistent_evidence"
+                        ),
                     },
                     indent=2,
                 ),
@@ -2302,8 +3338,18 @@ class Trellis2BridgeRuntime:
                                 "source_image_path": str(source_image_path),
                                 "reference_image_path": str(image_path),
                                 "reference_attempts": reference_attempts,
-                                "selected_reference_job_id": selected_attempt.get("reference_job_id"),
+                                "image_provider_contract": payload.get("image_provider_contract"),
+                    "image_provider": selected_attempt.get("image_provider", "flux1-schnell"),
+                    "image_provider_metadata": selected_attempt.get("image_provider_metadata"),
+                    "selected_reference_job_id": selected_attempt.get("reference_job_id"),
                                 "scene_dna_candidate_selection": scene_dna_candidate_selection,
+                                "persistent_evidence_root": str(
+                                    persistent_job_evidence_root
+                                ),
+                                "processing_contract": selected_attempt.get("processing_contract"),
+                                "selected_reference_evidence": selected_attempt.get(
+                                    "persistent_evidence"
+                                ),
                                 "alpha_quality_ok": selected_attempt.get("alpha_quality_ok"),
                                 "pipeline_run_attempts": pipeline_run_attempts,
                                 "glb_path": None,
@@ -2340,8 +3386,18 @@ class Trellis2BridgeRuntime:
                         "source_image_path": str(source_image_path),
                         "reference_image_path": str(image_path),
                         "reference_attempts": reference_attempts,
-                        "selected_reference_job_id": selected_attempt.get("reference_job_id"),
+                        "image_provider_contract": payload.get("image_provider_contract"),
+                    "image_provider": selected_attempt.get("image_provider", "flux1-schnell"),
+                    "image_provider_metadata": selected_attempt.get("image_provider_metadata"),
+                    "selected_reference_job_id": selected_attempt.get("reference_job_id"),
                         "scene_dna_candidate_selection": scene_dna_candidate_selection,
+                        "persistent_evidence_root": str(
+                            persistent_job_evidence_root
+                        ),
+                        "processing_contract": selected_attempt.get("processing_contract"),
+                        "selected_reference_evidence": selected_attempt.get(
+                            "persistent_evidence"
+                        ),
                         "alpha_quality_ok": selected_attempt.get("alpha_quality_ok"),
                         "pipeline_run_attempts": pipeline_run_attempts,
                         "postprocess_attempts": postprocess_attempts,
@@ -2372,8 +3428,18 @@ class Trellis2BridgeRuntime:
                     "source_image_path": str(source_image_path),
                     "reference_image_path": str(image_path),
                     "reference_attempts": reference_attempts,
+                    "image_provider_contract": payload.get("image_provider_contract"),
+                    "image_provider": selected_attempt.get("image_provider", "flux1-schnell"),
+                    "image_provider_metadata": selected_attempt.get("image_provider_metadata"),
                     "selected_reference_job_id": selected_attempt.get("reference_job_id"),
                     "scene_dna_candidate_selection": scene_dna_candidate_selection,
+                    "persistent_evidence_root": str(
+                        persistent_job_evidence_root
+                    ),
+                    "processing_contract": selected_attempt.get("processing_contract"),
+                    "selected_reference_evidence": selected_attempt.get(
+                        "persistent_evidence"
+                    ),
                     "alpha_quality_ok": selected_attempt.get("alpha_quality_ok"),
                     "pipeline_run_attempts": pipeline_run_attempts,
                     "postprocess_attempts": postprocess_attempts,
@@ -2458,6 +3524,27 @@ def build_handler(
 
         def do_GET(self) -> None:  # noqa: N802
             parsed = urlparse(self.path)
+            try:
+                route_path, requested_provider = provider_route(parsed.path)
+            except ValueError as exc:
+                self._send_json(400, {"error": str(exc)})
+                return
+            parsed = parsed._replace(path=route_path)
+            if requested_provider and route_path.startswith("/job/"):
+                route_job_id = route_path.split("/")[2]
+                route_job = jobs.get(route_job_id)
+                if route_job and route_job.get("image_provider") != requested_provider:
+                    self._send_json(404, {"error": "job does not belong to this image provider"})
+                    return
+            if route_path.startswith("/job/"):
+                checkpoint_job = jobs.get(route_path.split("/")[2])
+                if checkpoint_job and checkpoint_job.get("status") == "interrupted":
+                    self._send_json(410, {
+                        "status": "interrupted", "job_id": route_path.split("/")[2],
+                        "image_provider": checkpoint_job.get("image_provider"),
+                        "resume_path": route_path.split("/metadata")[0] + "/resume",
+                    })
+                    return
             if parsed.path in {"/", "/health"}:
                 self._send_json(
                     200,
@@ -2468,6 +3555,9 @@ def build_handler(
                         "trellis_model": runtime.args.trellis_model,
                         "flux_server_url": runtime.args.flux_server_url,
                         "flux_profile": runtime.args.flux_profile,
+                        "image_provider": requested_provider or runtime.args.image_provider,
+                        "image_provider_contract": runtime.image_provider_contract(requested_provider or runtime.args.image_provider),
+                        "builtin_imagegen_url": runtime.args.builtin_imagegen_url,
                         "heavy_job_broker": broker.snapshot() if broker else None,
                     },
                 )
@@ -2498,7 +3588,7 @@ def build_handler(
                     return
                 metadata_path = Path(str(job.get("metadata_path") or Path(runtime.args.output_dir) / f"{job_id}.json"))
                 if not metadata_path.exists():
-                    self._send_json(202 if job.get("status") == "processing" else 404, {"error": "metadata not ready"})
+                    self._send_json(202 if job.get("status") in {"processing", "waiting_for_image_provider"} else 404, {"error": "metadata not ready"})
                     return
                 self._send_file(metadata_path, "application/json")
                 schedule_process_recycle_after_metadata_delivery()
@@ -2524,13 +3614,23 @@ def build_handler(
                         },
                     )
                     return
-                self._send_json(202, {"status": job.get("status", "processing")})
+                self._send_json(202, {
+                    "status": job.get("status", "processing"),
+                    "resume_path": f"/job/{job_id}/resume" if job.get("status") == "waiting_for_image_provider" else None,
+                })
                 return
             self._send_json(404, {"error": "not found"})
 
         def do_POST(self) -> None:  # noqa: N802
             parsed = urlparse(self.path)
-            if parsed.path != "/generate":
+            try:
+                route_path, requested_provider = provider_route(parsed.path)
+            except ValueError as exc:
+                self._send_json(400, {"error": str(exc)})
+                return
+            parsed = parsed._replace(path=route_path)
+            resume_match = re.fullmatch(r"/job/([A-Za-z0-9_-]+)/resume", parsed.path)
+            if parsed.path != "/generate" and resume_match is None:
                 self._send_json(404, {"error": "not found"})
                 return
             if recycle_pending.is_set():
@@ -2545,7 +3645,30 @@ def build_handler(
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 payload = json.loads(self.rfile.read(length).decode("utf-8") or "{}")
-                job_id = uuid.uuid4().hex
+                if not isinstance(payload, dict):
+                    raise ValueError("Generation request must be an object")
+                if resume_match:
+                    if payload:
+                        raise ValueError("Resume uses the stored request; body must be empty")
+                    previous = jobs.get(resume_match.group(1))
+                    if not previous or previous.get("status") not in {"interrupted", "waiting_for_image_provider"}:
+                        raise ValueError("Job is not an interrupted resumable job")
+                    payload = dict(previous["request"])
+                if requested_provider and payload.get("image_provider", requested_provider) != requested_provider:
+                    raise ValueError("Image provider in URL conflicts with request body")
+                provider = requested_provider or str(payload.get("image_provider", getattr(runtime.args, "image_provider", "builtin_imagegen")))
+                if provider not in BRIDGE_IMAGE_PROVIDERS:
+                    raise ValueError("Unsupported image provider")
+                payload["image_provider"] = provider
+                if hasattr(runtime, "image_provider_contract"):
+                    current_contract = runtime.image_provider_contract(provider)
+                    stored_contract = payload.get("image_provider_contract")
+                    if resume_match and stored_contract is None:
+                        raise ValueError("Interrupted job lacks its original image provider contract")
+                    if stored_contract is not None and stored_contract != current_contract:
+                        raise ValueError("Image provider configuration changed; request contract mismatch")
+                    payload["image_provider_contract"] = current_contract
+                job_id = resume_match.group(1) if resume_match else uuid.uuid4().hex
                 admission = broker.acquire(job_id) if broker else {"accepted": True}
                 if not admission.get("accepted"):
                     self._send_json(
@@ -2557,7 +3680,7 @@ def build_handler(
                         },
                     )
                     return
-                jobs.create(job_id)
+                jobs.create(job_id, image_provider=provider, request=payload)
 
                 def worker() -> None:
                     heartbeat_stop = threading.Event()
@@ -2594,7 +3717,7 @@ def build_handler(
                         metadata_path = Path(runtime.args.output_dir) / f"{job_id}.json"
                         jobs.update(
                             job_id,
-                            status="failed",
+                            status=("waiting_for_image_provider" if isinstance(exc, TimeoutError) and str(exc).startswith("waiting_for_image_provider:") else "failed"),
                             error=str(exc),
                             error_log=str(error_log),
                             metadata_path=str(metadata_path) if metadata_path.exists() else None,
@@ -2624,11 +3747,22 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Serve SAGE TRELLIS API via local Flux plus TRELLIS.2.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8082)
+    parser.add_argument("--image-provider", choices=BRIDGE_IMAGE_PROVIDERS, default="builtin_imagegen")
+    parser.add_argument("--builtin-imagegen-url", default="http://127.0.0.1:8084")
+    parser.add_argument("--builtin-imagegen-timeout", type=float, default=1800.0)
     parser.add_argument("--flux-server-url", default="http://127.0.0.1:8083")
     parser.add_argument("--flux-profile", choices=["flux1-schnell", "flux2-klein", "custom"], default="flux1-schnell")
     parser.add_argument("--trellis-repo", default="/home/xy/PAT3D/pat3d_stage2/vendor/TRELLIS.2")
     parser.add_argument("--trellis-model", default="/data/xy/pat3d_stage2_data/models/trellis2_primary")
     parser.add_argument("--output-dir", default="/data/xy/SAGE_repro/trellis2_bridge")
+    parser.add_argument(
+        "--persistent-evidence-dir",
+        default="",
+        help=(
+            "Non-temporary root for raw Flux RGB, prepared RGBA, masks, and "
+            "hash manifests. Required when --output-dir is under /tmp or /var/tmp."
+        ),
+    )
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--pipeline-type", default="1024_cascade", choices=["512", "1024", "1024_cascade", "1536_cascade"])
     parser.add_argument(
@@ -2650,10 +3784,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--flux-background-mode",
         choices=["contrast", "gray", "white"],
-        default="gray",
+        default="white",
         help=(
-            "Background used for generated isolated references. Neutral gray is "
-            "the fair/default path; saturated contrast colors are diagnostic-only."
+            "Background used for generated isolated references. Pure white is "
+            "the production default; gray/contrast modes are diagnostic-only."
         ),
     )
     parser.add_argument("--flux-retry-count", type=int, default=2)
@@ -2683,9 +3817,23 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--alpha-content-scale", type=float, default=0.86)
     parser.add_argument("--alpha-quality-check", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--alpha-require-quality", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument(
+        "--background-isolation-require-clean",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "Fail before TRELLIS when the generated white source, exact-white "
+            "normalized preview, or exposed-support background-gap contract fails."
+        ),
+    )
     parser.add_argument("--alpha-min-foreground-ratio", type=float, default=0.012)
     parser.add_argument("--alpha-max-foreground-ratio", type=float, default=0.68)
     parser.add_argument("--alpha-max-border-foreground-ratio", type=float, default=0.015)
+    parser.add_argument("--white-background-alpha-max", type=int, default=8)
+    parser.add_argument("--white-background-minimum-channel", type=float, default=232.0)
+    parser.add_argument("--white-background-maximum-chroma-range", type=float, default=18.0)
+    parser.add_argument("--white-background-minimum-fraction", type=float, default=0.96)
+    parser.add_argument("--white-background-maximum-median-deviation", type=float, default=18.0)
     parser.add_argument("--white-base-quality-check", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--white-base-require-clean", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--white-base-auto-repair", action=argparse.BooleanOptionalAction, default=True)
@@ -2702,6 +3850,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--white-base-score-penalty", type=float, default=0.65)
     parser.add_argument("--white-base-support-band-height-ratio", type=float, default=0.04)
     parser.add_argument("--white-base-max-support-occupancy-ratio", type=float, default=0.55)
+    parser.add_argument("--connected-base-min-width-ratio", type=float, default=0.72)
+    parser.add_argument("--connected-base-max-height-ratio", type=float, default=0.24)
+    parser.add_argument("--connected-base-min-aspect-ratio", type=float, default=6.0)
+    parser.add_argument("--connected-base-min-bottom-ratio", type=float, default=0.72)
+    parser.add_argument("--support-gap-horizontal-inset-ratio", type=float, default=0.10)
+    parser.add_argument("--support-gap-minimum-depth-ratio", type=float, default=0.11)
+    parser.add_argument("--support-gap-minimum-open-column-fraction", type=float, default=0.30)
+    parser.add_argument("--support-gap-score-penalty", type=float, default=0.65)
     parser.add_argument("--white-base-repair-start-ratio", type=float, default=0.64)
     parser.add_argument("--white-base-repair-min-row-width-ratio", type=float, default=0.22)
     parser.add_argument("--white-base-repair-plant-min-row-width-ratio", type=float, default=0.38)
@@ -2844,6 +4000,10 @@ def main() -> None:
     os.environ.setdefault("HF_DATASETS_OFFLINE", "1")
     os.environ.setdefault("HF_HUB_DISABLE_TELEMETRY", "1")
     args = parse_args()
+    if args.builtin_imagegen_timeout <= 0:
+        raise ValueError("--builtin-imagegen-timeout must be positive")
+    if _is_loopback_url(args.builtin_imagegen_url) and urlparse(args.builtin_imagegen_url).port == int(args.port):
+        raise ValueError("Builtin image provider and TRELLIS bridge must use different ports")
     flux_url = urlparse(args.flux_server_url)
     flux_port = flux_url.port
     if _is_loopback_url(args.flux_server_url) and flux_port == int(args.port):
@@ -2852,8 +4012,11 @@ def main() -> None:
             "run Flux and the TRELLIS bridge on different ports."
         )
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
-    jobs = JobStore()
     runtime = Trellis2BridgeRuntime(args)
+    # Fail during service startup, before accepting heavy jobs, when evidence
+    # would otherwise be volatile.
+    evidence_root = runtime._persistent_evidence_root()
+    jobs = JobStore(evidence_root / "bridge_jobs")
     lease_path = Path(args.heavy_job_lease_state) if args.heavy_job_lease_state else Path(args.output_dir) / "heavy_job_lease.json"
     broker = HeavyJobBroker(
         lease_path,

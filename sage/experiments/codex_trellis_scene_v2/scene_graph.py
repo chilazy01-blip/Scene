@@ -153,6 +153,9 @@ def _object_source(obj: dict[str, Any]) -> dict[str, Any]:
         "required",
         "provenance",
         "placement_type",
+        "window_treatment",
+        "furnishing_anchor_id",
+        "furnishing_attachment",
         "part_of_id",
         "container_id",
         "container_slot",
@@ -172,6 +175,7 @@ def _object_source(obj: dict[str, Any]) -> dict[str, Any]:
         "asset_canonical_front",
         "asset_orientation",
         "asset_affordance",
+        "usage_constraints",
         "included_components",
         "component_policy",
         "component_requirements",
@@ -239,6 +243,9 @@ def _primary_parent(
     obj: dict[str, Any], node_ids: set[str]
 ) -> tuple[str, str, str]:
     placement_type = str(obj.get("placement_type") or "floor")
+    window_id = obj.get("window_treatment", {}).get("window_id")
+    if window_id in node_ids:
+        return window_id, "attached_to", "parent_local"
     part_of_id = str(obj.get("part_of_id") or "")
     if part_of_id:
         return part_of_id, "part_of", "parent_local"
@@ -697,6 +704,9 @@ def materialize_scene_graph(
             "local_reference": local_reference,
             "local_resolved": local_resolved,
         }
+        if obj is not None and obj.get("rigid_body_pose_matrix_z_up") is not None:
+            node["pose"]["world_rigid_body_matrix_z_up"] = deepcopy(obj["rigid_body_pose_matrix_z_up"])
+            node["pose"]["rigid_body_origin"] = "metric_visual_bounds_center"
 
     materialized["layout_materialized"] = True
     materialized["materialized_object_count"] = len(world_pose_by_id)

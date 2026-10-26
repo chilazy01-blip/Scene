@@ -37,6 +37,14 @@
               <span>调用资产库</span>
             </label>
           </div>
+          <label>
+            缺失资产候选图
+            <select id="imageProvider">
+              <option value="builtin_imagegen" selected>内置图生（默认，实际型号未核验）</option>
+              <option value="flux1-schnell">FLUX.1-schnell</option>
+            </select>
+          </label>
+          <p>内置图生需要 Codex 工具执行端在线；离线时任务等待，不会自动切换后端。</p>
         </section>
 
         <section class="panel">

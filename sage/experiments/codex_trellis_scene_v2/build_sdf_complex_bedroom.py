@@ -19,6 +19,7 @@ import numpy as np
 import trimesh
 
 from .capabilities import capability_index, load_capability_registry
+from .architecture import architecture_style_profile
 from .collision_mesh_cleanup import (
     CollisionMeshCleanupConfig,
     cleanup_collision_mesh,
@@ -52,6 +53,7 @@ from .orientation import (
     apply_facing_constraints,
     physical_contact_wall,
 )
+from .policies import wall_material_preset
 from .resource_health import (
     ResourceHealthThresholds,
     append_health_checkpoint,
@@ -87,7 +89,7 @@ GEOMETRY_ASSET_IDS = (
     "office_chair_black_mesh_001",
     "open_bookcase_trellis2_001",
     "book_row_trellis2_001",
-    "book_row_trellis2_002",
+    "book_row_trellis2_004",
     "book_row_trellis2_003",
 )
 GEOMETRY_RELATION_IDS = ("chair", "book_1", "book_2", "book_3")
@@ -110,7 +112,7 @@ TRELLIS_ASSET_SPECS: tuple[dict[str, Any], ...] = (
         "slot_id": "lower_bay",
     },
     {
-        "asset_id": "book_row_trellis2_002",
+        "asset_id": "book_row_trellis2_004",
         "object_id": "sdf_books_2",
         "category": "book_stack",
         "dimensions": {"width": 0.34, "length": 0.14, "height": 0.37},
@@ -124,7 +126,48 @@ TRELLIS_ASSET_SPECS: tuple[dict[str, Any], ...] = (
         "slot_id": "upper_bay",
     },
 )
-TRELLIS_ASSET_INDEX = {str(item["asset_id"]): item for item in TRELLIS_ASSET_SPECS}
+TRELLIS_ASSET_INDEX = {
+    str(item["asset_id"]): item for item in TRELLIS_ASSET_SPECS
+}
+SINGLE_BOOK_ASSET_SPECS: tuple[dict[str, Any], ...] = (
+    TRELLIS_ASSET_SPECS[0],
+    *(
+        {
+            **dict(spec),
+            "asset_id": f"book_row_single_books_{index:03d}",
+            "asset_source": "deterministic_individual_book_composition_multiview_approved",
+            "generation_kind": "individual_book_composition",
+            "included_component_count": 5,
+            "physics_scope": "static_upright_only",
+        }
+        for index, spec in enumerate(TRELLIS_ASSET_SPECS[1:], start=1)
+    ),
+)
+
+
+def _scene_asset_specs(asset_dir: Path) -> tuple[dict[str, Any], ...]:
+    """Prefer certified individual-book rows, with legacy rows as a fallback."""
+
+    individual_complete = all(
+        (asset_dir / f"{spec['asset_id']}.glb").is_file()
+        for spec in SINGLE_BOOK_ASSET_SPECS
+    )
+    selected = SINGLE_BOOK_ASSET_SPECS if individual_complete else TRELLIS_ASSET_SPECS
+    return tuple(dict(item) for item in selected)
+
+
+def _scene_asset_index(asset_dir: Path) -> dict[str, dict[str, Any]]:
+    return {
+        str(item["asset_id"]): item for item in _scene_asset_specs(asset_dir)
+    }
+
+
+def _geometry_asset_ids(asset_dir: Path) -> tuple[str, ...]:
+    return (
+        "desk_warm_oak_001",
+        "office_chair_black_mesh_001",
+        *tuple(str(item["asset_id"]) for item in _scene_asset_specs(asset_dir)),
+    )
 CURATED_ORIENTATION_KEYS = (
     "asset_axis_to_z",
     "asset_axis_to_z_sign",
@@ -395,14 +438,18 @@ def _hardlink_file(source: Path, destination: Path) -> None:
 
 
 def _trellis_capability(asset_id: str, trellis_asset_dir: Path) -> dict[str, Any]:
-    spec = TRELLIS_ASSET_INDEX[asset_id]
+    spec = _scene_asset_index(trellis_asset_dir)[asset_id]
     source_glb = trellis_asset_dir / f"{asset_id}.glb"
     if not source_glb.is_file():
         raise FileNotFoundError(source_glb)
     capability: dict[str, Any] = {
-        "schema": "codex_trellis_asset_capability_v1",
+        "schema": "codex_scene_asset_capability_v1",
         "asset_id": asset_id,
         "category": spec["category"],
+        "asset_source": spec.get(
+            "asset_source", "trellis2_scene_specific_multiview_approved"
+        ),
+        "generation_kind": spec.get("generation_kind", "trellis2_generated_mesh"),
         "source_asset": {
             "sha256": sha256_file(source_glb),
             "qa_status": "scene_specific_multiview_approved",
@@ -428,6 +475,16 @@ def _trellis_capability(asset_id: str, trellis_asset_dir: Path) -> dict[str, Any
         "free_space_volumes": [],
         "semantic_anchors": [],
     }
+    if spec.get("generation_kind") == "individual_book_composition":
+        capability["composition"] = {
+            "component_category": "single_book",
+            "included_component_count": int(spec["included_component_count"]),
+            "arrangement": "upright_single_depth_row",
+            "physics_scope": str(spec["physics_scope"]),
+            "dynamic_physics_status": (
+                "deferred_until_friction_and_contact_modeling"
+            ),
+        }
     if asset_id == "open_bookcase_trellis2_001":
         capability["containment_volumes"] = [
             {
@@ -477,7 +534,7 @@ def _require_trellis_multiview_qa(trellis_asset_dir: Path) -> dict[str, Any]:
         if isinstance(item, dict) and bool(item.get("accepted"))
     }
     accepted = set(accepted_rows)
-    required = set(TRELLIS_ASSET_INDEX)
+    required = set(_scene_asset_index(trellis_asset_dir))
     missing = sorted(required - accepted)
     if not bool(qa.get("ok")) or missing:
         raise RuntimeError(
@@ -809,6 +866,80 @@ def _object(plan: dict[str, Any], object_id: str) -> dict[str, Any]:
     raise KeyError(object_id)
 
 
+def _apply_scene_architecture_style(plan: dict[str, Any]) -> dict[str, Any]:
+    """Restyle an inherited shell without moving or replacing its openings."""
+
+    architecture = plan.get("architecture")
+    if not isinstance(architecture, dict):
+        raise ValueError("inherited bedroom plan has no architecture contract")
+    prompt_text = str(plan.get("description") or "")
+    profile = architecture_style_profile(plan, prompt_text)
+    default_material_id = str(profile["default_wall_material"])
+    accent_material_value = profile.get("accent_wall_material")
+    accent_material_id = (
+        str(accent_material_value) if accent_material_value else None
+    )
+    door_walls = {
+        str(item.get("wall"))
+        for item in architecture.get("doors", [])
+        if isinstance(item, dict)
+    }
+    accent_preferences = ("north", "west", "south", "east")
+    accent_wall = next(
+        (wall for wall in accent_preferences if wall not in door_walls), "north"
+    )
+    wall_overrides = (
+        {accent_wall: wall_material_preset(accent_material_id)}
+        if accent_material_id
+        else {}
+    )
+    architecture["wall_finish"] = {
+        "default": wall_material_preset(default_material_id),
+        "overrides": wall_overrides,
+        "max_override_walls": 1,
+    }
+    for opening_kind, finish_key in (
+        ("doors", "door_finish"),
+        ("windows", "window_finish"),
+    ):
+        for opening in architecture.get(opening_kind, []):
+            if not isinstance(opening, dict):
+                continue
+            opening["finish_profile"] = {
+                "profile_id": str(profile[finish_key]),
+                "source": "scene_style_profile",
+                "scene_style_profile_id": str(profile["profile_id"]),
+            }
+            binding = opening.get("asset_binding")
+            if isinstance(binding, dict):
+                binding["style_variant"] = str(profile[finish_key])
+                binding["style_match_status"] = "assembly_finish_overlay_bound"
+    planning = architecture.get("planning")
+    planning = planning if isinstance(planning, dict) else {}
+    planning["style_profile"] = deepcopy(profile)
+    planning.setdefault("decisions", []).append(
+        {
+            "decision": "inherited_shell_style_rebind",
+            "style_profile_id": str(profile["profile_id"]),
+            "default_wall_material_id": default_material_id,
+            "accent_wall": accent_wall if accent_material_id else None,
+            "accent_wall_material_id": accent_material_id,
+            "door_finish_profile": str(profile["door_finish"]),
+            "window_finish_profile": str(profile["window_finish"]),
+            "opening_geometry_preserved": True,
+        }
+    )
+    architecture["planning"] = planning
+    plan["architecture_style_rebind"] = {
+        "profile": deepcopy(profile),
+        "default_wall_material_id": default_material_id,
+        "accent_wall": accent_wall if accent_material_id else None,
+        "accent_wall_material_id": accent_material_id,
+        "opening_geometry_preserved": True,
+    }
+    return deepcopy(plan["architecture_style_rebind"])
+
+
 def prepare_stage(
     base_run: Path, asset_root: Path, output: Path, trellis_asset_dir: Path
 ) -> dict[str, Any]:
@@ -818,10 +949,12 @@ def prepare_stage(
     plan = deepcopy(read_json(base_run / "layout_plan_final.json"))
     multiview_qa = _require_trellis_multiview_qa(trellis_asset_dir)
     inherited_contract_repair = _repair_inherited_scene_contracts(plan, asset_root)
+    architecture_style_rebind = _apply_scene_architecture_style(plan)
 
     trellis_reports: list[dict[str, Any]] = []
     capabilities: dict[str, dict[str, Any]] = {}
-    for spec in TRELLIS_ASSET_SPECS:
+    scene_asset_specs = _scene_asset_specs(trellis_asset_dir)
+    for spec in scene_asset_specs:
         asset_id = str(spec["asset_id"])
         source_glb = trellis_asset_dir / f"{asset_id}.glb"
         pilot_report_path = trellis_asset_dir / f"{asset_id}_pilot_report.json"
@@ -851,20 +984,22 @@ def prepare_stage(
                 "pilot_report": str(pilot_report_path),
                 "pilot_ok": True,
                 "multiview_qa_accepted": True,
+                "asset_source": capability["asset_source"],
+                "generation_kind": capability["generation_kind"],
             }
         )
 
-    bookcase_spec = TRELLIS_ASSET_SPECS[0]
+    bookcase_spec = scene_asset_specs[0]
     bookcase_capability = capabilities[str(bookcase_spec["asset_id"])]
     bookcase_id = "sdf_open_bookcase"
-    book_specs = [dict(item) for item in TRELLIS_ASSET_SPECS[1:]]
+    book_specs = [dict(item) for item in scene_asset_specs[1:]]
 
     plan["objects"].append(
         {
             "id": bookcase_id,
             "category": "bookcase",
             "asset_id": bookcase_capability["asset_id"],
-            "asset_source": "trellis2_scene_specific_multiview_approved",
+            "asset_source": bookcase_capability["asset_source"],
             "asset_axis_to_z": 2,
             "asset_axis_to_z_sign": 1.0,
             "asset_local_yaw_offset_degrees": 0.0,
@@ -882,7 +1017,14 @@ def prepare_stage(
                 "id": spec["object_id"],
                 "category": "book_stack",
                 "asset_id": spec["asset_id"],
-                "asset_source": "trellis2_scene_specific_multiview_approved",
+                "asset_source": spec.get(
+                    "asset_source", "trellis2_scene_specific_multiview_approved"
+                ),
+                "generation_kind": spec.get(
+                    "generation_kind", "trellis2_generated_mesh"
+                ),
+                "included_component_count": spec.get("included_component_count"),
+                "physics_scope": spec.get("physics_scope"),
                 "asset_axis_to_z": 2,
                 "asset_axis_to_z_sign": 1.0,
                 "asset_local_yaw_offset_degrees": 0.0,
@@ -937,8 +1079,12 @@ def prepare_stage(
         "trellis_multiview_qa": multiview_qa,
         "bookcase_capability": bookcase_capability,
         "book_specs": book_specs,
-        "trellis_asset_exports": trellis_reports,
+        "scene_asset_exports": trellis_reports,
+        "single_book_composition_enabled": bool(
+            scene_asset_specs == tuple(dict(item) for item in SINGLE_BOOK_ASSET_SPECS)
+        ),
         "inherited_scene_contract_repair": inherited_contract_repair,
+        "architecture_style_rebind": architecture_style_rebind,
         "procedural_asset_exports": [],
         "procedural_fallback_permitted": False,
     }
@@ -958,7 +1104,7 @@ def _asset_meshes(
         visual_mesh, _ = load_normalized_asset_mesh(
             capability, asset_root, verify_hash=True
         )
-    elif asset_id in TRELLIS_ASSET_INDEX:
+    elif asset_id in _scene_asset_index(trellis_asset_dir):
         capability = _trellis_capability(asset_id, trellis_asset_dir)
         visual_mesh, _ = load_normalized_asset_mesh(
             capability, trellis_asset_dir, verify_hash=True
@@ -1045,7 +1191,7 @@ def geometry_asset_stage(
     output: Path,
     asset_id: str,
 ) -> dict[str, Any]:
-    if asset_id not in GEOMETRY_ASSET_IDS:
+    if asset_id not in _geometry_asset_ids(trellis_asset_dir):
         raise KeyError(f"unsupported geometry asset worker: {asset_id}")
     append_health_checkpoint(
         output / "resource_health.jsonl",
@@ -1116,7 +1262,7 @@ def _load_saved_runtime_asset(
         visual_mesh, _ = load_normalized_asset_mesh(
             capability, asset_root, verify_hash=True
         )
-    elif asset_id in TRELLIS_ASSET_INDEX:
+    elif asset_id in _scene_asset_index(trellis_asset_dir):
         capability = _trellis_capability(asset_id, trellis_asset_dir)
         visual_mesh, _ = load_normalized_asset_mesh(
             capability, trellis_asset_dir, verify_hash=True
@@ -1159,7 +1305,7 @@ def geometry_relation_stage(
     else:
         index = int(relation_id.split("_", 1)[1]) - 1
         source_object_id = f"sdf_books_{index + 1}"
-        source_asset_id = f"book_row_trellis2_{index + 1:03d}"
+        source_asset_id = str(_scene_asset_specs(trellis_asset_dir)[index + 1]["asset_id"])
         target_object_id = "sdf_open_bookcase"
         target_asset_id = "open_bookcase_trellis2_001"
         target_slot_id = ("lower_bay", "middle_bay", "upper_bay")[index]
@@ -1255,7 +1401,7 @@ def geometry_relation_stage(
     return report
 
 
-def _finalize_geometry_stage(output: Path) -> dict[str, Any]:
+def _finalize_geometry_stage(output: Path, trellis_asset_dir: Path) -> dict[str, Any]:
     plan = read_json(output / "layout_plan_pre_geometry.json")
     relation_reports = [
         read_json(output / "geometry_relations" / f"{relation_id}.json")
@@ -1293,7 +1439,7 @@ def _finalize_geometry_stage(output: Path) -> dict[str, Any]:
         asset_id: read_json(output / "geometry_assets" / f"{asset_id}.json").get(
             "collision_mesh_cleanup"
         )
-        for asset_id in GEOMETRY_ASSET_IDS
+        for asset_id in _geometry_asset_ids(trellis_asset_dir)
     }
     chair_report = relation_reports[0]
     book_reports = relation_reports[1:]
@@ -1305,7 +1451,7 @@ def _finalize_geometry_stage(output: Path) -> dict[str, Any]:
             and audit["accepted_relation_count"] == 4
             and whole_scene_audit["ok"]
         ),
-        "isolated_asset_subprocess_count": len(GEOMETRY_ASSET_IDS),
+        "isolated_asset_subprocess_count": len(_geometry_asset_ids(trellis_asset_dir)),
         "isolated_relation_subprocess_count": len(GEOMETRY_RELATION_IDS),
         "cleanup_reports": cleanup_reports,
         "relation_count": audit["relation_count"],
@@ -1351,11 +1497,14 @@ def geometry_stage(
         "office_chair_black_mesh_001": "office_chair",
         "open_bookcase_trellis2_001": "bookcase",
         "book_row_trellis2_001": "books_1",
-        "book_row_trellis2_002": "books_2",
+        "book_row_trellis2_004": "books_2",
         "book_row_trellis2_003": "books_3",
+        "book_row_single_books_001": "books_1",
+        "book_row_single_books_002": "books_2",
+        "book_row_single_books_003": "books_3",
     }
     module = "sage.experiments.codex_trellis_scene_v2.build_sdf_complex_bedroom"
-    for asset_id in GEOMETRY_ASSET_IDS:
+    for asset_id in _geometry_asset_ids(trellis_asset_dir):
         slug = asset_slugs[asset_id]
         _run_monitored_subprocess(
             [
@@ -1402,7 +1551,7 @@ def geometry_stage(
             / "checkpoints"
             / f"relation_{relation_id}.exit.json",
         )
-    report = _finalize_geometry_stage(output)
+    report = _finalize_geometry_stage(output, trellis_asset_dir)
     append_health_checkpoint(
         output / "resource_health.jsonl",
         stage="geometry_complete",
@@ -1625,7 +1774,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--source-delivery", type=Path)
     parser.add_argument("--blender", type=Path, default=DEFAULT_BLENDER)
-    parser.add_argument("--asset-id", choices=GEOMETRY_ASSET_IDS)
+    parser.add_argument(
+        "--asset-id",
+        choices=tuple(
+            dict.fromkeys(
+                [
+                    *GEOMETRY_ASSET_IDS,
+                    *[str(item["asset_id"]) for item in SINGLE_BOOK_ASSET_SPECS],
+                ]
+            )
+        ),
+    )
     parser.add_argument("--relation-id", choices=GEOMETRY_RELATION_IDS)
     parser.add_argument(
         "--assembler",

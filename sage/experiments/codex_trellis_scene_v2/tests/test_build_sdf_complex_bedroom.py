@@ -87,6 +87,39 @@ class SdfBedroomRunnerTest(unittest.TestCase):
             any("parametric" in asset_id for asset_id in build.GEOMETRY_ASSET_IDS)
         )
 
+    def test_certified_individual_book_rows_replace_legacy_rows_as_a_set(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for spec in build.SINGLE_BOOK_ASSET_SPECS:
+                (root / f"{spec['asset_id']}.glb").write_bytes(b"glb")
+            selected = build._scene_asset_specs(root)
+            selected_ids = [str(item["asset_id"]) for item in selected]
+            self.assertEqual(
+                selected_ids[1:],
+                [
+                    "book_row_single_books_001",
+                    "book_row_single_books_002",
+                    "book_row_single_books_003",
+                ],
+            )
+            self.assertTrue(
+                all(
+                    item.get("generation_kind") == "individual_book_composition"
+                    for item in selected[1:]
+                )
+            )
+
+    def test_partial_individual_book_set_does_not_mix_asset_families(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "open_bookcase_trellis2_001.glb").write_bytes(b"glb")
+            (root / "book_row_single_books_001.glb").write_bytes(b"glb")
+            selected_ids = {
+                str(item["asset_id"]) for item in build._scene_asset_specs(root)
+            }
+            self.assertIn("book_row_trellis2_004", selected_ids)
+            self.assertNotIn("book_row_single_books_001", selected_ids)
+
     def test_multiview_gate_requires_every_trellis_asset(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

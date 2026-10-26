@@ -23,6 +23,12 @@ except ModuleNotFoundError:  # direct ``python sage/webui/server.py`` launch
     from sage.webui.job_store import JobStore
 
 
+from sage.experiments.codex_trellis_scene_v2.core_domain import (
+    DEFAULT_IMAGE_PROVIDER,
+    normalize_image_provider,
+)
+
+
 WEBUI_DIR = Path(__file__).resolve().parent
 STATIC_DIR = WEBUI_DIR / "static"
 WORKSPACE_ROOT = WEBUI_DIR.parents[1]
@@ -120,6 +126,7 @@ def float_payload(payload: dict[str, Any], key: str, default: float, minimum: fl
 def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[str, Any]:
     mode = str(payload.get("mode") or "image_to_scene")
     asset_strategy = str(payload.get("assetStrategy") or "generate_from_scratch")
+    image_provider = normalize_image_provider(payload.get("imageProvider"))
     scene_name = sanitize_label(payload.get("sceneName"), fallback=mode)
     output_root = Path(str(payload.get("outputRoot") or DEFAULT_OUTPUT_ROOT)).expanduser().resolve()
     if output_root != DEFAULT_OUTPUT_ROOT and DEFAULT_OUTPUT_ROOT not in output_root.parents:
@@ -146,6 +153,8 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
             profile,
             "--asset-strategy",
             asset_strategy,
+            "--image-provider",
+            image_provider,
             "--asset-pipeline",
             "asset_library" if asset_strategy == "asset_library" else "source_images",
             "--candidate-count",
@@ -227,6 +236,7 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
             "profileKind": "formal_delivery" if profile == "production" else "diagnostic",
             "implemented": True,
             "assetStrategy": asset_strategy,
+            "imageProvider": image_provider,
             "command": command,
             "outputDir": str(output_dir),
             "warnings": warnings,
@@ -246,6 +256,8 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
         str(output_dir),
         "--profile",
         profile,
+        "--image-provider",
+        image_provider,
         "--no-layout-template-context",
         "--trellis-pipeline-type",
         str(payload.get("trellisPipelineType") or "512"),
@@ -314,6 +326,7 @@ def build_flow_plan(payload: dict[str, Any], job_id: str | None = None) -> dict[
         "profileKind": "formal_delivery" if profile == "production" else "diagnostic",
         "implemented": True,
         "assetStrategy": asset_strategy,
+        "imageProvider": image_provider,
         "command": command,
             "outputDir": str(output_dir),
             "warnings": warnings,
@@ -333,7 +346,12 @@ def config_payload() -> dict[str, Any]:
             {"id": "generate_from_scratch", "label": "从 0 生成资产", "enabled": True},
             {"id": "asset_library", "label": "调用资产库", "enabled": True},
         ],
+        "imageProviders": [
+            {"id": "builtin_imagegen", "label": "内置图生（实际型号未核验）"},
+            {"id": "flux1-schnell", "label": "FLUX.1-schnell"},
+        ],
         "defaults": {
+            "imageProvider": DEFAULT_IMAGE_PROVIDER,
             "flowPython": str(FLOW_PYTHON),
             "flowScript": str(FLOW_SCRIPT),
             "textFlowScript": str(TEXT_FLOW_SCRIPT),
@@ -432,6 +450,7 @@ class SageWebHandler(SimpleHTTPRequestHandler):
                 payload = self.read_json()
                 job_id = f"{int(time.time())}-{uuid.uuid4().hex[:8]}"
                 plan = build_flow_plan(payload, job_id=job_id)
+                payload["imageProvider"] = plan["imageProvider"]
                 job = {
                     "id": job_id,
                     "status": "created" if plan.get("implemented") else "reserved",

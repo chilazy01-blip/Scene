@@ -14,10 +14,13 @@ OBJECT_DEFINITIONS: dict[str, dict[str, Any]] = {
     "dresser": {"dimensions": [1.2, 0.5, 0.9], "keywords": ["dresser", "chest of drawers", "斗柜", "梳妆柜"]},
     "sofa": {"dimensions": [2.2, 0.92, 0.9], "keywords": ["sofa", "couch", "沙发"]},
     "coffee_table": {"dimensions": [1.1, 0.62, 0.42], "keywords": ["coffee table", "茶几"]},
-    "tv_stand": {"dimensions": [1.7, 0.42, 0.58], "keywords": ["tv stand", "media console", "电视柜"]},
+    "tv_stand": {"dimensions": [1.7, 0.42, 0.58], "keywords": ["tv stand", "tv cabinet", "media console", "电视柜"]},
     "tv": {"dimensions": [1.25, 0.12, 0.75], "keywords": ["television", "tv", "电视"]},
-    "accent_chair": {"dimensions": [0.82, 0.82, 0.92], "keywords": ["armchair", "accent chair", "休闲椅", "单人沙发"]},
+    "accent_chair": {"dimensions": [0.82, 0.82, 0.92], "keywords": ["armchair", "accent chair", "lounge chair", "休闲椅", "单人沙发"]},
     "side_table": {"dimensions": [0.48, 0.48, 0.55], "keywords": ["side table", "end table", "边几"]},
+    "computer_monitor": {"dimensions": [.61,.20,.45], "keywords": ["computer monitor", "显示器"], "placement_type": "support", "preferred_support_category": "desk"},
+    "laptop": {"dimensions": [.34,.25,.22], "keywords": ["laptop", "notebook computer", "笔记本电脑"], "placement_type": "support", "preferred_support_category": "desk"},
+    "desktop_tower": {"dimensions": [.20,.40,.43], "keywords": ["desktop tower", "电脑主机"]},
     "floor_lamp": {"dimensions": [0.4, 0.4, 1.65], "keywords": ["floor lamp", "落地灯"]},
     "refrigerator": {"dimensions": [0.82, 0.78, 1.9], "keywords": ["refrigerator", "fridge", "冰箱"]},
     "sink_cabinet": {"dimensions": [1.2, 0.65, 0.9], "keywords": ["sink", "sink cabinet", "水槽", "洗菜池"]},
@@ -28,6 +31,7 @@ OBJECT_DEFINITIONS: dict[str, dict[str, Any]] = {
     "desk": {"dimensions": [1.4, 0.72, 0.75], "keywords": ["desk", "书桌", "办公桌"]},
     "office_chair": {"dimensions": [0.62, 0.62, 1.05], "keywords": ["office chair", "desk chair", "办公椅"]},
     "bookcase": {"dimensions": [1.1, 0.36, 1.9], "keywords": ["bookcase", "bookshelf", "书柜", "书架"]},
+    "single_book": {"dimensions": [0.03, 0.16, 0.24], "keywords": ["individual single book", "独立单书"]},
     "cabinet": {"dimensions": [1.0, 0.48, 1.0], "keywords": ["cabinet", "文件柜", "储物柜"]},
     "area_rug": {
         "dimensions": [2.4, 1.7, 0.02],
@@ -70,6 +74,10 @@ OBJECT_DEFINITIONS: dict[str, dict[str, Any]] = {
     "storage_box": {
         "dimensions": [0.46, 0.34, 0.28],
         "keywords": ["storage box", "storage boxes", "收纳箱", "储物箱"],
+    },
+    "storage_basket": {
+        "dimensions": [0.40, 0.35, 0.33],
+        "keywords": ["storage basket", "storage baskets", "收纳篮", "储物篮"],
     },
     "pillow": {
         "dimensions": [0.62, 0.42, 0.16],
@@ -294,6 +302,43 @@ WALL_MATERIAL_PRESETS: dict[str, dict[str, Any]] = {
         "roughness": 0.82,
         "noise_scale": 46.0,
         "texture_scale_m": 1.0,
+    },
+    "warm_clay_plaster": {
+        "texture_type": "procedural_clay_plaster",
+        "base_color": [0.58, 0.42, 0.30, 1.0],
+        "secondary_color": [0.72, 0.57, 0.43, 1.0],
+        "roughness": 0.90,
+        "noise_scale": 22.0,
+        "texture_scale_m": 1.4,
+    },
+    "natural_linen_wallpaper": {
+        "texture_type": "procedural_linen_wallpaper",
+        "base_color": [0.72, 0.67, 0.57, 1.0],
+        "secondary_color": [0.84, 0.80, 0.70, 1.0],
+        "roughness": 0.86,
+        "texture_scale_m": 0.55,
+    },
+    "vertical_light_oak_slat": {
+        "texture_type": "procedural_wood_slat",
+        "base_color": [0.55, 0.34, 0.16, 1.0],
+        "secondary_color": [0.78, 0.58, 0.32, 1.0],
+        "roughness": 0.70,
+        "texture_scale_m": 0.72,
+    },
+    "charcoal_microcement": {
+        "texture_type": "procedural_microcement",
+        "base_color": [0.20, 0.22, 0.23, 1.0],
+        "secondary_color": [0.31, 0.33, 0.34, 1.0],
+        "roughness": 0.78,
+        "noise_scale": 18.0,
+        "texture_scale_m": 1.5,
+    },
+    "soft_red_brick": {
+        "texture_type": "procedural_brick_wall",
+        "base_color": [0.43, 0.20, 0.13, 1.0],
+        "secondary_color": [0.62, 0.31, 0.20, 1.0],
+        "roughness": 0.88,
+        "texture_scale_m": 0.8,
     },
 }
 
@@ -588,7 +633,7 @@ ROOM_POLICIES: dict[str, dict[str, Any]] = {
             _obj("desk", "desk", preferred_wall="north", priority=100),
             _obj("office_chair", "office_chair", priority=80),
             _obj("bookcase", "bookcase", preferred_wall="east", priority=90),
-            _obj("cabinet", "cabinet", preferred_wall="west", priority=70),
+            _obj("cabinet", "cabinet", required=False, preferred_wall="west", priority=70),
             _obj("floor_lamp", "floor_lamp", preferred_wall="south", priority=45),
         ],
         "relations": [["office_chair", "faces", "desk"]],
@@ -653,8 +698,16 @@ def detect_room_type(text: str, override: str | None = None) -> str:
     if override:
         return override
     lowered = text.lower()
+    room_names = {
+        "bedroom": ["bedroom", "卧室"],
+        "living_room": ["living room", "livingroom", "客厅", "起居室"],
+        "kitchen": ["kitchen", "厨房"],
+        "study": ["study", "home office", "书房", "办公室"],
+        "restroom": ["restroom", "bathroom", "卫生间", "浴室"],
+    }
     scores = {
-        room_type: sum(1 for keyword in keywords if keyword.lower() in lowered)
+        room_type: sum(1 for keyword in keywords if _contains_keyword(lowered, keyword))
+        + 10 * sum(_contains_keyword(lowered, keyword) for keyword in room_names.get(room_type, []))
         for room_type, keywords in ROOM_KEYWORDS.items()
     }
     best = max(scores, key=scores.get)
@@ -679,12 +732,27 @@ def detect_styles(text: str) -> list[str]:
     return styles or ["modern", "warm"]
 
 
+def _explicit_keyword_matches(text: str) -> list[tuple[str, str, int, int]]:
+    """Prefer the specific compound at each occurrence, retaining separate nouns."""
+    matches = []
+    for category, definition in OBJECT_DEFINITIONS.items():
+        for keyword in definition["keywords"]:
+            normalized = keyword.lower()
+            pattern = re.escape(normalized)
+            if re.fullmatch(r"[a-z0-9 _-]+", normalized):
+                plural = "s?" if not normalized.endswith("s") else ""
+                pattern = r"(?<![a-z0-9])" + pattern + plural + r"(?![a-z0-9])"
+            matches.extend((category, normalized, m.start(), m.end())
+                           for m in re.finditer(pattern, text.lower()))
+    return [m for m in matches if not any(
+        other[0] != m[0] and other[2] <= m[2] and other[3] >= m[3]
+        and other[3] - other[2] > m[3] - m[2] for other in matches
+    )]
+
+
 def detect_explicit_categories(text: str) -> list[str]:
-    return [
-        category
-        for category, definition in OBJECT_DEFINITIONS.items()
-        if any(_contains_keyword(text, keyword) for keyword in definition["keywords"])
-    ]
+    matched = {m[0] for m in _explicit_keyword_matches(text)}
+    return [category for category in OBJECT_DEFINITIONS if category in matched]
 
 
 _COUNT_WORDS = {
@@ -709,21 +777,19 @@ def detect_explicit_category_counts(text: str) -> dict[str, int]:
     """Return requested instance counts without treating the scene target as a cap."""
     lowered = text.lower()
     counts: dict[str, int] = {}
+    keyword_matches = _explicit_keyword_matches(text)
     for category in detect_explicit_categories(text):
         definition = OBJECT_DEFINITIONS[category]
         requested = 1
-        for keyword in definition["keywords"]:
-            normalized = str(keyword).lower()
-            if not _contains_keyword(text, normalized):
-                continue
+        for _, normalized, start, end in [m for m in keyword_matches if m[0] == category]:
             if re.fullmatch(r"[a-z0-9 _-]+", normalized):
                 keyword_pattern = re.escape(normalized)
                 if not normalized.endswith("s"):
                     keyword_pattern += "s?"
                 match = re.search(
                     rf"(?:exactly\s+|at\s+least\s+)?(\d+|one|two|three|four|five|six)"
-                    rf"(?:\s+[a-z-]+){{0,3}}\s+{keyword_pattern}(?![a-z0-9])",
-                    lowered,
+                    rf"(?:\s+(?!(?:and|or|with|on|a|an|one|two|three|four|five|six)\b)[a-z-]+){{0,3}}\s+{keyword_pattern}$",
+                    lowered[:end],
                 )
                 if match:
                     raw_count = match.group(1)

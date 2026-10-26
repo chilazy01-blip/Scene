@@ -1,0 +1,480 @@
+{
+  "content_sha256_excluding_this_field": "2528f48d3566b998efbbd0af49b63d47c94892672cd913ac96a1f0f2e58d56ba",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/build_review_records.py",
+    "sha256": "410e9ce37f4ac5fd1073ba30b2621e17f4b06151f9648d321b0a7f09fc64abeb",
+    "size_bytes": 10529
+  },
+  "implemented_automatic_promotion": false,
+  "implemented_skill_retrieval": false,
+  "literature_reading": {
+    "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/READING_LOG.json",
+    "sha256": "e66cc9af4472e04223b6ff6d24387607bdf8816a18ddc38b89e7527965872b16",
+    "size_bytes": 30137
+  },
+  "new_physics_steps": 0,
+  "project_final": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/FINAL_REVIEW.json",
+    "sha256": "9e82f38ea7a953833db71a3eeb79dd27ecd48c73920a71c85f9f79d2385c73b7",
+    "size_bytes": 49872
+  },
+  "records": [
+    {
+      "allowed_usage": "Retrieve as scoped strategy reference. Revalidate before using under changed models, controllers, assets or task conditions.",
+      "applicability": {
+        "body_control": "SONIC29",
+        "hand_control": "original native14handPD",
+        "layouts": [
+          "S02",
+          "S03"
+        ],
+        "loaded_reference_ratio": 0.65,
+        "object_asset": "mug_white_001",
+        "observation_contract": "privileged simulator state/contact access; not a vision-only or hardware qualification",
+        "original_task_and_physical_gates_unchanged": true,
+        "robot": "G1",
+        "solver_schedule": {
+          "activation_step": 3960,
+          "noslip_iterations": 3
+        },
+        "task": "original upright cup pick/carry/place with translated table-relative workcell"
+      },
+      "automatic_deployment_approved": false,
+      "counterexamples": [
+        "The V003 task was correctly rejected despite upright appearance; physical final-window criteria remain binding."
+      ],
+      "evidence": [
+        {
+          "case_id": "S02_cup",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/MEASUREMENTS.json",
+            "sha256": "5094ee6051c35cb0b03afbce98da7b0cd29c31d472761c1e5b3ec2c1d1e77aba",
+            "size_bytes": 44917
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+            "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+            "size_bytes": 45935557
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/full/REPORT.json",
+            "sha256": "9ca9b5221168eb76dc8965bad4cf5947c85f868e8cf431c66f20aa2b80de8cb3",
+            "size_bytes": 5604869
+          },
+          "source_role": "development_validation",
+          "stop_reason": "cup_upright_place_timeout",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/strategy.py",
+            "sha256": "31e88dffe8cbf70f465ebab01d74b2c5e830690e0207a19cc5b9a00909821537",
+            "size_bytes": 12218
+          },
+          "task_passed": false,
+          "trial": "cup_s02_floor_v3",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/FINAL_VERIFICATION.json",
+            "sha256": "a065638b21ea9a871324bba8b51a84ac4af378d28f884afcffeace873064ed1a",
+            "size_bytes": 3141
+          }
+        },
+        {
+          "case_id": "S02_cup",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/MEASUREMENTS.json",
+            "sha256": "c25f2fe85895ee333317abf5741ff872c30f31e4890aa35ac6bfd07f2d59b914",
+            "size_bytes": 7062
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+            "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+            "size_bytes": 45935557
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/full/REPORT.json",
+            "sha256": "5272a1861dc13a7e77da7a6af9835b7cf1d92de2f088b73360c68904876449b2",
+            "size_bytes": 5517371
+          },
+          "source_role": "development_validation",
+          "stop_reason": null,
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/strategy.py",
+            "sha256": "0f38c7b987784e198a8c138a7d04f2396903c2f5668936fa01f1d355d2db85dc",
+            "size_bytes": 12191
+          },
+          "task_passed": false,
+          "trial": "cup_s02_v003",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/FINAL_VERIFICATION.json",
+            "sha256": "ced5c1e502096e9f1ed9a2ddada3f6078490f8a0f471a8576adea4b8a70161d4",
+            "size_bytes": 3508
+          }
+        },
+        {
+          "case_id": "S02_cup",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/MEASUREMENTS.json",
+            "sha256": "4591543be864741abe8af242567d048cdef4f004b26e9f1a62f00b0ce2900f92",
+            "size_bytes": 6634
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+            "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+            "size_bytes": 45935557
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/full/REPORT.json",
+            "sha256": "7173dd96c4d4255740fea2d1cdbe480be0a32b209077f53be1ffeeae4198739c",
+            "size_bytes": 5510493
+          },
+          "source_role": "development_validation",
+          "stop_reason": null,
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/strategy.py",
+            "sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+            "size_bytes": 13082
+          },
+          "task_passed": true,
+          "trial": "cup_s02_v004",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/FINAL_VERIFICATION.json",
+            "sha256": "640826ac7c7a53ba7403294e5e210b1257b76913b96d0f675ef8c630b4ca4db3",
+            "size_bytes": 4663
+          }
+        },
+        {
+          "case_id": "S03_cup",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/MEASUREMENTS.json",
+            "sha256": "0d676ec271af49932113ee1e642e50126cf2c1474f5776ea1c735727ca8e351c",
+            "size_bytes": 6616
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_cup/model.xml",
+            "sha256": "e16e06067b5e7de49eb1d035c56f88f1eac3f7dd417f210bf96717faee7c2d4a",
+            "size_bytes": 45933888
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/full/REPORT.json",
+            "sha256": "7ba2a024ff019b27ceb7041e58719508ae9e8588cff44c1f455fa9bd53741838",
+            "size_bytes": 5750764
+          },
+          "source_role": "development_validation",
+          "stop_reason": null,
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/strategy.py",
+            "sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+            "size_bytes": 13082
+          },
+          "task_passed": true,
+          "trial": "cup_s03_v004",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/FINAL_VERIFICATION.json",
+            "sha256": "26dd1bb1eb62b6d88e360141649ff64d14bbf0833e6b8caf47dc7dd8fdd0aa00",
+            "size_bytes": 4849
+          }
+        }
+      ],
+      "failure_signature": "Cup alignment timed out with airborne references frozen; later physical terminal window initially included two non-quiet samples.",
+      "id": "cup_airborne_support_and_settle_window",
+      "repair_intent": "Use measured airborne support feedback and a complete physical settle observation interval.",
+      "scope_limit": "Two related development layouts, one cup asset/reference family; no success-rate estimate or unseen-object proof.",
+      "status": "project_validated_in_listed_development_cases"
+    },
+    {
+      "allowed_usage": "Diagnostic/planning reference only; never retrieve as a qualified complete manipulation skill.",
+      "applicability": {
+        "body_control": "SONIC29",
+        "grasp_region": "upper neck/cap",
+        "hand_control": "original native14handPD",
+        "loaded_reference_ratio": 0.65,
+        "mass_assumption_kg": 0.2,
+        "object_asset": "living_20260914_glass_bottle",
+        "observation_contract": "privileged simulator state/contact access; not a vision-only or hardware qualification",
+        "original_task_and_physical_gates_unchanged": true,
+        "robot": "G1",
+        "solver_schedule": {
+          "activation_step": 3960,
+          "noslip_iterations": 3
+        },
+        "tested_layout": "S02"
+      },
+      "automatic_deployment_approved": false,
+      "evidence": [
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/MEASUREMENTS.json",
+            "sha256": "0378e89a45476f78d1870d73fd1444ed5ae5c29554016fcd6f5e15ecd6be15b4",
+            "size_bytes": 43595
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/full/REPORT.json",
+            "sha256": "c73cdccb89f4754418649c7045d329f98e0f8dacd39f8f156d836ea70cf02d82",
+            "size_bytes": 927617
+          },
+          "source_role": "development_validation",
+          "stop_reason": "probe_relative_slip",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/strategy.py",
+            "sha256": "3ac3a79be12ab8632f7bd387bc3757d9324c5d79c6601d8cb0ad76f929cafbde",
+            "size_bytes": 44952
+          },
+          "task_passed": false,
+          "trial": "bottle_s02_v009",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/FINAL_VERIFICATION.json",
+            "sha256": "3c96689dae5aa325b7e6709e252287a4aefacb95ebdd73ac7bd7f994ba24a019",
+            "size_bytes": 3667
+          }
+        },
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/MEASUREMENTS.json",
+            "sha256": "0d957317e071cef56925607ae5cf4906745f2a1951370a60991c1a1897c9e425",
+            "size_bytes": 44877
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/full/REPORT.json",
+            "sha256": "2981b704d86c9ee2daeaf7d0d28e86a1f44f927ed0d75b5dfa463d3a151bb80e",
+            "size_bytes": 5970774
+          },
+          "source_role": "development_validation",
+          "stop_reason": "object_slipped",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/strategy.py",
+            "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+            "size_bytes": 46225
+          },
+          "task_passed": false,
+          "trial": "bottle_s02_v010",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+            "sha256": "4e4e01ace975ec9d77b658d280addd0895bef78d74827f9e4485435d5eea288d",
+            "size_bytes": 3531
+          }
+        },
+        {
+          "case_id": "S03_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/MEASUREMENTS.json",
+            "sha256": "6e1e5d80ca5856efec7e1b1c82a376e0d4605b45c69e18a9297c702094b1bb3f",
+            "size_bytes": 43064
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_bottle/model.xml",
+            "sha256": "5498b72c2a3f21654713696498057188fd93aa5b6a3dfd69248f5be8e58dfeeb",
+            "size_bytes": 47742816
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/full/REPORT.json",
+            "sha256": "3c122a615619ecde16c043bc7744fa1027a57513849ad52fe9d90dd72f494b33",
+            "size_bytes": 462916
+          },
+          "source_role": "development_validation",
+          "stop_reason": "mesh_close_timeout",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/strategy.py",
+            "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+            "size_bytes": 46225
+          },
+          "task_passed": false,
+          "trial": "bottle_s03_v010",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/FINAL_VERIFICATION.json",
+            "sha256": "516b7fb1a7a443be0afbf58d593b6783c70398d2f894dbdfbf85e4cb0d0f1551",
+            "size_bytes": 3506
+          }
+        }
+      ],
+      "failure_signature": "V009 lost middle-finger contact during native load probe while references were being adjusted.",
+      "id": "bottle_acquired_preload_during_probe_and_hover",
+      "observed_partial_outcome": {
+        "S02_final_failure": "object_slipped",
+        "S02_strict_held_robot_net_distance_m": 0.5340119562799803,
+        "S03_final_failure": "mesh_close_timeout"
+      },
+      "repair_intent": "Retain acquired native finger-reference preload through load_probe/lift/loaded_hover.",
+      "scope_limit": "Probe/hover/carry improved in S02; no complete bottle pick/carry/place or transferable success skill.",
+      "status": "project_phase_improvement_only"
+    },
+    {
+      "actual_trials_of_draft": 0,
+      "allowed_usage": "Hypothesis generation and explicitly authorized future guarded validation only.",
+      "applicability": {
+        "body_control": "SONIC29",
+        "grasp_region": "upper neck/cap",
+        "hand_control": "original native14handPD",
+        "loaded_reference_ratio": 0.65,
+        "object_asset": "living_20260914_glass_bottle",
+        "observation_contract": "privileged simulator state/contact access; not a vision-only or hardware qualification",
+        "original_task_and_physical_gates_unchanged": true,
+        "robot": "G1",
+        "solver_schedule": {
+          "activation_step": 3960,
+          "noslip_iterations": 3
+        }
+      },
+      "automatic_deployment_approved": false,
+      "causal_status": "Observed time order supports investigation, not a unique-cause conclusion or proof that this proposal works.",
+      "evidence": [
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/MEASUREMENTS.json",
+            "sha256": "0d957317e071cef56925607ae5cf4906745f2a1951370a60991c1a1897c9e425",
+            "size_bytes": 44877
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/full/REPORT.json",
+            "sha256": "2981b704d86c9ee2daeaf7d0d28e86a1f44f927ed0d75b5dfa463d3a151bb80e",
+            "size_bytes": 5970774
+          },
+          "source_role": "development_validation",
+          "stop_reason": "object_slipped",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/strategy.py",
+            "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+            "size_bytes": 46225
+          },
+          "task_passed": false,
+          "trial": "bottle_s02_v010",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+            "sha256": "4e4e01ace975ec9d77b658d280addd0895bef78d74827f9e4485435d5eea288d",
+            "size_bytes": 3531
+          }
+        }
+      ],
+      "failure_signature": "S02 V010 lost contact near placement after later motor-reference changes.",
+      "id": "bottle_all_airborne_preload_handoff",
+      "proposed_code": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/bottle_v011.py",
+        "sha256": "5917959ba56d2762a5542980aad516c8680281e55ac65d8f7d4cf9b309b0e815",
+        "size_bytes": 47371
+      },
+      "repair_intent": "Investigate consistent acquired-preload protection through later airborne callbacks until actual table-support handoff.",
+      "status": "untested_hypothesis",
+      "time_order_diagnosis": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/context/bottle_v010_time_order_diagnosis_v001.json",
+        "sha256": "3f94921d69912dc6dbc4c29d97ead35e9f04dd40103dd909381174c9fc65852b",
+        "size_bytes": 31682
+      }
+    },
+    {
+      "allowed_usage": "Task-admission and grasp-candidate planning evidence, not a general rule that books cannot be grasped.",
+      "applicability": {
+        "body_control": "SONIC29",
+        "hand_control": "original native14handPD",
+        "initial_pose": "flat, cover normal local X",
+        "left_hand_object_contact_allowed": false,
+        "loaded_reference_ratio": 0.65,
+        "mass_assumption_kg": 0.25,
+        "object_asset": "physics_reference_book_01",
+        "observation_contract": "privileged simulator state/contact access; not a vision-only or hardware qualification",
+        "original_task_and_physical_gates_unchanged": true,
+        "robot": "G1",
+        "solver_schedule": {
+          "activation_step": 3960,
+          "noslip_iterations": 3
+        }
+      },
+      "automatic_deployment_approved": false,
+      "evidence": [
+        {
+          "case_id": "S02_book",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/MEASUREMENTS.json",
+            "sha256": "879bbabcb37f3c63df779ab5d32e427785d1b086e8db9d8e86e7bb3a60534cf6",
+            "size_bytes": 24329
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v3/S02_book/model.xml",
+            "sha256": "bd7c83df7e4445de7bd7165eb5e89fe1cbb5011fe8a88a5f53b1176cfc732908",
+            "size_bytes": 47414075
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/full/REPORT.json",
+            "sha256": "6bec611f5b2ec13b1002055616047d874832ee93a6eeebfdf9c60fe63c11818d",
+            "size_bytes": 50774
+          },
+          "source_role": "development_validation",
+          "stop_reason": "book_shape_reference_not_admitted",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/strategy.py",
+            "sha256": "5736f0a6703c9ead0ff6faeca311e0f8ca2250a56dab4cd27efa6d11afab0ed6",
+            "size_bytes": 32828
+          },
+          "task_passed": false,
+          "trial": "book_s02_v002",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/FINAL_VERIFICATION.json",
+            "sha256": "6ec0924a65bcf9cc649605f051502be5def5db74331ae7847969eb46fce59c97",
+            "size_bytes": 3077
+          }
+        },
+        {
+          "case_id": "S03_book",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/MEASUREMENTS.json",
+            "sha256": "6063076065ded8893d569e0d0547b3e15cb00506c7f03a8514cac18597e5a733",
+            "size_bytes": 24345
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v3/S03_book/model.xml",
+            "sha256": "679cf4122e7c56afbfe1c872c773c575b41ac525af8d19052cea5f799e18fa95",
+            "size_bytes": 47412406
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/full/REPORT.json",
+            "sha256": "da8840bf6e6cf1dadab678448025065dfb86076a206c7d4a43a3bfcfacde1d05",
+            "size_bytes": 92536
+          },
+          "source_role": "development_validation",
+          "stop_reason": "book_opposed_cover_reference_not_admitted",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/strategy.py",
+            "sha256": "0e44f16efa1c634779c9bc2b11ac7bf7836f309aa24e6c3c904a7fae1303cbcc",
+            "size_bytes": 30648
+          },
+          "task_passed": false,
+          "trial": "book_s03_v004",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/FINAL_VERIFICATION.json",
+            "sha256": "36e3841777615fcd5b95a7b549b61b9812b73f1c33391045800d9b13d6a57b8e",
+            "size_bytes": 3078
+          }
+        }
+      ],
+      "failure_signature": "Tested single-right-hand flat-book references fail native clearance/contact/capacity admission.",
+      "id": "flat_book_bounded_direct_grasp_failures",
+      "scope_limit": "Finite references for these exact models and scenes. No global impossibility claim; no changed orientation or bimanual substitution.",
+      "status": "bounded_negative_case"
+    }
+  ],
+  "schema": "scoped-expert-experience-candidates/v1"
+}

@@ -1,0 +1,19 @@
+{
+  "actual_trials": 18,
+  "checked_epoch_utc": 1793003000.2557435,
+  "content_sha256_excluding_this_field": "8b78d0c742065b76b5bcfaf965a89b38217dfb21d754e6f94ecb831afc1d6451",
+  "cost_reservations_closed": 23,
+  "dataset_manifest": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/DATASET_MANIFEST.json",
+    "sha256": "fccfc3039d12fe7d8fce7f228ce33b0e875af9aa35b0987ff2b77bc1ed7f9eb0",
+    "size_bytes": 26568
+  },
+  "final_review": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/FINAL_REVIEW.json",
+    "sha256": "9e82f38ea7a953833db71a3eeb79dd27ecd48c73920a71c85f9f79d2385c73b7",
+    "size_bytes": 49872
+  },
+  "new_physics_steps": 0,
+  "passed": true,
+  "unique_positive_episodes": 2
+}

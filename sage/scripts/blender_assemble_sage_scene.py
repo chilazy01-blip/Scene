@@ -4,13 +4,23 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import sys
 from pathlib import Path
 
 import bpy
+import numpy as np
 from mathutils import Matrix, Vector
+
+
+# Load the same pure-Python contract in Blender and orchestration.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from mesh_dimension_contract import runtime_mesh_fit_audit
+from blender_mesh_bounds import mesh_bbox_world
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from sage.experiments.codex_trellis_scene_v2.asset_usage import asset_usage_violations
 
 
 TARGET_TYPES = {"MESH", "CURVE", "SURFACE", "META", "FONT"}
@@ -308,6 +318,7 @@ def make_wall_texture_image(
     base_color: tuple[float, float, float, float],
     secondary_color: tuple[float, float, float, float],
     size: int = 512,
+    contrast: float = 1.0,
 ) -> bpy.types.Image:
     """Create a subtle, deterministic, tileable wall finish for glTF export."""
 
@@ -323,11 +334,43 @@ def make_wall_texture_image(
     image = bpy.data.images.new(name, width=size, height=size, alpha=True)
     image.colorspace_settings.name = "sRGB"
     pixels: list[float] = []
-    limewash = texture_type == "procedural_limewash"
+    limewash = texture_type in {"procedural_limewash", "procedural_clay_plaster"}
     for y in range(size):
         phase_y = math.tau * y / size
         for x in range(size):
             phase_x = math.tau * x / size
+            if texture_type == "procedural_wood_slat":
+                period = size / 12.0
+                gap = 6
+                local_x = x % period
+                if local_x < gap:
+                    color = shifted_color(base_color, 0.30)
+                else:
+                    slat = x // period
+                    variation = 0.86 + ((slat * 17) % 19) / 100.0
+                    grain = 0.025 * math.sin(y * 0.085 + slat * 1.7)
+                    color = tuple(
+                        max(0.0, min(1.0, secondary_color[channel] * variation + grain))
+                        for channel in range(3)
+                    ) + (1.0,)
+                pixels.extend(encode_srgb(color))
+                continue
+            if texture_type == "procedural_brick_wall":
+                brick_w, brick_h, mortar = 112, 54, 5
+                row = y // brick_h
+                shifted_x = (x + (brick_w // 2 if row % 2 else 0)) % brick_w
+                if shifted_x < mortar or y % brick_h < mortar:
+                    color = (0.62, 0.58, 0.51, 1.0)
+                else:
+                    brick = (x + row * 31) // brick_w
+                    variation = 0.82 + ((brick * 23 + row * 11) % 24) / 100.0
+                    source = base_color if (brick + row) % 2 else secondary_color
+                    color = tuple(
+                        max(0.0, min(1.0, source[channel] * variation))
+                        for channel in range(3)
+                    ) + (1.0,)
+                pixels.extend(encode_srgb(color))
+                continue
             fine = (
                 0.52 * math.sin(7.0 * phase_x + 5.0 * phase_y)
                 + 0.30 * math.cos(13.0 * phase_x - 9.0 * phase_y)
@@ -337,8 +380,13 @@ def make_wall_texture_image(
                 0.55 * math.sin(2.0 * phase_x + phase_y)
                 + 0.45 * math.cos(phase_x - 2.0 * phase_y)
             ) if limewash else 0.0
+            if texture_type == "procedural_linen_wallpaper":
+                weave = 0.55 * math.sin(48.0 * phase_x) + 0.45 * math.sin(52.0 * phase_y)
+                fine = 0.65 * fine + 0.35 * weave
+            elif texture_type == "procedural_microcement":
+                broad = 0.65 * math.sin(1.5 * phase_x + phase_y) + 0.35 * math.cos(phase_x - 1.5 * phase_y)
             mix = 0.10 + 0.035 * fine + (0.045 * broad if limewash else 0.0)
-            value_shift = 0.007 * fine + (0.012 * broad if limewash else 0.0)
+            value_shift = contrast * (0.007 * fine + (0.012 * broad if limewash else 0.0))
             color = tuple(
                 max(
                     0.0,
@@ -356,6 +404,42 @@ def make_wall_texture_image(
     image.update()
     image.pack()
     return image
+
+
+def add_exportable_wall_pbr(mat, bsdf, spec, texture_type):
+    """Packed image inputs survive GLB export, unlike a procedural Bump node."""
+    import numpy as np
+    size = 512
+    y, x = np.mgrid[0:size, 0:size] / size
+    fine = .52*np.sin(math.tau*(7*x+5*y)) + .30*np.cos(math.tau*(13*x-9*y)) + .18*np.sin(math.tau*(23*x+19*y))
+    if texture_type == 'procedural_wood_slat':
+        # Twelve slats per UV tile, with rounded groove transitions.
+        height = .5 + .5*np.tanh(8*(np.cos(math.tau*12*x)+.82))
+    else:
+        height = .5 + .35*fine + .15*np.sin(math.tau*(2*x+y))
+    relief = float(spec.get('finish_relief_m', .0006))
+    tile_m = float(spec.get('texture_scale_m', 1.0))
+    dx = (np.roll(height,-1,axis=1)-np.roll(height,1,axis=1))*relief*size/(2*tile_m)
+    dy = (np.roll(height,-1,axis=0)-np.roll(height,1,axis=0))*relief*size/(2*tile_m)
+    normals = np.stack((-dx,-dy,np.ones_like(dx)),axis=-1)
+    normals /= np.linalg.norm(normals,axis=-1,keepdims=True)
+    pixels = np.ones((size,size,4),dtype=np.float32)
+    pixels[:,:,:3] = normals*.5+.5
+    normal = bpy.data.images.new(mat.name+'_normal',width=size,height=size,alpha=True)
+    normal.colorspace_settings.name='Non-Color'
+    normal.pixels.foreach_set(pixels.ravel());normal.update();normal.pack()
+    nodes,links=mat.node_tree.nodes,mat.node_tree.links
+    tex=nodes.new('ShaderNodeTexImage');tex.image=normal;tex.extension='REPEAT'
+    decode=nodes.new('ShaderNodeNormalMap');decode.space='TANGENT'
+    links.new(tex.outputs['Color'],decode.inputs['Color']);links.new(decode.outputs['Normal'],bsdf.inputs['Normal'])
+    rough=np.clip(float(spec.get('roughness',.85))+.045*fine,0,1)
+    pixels[:,:,:3]=rough[:,:,None]
+    image=bpy.data.images.new(mat.name+'_roughness',width=size,height=size,alpha=True)
+    image.colorspace_settings.name='Non-Color'
+    image.pixels.foreach_set(pixels.ravel());image.update();image.pack()
+    tex=nodes.new('ShaderNodeTexImage');tex.image=image;tex.extension='REPEAT'
+    links.new(tex.outputs['Color'],bsdf.inputs['Roughness'])
+    mat['exported_finish_relief_m']=relief
 
 
 def make_material(
@@ -406,6 +490,11 @@ def make_material(
             "procedural_painted_plaster",
             "procedural_limewash",
             "procedural_matte_paint",
+            "procedural_clay_plaster",
+            "procedural_linen_wallpaper",
+            "procedural_wood_slat",
+            "procedural_microcement",
+            "procedural_brick_wall",
         }
         if bool(spec.get("embed_generated_texture")) and (generated_floor or generated_wall):
             texture_factory = make_floor_texture_image if generated_floor else make_wall_texture_image
@@ -414,12 +503,15 @@ def make_material(
                 texture_type,
                 color,
                 normalized_rgba(spec.get("secondary_color"), shifted_color(color, 1.08)),
+                **({"contrast": float(spec.get("finish_contrast", 1.0))} if generated_wall else {}),
             )
             tex = mat.node_tree.nodes.new(type="ShaderNodeTexImage")
             tex.name = "generated_floor_texture" if generated_floor else "generated_wall_texture"
             tex.image = generated
             tex.extension = "REPEAT"
             mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+            if generated_wall and spec.get('embed_pbr_maps'):
+                add_exportable_wall_pbr(mat, bsdf, spec, texture_type)
         else:
             apply_procedural_texture(mat, bsdf, color, spec)
     return mat
@@ -536,6 +628,8 @@ def add_rug_underlay(obj_plan: dict, mat: bpy.types.Material) -> None:
     bpy.ops.mesh.primitive_cube_add(size=1.0, location=(x, y, z))
     obj = bpy.context.object
     obj.name = f"{obj_plan.get('id', 'rug')}_visual_underlay"
+    obj["scene_object_id"] = str(obj_plan['id'])
+    obj["scene_auxiliary_geometry"] = "rug_visual_underlay"
     obj.dimensions = (width, length, height)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     obj.rotation_euler[2] = yaw
@@ -717,6 +811,119 @@ def add_door_leaf(
     bpy.context.object["architecture_wall"] = wall
 
 
+ARCHITECTURE_FINISHES = {
+    "soft_white_black": {
+        "frame": (0.88, 0.88, 0.84, 1.0),
+        "body": (0.82, 0.82, 0.78, 1.0),
+        "hardware": (0.05, 0.05, 0.045, 1.0),
+    },
+    "soft_white": {
+        "frame": (0.90, 0.90, 0.87, 1.0),
+        "body": (0.87, 0.88, 0.85, 1.0),
+        "hardware": (0.22, 0.22, 0.20, 1.0),
+    },
+    "warm_oak_brass": {
+        "frame": (0.42, 0.23, 0.10, 1.0),
+        "body": (0.60, 0.37, 0.16, 1.0),
+        "hardware": (0.68, 0.47, 0.12, 1.0),
+    },
+    "light_oak_black": {
+        "frame": (0.58, 0.40, 0.20, 1.0),
+        "body": (0.72, 0.55, 0.31, 1.0),
+        "hardware": (0.055, 0.055, 0.05, 1.0),
+    },
+    "dark_oak_black": {
+        "frame": (0.20, 0.11, 0.055, 1.0),
+        "body": (0.32, 0.18, 0.08, 1.0),
+        "hardware": (0.04, 0.04, 0.035, 1.0),
+    },
+    "dark_timber": {
+        "frame": (0.20, 0.11, 0.055, 1.0),
+        "body": (0.28, 0.15, 0.07, 1.0),
+        "hardware": (0.04, 0.04, 0.035, 1.0),
+    },
+    "charcoal_steel": {
+        "frame": (0.055, 0.06, 0.065, 1.0),
+        "body": (0.10, 0.11, 0.12, 1.0),
+        "hardware": (0.40, 0.42, 0.43, 1.0),
+    },
+    "dark_bronze": {
+        "frame": (0.055, 0.032, 0.018, 1.0),
+        "body": (0.10, 0.055, 0.025, 1.0),
+        "hardware": (0.54, 0.37, 0.13, 1.0),
+    },
+    "walnut_brass": {
+        "frame": (0.22, 0.09, 0.035, 1.0),
+        "body": (0.38, 0.16, 0.06, 1.0),
+        "hardware": (0.72, 0.51, 0.16, 1.0),
+    },
+    "walnut": {
+        "frame": (0.24, 0.10, 0.04, 1.0),
+        "body": (0.36, 0.15, 0.055, 1.0),
+        "hardware": (0.42, 0.28, 0.10, 1.0),
+    },
+}
+
+
+def opening_finish_materials(opening: dict, opening_type: str) -> dict[str, bpy.types.Material]:
+    raw = opening.get("finish_profile")
+    raw = raw if isinstance(raw, dict) else {}
+    profile_id = str(raw.get("profile_id") or ("soft_white_black" if opening_type == "door" else "soft_white"))
+    palette = ARCHITECTURE_FINISHES.get(profile_id, ARCHITECTURE_FINISHES["soft_white"])
+    return {
+        "frame": material_by_name(f"architecture_{profile_id}_frame", palette["frame"]),
+        "body": material_by_name(f"architecture_{profile_id}_body", palette["body"]),
+        "hardware": material_by_name(f"architecture_{profile_id}_hardware", palette["hardware"]),
+        "glass": material_by_name("architecture_window_glass", (0.43, 0.66, 0.78, 0.34)),
+    }
+
+
+def add_opening_finish_overlay(
+    opening: dict,
+    opening_type: str,
+    room_width: float,
+    room_length: float,
+) -> None:
+    """Add style-specific trim without mutating the curated source GLB."""
+
+    mats = opening_finish_materials(opening, opening_type)
+    wall = str(opening.get("wall", "north"))
+    center = float(opening.get("center", 0.0) or 0.0)
+    width = float(opening.get("width", 1.0) or 1.0)
+    height = float(opening.get("height", 1.0) or 1.0)
+    opening_id = str(opening.get("id") or opening_type)
+    if opening_type == "door":
+        add_wall_aligned_box(
+            f"{opening_id}_finish_panel", wall, room_width, room_length,
+            center, height * 0.52, max(0.1, width - 0.14), 0.018,
+            max(0.1, height - 0.20), mats["body"],
+        )
+        for z_value in (height * 0.34, height * 0.69):
+            add_wall_aligned_box(
+                f"{opening_id}_finish_rail_{int(z_value * 100)}", wall,
+                room_width, room_length, center, z_value,
+                max(0.1, width - 0.22), 0.035, 0.035, mats["frame"],
+            )
+        add_wall_aligned_box(
+            f"{opening_id}_finish_handle", wall, room_width, room_length,
+            center + width * 0.32, min(1.02, height * 0.5),
+            0.11, 0.055, 0.028, mats["hardware"],
+        )
+        return
+    sill = float(opening.get("sill_height", 1.0) or 1.0)
+    frame = 0.055
+    for suffix, along in (("left", center - width / 2.0), ("right", center + width / 2.0), ("mullion", center)):
+        add_wall_aligned_box(
+            f"{opening_id}_finish_{suffix}", wall, room_width, room_length,
+            along, sill + height / 2.0, frame, 0.14, height, mats["frame"],
+        )
+    for suffix, z_value in (("bottom", sill), ("top", sill + height)):
+        add_wall_aligned_box(
+            f"{opening_id}_finish_{suffix}", wall, room_width, room_length,
+            center, z_value, width + frame * 2.0, 0.14, frame, mats["frame"],
+        )
+
+
 def add_architecture_details(
     architecture: object,
     room_width: float,
@@ -725,9 +932,6 @@ def add_architecture_details(
 ) -> None:
     if not isinstance(architecture, dict):
         return
-    frame_mat = material_by_name("architecture_frame", (0.90, 0.89, 0.84, 1.0))
-    door_mat = material_by_name("architecture_door_wood", (0.47, 0.27, 0.12, 1.0))
-    glass_mat = material_by_name("architecture_window_glass", (0.43, 0.66, 0.78, 1.0))
     frame = 0.07
     depth = 0.12
 
@@ -737,7 +941,9 @@ def add_architecture_details(
         if import_architecture_asset(
             raw, "door", room_width, room_length, asset_dir
         ):
+            add_opening_finish_overlay(raw, "door", room_width, room_length)
             continue
+        mats = opening_finish_materials(raw, "door")
         wall = str(raw.get("wall", "east"))
         center = float(raw.get("center", 0.75) or 0.75)
         opening_width = float(raw.get("width", 0.9) or 0.9)
@@ -746,14 +952,14 @@ def add_architecture_details(
         for suffix, along in (("left", center - opening_width / 2.0), ("right", center + opening_width / 2.0)):
             add_wall_aligned_box(
                 f"{opening_id}_frame_{suffix}", wall, room_width, room_length,
-                along, opening_height / 2.0, frame, depth, opening_height, frame_mat,
+                along, opening_height / 2.0, frame, depth, opening_height, mats["frame"],
             )
         add_wall_aligned_box(
             f"{opening_id}_frame_top", wall, room_width, room_length,
             center, opening_height + frame / 2.0, opening_width + frame * 2.0,
-            depth, frame, frame_mat,
+            depth, frame, mats["frame"],
         )
-        add_door_leaf(raw, room_width, room_length, door_mat)
+        add_door_leaf(raw, room_width, room_length, mats["body"])
 
     for raw in architecture.get("windows", []):
         if not isinstance(raw, dict):
@@ -761,7 +967,9 @@ def add_architecture_details(
         if import_architecture_asset(
             raw, "window", room_width, room_length, asset_dir
         ):
+            add_opening_finish_overlay(raw, "window", room_width, room_length)
             continue
+        mats = opening_finish_materials(raw, "window")
         wall = str(raw.get("wall", "north"))
         center = float(raw.get("center", 0.0) or 0.0)
         opening_width = float(raw.get("width", 1.0) or 1.0)
@@ -771,18 +979,19 @@ def add_architecture_details(
         add_wall_aligned_box(
             f"{opening_id}_glass", wall, room_width, room_length,
             center, sill + opening_height / 2.0, opening_width - frame,
-            0.025, opening_height - frame, glass_mat,
+            0.025, opening_height - frame, mats["glass"],
         )
         for suffix, along in (("left", center - opening_width / 2.0), ("right", center + opening_width / 2.0)):
             add_wall_aligned_box(
                 f"{opening_id}_frame_{suffix}", wall, room_width, room_length,
-                along, sill + opening_height / 2.0, frame, depth, opening_height, frame_mat,
+                along, sill + opening_height / 2.0, frame, depth, opening_height, mats["frame"],
             )
         for suffix, z_value in (("bottom", sill), ("top", sill + opening_height)):
             add_wall_aligned_box(
                 f"{opening_id}_frame_{suffix}", wall, room_width, room_length,
-                center, z_value, opening_width + frame * 2.0, depth, frame, frame_mat,
+                center, z_value, opening_width + frame * 2.0, depth, frame, mats["frame"],
             )
+        add_opening_finish_overlay(raw, "window", room_width, room_length)
 
 
 def add_room(
@@ -872,20 +1081,6 @@ def imported_objects(before: set[bpy.types.Object]) -> list[bpy.types.Object]:
     return [obj for obj in bpy.context.scene.objects if obj not in before]
 
 
-def mesh_bbox_world(objects: list[bpy.types.Object]) -> tuple[Vector, Vector]:
-    corners: list[Vector] = []
-    for obj in objects:
-        if obj.type not in TARGET_TYPES:
-            continue
-        for corner in obj.bound_box:
-            corners.append(obj.matrix_world @ Vector(corner))
-    if not corners:
-        raise RuntimeError("Imported asset has no renderable geometry.")
-    min_v = Vector((min(c.x for c in corners), min(c.y for c in corners), min(c.z for c in corners)))
-    max_v = Vector((max(c.x for c in corners), max(c.y for c in corners), max(c.z for c in corners)))
-    return min_v, max_v
-
-
 def axis_to_z_matrix(axis_to_z: int, axis_sign: float = 1.0) -> Matrix:
     sign = -1.0 if float(axis_sign) < 0.0 else 1.0
     if axis_to_z == 0:
@@ -959,17 +1154,17 @@ def transform_imported_asset(
         int(obj_plan.get("asset_axis_to_z", 2)),
         float(obj_plan.get("asset_axis_to_z_sign", 1.0) or 1.0),
     )
-    if axis_matrix != Matrix.Identity(4):
-        for obj in objects:
-            if obj.type in TARGET_TYPES:
-                obj.matrix_world = axis_matrix @ obj.matrix_world
-
     asset_local_offset = float(obj_plan.get("asset_local_yaw_offset_degrees", 0.0) or 0.0)
-    if abs(asset_local_offset) > 1e-6:
-        local_front_matrix = Matrix.Rotation(math.radians(asset_local_offset), 4, "Z")
-        for obj in objects:
-            if obj.type in TARGET_TYPES:
-                obj.matrix_world = local_front_matrix @ obj.matrix_world
+    canonical_transform = Matrix.Rotation(math.radians(asset_local_offset), 4, "Z") @ axis_matrix
+    if canonical_transform != Matrix.Identity(4):
+        # Apply once per hierarchy, including imported empty roots. Mutating
+        # parent and child world transforms together can rotate a child twice.
+        imported_set = set(objects)
+        roots = [obj for obj in objects if obj.parent not in imported_set]
+        worlds = [(obj, obj.matrix_world.copy()) for obj in roots]
+        for obj, world in worlds:
+            obj.matrix_world = canonical_transform @ world
+        bpy.context.view_layer.update()
 
     reflection_result = None
     reflection_axis = str(obj_plan.get("asset_reflection_axis") or "")
@@ -1017,6 +1212,8 @@ def transform_imported_asset(
                     f"Plan dimensions changed after resolution for {obj_plan['id']}: {axis}"
                 )
     target = Vector((float(dims["width"]), float(dims["length"]), float(dims["height"])))
+    if any(not math.isfinite(v) or v <= 0 for v in (*extents, *target)):
+        raise ValueError(f"Invalid source or target dimensions for {obj_plan['id']}")
     scale = Vector(
         (
             target.x / max(float(extents.x), 1e-6),
@@ -1024,6 +1221,16 @@ def transform_imported_asset(
             target.z / max(float(extents.z), 1e-6),
         )
     )
+    mesh_fit = runtime_mesh_fit_audit(
+        [float(scale.x), float(scale.y), float(scale.z)], dimension_policy, dimension_resolution
+    )
+    if (dimension_policy.get("enforce_at_assembly")
+            or dimension_resolution.get("requires_runtime_bounds_check")
+            or mesh_fit["evaluated"]):
+        if not mesh_fit["evaluated"] or mesh_fit["passes"] is not True:
+            raise ValueError(
+                f"Runtime dimension policy failed for {obj_plan['id']}: {mesh_fit}"
+            )
 
     root = bpy.data.objects.new(f"{obj_plan['id']}_root", None)
     bpy.context.scene.collection.objects.link(root)
@@ -1048,6 +1255,7 @@ def transform_imported_asset(
         )
     root["imported_raw_extents"] = [float(extents.x), float(extents.y), float(extents.z)]
     root["mesh_normalization_scale"] = [float(scale.x), float(scale.y), float(scale.z)]
+    root["runtime_mesh_fit_audit_json"] = json.dumps(mesh_fit, sort_keys=True)
     if reflection_result is not None:
         root["asset_reflection_axis"] = str(reflection_result["axis"])
         root["asset_reflection_space"] = str(reflection_result["space"])
@@ -1072,24 +1280,118 @@ def transform_imported_asset(
         @ Matrix.Diagonal((scale.x, scale.y, scale.z, 1.0))
         @ Matrix.Translation((-center.x, -center.y, -center.z))
     )
+    if obj_plan.get("rigid_body_pose_matrix_z_up") is not None:
+        pose = Matrix(obj_plan["rigid_body_pose_matrix_z_up"])
+        rotation = pose.to_3x3()
+        if abs(rotation.determinant() - 1.0) > 1e-6 or any(
+            abs((rotation.transposed() @ rotation)[i][j] - float(i == j)) > 1e-6
+            for i in range(3) for j in range(3)
+        ):
+            raise ValueError("Physical pose must be a proper rigid transform")
+        final_matrix = pose @ Matrix.Diagonal((scale.x, scale.y, scale.z, 1.0)) @ Matrix.Translation((-center.x, -center.y, -center.z))
     root.matrix_world = final_matrix
+    bpy.context.view_layer.update()
+    # Undo only the final rigid placement. Comparing world AABB dimensions to
+    # local target dimensions would repeat the rotated-box error at readback.
+    if obj_plan.get("rigid_body_pose_matrix_z_up") is not None:
+        frame = Matrix(obj_plan["rigid_body_pose_matrix_z_up"]).inverted()
+    else:
+        frame = Matrix.Rotation(-yaw, 4, "Z")
+    actual_min, actual_max = mesh_bbox_world(renderables, frame=frame)
+    actual = actual_max - actual_min
+    errors = [abs(float(actual[i]) - float(target[i])) for i in range(3)]
+    tolerance = 2e-5
+    passes = all(error <= max(tolerance, float(target[i]) * 1e-5) for i, error in enumerate(errors))
+    root["runtime_dimensions_audit_json"] = json.dumps({
+        "evaluated": True, "passes": passes, "method": "evaluated_vertices_in_placement_frame",
+        "actual_dimensions": list(actual), "target_dimensions": list(target),
+        "absolute_errors_m": errors, "absolute_tolerance_m": tolerance,
+    }, sort_keys=True)
+    if not passes:
+        raise ValueError(f"Actual assembled dimensions differ from plan for {obj_plan['id']}: {errors}")
     return root
 
 
 def import_asset(asset_path: Path, obj_plan: dict) -> list[bpy.types.Object]:
+    usage_failures = asset_usage_violations(obj_plan)
+    if usage_failures:
+        raise ValueError(f"Asset use constraints failed before import: {usage_failures}")
     before = set(bpy.context.scene.objects)
     bpy.ops.import_scene.gltf(filepath=str(asset_path))
     objects = imported_objects(before)
-    for imported in objects:
-        imported.name = f"{obj_plan['id']}_{imported.name}"
+    for index, imported in enumerate(objects):
+        source_name = imported.name
+        if imported.type == "MESH":
+            imported.name = (
+                f"{obj_plan['id']}_geometry_{index:03d}_{source_name}"
+            )
+        else:
+            imported.name = f"{obj_plan['id']}_node_{index:03d}_{source_name}"
         if getattr(imported, "data", None):
             imported.data.name = f"{obj_plan['id']}_{imported.data.name}"
     root = transform_imported_asset(objects, obj_plan)
-    if is_rug_plan(obj_plan):
+    category = str(obj_plan.get("category") or "")
+    placement_type = str(obj_plan.get("placement_type") or "floor")
+    preferred_wall = str(obj_plan.get("preferred_wall") or "")
+    mounted_wall = (
+        preferred_wall
+        if preferred_wall
+        and (
+            placement_type == "wall"
+            or category in {"wall_art", "mirror", "wall_fixture"}
+        )
+        else ""
+    )
+    for imported in (root, *objects):
+        imported["scene_object_id"] = str(obj_plan["id"])
+        imported["scene_category"] = category
+        imported["scene_placement_type"] = placement_type
+        imported["scene_mounted_wall"] = mounted_wall
+    if is_rug_plan(obj_plan) and not obj_plan.get('preserve_source_materials'):
         rug_mat = material_by_name("rug_visual_separate_from_floor", (0.86, 0.83, 0.74, 1.0))
         apply_material_override(objects, rug_mat)
         add_rug_underlay(obj_plan, rug_mat)
     return [root, *objects]
+
+
+def audit_exported_dimensions(scene_glb: Path, plan: dict, report_path: Path | None = None) -> dict:
+    """Reload the exported GLB and check tight dimensions in placement frames.
+
+    This deliberately discards the current scene, so callers render/save any
+    desired Blender project before invoking it.
+    """
+    clear_scene()
+    bpy.ops.import_scene.gltf(filepath=str(scene_glb))
+    bpy.context.view_layer.update()
+    rows = []
+    for obj_plan in plan.get("objects", []):
+        identifier = str(obj_plan["id"])
+        meshes = [obj for obj in bpy.context.scene.objects if obj.type in TARGET_TYPES
+                  and str(obj.get("scene_object_id") or "") == identifier]
+        if not meshes:
+            rows.append({"object_id": identifier, "passes": False, "reason": "missing geometry"})
+            continue
+        yaw = math.radians(float(obj_plan.get("yaw",0)) + float(obj_plan.get("footprint_yaw_offset_degrees",0) or 0))
+        frame = Matrix.Rotation(-yaw,4,"Z")
+        if obj_plan.get("rigid_body_pose_matrix_z_up") is not None:
+            frame = Matrix(obj_plan["rigid_body_pose_matrix_z_up"]).inverted()
+        low, high = mesh_bbox_world(meshes, frame=frame)
+        actual = high-low
+        target = [float(obj_plan["dimensions"][axis]) for axis in ("width","length","height")]
+        errors = [abs(float(actual[i])-target[i]) for i in range(3)]
+        passes = all(e <= max(2e-5,target[i]*1e-5) for i,e in enumerate(errors))
+        usage_failures = asset_usage_violations(obj_plan,plan.get("room"))
+        rows.append(dict(object_id=identifier,evaluated=True,passes=passes and not usage_failures,
+                         dimensions_m=list(actual),expected_dimensions_m=target,errors_m=errors,usage_failures=usage_failures))
+    report = dict(schema="exported_glb_dimension_audit_v1",source_glb=str(scene_glb),
+                  source_sha256=hashlib.sha256(scene_glb.read_bytes()).hexdigest(),
+                  method="fresh GLB import; evaluated vertices; inverse rigid placement frame",
+                  object_count=len(rows),passes=bool(rows) and all(r["passes"] for r in rows),results=rows)
+    path = report_path or scene_glb.with_suffix(".dimensions.json")
+    path.write_text(json.dumps(report,indent=2)+"\n")
+    if not report["passes"]:
+        raise RuntimeError(f"Exported GLB dimension/use audit failed: {path}")
+    return report
 
 
 def import_architecture_asset(
@@ -1213,7 +1515,8 @@ def render_front_45_preview(
         architecture_wall = str(obj.get("architecture_wall", ""))
         if architecture_wall or obj.name.startswith("wall_"):
             obj.hide_render = False
-        if architecture_wall in hidden_walls or any(
+        mounted_wall = str(obj.get("scene_mounted_wall", ""))
+        if architecture_wall in hidden_walls or mounted_wall in hidden_walls or any(
             obj.name.startswith(f"wall_{wall}_panel_") for wall in hidden_walls
         ):
             obj.hide_render = True
@@ -1327,7 +1630,8 @@ def render_relationship_preview(plan: dict, output_path: Path) -> None:
         architecture_wall = str(obj.get("architecture_wall", ""))
         if architecture_wall or obj.name.startswith("wall_"):
             obj.hide_render = False
-        if architecture_wall in hidden_walls or any(
+        mounted_wall = str(obj.get("scene_mounted_wall", ""))
+        if architecture_wall in hidden_walls or mounted_wall in hidden_walls or any(
             obj.name.startswith(f"wall_{wall}_panel_") for wall in hidden_walls
         ):
             obj.hide_render = True
@@ -1424,6 +1728,7 @@ def main() -> None:
         render_front_45_preview(plan, args.preview_image_center, view="center")
     if args.relationship_preview:
         render_relationship_preview(plan, args.relationship_preview)
+    audit_exported_dimensions(args.output_glb, plan)
     print(
         json.dumps(
             {

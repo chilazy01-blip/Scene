@@ -1,0 +1,22 @@
+{
+  "book": {
+    "current_direct_references": [
+      "underside edge thickness pinch",
+      "above-table opposite-side width pinch"
+    ],
+    "initial_condition": "flat book, localXcover-normal up",
+    "outcome_scope": "Failed references; not global impossibility and not a completed grasp. No silently substituted initial pose."
+  },
+  "bottle": {
+    "body_reference_outcome": "Body pinch rejected by native proximal/palm contact geometry; preserve v001/v002 failures.",
+    "current_variant": "upper-neck grasp; intended localZ approximately.103..122m on asset localZ range-.125..125m",
+    "disclosure": "Any successful neck-grasp trajectory is a neck-grasp variant of upright bottle transport, NOT evidence the initial body-grasp template succeeded. Final dataset must label the actual grasp region and retain failed body variants.",
+    "new_physical_targets_or_gates": false,
+    "original_candidate_reference": "G/CANDIDATES bottle-body-grasp template"
+  },
+  "content_sha256_excluding_this_field": "0c8f8608333d87f1fe3165154638aa33361ce9cc24d8df0da9ef6ded39385b7f",
+  "implementation_note": "Metadata only, no integration/plant/controller/case edit.",
+  "recorded_epoch_utc": 1792988458.8968894,
+  "schema": "generated-grasp-task-scope-disclosure/v1",
+  "user_scope": "Try different grasp tasks based on our own generated scenes; actual Codex expert may change references/grasp approach, not frozen plant/control/final acceptance."
+}

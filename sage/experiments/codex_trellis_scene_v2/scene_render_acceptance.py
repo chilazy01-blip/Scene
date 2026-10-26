@@ -15,6 +15,9 @@ from .io_utils import read_json, write_json
 def _image_array(path: Path, mode: str) -> np.ndarray | None:
     if not path.is_file():
         return None
+    if path.suffix.lower() == '.exr':
+        from .scalar_exr import read_scalar_exr
+        return read_scalar_exr(path)
     with Image.open(path) as image:
         return np.asarray(image.convert(mode))
 
@@ -101,9 +104,11 @@ def evaluate_scene_render_manifest(
                             normalized / 12.92,
                             np.power((normalized + 0.055) / 1.055, 2.4),
                         )
-                    decoded_indices = np.rint(
-                        normalized * float(max(1, denominator))
-                    ).astype(np.int32)
+                    values = normalized * float(max(1, denominator))
+                    decoded_indices = np.rint(values).astype(np.int32)
+                    if row.get('object_index_encoding') == 'native_integer_ids':
+                        if np.any(np.abs(values-decoded_indices) > 1e-6) or np.any(values < 0):
+                            raise ValueError('Native object IDs must be nonnegative integers')
                     mask = decoded_indices == pass_index
                 else:
                     mask = None
@@ -234,6 +239,7 @@ def render_and_evaluate_scene(
     asset_dir: Path,
     output_dir: Path,
     resolution: int = 512,
+    engine: str = "eevee",
 ) -> dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
     script = Path(__file__).resolve().parents[2] / "scripts" / "blender_render_sage_diagnostics.py"
@@ -253,6 +259,8 @@ def render_and_evaluate_scene(
         str(output_dir),
         "--resolution",
         str(int(resolution)),
+        "--engine",
+        engine,
         "--skip-assets",
         "--qa-passes",
     ]

@@ -11,6 +11,19 @@ from ..scene_render_acceptance import evaluate_scene_render_manifest
 
 
 class SceneRenderAcceptanceTest(unittest.TestCase):
+    def test_native_integer_ids_do_not_round_fractional_boundary_colors(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest,plan=self._fixture(Path(tmp), visible=True)
+            for view in manifest['qa_passes']['views'].values():
+                Path(view['objects']['chair']['mask_path']).unlink()
+                index=Path(tmp)/'index.png'
+                Image.fromarray(np.full((64,64),64,dtype=np.uint8)).save(index)
+                view.update(object_index_path=str(index),object_index_denominator=2,
+                    object_index_max_pixel_value=255,object_index_encoding='native_integer_ids')
+                view['objects']['chair'].update(pass_index=1)
+            with self.assertRaises(ValueError):
+                evaluate_scene_render_manifest(manifest,plan)
+
     def _fixture(self, root: Path, *, visible: bool = True) -> tuple[dict, dict]:
         views = {}
         for view in ("top", "corner", "front"):

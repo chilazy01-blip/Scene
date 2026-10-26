@@ -12,6 +12,7 @@ from urllib import request as urlrequest
 from urllib.error import HTTPError, URLError
 
 from .asset_admission import build_missing_asset_subflow_contract
+from .asset_index import AssetIndex
 from .content_chain import (
     build_generation_contract,
     content_hash,
@@ -120,12 +121,37 @@ class AssetRegistry:
         self.manifest_path = manifest_path.resolve() if manifest_path else None
         self.root = self.manifest_path.parent if self.manifest_path else None
         self.assets: list[dict[str, Any]] = []
+        self.index: AssetIndex | None = None
+        self.index_queries: list[dict[str, Any]] = []
+        self.batch_prefetch_report: dict[str, Any] | None = None
         if self.manifest_path:
             payload = read_json(self.manifest_path)
             raw_assets = payload.get("assets", []) if isinstance(payload, dict) else []
             if not isinstance(raw_assets, list):
                 raise ValueError(f"asset manifest 'assets' must be a list: {self.manifest_path}")
             self.assets = [item for item in raw_assets if isinstance(item, dict)]
+            index_path = self.manifest_path.with_suffix(".asset_index.sqlite")
+            if index_path.is_file():
+                try:
+                    self.index = AssetIndex(index_path, expected_manifest=self.manifest_path)
+                except ValueError:
+                    if len(self.assets) >= 10_000:
+                        raise
+
+    def prefetch(self, queries: list[dict[str, Any]]) -> dict[str, Any] | None:
+        if self.index is None:
+            return None
+        unique: dict[str, dict[str, Any]] = {}
+        for query in queries:
+            normalized = {
+                "category": str(query["category"]),
+                "styles": list(query.get("styles", [])),
+            }
+            unique[content_hash(normalized)] = normalized
+        self.batch_prefetch_report = self.index.batch_query(
+            [unique[key] for key in sorted(unique)]
+        )
+        return deepcopy(self.batch_prefetch_report)
 
     def find(
         self,
@@ -144,7 +170,28 @@ class AssetRegistry:
     ) -> dict[str, Any] | None:
         candidates: list[tuple[tuple[Any, ...], str, dict[str, Any]]] = []
         wanted_styles = {style.lower() for style in styles}
-        for item in self.assets:
+        indexed_query = None
+        candidate_assets = self.assets
+        if self.index is not None:
+            indexed_query = self.index.query(
+                category=category,
+                styles=styles,
+                family_id=family_id,
+                asset_id=asset_id,
+                pair_role=pair_role,
+            )
+            self.index_queries.append(
+                {
+                    key: deepcopy(indexed_query[key])
+                    for key in (
+                        "index_version", "query_contract_hash", "cache_key",
+                        "cache_hit", "hard_filtered_count", "ann_recall_limit",
+                        "rerank_limit",
+                    )
+                }
+            )
+            candidate_assets = indexed_query["results"]
+        for item in candidate_assets:
             if str(item.get("category")) != category:
                 continue
             if family_id and str(item.get("asset_family_id") or "") != family_id:
@@ -221,7 +268,16 @@ class AssetRegistry:
         candidates.sort(key=lambda row: (row[0], row[1]))
         best_score = candidates[0][0]
         best_candidates = [row for row in candidates if row[0] == best_score]
-        return best_candidates[int(variant_index) % len(best_candidates)][2]
+        selected = best_candidates[int(variant_index) % len(best_candidates)][2]
+        if indexed_query is not None:
+            selected["_asset_index_retrieval"] = {
+                "index_version": indexed_query["index_version"],
+                "query_contract_hash": indexed_query["query_contract_hash"],
+                "cache_key": indexed_query["cache_key"],
+                "hard_filtered_count": indexed_query["hard_filtered_count"],
+                "selected_from_rerank_count": len(candidate_assets),
+            }
+        return selected
 
 
 def _copy_asset(source: Path, destination: Path) -> None:
@@ -688,6 +744,13 @@ def resolve_assets(
     require_generated_asset_admission: bool = False,
 ) -> dict[str, Any]:
     registry = AssetRegistry(manifest_path)
+    registry.prefetch(
+        [
+            {"category": str(obj.get("category") or ""), "styles": list(brief.get("styles", []))}
+            for obj in brief.get("objects", [])
+            if isinstance(obj, dict) and obj.get("category")
+        ]
+    )
     multiview_semantic_scorer = (
         Siglip2SemanticScorer(
             scene_dna_semantic_model,
@@ -1755,6 +1818,14 @@ def resolve_assets(
         "schema": "codex_trellis_asset_resolution_v2",
         "mode": mode,
         "manifest": str(manifest_path.resolve()) if manifest_path else None,
+        "asset_index": {
+            "enabled": registry.index is not None,
+            "path": str(registry.index.path) if registry.index is not None else None,
+            "index_version": registry.index.index_version if registry.index is not None else None,
+            "batch_prefetch": deepcopy(registry.batch_prefetch_report),
+            "queries": deepcopy(registry.index_queries),
+            "deterministic_hard_filter_ann_rerank": registry.index is not None,
+        },
         "asset_dir": str(asset_dir),
         "missing_asset_generation_plan": str(generation_plan_path),
         "scene_dna_contract": str(scene_dna_path),

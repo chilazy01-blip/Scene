@@ -1,0 +1,49 @@
+{
+  "content_sha256_excluding_this_field": "869d6b567f4a2faa525cb3e8ca2d16d72ffe56d7697fd167bf6cb38cb8ac706c",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/build_review_records.py",
+    "sha256": "410e9ce37f4ac5fd1073ba30b2621e17f4b06151f9648d321b0a7f09fc64abeb",
+    "size_bytes": 10529
+  },
+  "items": [
+    {
+      "acceptance": "Distinguish cup final-window failure, bottle grasp/placement failure, numerical-invalid book and model-capacity interruption using existing bound evidence.",
+      "deliverable": "Explicit state semantics, phase contracts and indexed first-failure summaries.",
+      "id": "P0_feedback",
+      "priority": 0,
+      "runtime_change": "new version required"
+    },
+    {
+      "acceptance": "Never automatically deploy the partial bottle record or untested V011; refresh current object poses.",
+      "deliverable": "Dependency-filtered retrieval of scoped validated, partial, negative and hypothetical records.",
+      "id": "P0_memory",
+      "priority": 0,
+      "runtime_change": "not implemented"
+    },
+    {
+      "acceptance": "Zero-integration admission plus actual original-init native validation with frozen controller/judge.",
+      "deliverable": "Separate object-centered grasp constraints, approach, loaded hold, carry and support transfer references.",
+      "id": "P1_reference_contract",
+      "priority": 1,
+      "runtime_change": "new version and finite experiment required"
+    },
+    {
+      "acceptance": "No duplicate actual requests or ledger reset on service interruption; no hard-gate tradeoff.",
+      "deliverable": "Candidate/champion provenance, paired regression, protected accepted versions and bounded resumable service calls.",
+      "id": "P1_promotion_resume",
+      "priority": 1,
+      "runtime_change": "not implemented"
+    },
+    {
+      "acceptance": "Count all failed attempts and unique valid data; report total cost and source-group uncertainty.",
+      "deliverable": "Source-isolated task groups and equal-budget no-memory/with-memory comparisons, followed by learning utility study.",
+      "id": "P2_production_benefit",
+      "priority": 2,
+      "runtime_change": "new experiment and training authorization/scope required"
+    }
+  ],
+  "new_physics_steps": 0,
+  "schema": "expert-trajectory-quality-backlog/v1",
+  "status": "design_only",
+  "unchanged_cumulative_native_steps": 239138
+}

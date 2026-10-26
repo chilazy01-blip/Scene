@@ -1,0 +1,26 @@
+{
+  "schema": "scene-v2-asset-retrieval-labeled-queries/v1",
+  "annotation_policy": "A compatible asset has the named category, approved/curated lifecycle, allowed license, required capability and the referenced multiview appearance target.",
+  "queries": [
+    {"query_id":"q_sofa","category":"sofa","styles":["modern"],"compatible_asset_ids":["asset_000000"]},
+    {"query_id":"q_coffee_table","category":"coffee_table","styles":["modern"],"compatible_asset_ids":["asset_000001"]},
+    {"query_id":"q_tv_stand","category":"tv_stand","styles":["modern"],"compatible_asset_ids":["asset_000002"]},
+    {"query_id":"q_bookcase","category":"bookcase","styles":["modern"],"compatible_asset_ids":["asset_000003"]},
+    {"query_id":"q_bed","category":"bed","styles":["modern"],"compatible_asset_ids":["asset_000004"]},
+    {"query_id":"q_nightstand","category":"nightstand","styles":["modern"],"compatible_asset_ids":["asset_000005"]},
+    {"query_id":"q_desk","category":"desk","styles":["modern"],"compatible_asset_ids":["asset_000006"]},
+    {"query_id":"q_office_chair","category":"office_chair","styles":["modern"],"compatible_asset_ids":["asset_000007"]},
+    {"query_id":"q_wardrobe","category":"wardrobe","styles":["modern"],"compatible_asset_ids":["asset_000008"]},
+    {"query_id":"q_dresser","category":"dresser","styles":["modern"],"compatible_asset_ids":["asset_000009"]},
+    {"query_id":"q_floor_lamp","category":"floor_lamp","styles":["modern"],"compatible_asset_ids":["asset_000010"]},
+    {"query_id":"q_table_lamp","category":"table_lamp","styles":["modern"],"compatible_asset_ids":["asset_000011"]},
+    {"query_id":"q_side_table","category":"side_table","styles":["modern"],"compatible_asset_ids":["asset_000012"]},
+    {"query_id":"q_accent_chair","category":"accent_chair","styles":["modern"],"compatible_asset_ids":["asset_000013"]},
+    {"query_id":"q_dining_table","category":"dining_table","styles":["modern"],"compatible_asset_ids":["asset_000014"]},
+    {"query_id":"q_dining_chair","category":"dining_chair","styles":["modern"],"compatible_asset_ids":["asset_000015"]},
+    {"query_id":"q_cabinet","category":"cabinet","styles":["modern"],"compatible_asset_ids":["asset_000016"]},
+    {"query_id":"q_rug","category":"area_rug","styles":["modern"],"compatible_asset_ids":["asset_000017"]},
+    {"query_id":"q_plant","category":"potted_plant","styles":["modern"],"compatible_asset_ids":["asset_000018"]},
+    {"query_id":"q_wall_art","category":"wall_art","styles":["modern"],"compatible_asset_ids":["asset_000019"]}
+  ]
+}

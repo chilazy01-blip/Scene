@@ -1,0 +1,17 @@
+{
+  "budget_origin": "New finite six-hour execution round declared in commentary, no revival of expired windows.",
+  "content_sha256_excluding_this_field": "9dcfd02b2a7bc45f089e0cfd458ff3f5d87b69b99c79620942601bec5e716c7a",
+  "deadline_epoch_utc": 1793003513.8857322,
+  "max_new_physics_steps": 180000,
+  "prior_native_steps": 143686,
+  "recorded_epoch_utc": 1792981913.8857322,
+  "resource_limits": {
+    "blas_threads": 1,
+    "cpu_affinity_first_available": 8,
+    "memory_gib_per_process": 16
+  },
+  "schema": "generated-grasp-authorization/v1",
+  "user_authorized_expert_code_and_tools": true,
+  "user_authorized_project_context_and_expert_sources_for_codex": true,
+  "user_instruction_verbatim": "那现在可以进行了？"
+}

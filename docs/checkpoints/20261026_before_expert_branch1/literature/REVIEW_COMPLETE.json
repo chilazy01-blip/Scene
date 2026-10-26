@@ -1,0 +1,61 @@
+{
+  "allowed_existing_change": "AGENT.md handoff only",
+  "artifacts": {
+    "EXPERIENCE_CANDIDATES.json": {
+      "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/EXPERIENCE_CANDIDATES.json",
+      "sha256": "a047dcec8afc21e40e5bba3f75b76c865f6275510ef8a2fe2690ebd49ea9c9c1",
+      "size_bytes": 25550
+    },
+    "IMPLEMENTATION_BACKLOG.json": {
+      "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/IMPLEMENTATION_BACKLOG.json",
+      "sha256": "51ce5926c28b94725b2be229625e23757bf4fa2c33ffee9f7f4ef3f5834145b2",
+      "size_bytes": 2435
+    },
+    "PLAN.json": {
+      "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/PLAN.json",
+      "sha256": "d951848ef24d29e3cbfaa89f5a6e5ecbe32f82b14ed374d9a9bb432f487d3875",
+      "size_bytes": 675
+    },
+    "PROJECT_STATE_SNAPSHOT.json": {
+      "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/PROJECT_STATE_SNAPSHOT.json",
+      "sha256": "5be1ef90c7bf9c72e36f1f9e64645c2defff3d841fa81fbb0a6afede9eec9855",
+      "size_bytes": 11260
+    },
+    "READING_LOG.json": {
+      "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/READING_LOG.json",
+      "sha256": "e66cc9af4472e04223b6ff6d24387607bdf8816a18ddc38b89e7527965872b16",
+      "size_bytes": 30137
+    },
+    "SCOPE_UPDATE.json": {
+      "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/SCOPE_UPDATE.json",
+      "sha256": "a389b5a239f446bf9f2f39a5f6b4545f3885064bb8a4ff1a6a0e7e2557cec1ac",
+      "size_bytes": 336
+    }
+  },
+  "complete": true,
+  "content_sha256_excluding_this_field": "d4b15e51fc54c76410db04d0da827064947683572c49985bfe090b658c6c193d",
+  "cumulative_native_steps_unchanged": 239138,
+  "existing_dirty_tracked_paths": 45,
+  "external_paper_programs_executed": false,
+  "finished_utc": "2026-10-26T09:01:17.443565+00:00",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/verify_review.py",
+    "sha256": "0885aaab04f6fd9f96d67f0bec3e8e7b1f5868e904ba5e930e5ecac84f9a95f4",
+    "size_bytes": 4061
+  },
+  "implementation_backlog_items": 5,
+  "local_and_source_anchor_links_checked": 12,
+  "new_physics_steps": 0,
+  "papers_reviewed": 7,
+  "review_elapsed_minutes": 23.65992765,
+  "review_notes": {
+    "path": "/data/wsj/main/scene/docs/EXPERT_TRAJECTORY_LITERATURE_REVIEW_20261026.md",
+    "sha256": "86e7fc5a1d9a523fa9c601041b965c3fd2f9fed7419f6c2f01f42fcf0478a3aa",
+    "size_bytes": 15432
+  },
+  "reviewed_sections_and_partial_sections": 66,
+  "runtime_capabilities_implemented": false,
+  "schema": "expert-trajectory-literature-review-complete/v1",
+  "scoped_experience_records": 4,
+  "source_and_evidence_bindings_checked": 117
+}

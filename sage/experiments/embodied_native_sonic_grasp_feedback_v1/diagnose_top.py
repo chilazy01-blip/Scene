@@ -1,0 +1,14 @@
+"""Measured gate-by-gate diagnosis, no new integrations."""
+import argparse
+from pathlib import Path
+import numpy as np
+from .protocol import read_bound_json,safe_save,_file_binding
+
+def stat(a):
+    a=np.array(a,dtype=float);return dict(min=np.min(a,axis=0).tolist(),median=np.median(a,axis=0).tolist(),max=np.max(a,axis=0).tolist()) if len(a) else None
+
+def run(episode):
+    r=read_bound_json(episode/'REPORT.json');t=read_bound_json(episode/'TRACE.json');rows=[x for x in t['records'] if x['stage']=='force_balance'];quality=[x for x in t['events'] if x.get('kind')=='actual_wrench_quality' and x.get('stage')=='force_balance'];weights=[x['quality']['weight_n'] for x in quality];alloc=[x['feedback_allocation'] for x in rows if x.get('feedback_allocation')];feasible=[a for a in alloc if a['feasible']];q=[x['quality'] for x in quality];finger=[x['substeps'][-1] for x in rows];out=dict(new_physics_steps=0,report=_file_binding(episode/'REPORT.json'),implementation=_file_binding(Path(__file__)),samples=len(rows),allocation_feasible_count=len(feasible),allocation_count=len(alloc),capacity=stat([(a['capacity'].get('maximum_weight_multiple') or 0) for a in q]),slip_m_s=stat([a['maximum_slip_m_s'] for a in q]),hand_force_n=stat([a['hand_force_world_n'] for a in q]),hand_torque_nm=stat([np.linalg.norm(a['hand_torque_nm']) for a in q]),wrist_reference_error_m=stat([np.linalg.norm(np.array(x['wrist_position_m'])-x['wrist_reference_m']) for x in rows]),group_force_n={g:stat([x['forces'][g] for x in finger]) for g in ['thumb','index','middle']},gate_counts=dict(capacity_and_slip=sum(a['qualified'] for a in q),upward_press_bound=sum(a['hand_force_world_n'][2]>=-.5*a['weight_n'] for a in q),lateral_bound=sum(np.linalg.norm(a['hand_force_world_n'][:2])<=.5*a['weight_n'] for a in q),torque_bound=sum(np.linalg.norm(a['hand_torque_nm'])<=.02 for a in q)),actual_contact_normal_vertical={g:stat([abs(c['normal_vertical']) for a in q for c in a['contacts'] if c['role']==g]) for g in ['thumb','index','middle']},desired_joint_torque=stat([a['desired_contact_torque_nm'] for a in feasible]),measured_joint_torque=stat([a['measured_contact_torque_nm'] for a in feasible]),infeasible_reasons=sorted(set(a.get('reason','') for a in alloc if not a['feasible'])),physics_safe=r['gates']['all_physical_safe'],last_quality=q[-1] if q else None,last_finger_targets=finger[-1]['hand_target_rad'] if finger else None,limitation='Gate counts and actual-contact geometry describe this trial; correlated failures are not by themselves unique causal attribution.'))
+    safe_save(episode.parent/'MEASURED_CAUSE.json',out);print({k:v for k,v in out.items() if k not in ['last_quality','last_finger_targets','desired_joint_torque','measured_joint_torque']},flush=True)
+if __name__=='__main__':
+    p=argparse.ArgumentParser();p.add_argument('--episode',type=Path,required=True);run(p.parse_args().episode)

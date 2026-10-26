@@ -1,0 +1,1034 @@
+{
+  "all_admitted_cases_assessed": true,
+  "all_cases_successful": false,
+  "all_required_independent_reviews_complete": true,
+  "all_trials": [
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/CASE.json",
+        "sha256": "1d9ee03808390bdf9df5e3fef322dab38414d957e568e47d82a3dc48bef6c676",
+        "size_bytes": 12476
+      },
+      "case_id": "S02_book",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.49999601385950965,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_book/model.xml",
+        "sha256": "908a0aca0a6bf8a3fd6a1a444ab4e70e6d7394a572141482a1b4029d0aa7fe29",
+        "size_bytes": 47414053
+      },
+      "name": "book_s02_v001",
+      "numerically_quarantined": true,
+      "object_id": "book",
+      "physics_steps": 3200,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/full/REPORT.json",
+        "sha256": "d064c4f70eee098c808ac0b45aa9d79db232031a67537db0e405f101d4d2d6d8",
+        "size_bytes": 28051
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "book_shape_reference_not_admitted",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/strategy.py",
+        "sha256": "75371e28a42220a1dd798ebccdd0abfed61639377be4ec91375ed4902b5d0aed",
+        "size_bytes": 22027
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/FINAL_VERIFICATION.json",
+        "sha256": "2ce185bb5b43aedb0d17288b7f0f9e0ef3762986d406644f26d6ee439d9a1eea",
+        "size_bytes": 3201
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/CASE.json",
+        "sha256": "1d9ee03808390bdf9df5e3fef322dab38414d957e568e47d82a3dc48bef6c676",
+        "size_bytes": 12476
+      },
+      "case_id": "S02_book",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.4999979780361666,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v3/S02_book/model.xml",
+        "sha256": "bd7c83df7e4445de7bd7165eb5e89fe1cbb5011fe8a88a5f53b1176cfc732908",
+        "size_bytes": 47414075
+      },
+      "name": "book_s02_v002",
+      "numerically_quarantined": false,
+      "object_id": "book",
+      "physics_steps": 1824,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/full/REPORT.json",
+        "sha256": "6bec611f5b2ec13b1002055616047d874832ee93a6eeebfdf9c60fe63c11818d",
+        "size_bytes": 50774
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "book_shape_reference_not_admitted",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/strategy.py",
+        "sha256": "5736f0a6703c9ead0ff6faeca311e0f8ca2250a56dab4cd27efa6d11afab0ed6",
+        "size_bytes": 32828
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/FINAL_VERIFICATION.json",
+        "sha256": "6ec0924a65bcf9cc649605f051502be5def5db74331ae7847969eb46fce59c97",
+        "size_bytes": 3077
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v001/CASE.json",
+        "sha256": "e52eb98ab3cd7cbcb51d070e5456637dba57af5050601cf417bb0ff20735e685",
+        "size_bytes": 12390
+      },
+      "case_id": "S03_book",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.4999958160198504,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_book/model.xml",
+        "sha256": "ac1ed542bdbbf105136cd838905216497f92db3c2428e59269f6719cb71c5379",
+        "size_bytes": 47412384
+      },
+      "name": "book_s03_v001",
+      "numerically_quarantined": true,
+      "object_id": "book",
+      "physics_steps": 3200,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v001/full/REPORT.json",
+        "sha256": "a103a8bec3b362dda3ec615e06d1df682ae346e15c21fb0ff4f8ec3f0daf3d94",
+        "size_bytes": 28074
+      },
+      "scene_id": "S03",
+      "source_role": "development_validation",
+      "stop_reason": "book_shape_reference_not_admitted",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v001/strategy.py",
+        "sha256": "75371e28a42220a1dd798ebccdd0abfed61639377be4ec91375ed4902b5d0aed",
+        "size_bytes": 22027
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v001/FINAL_VERIFICATION.json",
+        "sha256": "aa06689bda52b823c9143a16d8025ab14a3235da2d838c0d0954dab232039479",
+        "size_bytes": 3203
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/CASE.json",
+        "sha256": "e52eb98ab3cd7cbcb51d070e5456637dba57af5050601cf417bb0ff20735e685",
+        "size_bytes": 12390
+      },
+      "case_id": "S03_book",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.4999978552465531,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v3/S03_book/model.xml",
+        "sha256": "679cf4122e7c56afbfe1c872c773c575b41ac525af8d19052cea5f799e18fa95",
+        "size_bytes": 47412406
+      },
+      "name": "book_s03_v004",
+      "numerically_quarantined": false,
+      "object_id": "book",
+      "physics_steps": 1824,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/full/REPORT.json",
+        "sha256": "da8840bf6e6cf1dadab678448025065dfb86076a206c7d4a43a3bfcfacde1d05",
+        "size_bytes": 92536
+      },
+      "scene_id": "S03",
+      "source_role": "development_validation",
+      "stop_reason": "book_opposed_cover_reference_not_admitted",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/strategy.py",
+        "sha256": "0e44f16efa1c634779c9bc2b11ac7bf7836f309aa24e6c3c904a7fae1303cbcc",
+        "size_bytes": 30648
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/FINAL_VERIFICATION.json",
+        "sha256": "36e3841777615fcd5b95a7b549b61b9812b73f1c33391045800d9b13d6a57b8e",
+        "size_bytes": 3078
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v001/CASE.json",
+        "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+        "size_bytes": 12643
+      },
+      "case_id": "S02_bottle",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.5009560269857458,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+        "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+        "size_bytes": 47744485
+      },
+      "name": "bottle_s02_v001",
+      "numerically_quarantined": false,
+      "object_id": "bottle",
+      "physics_steps": 1824,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v001/full/REPORT.json",
+        "sha256": "0b01964cfbe0cd0ae8d007110bf992cd9e9c616eb0f5a427159e1b50a9258cbf",
+        "size_bytes": 7234
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "reference_route_not_found",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v001/strategy.py",
+        "sha256": "75371e28a42220a1dd798ebccdd0abfed61639377be4ec91375ed4902b5d0aed",
+        "size_bytes": 22027
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v001/FINAL_VERIFICATION.json",
+        "sha256": "7491eea69eafb22da981be2d2afeaa3e74e5ddd2db7f49b1f9d76ecf5c4291f0",
+        "size_bytes": 3765
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v002/CASE.json",
+        "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+        "size_bytes": 12643
+      },
+      "case_id": "S02_bottle",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.5009560269857458,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+        "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+        "size_bytes": 47744485
+      },
+      "name": "bottle_s02_v002",
+      "numerically_quarantined": false,
+      "object_id": "bottle",
+      "physics_steps": 1824,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v002/full/REPORT.json",
+        "sha256": "5b4380a9e2e2bafa4f9b00a4f341296baf8b062abdf049dfe9624da9420758ff",
+        "size_bytes": 135753
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "bottle_shape_reference_not_admitted",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v002/strategy.py",
+        "sha256": "92ac845b8125191bf052590c7ba18922f1336b7ffa2c4b50555cb6d20500387e",
+        "size_bytes": 32555
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v002/FINAL_VERIFICATION.json",
+        "sha256": "8843c1e13fd445fd19fee94b37c696659e8054f2e02476491ed8da1973b5d561",
+        "size_bytes": 3093
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v003/CASE.json",
+        "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+        "size_bytes": 12643
+      },
+      "case_id": "S02_bottle",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.5009560269857458,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+        "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+        "size_bytes": 47744485
+      },
+      "name": "bottle_s02_v003",
+      "numerically_quarantined": false,
+      "object_id": "bottle",
+      "physics_steps": 1824,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v003/full/REPORT.json",
+        "sha256": "1f81673bd0718d4d22f0c850313932e174debed62936ec3088b2980400ce2a9c",
+        "size_bytes": 141226
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "shape_ready_reference_route_blocked",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v003/strategy.py",
+        "sha256": "462109414bd15e9e6b14cf62a89a61c6e2177f2e7e7abea731adc9590600b8a1",
+        "size_bytes": 33683
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v003/FINAL_VERIFICATION.json",
+        "sha256": "e3d8bd8ded5a2337c51c8bfe786c8d21946968517b2f26984d0a99728246d58a",
+        "size_bytes": 3093
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v007/CASE.json",
+        "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+        "size_bytes": 12643
+      },
+      "case_id": "S02_bottle",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.500988179007835,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+        "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+        "size_bytes": 47744485
+      },
+      "name": "bottle_s02_v007",
+      "numerically_quarantined": false,
+      "object_id": "bottle",
+      "physics_steps": 4628,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v007/full/REPORT.json",
+        "sha256": "1007c466e988db1dd0b24bcb6b0ae716db88b3e9f8a150c5ee2ab49ffa980a3c",
+        "size_bytes": 160838
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "ready_arm_timeout",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v007/strategy.py",
+        "sha256": "5ec8fbd443f6e13b0f320d4bf108418aeb037ee73e9d6624fdcca32a559c3622",
+        "size_bytes": 43456
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v007/FINAL_VERIFICATION.json",
+        "sha256": "6dd1a016c5f5e3e42705e95a60918c736ce38a943b73dee14c7f2f6df920ac23",
+        "size_bytes": 3242
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/CASE.json",
+        "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+        "size_bytes": 12643
+      },
+      "case_id": "S02_bottle",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.49544803519132263,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+        "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+        "size_bytes": 47744485
+      },
+      "name": "bottle_s02_v009",
+      "numerically_quarantined": false,
+      "object_id": "bottle",
+      "physics_steps": 5268,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/full/REPORT.json",
+        "sha256": "c73cdccb89f4754418649c7045d329f98e0f8dacd39f8f156d836ea70cf02d82",
+        "size_bytes": 927617
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "probe_relative_slip",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/strategy.py",
+        "sha256": "3ac3a79be12ab8632f7bd387bc3757d9324c5d79c6601d8cb0ad76f929cafbde",
+        "size_bytes": 44952
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/FINAL_VERIFICATION.json",
+        "sha256": "3c96689dae5aa325b7e6709e252287a4aefacb95ebdd73ac7bd7f994ba24a019",
+        "size_bytes": 3667
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/CASE.json",
+        "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+        "size_bytes": 12643
+      },
+      "case_id": "S02_bottle",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.10388640418401476,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+        "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+        "size_bytes": 47744485
+      },
+      "name": "bottle_s02_v010",
+      "numerically_quarantined": false,
+      "object_id": "bottle",
+      "physics_steps": 7292,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/full/REPORT.json",
+        "sha256": "2981b704d86c9ee2daeaf7d0d28e86a1f44f927ed0d75b5dfa463d3a151bb80e",
+        "size_bytes": 5970774
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "object_slipped",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/strategy.py",
+        "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+        "size_bytes": 46225
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+        "sha256": "4e4e01ace975ec9d77b658d280addd0895bef78d74827f9e4485435d5eea288d",
+        "size_bytes": 3531
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v001/CASE.json",
+        "sha256": "2e6e5e43892a065e0336f6c5b47c08d56691e573857718265a32e47e4847905d",
+        "size_bytes": 12543
+      },
+      "case_id": "S03_bottle",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.5009562161961314,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_bottle/model.xml",
+        "sha256": "5498b72c2a3f21654713696498057188fd93aa5b6a3dfd69248f5be8e58dfeeb",
+        "size_bytes": 47742816
+      },
+      "name": "bottle_s03_v001",
+      "numerically_quarantined": false,
+      "object_id": "bottle",
+      "physics_steps": 1824,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v001/full/REPORT.json",
+        "sha256": "40a465f4406281526c05f2831c97f9a44992a784fcd663c97728894d6c7b1603",
+        "size_bytes": 7246
+      },
+      "scene_id": "S03",
+      "source_role": "development_validation",
+      "stop_reason": "reference_route_not_found",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v001/strategy.py",
+        "sha256": "75371e28a42220a1dd798ebccdd0abfed61639377be4ec91375ed4902b5d0aed",
+        "size_bytes": 22027
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v001/FINAL_VERIFICATION.json",
+        "sha256": "854bc0b56f77b72a7a653f87b35a94db47daa2a62d7430e1cd6d3197cc998c29",
+        "size_bytes": 3091
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/CASE.json",
+        "sha256": "2e6e5e43892a065e0336f6c5b47c08d56691e573857718265a32e47e4847905d",
+        "size_bytes": 12543
+      },
+      "case_id": "S03_bottle",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.5166120661557078,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_bottle/model.xml",
+        "sha256": "5498b72c2a3f21654713696498057188fd93aa5b6a3dfd69248f5be8e58dfeeb",
+        "size_bytes": 47742816
+      },
+      "name": "bottle_s03_v010",
+      "numerically_quarantined": false,
+      "object_id": "bottle",
+      "physics_steps": 5228,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/full/REPORT.json",
+        "sha256": "3c122a615619ecde16c043bc7744fa1027a57513849ad52fe9d90dd72f494b33",
+        "size_bytes": 462916
+      },
+      "scene_id": "S03",
+      "source_role": "development_validation",
+      "stop_reason": "mesh_close_timeout",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/strategy.py",
+        "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+        "size_bytes": 46225
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/FINAL_VERIFICATION.json",
+        "sha256": "516b7fb1a7a443be0afbf58d593b6783c70398d2f894dbdfbf85e4cb0d0f1551",
+        "size_bytes": 3506
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/CASE.json",
+        "sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+        "size_bytes": 12416
+      },
+      "case_id": "S02_cup",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.021920618237250823,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+        "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+        "size_bytes": 45935557
+      },
+      "name": "cup_s02_floor_v3",
+      "numerically_quarantined": false,
+      "object_id": "cup",
+      "physics_steps": 8904,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/full/REPORT.json",
+        "sha256": "9ca9b5221168eb76dc8965bad4cf5947c85f868e8cf431c66f20aa2b80de8cb3",
+        "size_bytes": 5604869
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "cup_upright_place_timeout",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/strategy.py",
+        "sha256": "31e88dffe8cbf70f465ebab01d74b2c5e830690e0207a19cc5b9a00909821537",
+        "size_bytes": 12218
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/FINAL_VERIFICATION.json",
+        "sha256": "a065638b21ea9a871324bba8b51a84ac4af378d28f884afcffeace873064ed1a",
+        "size_bytes": 3141
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v001/CASE.json",
+        "sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+        "size_bytes": 12416
+      },
+      "case_id": "S02_cup",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.5014610480433037,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models/S02_cup/model.xml",
+        "sha256": "13170f910e0927853de35c508651107cadc6b3c53eabcde34a69ffdcfcef3833",
+        "size_bytes": 45936082
+      },
+      "name": "cup_s02_v001",
+      "numerically_quarantined": false,
+      "object_id": "cup",
+      "physics_steps": 16,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v001/full/REPORT.json",
+        "sha256": "6063a52f05108a51631e4c306d8175e6df14eb7bf3c0486accc583879e352795",
+        "size_bytes": 4002
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": "physical_rejection:no_forbidden_contact",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v001/strategy.py",
+        "sha256": "31e88dffe8cbf70f465ebab01d74b2c5e830690e0207a19cc5b9a00909821537",
+        "size_bytes": 12218
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v001/FINAL_VERIFICATION.json",
+        "sha256": "b7dad287d5c47d84a2570cd8d1183a047e83a2d45550c4d0461d415201001892",
+        "size_bytes": 2215
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/CASE.json",
+        "sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+        "size_bytes": 12416
+      },
+      "case_id": "S02_cup",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.005711577088082361,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+        "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+        "size_bytes": 45935557
+      },
+      "name": "cup_s02_v003",
+      "numerically_quarantined": false,
+      "object_id": "cup",
+      "physics_steps": 8532,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/full/REPORT.json",
+        "sha256": "5272a1861dc13a7e77da7a6af9835b7cf1d92de2f088b73360c68904876449b2",
+        "size_bytes": 5517371
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": null,
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/strategy.py",
+        "sha256": "0f38c7b987784e198a8c138a7d04f2396903c2f5668936fa01f1d355d2db85dc",
+        "size_bytes": 12191
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/FINAL_VERIFICATION.json",
+        "sha256": "ced5c1e502096e9f1ed9a2ddada3f6078490f8a0f471a8576adea4b8a70161d4",
+        "size_bytes": 3508
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/CASE.json",
+        "sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+        "size_bytes": 12416
+      },
+      "case_id": "S02_cup",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.005711577711826629,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+        "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+        "size_bytes": 45935557
+      },
+      "name": "cup_s02_v004",
+      "numerically_quarantined": false,
+      "object_id": "cup",
+      "physics_steps": 8536,
+      "qualified": true,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/full/REPORT.json",
+        "sha256": "7173dd96c4d4255740fea2d1cdbe480be0a32b209077f53be1ffeeae4198739c",
+        "size_bytes": 5510493
+      },
+      "scene_id": "S02",
+      "source_role": "development_validation",
+      "stop_reason": null,
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/strategy.py",
+        "sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+        "size_bytes": 13082
+      },
+      "task_passed": true,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/FINAL_VERIFICATION.json",
+        "sha256": "640826ac7c7a53ba7403294e5e210b1257b76913b96d0f675ef8c630b4ca4db3",
+        "size_bytes": 4663
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v001/CASE.json",
+        "sha256": "a3201f433f10b0254d5933a964daa531b8a07167c3d461c899eefedd214f5aab",
+        "size_bytes": 12372
+      },
+      "case_id": "S03_cup",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.5014610415538822,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models/S03_cup/model.xml",
+        "sha256": "8f093e78fb9740e13ab213c0d996c516cd4e29c0ddba167701a50bfb3785b5b9",
+        "size_bytes": 45934413
+      },
+      "name": "cup_s03_v001",
+      "numerically_quarantined": false,
+      "object_id": "cup",
+      "physics_steps": 16,
+      "qualified": false,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v001/full/REPORT.json",
+        "sha256": "b3b003dc8e1f35ad1e91b53d3c5a3ed3b509c163e105850ad44be7ef917fd81d",
+        "size_bytes": 4002
+      },
+      "scene_id": "S03",
+      "source_role": "development_validation",
+      "stop_reason": "physical_rejection:no_forbidden_contact",
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v001/strategy.py",
+        "sha256": "31e88dffe8cbf70f465ebab01d74b2c5e830690e0207a19cc5b9a00909821537",
+        "size_bytes": 12218
+      },
+      "task_passed": false,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v001/FINAL_VERIFICATION.json",
+        "sha256": "dc7351804e8abfbe65f7633d04b37ed34bc2f7119ae25848398bdf75a699bb87",
+        "size_bytes": 2215
+      }
+    },
+    {
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/CASE.json",
+        "sha256": "a3201f433f10b0254d5933a964daa531b8a07167c3d461c899eefedd214f5aab",
+        "size_bytes": 12372
+      },
+      "case_id": "S03_cup",
+      "dataset_split": "unassigned",
+      "goal_error_m": 0.008499054042315815,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_cup/model.xml",
+        "sha256": "e16e06067b5e7de49eb1d035c56f88f1eac3f7dd417f210bf96717faee7c2d4a",
+        "size_bytes": 45933888
+      },
+      "name": "cup_s03_v004",
+      "numerically_quarantined": false,
+      "object_id": "cup",
+      "physics_steps": 8936,
+      "qualified": true,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/full/REPORT.json",
+        "sha256": "7ba2a024ff019b27ceb7041e58719508ae9e8588cff44c1f455fa9bd53741838",
+        "size_bytes": 5750764
+      },
+      "scene_id": "S03",
+      "source_role": "development_validation",
+      "stop_reason": null,
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/strategy.py",
+        "sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+        "size_bytes": 13082
+      },
+      "task_passed": true,
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/FINAL_VERIFICATION.json",
+        "sha256": "26dd1bb1eb62b6d88e360141649ff64d14bbf0833e6b8caf47dc7dd8fdd0aa00",
+        "size_bytes": 4849
+      }
+    }
+  ],
+  "book_result": "Flat-book direct single-right-hand references not admitted; bounded local evidence does not establish global impossibility. No bimanual substitution or changed initial pose.",
+  "bottle_result": "Body-pinch references rejected. Neck/cap V010 S02 passed probe/hover/carry but slipped at placement; S03 failed mesh_close_timeout. No qualified bottle data.",
+  "case_admission_registry": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/CASE_ADMISSION_REGISTRY.json",
+    "sha256": "b3e3e3b0963a37d27af57b22397d2c39283912bb8abf2ac715dd8327434c003e",
+    "size_bytes": 2621
+  },
+  "categories": {
+    "book": {
+      "current_cases": [
+        "S02_book",
+        "S03_book"
+      ],
+      "qualified_cases": [],
+      "qualified_episodes": 0
+    },
+    "bottle": {
+      "current_cases": [
+        "S02_bottle",
+        "S03_bottle"
+      ],
+      "qualified_cases": [],
+      "qualified_episodes": 0
+    },
+    "cup": {
+      "current_cases": [
+        "S02_cup",
+        "S03_cup"
+      ],
+      "qualified_cases": [
+        "S02_cup",
+        "S03_cup"
+      ],
+      "qualified_episodes": 2
+    }
+  },
+  "content_sha256_excluding_this_field": "c3f489baef6ac05877ecaa690fe23628f1f734f7d753382226def127f283e230",
+  "cost_snapshot": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/COST_FINAL_SNAPSHOT.json",
+    "sha256": "2bb45e25f95848c2b567be166653cb00e4249f251a846b59bf78a793effc7f51",
+    "size_bytes": 8742
+  },
+  "costs": [
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v001/cost/REPORT.json",
+        "sha256": "47439db7ece2f64507220c487a2cb464f10ff0278f8f01283e7c3ce4fde05b0a",
+        "size_bytes": 734
+      },
+      "steps": 16
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v001/cost/REPORT.json",
+        "sha256": "095b6fee79916760a000a3244b2418cf34a3f35ad32497b5f253771abfc2040a",
+        "size_bytes": 734
+      },
+      "steps": 16
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/cost/REPORT.json",
+        "sha256": "d8eecb3a547d4eb520dcaa414c7f450d23457b15ef2e5c293e7e7f0116c0b4ac",
+        "size_bytes": 745
+      },
+      "steps": 8904
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v001/cost/REPORT.json",
+        "sha256": "b004949f2a31d078c09e7a586898966fad7448ef4b6cb1be0a9650bd95e8c8ee",
+        "size_bytes": 741
+      },
+      "steps": 1824
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v001/cost/REPORT.json",
+        "sha256": "95cc80da547f14a71abff44dc2d72efc7bdfe88c3ffcb5228549652a4ac10989",
+        "size_bytes": 741
+      },
+      "steps": 1824
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/cost/REPORT.json",
+        "sha256": "a2ecd74af87c038aba64c52b59ca9f1f0c8935a07258d6beda9dc7bd7e0369fe",
+        "size_bytes": 740
+      },
+      "steps": 3200
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v001/cost/REPORT.json",
+        "sha256": "cbcae08115749349d3b08219aa002dbe5251da8df09830a118e618c58bcfe6f0",
+        "size_bytes": 740
+      },
+      "steps": 3200
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/continuous_replay_numerical_diagnostic",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/continuous_replay_numerical_diagnostic/REPORT.json",
+        "sha256": "baab6fb0a879f62e885776d6096a90c9606a69fc535fc1d416077573ddc92b58",
+        "size_bytes": 2551
+      },
+      "steps": 3200
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v002/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v002/cost/REPORT.json",
+        "sha256": "cfb0fe6c89df956dec1680b926e36a16f4996c95b11ff42d2cc46f253db88324",
+        "size_bytes": 743
+      },
+      "steps": 1824
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/numerical_admission/S02_book/continuous_replay_capacity_probe",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/numerical_admission/S02_book/continuous_replay_capacity_probe/REPORT.json",
+        "sha256": "ccd6a2d8840c09d52b093421979e114a360c51d088228da7baa082b6d779512b",
+        "size_bytes": 20677
+      },
+      "steps": 40
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/numerical_admission/S03_book/continuous_replay_capacity_probe",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/numerical_admission/S03_book/continuous_replay_capacity_probe/REPORT.json",
+        "sha256": "511f9279ef198ed8d1e555170f3d07ca9666e35975d1b64518bd10e756bfbb61",
+        "size_bytes": 20676
+      },
+      "steps": 40
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/cost/REPORT.json",
+        "sha256": "2805b8397284d607250b3a2e8fddf6c0291fdde9356a7fdd39c9dd4b6e188324",
+        "size_bytes": 740
+      },
+      "steps": 1824
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v003/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v003/cost/REPORT.json",
+        "sha256": "24d877eaf031596ad7f23bff363aaae6fc02fd1b02f55e91387dc842e86f9790",
+        "size_bytes": 743
+      },
+      "steps": 1824
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/cost/REPORT.json",
+        "sha256": "695f4f23e1fc7bf7059430a4978dfa7d37aaba183bfe2aa74bd801fe80a35011",
+        "size_bytes": 741
+      },
+      "steps": 8532
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/cost/REPORT.json",
+        "sha256": "b27f84f55f354d8603ddd2e2aa5b3e35a2d29afce459e340ff92ab425fc594c6",
+        "size_bytes": 741
+      },
+      "steps": 8536
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/continuous_replay",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/continuous_replay/REPORT.json",
+        "sha256": "54e29a773764d60cb90f893872d34acd0251f22c077193d5df1f337af494bdae",
+        "size_bytes": 1659
+      },
+      "steps": 8536
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/cost/REPORT.json",
+        "sha256": "919424af8e7f9dfe58de4a4f56ba814b2e7ee8040fa23e1bf95586234fc26525",
+        "size_bytes": 741
+      },
+      "steps": 8936
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/continuous_replay",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/continuous_replay/REPORT.json",
+        "sha256": "e72218142823f1c04a6ffce5b98195cbf7a433529831f40eec988c5253340f78",
+        "size_bytes": 1659
+      },
+      "steps": 8936
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v007/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v007/cost/REPORT.json",
+        "sha256": "a1e03a07451e1929091880a502315b7b60b4e69758d12bc2ce1079e949bd6550",
+        "size_bytes": 743
+      },
+      "steps": 4628
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/cost/REPORT.json",
+        "sha256": "5ae65312cf184d82bb75ef3362e1d78ab58bb510d35b1c18de4420ccf8070683",
+        "size_bytes": 740
+      },
+      "steps": 1824
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/cost/REPORT.json",
+        "sha256": "82242841a2afa93699adf645030cca0665c7616b0c777b3c6ef3f48ab97c1605",
+        "size_bytes": 743
+      },
+      "steps": 5268
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/cost/REPORT.json",
+        "sha256": "b877db941def014dd0daed9f4abc5d7a0f78adfd73a243ad9a946dad20e6759e",
+        "size_bytes": 744
+      },
+      "steps": 7292
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/cost/REPORT.json",
+        "sha256": "c177e29da51dd5f50a1d91de4dc598e9cca4e2f0fffb55ab6fa6edb576bb0c91",
+        "size_bytes": 743
+      },
+      "steps": 5228
+    }
+  ],
+  "cumulative_native_steps": 239138,
+  "dataset_manifest": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/DATASET_MANIFEST.json",
+    "sha256": "fccfc3039d12fe7d8fce7f228ce33b0e875af9aa35b0987ff2b77bc1ed7f9eb0",
+    "size_bytes": 26568
+  },
+  "dataset_split": "unassigned",
+  "exit_reason": "Fixed admitted six-case assessment and all required verification complete with partial failures. Additional expert continuation failed due model-service capacity; its proposed V011 is untested. Remaining declared time no longer permits a new full trial with replay/QA headroom.",
+  "expert_final_reconciliation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/EXPERT_FINAL_RECONCILIATION.json",
+    "sha256": "3eee3ffc93baf11fda88b5e0e74e49d3ababd196e0c41c6d3c5928eacd69d160",
+    "size_bytes": 2615
+  },
+  "finished_utc": "2026-10-26T08:22:44.738536+00:00",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/tools/finalize_round_v1.py",
+    "sha256": "7af0f7b8528bb4329212fc82704b5353b6ac455fd4bfb5f0862c8e09f5b4904a",
+    "size_bytes": 8109
+  },
+  "independent_success_rate_estimated": false,
+  "learning_effect_evaluated": false,
+  "limitations": [
+    "Native meshes are complete, but materials are simplified. Empty bottle200g and book250g/inertia are frozen simulation assumptions.",
+    "All body29 remain SONIC and all14 fingers nativePD with unchanged original physical/final gates; NoSlip0->3 at3960 is the explicitly declared numerical calibration condition.",
+    "Old16MiB book records have real CONTACTFULL and are numerically quarantined; replacement256MiB model retains exact guarded plant arrays/options.",
+    "Full videos are automatically decoded; primary agent reviewed sampled actual keyframes and closeups, not every frame manually."
+  ],
+  "new_physics_steps": 95452,
+  "new_steps_per_unique_qualified_episode": 47726.0,
+  "old_history": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/OLD_HISTORY_BINDING_CHECK.json",
+    "sha256": "d65652067dc28c875849052468882f51480dd2bc7efb0f2450e34ad95c62ba35",
+    "size_bytes": 112712
+  },
+  "original_deadline_epoch_utc": 1793003513.8857322,
+  "physics_cap": 180000,
+  "prior_native_steps": 143686,
+  "production_batch_capacity_verified": false,
+  "qualified_episodes": 2,
+  "round_complete": true,
+  "schema": "generated-grasp-round-final-review/v1",
+  "sequential_agent_invocations": [
+    {
+      "invocation": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/agent_01/INVOCATION.json",
+        "sha256": "a3d029b458c9b68e3d0c4b91cfc2f018c5037eefd21f3005ea9bb5b41d48862b",
+        "size_bytes": 4684
+      },
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "invocation": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/agent_02/INVOCATION.json",
+        "sha256": "24c539d36d476d6759bbf0c0bcdadf0e95b22faabc9b8d6b8bd26fac0b740215",
+        "size_bytes": 998
+      },
+      "returncode": 1,
+      "timed_out": false
+    }
+  ],
+  "session_closeout": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/SESSION_CLOSEOUT.json",
+    "sha256": "b2f8ad66c46b5c9049fc9ff951d6d4266098c91cda0c9593f8dcf1faa9b98885",
+    "size_bytes": 2404
+  },
+  "source_role": "development_validation",
+  "task_scope_disclosure": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/TASK_SCOPE_DISCLOSURE.json",
+    "sha256": "6561152ed21272938abe773419ee3bedf51069c16505dea6dafa3cffd57dc863",
+    "size_bytes": 1448
+  },
+  "unique_qualified_physical_trajectories": 2,
+  "unsettled_reservations": []
+}

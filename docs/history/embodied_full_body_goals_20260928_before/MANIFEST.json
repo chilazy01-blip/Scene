@@ -1,0 +1,27 @@
+[
+  {
+    "source": "/data/wsj/main/scene/AGENT.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_full_body_goals_20260928_before/AGENT.md",
+    "sha256": "674ca005032bf6c4102e5b73c12be97daaa07f373ee26012fb00737e6a025d02"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_FULL_BODY_ALIGNMENT_20260928.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_full_body_goals_20260928_before/EMBODIED_FULL_BODY_ALIGNMENT_20260928.md",
+    "sha256": "50e36e7567f54a5d2e17605a7351f2e8f76581733cc124e0888240d23df2667b"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_DATA_ROADMAP_20260926.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_full_body_goals_20260928_before/EMBODIED_DATA_ROADMAP_20260926.md",
+    "sha256": "5380add0631faa2599fbf3540413a3b05038f41a5d9decd981312f306efb73e2"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_full_body_goals_20260928_before/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+    "sha256": "a5176e77fea6b964757950811ea87d8afe260b218875bdd0f63a7a9ae27bdd2e"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_full_body_goals_20260928_before/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+    "sha256": "c3ff5656ffe30870ee089cecb698885a630acf7cb2505c4f45a66f09f02028e1"
+  }
+]

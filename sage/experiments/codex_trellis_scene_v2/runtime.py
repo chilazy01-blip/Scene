@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import subprocess
 from pathlib import Path
@@ -75,6 +76,8 @@ def assemble_with_blender(
     cmd = [
         str(blender_bin),
         "--background",
+        "--python-exit-code",
+        "1",
         "--python",
         str(assembler),
         "--",
@@ -107,6 +110,13 @@ def assemble_with_blender(
         raise RuntimeError(
             f"Blender assembly failed with code {proc.returncode}; see {stderr_path}"
         )
+    dimensions_path = output_glb.with_suffix(".dimensions.json")
+    if not dimensions_path.is_file():
+        raise RuntimeError("Blender assembly omitted the actual GLB dimension readback")
+    dimensions_audit = json.loads(dimensions_path.read_text())
+    if (dimensions_audit.get("passes") is not True
+            or dimensions_audit.get("source_sha256") != hashlib.sha256(output_glb.read_bytes()).hexdigest()):
+        raise RuntimeError("Actual GLB dimension readback failed or its source binding changed")
     if preview_image is not None and (
         not preview_image.is_file() or preview_image.stat().st_size <= 0
     ):

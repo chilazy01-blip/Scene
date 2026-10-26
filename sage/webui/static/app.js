@@ -27,6 +27,7 @@ function collectPayload() {
   return {
     mode: state.mode,
     assetStrategy: selectedAssetStrategy(),
+    imageProvider: fieldValue("imageProvider"),
     referenceImage: fieldValue("referenceImage"),
     sceneName: fieldValue("sceneName"),
     outputRoot: fieldValue("outputRoot"),
@@ -82,6 +83,7 @@ function renderPlan(plan) {
   const lines = [];
   lines.push(plan.implemented ? "配置可创建任务" : "当前配置仅预留接口");
   lines.push(`运行用途：${plan.profileKind === "formal_delivery" ? "正式交付" : "诊断"} (${plan.profile || "unknown"})`);
+  lines.push(`候选图后端：${plan.imageProvider === "builtin_imagegen" ? "内置图生（实际型号未核验）" : plan.imageProvider || "未记录"}`);
   if (plan.outputDir) lines.push(`输出目录：${plan.outputDir}`);
   if (plan.mode === "text_to_scene" && plan.assetStrategy === "generate_from_scratch") {
     lines.push("资产链路：SceneBrief -> V2 缺失资产合同 -> Trellis2 -> 准入 -> Blender");
@@ -138,6 +140,11 @@ function renderJobs(jobs) {
     const profile = document.createElement("span");
     profile.textContent = job.profile === "production" ? "正式交付" : `诊断运行 (${job.profile || "unknown"})`;
     item.appendChild(profile);
+
+    const imageProvider = document.createElement("span");
+    const provider = (job.plan || {}).imageProvider;
+    imageProvider.textContent = `候选图后端：${provider === "builtin_imagegen" ? "内置图生（实际型号未核验）" : provider || "未记录"}`;
+    item.appendChild(imageProvider);
 
     const gate = document.createElement("span");
     const gateData = job.resourceGate || {};
@@ -207,6 +214,7 @@ function setMode(mode) {
 
 function applyDefaults(config) {
   const defaults = config.defaults || {};
+  $("imageProvider").value = defaults.imageProvider || "builtin_imagegen";
   $("outputRoot").value = defaults.outputRoot || "";
   $("assetSourceImageDir").placeholder = `${defaults.assetSourceRoot || "/data/xy/SAGE_runs/image2_replacement"}/.../source_images`;
   $("textAssetSourceImageDir").placeholder = `${defaults.assetSourceRoot || "/data/xy/SAGE_runs/image2_replacement"}/.../source_images`;

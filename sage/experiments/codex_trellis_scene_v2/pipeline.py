@@ -6,12 +6,14 @@ from pathlib import Path
 from typing import Any
 
 from .architecture import plan_architecture
-from .assets import resolve_assets
+from .asset_source_policy import audit_asset_source_policy
+from .asset_usage import bind_asset_usage
+from .assets import bridge_health, resolve_assets
 from .brief import expand_prompt
 from .constraint_scopes import evaluate_constraint_scope_envelopes
 from .content_chain import content_hash, file_binding
 from .contracts import COORDINATES, stamp_document, validate_document_family, validate_layout_plan
-from .core_domain import request_from_pipeline_args
+from .core_domain import normalize_image_provider, request_from_pipeline_args
 from .delivery_status import apply_profile_defaults, evaluate_terminal_status
 from .io_utils import read_json, write_json
 from .planner import codex_layout, codex_repair_layout, rules_layout
@@ -45,8 +47,57 @@ def prepare_output_dir(path: Path, overwrite: bool, resume: bool = False) -> Non
     path.mkdir(parents=True, exist_ok=True)
 
 
+def image_provider_connection(args: Any) -> tuple[str, dict[str, Any]]:
+    """Bind the selected provider and server generation settings before caching."""
+    provider = normalize_image_provider(getattr(args, "image_provider", None))
+    base = str(args.trellis_url).rstrip("/")
+    if "/providers/" in base:
+        base, scoped = base.rsplit("/providers/", 1)
+        if scoped != provider:
+            raise ValueError("--trellis-url provider conflicts with --image-provider")
+    endpoint = base + "/providers/" + provider
+    contract: dict[str, Any] = {
+        "schema": "scene-image-provider-contract/v1", "provider": provider,
+        "configuration_status": "not_queried_in_non_generation_mode",
+    }
+    if str(args.asset_mode) == "trellis2":
+        health = bridge_health(endpoint)
+        payload = health.get("payload") or {}
+        observed = payload.get("image_provider_contract")
+        if not health.get("ok") or not isinstance(observed, dict) or observed.get("provider") != provider:
+            raise RuntimeError(f"Image provider contract unavailable at {endpoint}: {health}")
+        required = {"schema", "provider", "prompt_template_version", "background_mode", "retry_count", "transport", "requested_model"}
+        required |= (
+            {"backend_model_id", "model_identity_status", "seed_supported", "size_control_supported"}
+            if provider == "builtin_imagegen"
+            else {"width", "height", "steps", "guidance_scale", "max_sequence_length"}
+        )
+        expected_transport = "codex_tool_spool/v1" if provider == "builtin_imagegen" else "flux_http/v1"
+        if (
+            not required.issubset(observed)
+            or observed.get("schema") != "scene-image-provider-contract/v1"
+            or observed.get("transport") != expected_transport
+            or not observed.get("prompt_template_version")
+        ):
+            raise RuntimeError(f"Incomplete or unsupported image provider contract: {observed}")
+        if provider == "builtin_imagegen" and (
+            observed.get("backend_model_id") is not None
+            or observed.get("requested_model") is not None
+            or observed.get("model_identity_status") != "unverified"
+        ):
+            raise RuntimeError("Builtin imagegen does not expose a verified backend model")
+        if provider == "flux1-schnell" and observed.get("requested_model") != "flux1-schnell":
+            raise RuntimeError("FLUX.1 provider is backed by a different model profile")
+        contract = observed
+    return endpoint, contract
+
+
 def run_pipeline(args: Any) -> dict[str, Any]:
     apply_profile_defaults(args)
+    from .scene_physics import read_config, extend_brief
+    from .furnishing_groups import read_config as read_furnishing_config, ground_groups, place_groups
+    furnishing_config = read_furnishing_config(getattr(args, "furnishing_config", None))
+    physics_config = read_config(getattr(args, "physics_config", None))
     output_dir = Path(args.output_dir).expanduser().resolve()
     resume = bool(getattr(args, "resume", False))
     prepare_output_dir(output_dir, bool(args.overwrite), resume=resume)
@@ -95,6 +146,9 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         "target_max_objects": args.target_max_scene_objects,
         "max_auto_inferred_objects": args.max_auto_inferred_assets,
     }
+    if physics_config is not None:
+        expand_config["physics_config"] = physics_config
+        write_json(output_dir / "physics_config.json", physics_config)
     expand_attempt = dag.begin("expand", inputs=expand_inputs, config=expand_config)
     expanded_path = output_dir / "scene_brief_expanded.json"
     if expand_attempt["reused"]:
@@ -111,6 +165,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             target_max_objects=args.target_max_scene_objects,
             max_auto_inferred_objects=args.max_auto_inferred_assets,
         )
+        extend_brief(brief, physics_config)
         brief["coordinate_contract"] = COORDINATES.as_dict()
         stamp_document(brief)
         validate_document_family("SceneBrief", brief)
@@ -129,6 +184,9 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         "accent_material": getattr(args, "accent_wall_material", None),
         "window_wall": getattr(args, "window_wall", None),
     }
+    if furnishing_config is not None:
+        architecture_config["furnishing_groups"] = furnishing_config
+        write_json(output_dir / "furnishing_config.json", furnishing_config)
     architecture_attempt = dag.begin(
         "architecture", inputs=architecture_inputs, config=architecture_config
     )
@@ -144,6 +202,8 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             accent_wall_material_override=getattr(args, "accent_wall_material", None),
             window_wall_override=getattr(args, "window_wall", None),
         )
+    if not architecture_attempt["reused"]:
+        ground_groups(brief, architecture_plan, furnishing_config)
     brief["coordinate_contract"] = COORDINATES.as_dict()
     stamp_document(brief)
     validate_document_family("SceneBrief", brief)
@@ -202,6 +262,18 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             },
         )
 
+    provider_url, provider_contract = image_provider_connection(args)
+    provider_contract_hash = content_hash(provider_contract)
+    provider_code_version = (
+        str(getattr(args, "generation_code_version", "unfrozen-scene-v2-code"))
+        + ":image-provider-v1:" + provider_contract_hash
+    )
+    write_json(output_dir / "image_provider.json", {
+        "provider": normalize_image_provider(getattr(args, "image_provider", None)),
+        "endpoint": provider_url, "contract": provider_contract,
+        "contract_hash": provider_contract_hash,
+        "generation_code_version": provider_code_version,
+    })
     asset_config = {
         "mode": str(args.asset_mode),
         "seed": int(args.seed),
@@ -210,7 +282,8 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         "decimation_target": int(args.decimation_target),
         "pipeline_type": str(args.trellis_pipeline_type),
         "model_fingerprint": str(getattr(args, "trellis_model_fingerprint", "")),
-        "code_version": str(getattr(args, "generation_code_version", "")),
+        "code_version": provider_code_version,
+        "image_provider_contract": provider_contract,
     }
     asset_plan_attempt = dag.begin(
         "asset_plan", inputs={"brief_hash": content_hash(brief)}, config=asset_config
@@ -223,7 +296,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             output_dir,
             mode=str(args.asset_mode),
             manifest_path=Path(args.asset_library_manifest).expanduser() if args.asset_library_manifest else None,
-            trellis_url=str(args.trellis_url),
+            trellis_url=provider_url,
             seed=int(args.seed),
             timeout=float(args.asset_timeout),
             steps=int(args.steps),
@@ -241,13 +314,39 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             resume_staged_assets=resume,
             trellis_model_fingerprint=str(getattr(args, "trellis_model_fingerprint", "unfrozen-local-trellis-model")),
             rmbg_model_fingerprint=str(getattr(args, "rmbg_model_fingerprint", "unfrozen-local-rmbg-model")),
-            generation_code_version=str(
-                getattr(args, "generation_code_version", "unfrozen-scene-v2-code")
-            ),
+            generation_code_version=provider_code_version,
             require_generated_asset_admission=(
                 str(getattr(args, "profile", "development")) == "production"
             ),
     )
+    usage_manifest = read_json(Path(args.asset_library_manifest).expanduser()) if args.asset_library_manifest else {}
+    asset_report["usage_resolution"] = bind_asset_usage(brief, usage_manifest)
+    write_json(output_dir / "asset_usage_resolution.json", asset_report["usage_resolution"])
+    source_policy = audit_asset_source_policy(asset_report)
+    provider_failures = []
+    for item in asset_report.get("results", []):
+        if not isinstance(item, dict) or item.get("status") != "generated":
+            continue
+        metadata = item.get("metadata") or {}
+        metadata = metadata.get("primary_generation_metadata", metadata)
+        observed = (metadata.get("bridge_metadata") or {}).get("image_provider_contract")
+        if observed != provider_contract:
+            provider_failures.append(str(item.get("object_id", "unknown")) + ":actual_provider_contract_mismatch")
+    if provider_failures:
+        source_policy["ok"] = False
+        source_policy.setdefault("failures", []).extend(provider_failures)
+    write_json(output_dir / "image_provider_audit.json", {
+        "ok": not provider_failures, "expected_contract": provider_contract,
+        "failures": provider_failures,
+    })
+    asset_report["asset_source_policy"] = source_policy
+    asset_report["ready_for_assembly"] = bool(
+        asset_report.get("ready_for_assembly") and source_policy["ok"]
+    )
+    # resolve_assets writes its initial report; overwrite it with the source
+    # policy result before any downstream DAG certificate or assembly check.
+    write_json(output_dir / "asset_resolution.json", asset_report)
+    write_json(output_dir / "asset_source_policy.json", source_policy)
     write_json(
         output_dir / "instance_group_asset_resolution.json",
         asset_report.get("instance_group_resolution", {}),
@@ -348,6 +447,8 @@ def run_pipeline(args: Any) -> dict[str, Any]:
             plan = codex_layout(brief, output_dir, str(args.model))
         else:
             plan = rules_layout(brief)
+        plan["furnishing_groups"] = deepcopy(brief.get("furnishing_groups", {}))
+        place_groups(plan)
         write_json(output_dir / "layout_plan_initial.json", plan)
 
         validation = validate_layout(plan)
@@ -382,6 +483,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                     model=str(args.model),
                     iteration=iteration,
                 )
+                place_groups(plan)
                 validation = validate_layout(plan)
                 write_json(output_dir / f"validation_{iteration:02d}_codex.json", validation)
 
@@ -466,7 +568,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
         assembly_attempt = dag.begin(
             "assemble",
             inputs={"layout_hash": content_hash(plan), "asset_report_hash": content_hash(asset_report)},
-            config={"blender": str(args.blender_bin)},
+            config={"blender": str(args.blender_bin), **({"physics": physics_config} if physics_config else {})},
         )
         if assembly_attempt["reused"]:
             assembly_report = read_json(output_dir / "assembly_report.json")
@@ -476,9 +578,21 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                 Path(asset_report["asset_dir"]),
                 scene_glb,
                 blender_bin=Path(args.blender_bin).expanduser(),
-                preview_image=scene_render,
-                preview_image_center=scene_render_front_center,
+                preview_image=None if physics_config else scene_render,
+                preview_image_center=None if physics_config else scene_render_front_center,
             )
+            if furnishing_config:
+                from .furnishing_geometry import audit_furnishing_geometry
+                furnishing_audit = audit_furnishing_geometry(scene_glb, plan)
+                write_json(output_dir / "furnishing_geometry.json", furnishing_audit)
+                if not furnishing_audit['ok']:
+                    raise RuntimeError('Under-furniture source geometry obstructs the requested object envelope')
+                assembly_report['furnishing_geometry'] = furnishing_audit
+            if physics_config:
+                from .scene_physics import run_scene_physics
+                physics_report = run_scene_physics(scene_glb, plan, output_dir / "physics", physics_config)
+                assembly_report["physics"] = physics_report
+                assembly_report["final_scene_glb"] = physics_report["final_scene"]["path"]
             write_json(output_dir / "assembly_report.json", assembly_report)
             dag.commit(
                 "assemble",
@@ -486,13 +600,23 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                 outputs={
                     "assembly_report": output_dir / "assembly_report.json",
                     "scene_glb": scene_glb,
+                    **({"physics_final_scene": Path(assembly_report["physics"]["final_scene"]["path"]),
+                        "physics_final_plan": Path(assembly_report["physics"]["final_layout_plan"]["path"]),
+                        "physics_result": output_dir / "physics" / "physics_result.json"} if physics_config else {}),
                 },
             )
+        if physics_config:
+            scene_glb = Path(assembly_report["physics"]["final_scene"]["path"])
+            plan_path = Path(assembly_report["physics"]["final_layout_plan"]["path"])
+            plan = read_json(plan_path)
+            scene_render = None
+            scene_render_front_center = None
         if bool(getattr(args, "scene_render_acceptance", False)):
             render_attempt = dag.begin(
                 "render_acceptance",
                 inputs={"scene_glb": file_binding(scene_glb)},
-                config={"resolution": int(getattr(args, "scene_render_acceptance_resolution", 512))},
+                config={"resolution": int(getattr(args, "scene_render_acceptance_resolution", 512)),
+                        "engine": str(getattr(args, "scene_render_acceptance_engine", "eevee"))},
             )
             render_report_path = output_dir / "scene_render_acceptance" / "scene_render_acceptance_report.json"
             if render_attempt["reused"]:
@@ -504,6 +628,7 @@ def run_pipeline(args: Any) -> dict[str, Any]:
                     plan_path=plan_path,
                     asset_dir=Path(asset_report["asset_dir"]),
                     output_dir=output_dir / "scene_render_acceptance",
+                    engine=str(getattr(args, "scene_render_acceptance_engine", "eevee")),
                     resolution=int(
                         getattr(args, "scene_render_acceptance_resolution", 512)
                     ),

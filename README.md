@@ -32,3 +32,9 @@ python -m sage.experiments.codex_trellis_scene_v2.project_facts \
 ```
 
 历史 Flow2 说明和实验结论保留在 `docs/` 与 V2 实验报告中，仅作证据，不代表当前默认链。
+
+## 具身训练数据实验（2026-09-27）
+
+已完成48条件几何采集（开发32/40、验证8/8）和等量图像学习检验；整批产量门及视觉取放准入未通过，失败保留。可读取的条件化研究数据现有97条成功开发轨迹，其中44条含完整腕部RGB-D，11880个时刻。它们不具备真机或稳定量产资格。见[训练入口](docs/EMBODIED_TRAINING_DATA_20260927.md)和[实测结果](docs/EMBODIED_CAPABILITY_RESULTS_20260926.md)。
+
+项目里程碑与下一步见[具身数据路线图](docs/EMBODIED_DATA_ROADMAP_20260926.md)；换对话从[当前交接](docs/EMBODIED_LONG_RUN_HANDOFF_20260926.md)恢复，各阶段状态汇总见[进展台账](docs/EMBODIED_LONG_RUN_PROGRESS_20260926.md)。磁盘31GiB扩容及无损交付已完成；下一56条件批仅静态通过，计算扩容尚待批准。

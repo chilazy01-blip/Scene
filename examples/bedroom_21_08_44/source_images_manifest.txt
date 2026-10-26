@@ -1,0 +1,22 @@
+Generated source images for bedroom_21_08_44 stage 4.
+Place these files in examples/bedroom_21_08_44/source_images/.
+
+alarm_clock.png
+area_rug.png
+bedside_table_lamp.png
+black_office_chair.png
+blue_curtain_panel.png
+curtain_rod.png
+desk_lamp.png
+framed_lake_art.png
+left_nightstand.png
+left_slipper.png
+left_window.png
+potted_plant.png
+right_nightstand.png
+right_slipper.png
+wall_shelf.png
+wardrobe.png
+white_mug.png
+wooden_bed.png
+wooden_desk.png

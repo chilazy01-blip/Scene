@@ -1,0 +1,712 @@
+{
+  "content_sha256_excluding_this_field": "fdf3e2432ccdfdd425bad57fa77793c76ae8fb98c47bbaa9d2a844aa182ec582",
+  "core_papers": 6,
+  "created_utc": "2026-10-26T08:56:45.263596+00:00",
+  "external_programs_executed": false,
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/build_review_records.py",
+    "sha256": "410e9ce37f4ac5fd1073ba30b2621e17f4b06151f9648d321b0a7f09fc64abeb",
+    "size_bytes": 10529
+  },
+  "new_physics_steps": 0,
+  "papers": [
+    {
+      "arxiv_id": "2610.12369v1",
+      "depth": "Methods, selected evaluation/results, limitations and listed implementation appendices. No claim of reading every prompt/code listing or visually inspecting every figure.",
+      "name": "etm",
+      "reviewed_sections": [
+        {
+          "id": "S3",
+          "reviewed_in_full": true,
+          "text_characters": 11636,
+          "text_sha256": "a39d55a0287f8d57b19dba483a7fbfc20779ade3f1ec9382d3cde9552975a2f6",
+          "title": "3 Embodied Turing Machine: Code-Only-as-Policy",
+          "url": "https://arxiv.org/html/2610.12369v1#S3"
+        },
+        {
+          "id": "S4.SS1",
+          "reviewed_in_full": true,
+          "text_characters": 1573,
+          "text_sha256": "eed3c9d7970d44d2c27674b452f292515997a5cf08e83da2adbce96685cc5f3c",
+          "title": "4.1 Setup",
+          "url": "https://arxiv.org/html/2610.12369v1#S4.SS1"
+        },
+        {
+          "id": "S4.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 738,
+          "text_sha256": "298773617f34d3310a30d8b02c7d691984e77bee0cb6d8770a8508c78e5ed7d7",
+          "title": "4.2 Main results",
+          "url": "https://arxiv.org/html/2610.12369v1#S4.SS2"
+        },
+        {
+          "id": "S4.SS4",
+          "reviewed_in_full": true,
+          "text_characters": 2134,
+          "text_sha256": "864edd10a38d35ff9937936a3529c0ec9cb1c63b5ddeabd85bf568d6d336fea7",
+          "title": "4.4 Why Code-Only-as-Policy Suits RSI",
+          "url": "https://arxiv.org/html/2610.12369v1#S4.SS4"
+        },
+        {
+          "id": "S5",
+          "reviewed_in_full": true,
+          "text_characters": 6827,
+          "text_sha256": "aec6952afde59258614fd4cd4211d480ac0c2fe3641ca5a066c7da9720295060",
+          "title": "5 Discussion",
+          "url": "https://arxiv.org/html/2610.12369v1#S5"
+        },
+        {
+          "id": "A1.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 3658,
+          "text_sha256": "a94d82aa764a69a9fdfcd6565ce57be5229822fb3626719981cecf442987b5a7",
+          "title": "A.2 Extensibility",
+          "url": "https://arxiv.org/html/2610.12369v1#A1.SS2"
+        },
+        {
+          "id": "A2",
+          "reviewed_in_full": true,
+          "text_characters": 1430,
+          "text_sha256": "44eaf484950eddf4d2930c95f0faae9f1c2d64f434edcd580c9499d9c6fc2028",
+          "title": "Appendix B Parallel Branching: Details",
+          "url": "https://arxiv.org/html/2610.12369v1#A2"
+        }
+      ],
+      "source_html": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/etm.html",
+        "sha256": "f162aa4ba5d0e84f2dcbd01c6d1e6f8eb094460b4d6ab231fc5eb28c6bf4d457",
+        "size_bytes": 370568
+      },
+      "source_metadata": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/etm.json",
+        "sha256": "bfccb129cc7b7c362f9c9f5c050aa6fa73c44838eaf8f7619d93d126e1f286d7",
+        "size_bytes": 5943
+      },
+      "source_text": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/etm.txt",
+        "sha256": "86d54bfcac3df867647125d10528ca942a7e5af052851bac80224dc8c1c87695",
+        "size_bytes": 75033
+      },
+      "url": "https://arxiv.org/html/2610.12369v1",
+      "version_pinned": true
+    },
+    {
+      "arxiv_id": "2609.12541v3",
+      "depth": "Methods, selected evaluation/results, limitations and listed implementation appendices. No claim of reading every prompt/code listing or visually inspecting every figure.",
+      "name": "agp",
+      "reviewed_sections": [
+        {
+          "id": "S3",
+          "reviewed_in_full": true,
+          "text_characters": 6306,
+          "text_sha256": "acb7ba4301a9c859bfd3871613f4692ef2d435948998082a7a89de664139c6b2",
+          "title": "3 A General Purpose Agent as the Robot Policy",
+          "url": "https://arxiv.org/html/2609.12541v3#S3"
+        },
+        {
+          "id": "S4.SS1",
+          "reviewed_in_full": true,
+          "text_characters": 4877,
+          "text_sha256": "9176b3eacfbb7dc9db323eaaf0023d5cee4f5e6392f5ba6f8c19779de18edd55",
+          "title": "4.1 Experimental Setup",
+          "url": "https://arxiv.org/html/2609.12541v3#S4.SS1"
+        },
+        {
+          "id": "S4.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 6810,
+          "text_sha256": "4dc0aa862fcefa3117a04918c91cbcadefd0af91451701b5e583471abd428c01",
+          "title": "4.2 Experimental Results",
+          "url": "https://arxiv.org/html/2609.12541v3#S4.SS2"
+        },
+        {
+          "id": "S4.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 2427,
+          "text_sha256": "c59a02bc602f8b3fa71ad3971c8ae695dad89b278cae1c042019def186a07b3f",
+          "title": "4.3 Improving Efficiency through Experience",
+          "url": "https://arxiv.org/html/2609.12541v3#S4.SS3"
+        },
+        {
+          "id": "A1",
+          "reviewed_in_full": true,
+          "text_characters": 4344,
+          "text_sha256": "1309333c8c10894acfd5a3878c0e1009a1b44e28e79e1c1e18a697eb26db2bb9",
+          "title": "Appendix A Implementation Details",
+          "url": "https://arxiv.org/html/2609.12541v3#A1"
+        },
+        {
+          "id": "A2.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 307,
+          "text_sha256": "034f79f0dc5c4724adb82deb0cda144a8217ca6428889914bf23ae8010550a37",
+          "title": "B.2 Trial Protocol",
+          "url": "https://arxiv.org/html/2609.12541v3#A2.SS2"
+        },
+        {
+          "id": "A2.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 1312,
+          "text_sha256": "4dd8c8459de422adb1bb6f19b64747e7ef9b35a5486ad50d83c0aed2b9d35f10",
+          "title": "B.3 Metric Definitions and Resource Accounting",
+          "url": "https://arxiv.org/html/2609.12541v3#A2.SS3"
+        },
+        {
+          "id": "A4.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 3081,
+          "text_sha256": "8e5c4d26347b3e95df9b56b1b3ff8f1acb2e66d2984089300374b6df45d51c8a",
+          "title": "D.2 Repeated Execution with Persistent Experience",
+          "url": "https://arxiv.org/html/2609.12541v3#A4.SS2"
+        },
+        {
+          "id": "A4.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 818,
+          "text_sha256": "a30357a47762ee87b8e2e23d3bb9b47093d6fe57dee45a88482773d088d38f08",
+          "title": "D.3 Transferring Frozen Experience to Terra",
+          "url": "https://arxiv.org/html/2609.12541v3#A4.SS3"
+        },
+        {
+          "id": "A6.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 1235,
+          "text_sha256": "a6b30948c47a06d45a679897ddf1361951c94f8410dfebcd81dd40dec1bb2cde",
+          "title": "F.2 Grasp Loss and Unstable Placement in Four Pair Assembly",
+          "url": "https://arxiv.org/html/2609.12541v3#A6.SS2"
+        },
+        {
+          "id": "A6.SS5",
+          "reviewed_in_full": true,
+          "text_characters": 1127,
+          "text_sha256": "c1c03f594eeae33675b660c0482ec00feeac573ee13db14f8d1e3b2156cdd5c4",
+          "title": "F.5 Fabric Slippage and Incomplete Fold Verification",
+          "url": "https://arxiv.org/html/2609.12541v3#A6.SS5"
+        }
+      ],
+      "source_html": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/agp.html",
+        "sha256": "4900f12df602dae6ab8b1b1b7b18e48f81d5528eca3bc0b7ba7a37e737ea4373",
+        "size_bytes": 309440
+      },
+      "source_metadata": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/agp.json",
+        "sha256": "d56d04dc466413f2c5b48a9915038776993667745b0c6c79b0bbd7ec597359ad",
+        "size_bytes": 8990
+      },
+      "source_text": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/agp.txt",
+        "sha256": "67bb49f50f1462e7bdf38ace2966b0be454cada1dca527b8b3270234885dc6ae",
+        "size_bytes": 82894
+      },
+      "url": "https://arxiv.org/html/2609.12541v3",
+      "version_pinned": true
+    },
+    {
+      "arxiv_id": "2410.03645v1",
+      "depth": "Methods, selected evaluation/results, limitations and listed implementation appendices. No claim of reading every prompt/code listing or visually inspecting every figure.",
+      "name": "gensim2",
+      "reviewed_sections": [
+        {
+          "id": "S3",
+          "reviewed_in_full": true,
+          "text_characters": 6968,
+          "text_sha256": "c2f76804f16155f076e14be1605578529b91ab1168e9e3a38c6d861246b119c4",
+          "title": "3 Generating Tasks and Training Policies at Scale",
+          "url": "https://arxiv.org/html/2410.03645v1#S3"
+        },
+        {
+          "id": "S4",
+          "reviewed_in_full": true,
+          "text_characters": 5609,
+          "text_sha256": "b5ea46aa814f57d692b93f91e41c3ec8540ae16ba803a2e5ba833889c7532faa",
+          "title": "4 Experiment: Task and Data Generation",
+          "url": "https://arxiv.org/html/2410.03645v1#S4"
+        },
+        {
+          "id": "S5",
+          "reviewed_in_full": true,
+          "text_characters": 4435,
+          "text_sha256": "856ae19b987468776bf8758b03748d01b717b91a9be589f360eaadb8f9fd8a65",
+          "title": "5 Experiment: Multi-Task Policy Training and Transfer",
+          "url": "https://arxiv.org/html/2410.03645v1#S5"
+        },
+        {
+          "id": "S6",
+          "reviewed_in_full": true,
+          "text_characters": 508,
+          "text_sha256": "0a88ffa0646ae0450ecae6595ecf271707ca004c7fc79b8a642bb05a54737e24",
+          "title": "6 Limitations and Discussions",
+          "url": "https://arxiv.org/html/2410.03645v1#S6"
+        },
+        {
+          "id": "A1.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 3837,
+          "text_sha256": "60273a4930c245f04035e6d1cadf0523de4eb925ef192799fc61391b28ed42be",
+          "title": "A.3 Task Solver Details",
+          "url": "https://arxiv.org/html/2410.03645v1#A1.SS3"
+        },
+        {
+          "id": "A1.SS4",
+          "reviewed_in_full": true,
+          "text_characters": 1619,
+          "text_sha256": "1f03f5e0ae217215a74efccde97f6eb4ca24481427e4428f89afd16b51017cb8",
+          "title": "A.4 Human Verification",
+          "url": "https://arxiv.org/html/2410.03645v1#A1.SS4"
+        },
+        {
+          "id": "A2.SS4",
+          "reviewed_in_full": true,
+          "text_characters": 989,
+          "text_sha256": "1cd0b6c5efa9a86a07e6662beaf2675f3089ec0c30d614830c260cb2df569d8c",
+          "title": "B.4 Additional Experiments for Object-Level Generalization",
+          "url": "https://arxiv.org/html/2410.03645v1#A2.SS4"
+        },
+        {
+          "id": "A3.SS1",
+          "reviewed_in_full": true,
+          "text_characters": 898,
+          "text_sha256": "dea04cc201c3a47a5770ebc6a8ed643165bceaa3c2c11085037647112e00315f",
+          "title": "C.1 Generalization on Unseen Objects",
+          "url": "https://arxiv.org/html/2410.03645v1#A3.SS1"
+        },
+        {
+          "id": "A3.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 861,
+          "text_sha256": "242b50d036f6355f4484ec9bd9e6919fdb71e02257452c375a7fec3e466b9a5a",
+          "title": "C.2 Co-Training Experiment Details",
+          "url": "https://arxiv.org/html/2410.03645v1#A3.SS2"
+        },
+        {
+          "id": "A5.SS4",
+          "reviewed_in_full": true,
+          "text_characters": 4680,
+          "text_sha256": "1a364ff2ab8252104af4a1d43912060ea08ddb17da359fa6d39a203d5b0e6545",
+          "title": "E.4 Example Failure Cases",
+          "url": "https://arxiv.org/html/2410.03645v1#A5.SS4"
+        },
+        {
+          "id": "A1.SS5",
+          "reviewed_in_full": false,
+          "reviewed_prefix_characters": 2200,
+          "text_sha256": "ce2cb60080f598b68a3e6a5f9293ead17e2b6a8e7c0b319db431671c47bb75f5",
+          "url": "https://arxiv.org/html/2410.03645v1#A1.SS5"
+        }
+      ],
+      "source_html": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/gensim2.html",
+        "sha256": "b8956c0c35402cf2679d7c35c1ada2db7ddd26301e213e5f271824923f7cb2e0",
+        "size_bytes": 344411
+      },
+      "source_metadata": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/gensim2.json",
+        "sha256": "31424064a86f01ba261ae75ceaf78ef24fb13fec2a1ecb57816f342090da994f",
+        "size_bytes": 4214
+      },
+      "source_text": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/gensim2.txt",
+        "sha256": "139f190d0ecc8a380d8cfd0b28301d142b9ff2840a20aca756e8305d0b26a099",
+        "size_bytes": 98069
+      },
+      "url": "https://arxiv.org/html/2410.03645v1",
+      "version_pinned": true
+    },
+    {
+      "arxiv_id": "2311.01455v3",
+      "depth": "Methods, selected evaluation/results, limitations and listed implementation appendices. No claim of reading every prompt/code listing or visually inspecting every figure.",
+      "name": "robogen",
+      "reviewed_sections": [
+        {
+          "id": "S3",
+          "reviewed_in_full": true,
+          "text_characters": 13699,
+          "text_sha256": "c4f4bff5393a51f5dafbff225133f9337d70230a6a3fd7c4eefff58954245520",
+          "title": "3 RoboGen",
+          "url": "https://arxiv.org/html/2311.01455v3#S3"
+        },
+        {
+          "id": "S4.SS1",
+          "reviewed_in_full": true,
+          "text_characters": 1921,
+          "text_sha256": "3e0f5b237ee1b7f0bed07a6447b72c55da055fd7ba7272d149ded2d3993e6c5c",
+          "title": "4.1 Experimental Setup",
+          "url": "https://arxiv.org/html/2311.01455v3#S4.SS1"
+        },
+        {
+          "id": "S4.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 3655,
+          "text_sha256": "c307155bebad1a7c9568aebe1b4b36a2a347d6f874f6cec66b902a7b67d7ca20",
+          "title": "4.2 Evaluation Metrics and Baselines",
+          "url": "https://arxiv.org/html/2311.01455v3#S4.SS2"
+        },
+        {
+          "id": "S4.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 5758,
+          "text_sha256": "4582dca2ecf8be50b27c50ae8956da5b232b90651619ee111a3d8858dada1ba2",
+          "title": "4.3 Results",
+          "url": "https://arxiv.org/html/2311.01455v3#S4.SS3"
+        },
+        {
+          "id": "S5",
+          "reviewed_in_full": true,
+          "text_characters": 1327,
+          "text_sha256": "ccf7d490f2cf9af4f23a911326a5469d1b842d129e73429b01141dbc1b8f16cb",
+          "title": "5 Conclusion & Limitations",
+          "url": "https://arxiv.org/html/2311.01455v3#S5"
+        },
+        {
+          "id": "A1",
+          "reviewed_in_full": true,
+          "text_characters": 4304,
+          "text_sha256": "5a856936fbe3f189c8fe364d297c7423e660104f2d53260cb5f5f223dfe8ff91",
+          "title": "Appendix A Implementation Details",
+          "url": "https://arxiv.org/html/2311.01455v3#A1"
+        },
+        {
+          "id": "A2.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 6563,
+          "text_sha256": "f0be4b7a50ab6bbd98702cc9730f48d51b1f865f5f744278938c691f83f77a52",
+          "title": "B.3 Failure Analysis",
+          "url": "https://arxiv.org/html/2311.01455v3#A2.SS3"
+        }
+      ],
+      "source_html": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/robogen.html",
+        "sha256": "53564228a660a4cdcdbc2b58568b680c4c3efb5f2ff02af72b092fcc98184470",
+        "size_bytes": 3790203
+      },
+      "source_metadata": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/robogen.json",
+        "sha256": "3ed90b01934f9d233de615099bcda1bdfc4cf7bc59c5488f7195bca0be73f1f6",
+        "size_bytes": 4509
+      },
+      "source_text": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/robogen.txt",
+        "sha256": "2c61ffb081fb34569833744e5ccac01579d761d3257db15ae1ef43a34f4e72ec",
+        "size_bytes": 185499
+      },
+      "url": "https://arxiv.org/html/2311.01455v3",
+      "version_pinned": true
+    },
+    {
+      "arxiv_id": "2305.16291v2",
+      "depth": "Methods, selected evaluation/results, limitations and listed implementation appendices. No claim of reading every prompt/code listing or visually inspecting every figure.",
+      "name": "voyager",
+      "reviewed_sections": [
+        {
+          "id": "S2",
+          "reviewed_in_full": true,
+          "text_characters": 7193,
+          "text_sha256": "b7b22499d869ff5876e7bccb709fad07c431f6698931318070fe0c3ac85b8fa8",
+          "title": "2 Method",
+          "url": "https://arxiv.org/html/2305.16291v2#S2"
+        },
+        {
+          "id": "S3.SS1",
+          "reviewed_in_full": true,
+          "text_characters": 479,
+          "text_sha256": "e71f343c71baa0bf1374696865eb9c64124fee52fb38c3803f00f80c819b890b",
+          "title": "3.1 Experimental Setup",
+          "url": "https://arxiv.org/html/2305.16291v2#S3.SS1"
+        },
+        {
+          "id": "S3.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 6823,
+          "text_sha256": "8d7c9f2c044e2025fb618d62c06221b06229e56d0d3d0bd76caacf638bc3d006",
+          "title": "3.3 Evaluation Results",
+          "url": "https://arxiv.org/html/2305.16291v2#S3.SS3"
+        },
+        {
+          "id": "S3.SS4",
+          "reviewed_in_full": true,
+          "text_characters": 2291,
+          "text_sha256": "01b7ac0eea6ed060090f02caa9c97fbff821ad1df0adbc7ba94eb85b10db6938",
+          "title": "3.4 Ablation Studies",
+          "url": "https://arxiv.org/html/2305.16291v2#S3.SS4"
+        },
+        {
+          "id": "S4",
+          "reviewed_in_full": true,
+          "text_characters": 1318,
+          "text_sha256": "941dfba1033de84450dd4cf7f92c9bbf5ea0c41609b9c5ab0dcb738d7711feec",
+          "title": "4 Limitations and Future Work",
+          "url": "https://arxiv.org/html/2305.16291v2#S4"
+        },
+        {
+          "id": "A1.SS1",
+          "reviewed_in_full": true,
+          "text_characters": 1360,
+          "text_sha256": "6a375b40aeaebe74c9b6f1cd7c17169e27ee02f976daa95ecd85d0e6c058663a",
+          "title": "A.1 Voyager Algorithm",
+          "url": "https://arxiv.org/html/2305.16291v2#A1.SS1"
+        },
+        {
+          "id": "A1.SS4.SSS1",
+          "reviewed_in_full": true,
+          "text_characters": 4274,
+          "text_sha256": "d1191e63ccc24793775ca513fbee35957fbab5d7fa1080bdbac5147904ad1616",
+          "title": "A.4.1 Components in the Prompt",
+          "url": "https://arxiv.org/html/2305.16291v2#A1.SS4.SSS1"
+        },
+        {
+          "id": "A1.SS5.SSS1",
+          "reviewed_in_full": true,
+          "text_characters": 920,
+          "text_sha256": "5ba5b342242e14bd887cb628abbbcb6446df9793bf87de7584ec6cd690dfcbcb",
+          "title": "A.5.1 Components in the Prompt",
+          "url": "https://arxiv.org/html/2305.16291v2#A1.SS5.SSS1"
+        },
+        {
+          "id": "A2.SS4.SSS3",
+          "reviewed_in_full": true,
+          "text_characters": 662,
+          "text_sha256": "fc44d5af00d05cb980d5f6022530a3019dc8360e6fea801c6a1f5c04c97d747d",
+          "title": "B.4.3 Efficient Zero-Shot Generalization to Unseen Tasks",
+          "url": "https://arxiv.org/html/2305.16291v2#A2.SS4.SSS3"
+        },
+        {
+          "id": "A2.SS4.SSS4",
+          "reviewed_in_full": true,
+          "text_characters": 513,
+          "text_sha256": "59ca8582391d2e920702100bffa69716461ac2a3b03c981df5b84e550467d3cc",
+          "title": "B.4.4 Accurate Skill Retrieval",
+          "url": "https://arxiv.org/html/2305.16291v2#A2.SS4.SSS4"
+        }
+      ],
+      "source_html": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/voyager.html",
+        "sha256": "09d1b8f54434079702cc5e8c1733999f09b024be294d3abebfd4301ff4d61483",
+        "size_bytes": 1361504
+      },
+      "source_metadata": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/voyager.json",
+        "sha256": "487738be7bdfd8db59bf3e001804070023f78576739e9d1fdc07761875297369",
+        "size_bytes": 5215
+      },
+      "source_text": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/voyager.txt",
+        "sha256": "79c45e38ad77aed558de97282d203f9063a50d12c613fe44745b641180a5e263",
+        "size_bytes": 122244
+      },
+      "url": "https://arxiv.org/html/2305.16291v2",
+      "version_pinned": true
+    },
+    {
+      "arxiv_id": "2310.12931v2",
+      "depth": "Methods, selected evaluation/results, limitations and listed implementation appendices. No claim of reading every prompt/code listing or visually inspecting every figure.",
+      "name": "eureka",
+      "reviewed_sections": [
+        {
+          "id": "S2",
+          "reviewed_in_full": true,
+          "text_characters": 1792,
+          "text_sha256": "1bd5de6b731c4a31a51701111660cb6b5661207df2bb8a9711490875c0a3a8ca",
+          "title": "2 Problem Setting and Definitions",
+          "url": "https://arxiv.org/html/2310.12931v2#S2"
+        },
+        {
+          "id": "S3",
+          "reviewed_in_full": true,
+          "text_characters": 7143,
+          "text_sha256": "f9f2399bdd2c4e374d7f9166043d9acf9f4bb68d8f1f84d6c9c23069d9537c89",
+          "title": "3 Method",
+          "url": "https://arxiv.org/html/2310.12931v2#S3"
+        },
+        {
+          "id": "S4.SS2",
+          "reviewed_in_full": true,
+          "text_characters": 1347,
+          "text_sha256": "c7b7038ee345e1390e1c745d421c29eae9a5285fdeb3ab47ead30b4ec605c4e6",
+          "title": "4.2 Training Details",
+          "url": "https://arxiv.org/html/2310.12931v2#S4.SS2"
+        },
+        {
+          "id": "S4.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 6319,
+          "text_sha256": "7ea897ca22bf69ec51fad690e274333b066d996a1279cae7a91e5b54695a6db7",
+          "title": "4.3 Results",
+          "url": "https://arxiv.org/html/2310.12931v2#S4.SS3"
+        },
+        {
+          "id": "S6",
+          "reviewed_in_full": true,
+          "text_characters": 947,
+          "text_sha256": "615cf6a108ce3919f3cd1ad3478c23dfe44eae618a966fee01cb2bc68d10b367",
+          "title": "6 Conclusion",
+          "url": "https://arxiv.org/html/2310.12931v2#S6"
+        },
+        {
+          "id": "A4.SS4",
+          "reviewed_in_full": true,
+          "text_characters": 399,
+          "text_sha256": "cf353d6cb19f47abe4b2e59a761fcdaa410bb379e231b1e9576891f7e89f3991",
+          "title": "D.4 Computation Resources",
+          "url": "https://arxiv.org/html/2310.12931v2#A4.SS4"
+        },
+        {
+          "id": "A8",
+          "reviewed_in_full": true,
+          "text_characters": 2851,
+          "text_sha256": "dceec6cc97410afc3b71a2bce60fe0af3d875cbec5713a9b53f2b5deb049c039",
+          "title": "Appendix H Limitations and Discussion",
+          "url": "https://arxiv.org/html/2310.12931v2#A8"
+        },
+        {
+          "id": "A7.SS1",
+          "reviewed_in_full": false,
+          "reviewed_prefix_characters": 3600,
+          "text_sha256": "cb8e48a31b9d88cbcb88e88131d29b491441d0689e1cec533ab51dd33c9aa360",
+          "url": "https://arxiv.org/html/2310.12931v2#A7.SS1"
+        }
+      ],
+      "source_html": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/eureka.html",
+        "sha256": "fa7c967f12182e9d3c44bbe4f3bf04ee643c7fcf876d8138f1a603056bc518d1",
+        "size_bytes": 1637174
+      },
+      "source_metadata": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/eureka.json",
+        "sha256": "51b3242ced3a93a854e91dd095b0394d902ff79f74653f6bf1571eb90c0cc6ea",
+        "size_bytes": 3931
+      },
+      "source_text": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/eureka.txt",
+        "sha256": "a43f95095883778f6409a01dc6e89159af4fd40b7f680cb0203e5d69dfeb4577",
+        "size_bytes": 147767
+      },
+      "url": "https://arxiv.org/html/2310.12931v2",
+      "version_pinned": true
+    },
+    {
+      "arxiv_id": "2607.00272v2",
+      "depth": "Methods, selected evaluation/results, limitations and listed implementation appendices. No claim of reading every prompt/code listing or visually inspecting every figure.",
+      "name": "aspire",
+      "reviewed_sections": [
+        {
+          "id": "S2",
+          "reviewed_in_full": true,
+          "text_characters": 11381,
+          "text_sha256": "d2067cf01e54db5887a073fabe0e0d7564df3421b4c49af8709a2fe2faba022e",
+          "title": "2 Method",
+          "url": "https://arxiv.org/html/2607.00272v2#S2"
+        },
+        {
+          "id": "S3.SS1",
+          "reviewed_in_full": true,
+          "text_characters": 3332,
+          "text_sha256": "15fa8ec874c1edace351e7f3d659417a0a73bf31960706c0ed1690750586726c",
+          "title": "3.1 Experimental Setup",
+          "url": "https://arxiv.org/html/2607.00272v2#S3.SS1"
+        },
+        {
+          "id": "S3.SS3",
+          "reviewed_in_full": true,
+          "text_characters": 595,
+          "text_sha256": "7ba9b70f553ff17e5db1d4fca1a8716f8486121f26a3c176aa22465ce99b5033",
+          "title": "3.3 Evaluation Protocol",
+          "url": "https://arxiv.org/html/2607.00272v2#S3.SS3"
+        },
+        {
+          "id": "S3.SS5",
+          "reviewed_in_full": true,
+          "text_characters": 1530,
+          "text_sha256": "9a682ed0c11445e2f675e2170c7f6cbae0be53d3babb8d79d28d59e97335e5e1",
+          "title": "3.5 Zero-Shot Transfer to Unseen Tasks",
+          "url": "https://arxiv.org/html/2607.00272v2#S3.SS5"
+        },
+        {
+          "id": "S3.SS6",
+          "reviewed_in_full": true,
+          "text_characters": 1959,
+          "text_sha256": "71cc8e36beb49b3ce7b0ea689c60e503aace13592bab9b89c8cca08c12afa7e5",
+          "title": "3.6 Real-Robot Skill Transfer Across Embodiments",
+          "url": "https://arxiv.org/html/2607.00272v2#S3.SS6"
+        },
+        {
+          "id": "S3.SS8.SSS0.Px1",
+          "reviewed_in_full": true,
+          "text_characters": 579,
+          "text_sha256": "5f1360528595e72590802e6b9f88101b5c8d25305928b2b1a804bc4c7d0f1da7",
+          "title": "Robot execution engine and evolutionary search.",
+          "url": "https://arxiv.org/html/2607.00272v2#S3.SS8.SSS0.Px1"
+        },
+        {
+          "id": "S3.SS8.SSS0.Px3",
+          "reviewed_in_full": true,
+          "text_characters": 1318,
+          "text_sha256": "54e15375811329d811aedbb7e3052be8f8f4e06b44377f1cfb4a01d13dfb107c",
+          "title": "Backward Skill Transfer.",
+          "url": "https://arxiv.org/html/2607.00272v2#S3.SS8.SSS0.Px3"
+        },
+        {
+          "id": "S5",
+          "reviewed_in_full": true,
+          "text_characters": 2714,
+          "text_sha256": "dc905940da4cf718f12241e7eee7ae3aa04d4c99271352d633f1e9e690c2406d",
+          "title": "5 Limitations",
+          "url": "https://arxiv.org/html/2607.00272v2#S5"
+        },
+        {
+          "id": "A1",
+          "reviewed_in_full": true,
+          "text_characters": 1360,
+          "text_sha256": "411d32d748354fe337c5ed3bd082f7fa762cf11dd47234bb04474e8d59a56fbc",
+          "title": "Appendix A Skill Library Details",
+          "url": "https://arxiv.org/html/2607.00272v2#A1"
+        },
+        {
+          "id": "A4",
+          "reviewed_in_full": true,
+          "text_characters": 5378,
+          "text_sha256": "f0623f1c21fa571e93e1443b21b91d9de6c7b089197afe16d8fa1cf30d028bdc",
+          "title": "Appendix D Harness for an Agentic System 2 on Real Robots",
+          "url": "https://arxiv.org/html/2607.00272v2#A4"
+        },
+        {
+          "id": "A5.SS10",
+          "reviewed_in_full": true,
+          "text_characters": 982,
+          "text_sha256": "21af46f3c78e196ce2efcc6ae7a1f2b752e57c563a9c8eb004ce116e53099fad",
+          "title": "E.10 Iterative Debugging Variance on LIBERO-Pro Goal under Position Perturbation",
+          "url": "https://arxiv.org/html/2607.00272v2#A5.SS10"
+        },
+        {
+          "id": "A7",
+          "reviewed_in_full": true,
+          "text_characters": 1987,
+          "text_sha256": "8f0d5fdccfa80a465c4ec1cfda77fee67ca841d99b6ca63b647e32e2f6a8906c",
+          "title": "Appendix G Agent Pipeline Skills",
+          "url": "https://arxiv.org/html/2607.00272v2#A7"
+        }
+      ],
+      "source_html": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/aspire.html",
+        "sha256": "b5464fe6a055383572c5c9a6161ac1eb64e31b153edeaddda0cbad0a166e160b",
+        "size_bytes": 739815
+      },
+      "source_metadata": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/aspire.json",
+        "sha256": "33e22a5c0b3104f08efb55b854f3788b77e6253763b0fcc27e0b68a2147aafa5",
+        "size_bytes": 6394
+      },
+      "source_text": {
+        "path": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/sources/aspire.txt",
+        "sha256": "b5f8e9d2e7b35b9e7b993867574b50729c0d73387c4a694fc6e2b9a86e691962",
+        "size_bytes": 94715
+      },
+      "url": "https://arxiv.org/html/2607.00272v2",
+      "version_pinned": true
+    }
+  ],
+  "prior_cumulative_native_steps": 239138,
+  "schema": "expert-trajectory-literature-reading/v1",
+  "software_installed": false,
+  "supplemental_papers": 1
+}

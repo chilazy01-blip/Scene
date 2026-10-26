@@ -23,6 +23,11 @@ FLOOR_MATERIAL_KEYWORDS: tuple[tuple[str, tuple[str, ...]], ...] = (
 )
 
 WALL_MATERIAL_KEYWORDS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("vertical_light_oak_slat", ("oak slat wall", "wood slat wall", "木格栅墙", "橡木格栅墙")),
+    ("natural_linen_wallpaper", ("linen wallpaper", "woven wallpaper", "亚麻墙纸", "织物墙纸")),
+    ("charcoal_microcement", ("charcoal microcement", "dark microcement", "深灰微水泥", "炭灰微水泥")),
+    ("soft_red_brick", ("red brick wall", "exposed brick", "红砖墙", "裸砖墙")),
+    ("warm_clay_plaster", ("clay plaster", "earthen wall", "暖陶土墙", "泥灰墙")),
     ("muted_sage_matte_paint", ("sage green wall", "sage wall", "鼠尾草绿墙", "灰绿色墙")),
     ("blue_gray_matte_paint", ("blue gray wall", "blue-grey wall", "蓝灰色墙")),
     ("light_gray_matte_paint", ("light gray wall", "light grey wall", "浅灰色墙")),
@@ -30,6 +35,85 @@ WALL_MATERIAL_KEYWORDS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("cool_white_plaster", ("cool white wall", "冷白墙")),
     ("warm_white_plaster", ("warm white wall", "暖白墙")),
 )
+
+
+ARCHITECTURE_STYLE_PROFILES: dict[str, dict[str, Any]] = {
+    "warm_contemporary": {
+        "keywords": (
+            "warm contemporary",
+            "warm modern",
+            "light oak",
+            "cream boucle",
+            "暖现代",
+            "现代原木",
+        ),
+        "default_wall_material": "soft_beige_limewash",
+        "accent_wall_material": "vertical_light_oak_slat",
+        "door_finish": "warm_oak_brass",
+        "window_finish": "dark_bronze",
+    },
+    "scandinavian": {
+        "keywords": ("scandinavian", "nordic", "北欧"),
+        "default_wall_material": "warm_white_plaster",
+        "accent_wall_material": "natural_linen_wallpaper",
+        "door_finish": "light_oak_black",
+        "window_finish": "soft_white",
+    },
+    "japanese_natural": {
+        "keywords": ("japanese", "wabi", "japandi", "日式", "侘寂"),
+        "default_wall_material": "warm_clay_plaster",
+        "accent_wall_material": "vertical_light_oak_slat",
+        "door_finish": "dark_oak_black",
+        "window_finish": "dark_timber",
+    },
+    "industrial": {
+        "keywords": ("industrial", "loft", "工业", "仓库风"),
+        "default_wall_material": "light_gray_matte_paint",
+        "accent_wall_material": "soft_red_brick",
+        "door_finish": "charcoal_steel",
+        "window_finish": "charcoal_steel",
+    },
+    "traditional": {
+        "keywords": ("traditional", "classic", "heritage", "传统", "复古"),
+        "default_wall_material": "natural_linen_wallpaper",
+        "accent_wall_material": "warm_clay_plaster",
+        "door_finish": "walnut_brass",
+        "window_finish": "walnut",
+    },
+    "modern_neutral": {
+        "keywords": ("modern", "contemporary", "现代", "当代"),
+        "default_wall_material": "warm_white_plaster",
+        "accent_wall_material": "muted_sage_matte_paint",
+        "door_finish": "soft_white_black",
+        "window_finish": "charcoal_steel",
+    },
+}
+
+
+def architecture_style_profile(brief: dict[str, Any], prompt_text: str) -> dict[str, Any]:
+    text = " ".join(
+        [prompt_text, *[str(item) for item in brief.get("styles", [])]]
+    ).lower()
+    for profile_id, raw in ARCHITECTURE_STYLE_PROFILES.items():
+        if any(keyword.lower() in text for keyword in raw["keywords"]):
+            return {"profile_id": profile_id, **deepcopy(raw)}
+    return {
+        "profile_id": "neutral_default",
+        "keywords": (),
+        "default_wall_material": "warm_white_plaster",
+        "accent_wall_material": None,
+        "door_finish": "soft_white_black",
+        "window_finish": "soft_white",
+    }
+
+
+def _focal_accent_wall(room_type: str, door_walls: set[str]) -> str:
+    preferences = {
+        "living_room": ("north", "west", "east", "south"),
+        "bedroom": ("north", "west", "south", "east"),
+        "study": ("north", "west", "east", "south"),
+    }.get(room_type, ("north", "west", "east", "south"))
+    return next((wall for wall in preferences if wall not in door_walls), preferences[0])
 
 WINDOW_WALL_KEYWORDS: dict[str, tuple[str, ...]] = {
     "north": ("window on the north", "north wall window", "北墙窗", "窗户在北墙", "北侧窗"),
@@ -102,6 +186,7 @@ def plan_architecture(
     prompt_text = " ".join(
         str(brief.get(key) or "") for key in ("original_prompt", "expanded_description")
     )
+    style_profile = architecture_style_profile(brief, prompt_text)
     decisions: list[dict[str, Any]] = []
     constraint_overrides: dict[str, bool] = {
         "door_window_same_wall": False,
@@ -134,7 +219,9 @@ def plan_architecture(
     )
     prompt_wall_material = _prompt_wall_material(prompt_text)
     selected_wall_material = (
-        wall_material_override or prompt_wall_material or default_wall_material
+        wall_material_override
+        or prompt_wall_material
+        or str(style_profile.get("default_wall_material") or default_wall_material)
     )
     if selected_wall_material not in WALL_MATERIAL_PRESETS:
         raise ValueError(f"Unsupported wall material: {selected_wall_material}")
@@ -146,10 +233,26 @@ def plan_architecture(
         raise ValueError(
             f"Unsupported accent wall material: {accent_wall_material_override}"
         )
+    door_walls = {
+        str(item.get("wall"))
+        for item in architecture.get("doors", [])
+        if isinstance(item, dict)
+    }
     wall_overrides: dict[str, dict[str, Any]] = {}
     if accent_wall_override and accent_wall_material_override:
         wall_overrides[accent_wall_override] = wall_material_preset(
             accent_wall_material_override
+        )
+    elif (
+        style_profile.get("accent_wall_material")
+        and not wall_material_override
+        and not prompt_wall_material
+    ):
+        automatic_accent_wall = _focal_accent_wall(
+            str(brief.get("room_type") or ""), door_walls
+        )
+        wall_overrides[automatic_accent_wall] = wall_material_preset(
+            str(style_profile["accent_wall_material"])
         )
     wall_finish.update(
         {
@@ -168,15 +271,35 @@ def plan_architecture(
                 if wall_material_override
                 else ("prompt" if prompt_wall_material else "room_policy")
             ),
-            "override_wall": accent_wall_override,
-            "override_material_id": accent_wall_material_override,
-            "override_source": "cli_override" if accent_wall_override else None,
+            "override_wall": next(iter(wall_overrides), None),
+            "override_material_id": (
+                next(iter(wall_overrides.values()))["material_id"]
+                if wall_overrides else None
+            ),
+            "override_source": (
+                "cli_override" if accent_wall_override else (
+                    "scene_style_profile" if wall_overrides else None
+                )
+            ),
+            "style_profile_id": style_profile["profile_id"],
         }
     )
 
     doors = [item for item in architecture.get("doors", []) if isinstance(item, dict)]
     windows = [item for item in architecture.get("windows", []) if isinstance(item, dict)]
     door_walls = {str(item.get("wall")) for item in doors}
+    for item in doors:
+        item["finish_profile"] = {
+            "profile_id": str(style_profile["door_finish"]),
+            "source": "scene_style_profile",
+            "scene_style_profile_id": style_profile["profile_id"],
+        }
+    for item in windows:
+        item["finish_profile"] = {
+            "profile_id": str(style_profile["window_finish"]),
+            "source": "scene_style_profile",
+            "scene_style_profile_id": style_profile["profile_id"],
+        }
     primary_door_wall = str(doors[0].get("wall")) if doors else ""
     opposite_door_wall = OPPOSITE_WALL.get(primary_door_wall)
     requirements = architecture.get("requirements")
@@ -254,6 +377,7 @@ def plan_architecture(
         ],
         "hinge_articulation_status": "deferred_static_metadata_only",
         "decisions": deepcopy(decisions),
+        "style_profile": deepcopy(style_profile),
     }
     brief["architecture"] = architecture
     brief["architecture_planning"] = {
@@ -263,6 +387,9 @@ def plan_architecture(
         "wall_material_overrides": {
             wall: material["material_id"] for wall, material in wall_overrides.items()
         },
+        "architecture_style_profile_id": style_profile["profile_id"],
+        "door_finish_profile": style_profile["door_finish"],
+        "window_finish_profile": style_profile["window_finish"],
         "window_wall": selected_wall,
         "constraint_overrides": deepcopy(constraint_overrides),
     }

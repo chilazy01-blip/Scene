@@ -26,6 +26,12 @@ class SceneDeliveryOptimizationTests(unittest.TestCase):
             2_500,
         )
 
+    def test_large_rectilinear_nightstand_keeps_drawer_edge_budget(self) -> None:
+        target = choose_target_faces(
+            "nightstand", 80_000, curvature=0.13, silhouette=1.0
+        )
+        self.assertGreaterEqual(target, 39_000)
+
     def test_mask_iou_is_exact(self) -> None:
         first = np.asarray([[True, True], [False, False]])
         second = np.asarray([[True, False], [True, False]])

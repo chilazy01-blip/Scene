@@ -1,0 +1,56 @@
+{
+  "bottleneck": "Prior grasp trajectories have one generated layout and one object asset; new-layout/new-object executability is unverified.",
+  "cases": {
+    "S02_book": {
+      "object": "book",
+      "scene": "S02"
+    },
+    "S02_bottle": {
+      "object": "bottle",
+      "scene": "S02"
+    },
+    "S02_cup": {
+      "object": "cup",
+      "scene": "S02"
+    },
+    "S03_book": {
+      "object": "book",
+      "scene": "S03"
+    },
+    "S03_bottle": {
+      "object": "bottle",
+      "scene": "S03"
+    },
+    "S03_cup": {
+      "object": "cup",
+      "scene": "S03"
+    }
+  },
+  "content_sha256_excluding_this_field": "7d6cc9e14e4b81e03a1a33f4911293990e30713655c56e40a379ab5495a92911",
+  "dataset_split": "unassigned",
+  "deadline_epoch_utc": 1793003513.8857322,
+  "exit": "Complete admitted six-case experiments and all required verification, or actual declared finite time/physics budget. Diagnose actual failures before each revision; no blind sweeps.",
+  "fixed": [
+    "official G1+14 native hands",
+    "SONIC29+native handPD",
+    "plant/effort/PD/geometry frozen per admitted model",
+    "NoSlip0->3 at3960",
+    "original eight task gates",
+    "upright bottle/cup >=.98; book cover normal abs dot up >=.98"
+  ],
+  "full_ticks": 3200,
+  "max_new_physics_steps": 180000,
+  "objective": "Fresh original-init full-body pick/carry/place in generated S02/S03, cup then bottle then book, retaining actual admission failures.",
+  "prefix_active_ticks": 0,
+  "prefix_physics_steps": 0,
+  "prior_native_steps": 143686,
+  "schema": "generated-grasp-plan/v1",
+  "source_role": "development_validation",
+  "success_requires": [
+    "original-init all43ctrl continuous replay",
+    "independent NN/PD/contact/geometry audit",
+    "force reconstruction",
+    "full real video decode and main-agent keyframe review",
+    "dataset lineage and content deduplication"
+  ]
+}

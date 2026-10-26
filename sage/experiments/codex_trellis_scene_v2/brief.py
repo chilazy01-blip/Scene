@@ -60,6 +60,7 @@ DEFAULT_TUCKED_UNDER_FREE_SPACES = {
 
 
 ASSET_SHAPE_GUIDANCE = {
+    "sofa": "one complete proportionate sofa with a full-depth seat, separate cushions, backrest, arms, and visible legs; no platform or floor slab",
     "book_stack": "one compact stack of several closed books with distinct covers and page blocks",
     "bookcase": "one freestanding open-front bookcase with two vertical side supports and several repeated horizontal shelves and visible storage cavities",
     "storage_box": "one closed rectangular fabric-covered storage box with straight edges and a visible lid",
@@ -76,6 +77,13 @@ ASSET_SHAPE_GUIDANCE = {
 
 
 ASSET_SEMANTIC_FORM_HINTS: dict[str, dict[str, Any]] = {
+    "sofa": {
+        "shape_profile": "upholstered_seating",
+        "required_parts": ["full-depth seat", "backrest", "separate cushions", "stable support legs"],
+        "forbidden_parts": ["display pedestal", "extra floor platform", "wall panel"],
+        "hard_negative_identities": ["bench", "bed", "wall panel", "floor cushion"],
+        "maximum_axis_scale_anisotropy": 2.0,
+    },
     "storage_box": {
         "shape_profile": "compact_orthogonal",
         "required_parts": ["closed box body", "visible lid"],
@@ -100,18 +108,21 @@ ASSET_SEMANTIC_FORM_HINTS: dict[str, dict[str, Any]] = {
         "required_parts": ["seat", "backrest", "stable support legs"],
         "forbidden_parts": ["display pedestal"],
         "hard_negative_identities": ["stool", "sofa", "side table"],
+        "maximum_axis_scale_anisotropy": 2.25,
     },
     "dining_chair": {
         "shape_profile": "skeletal_support",
         "required_parts": ["seat", "upright backrest", "stable support legs"],
         "forbidden_parts": ["display pedestal"],
         "hard_negative_identities": ["stool", "armchair", "side table"],
+        "maximum_axis_scale_anisotropy": 2.25,
     },
     "office_chair": {
         "shape_profile": "skeletal_support",
         "required_parts": ["seat", "backrest", "stable central or separated support"],
         "forbidden_parts": ["display pedestal"],
         "hard_negative_identities": ["stool", "dining chair", "side table"],
+        "maximum_axis_scale_anisotropy": 2.25,
     },
     "table_lamp": {
         "shape_profile": "slender_radial",
@@ -1250,7 +1261,8 @@ def build_baseline_brief(
     explicit = list(explicit_counts)
     objects = deepcopy(policy["objects"])
     lowered_prompt = prompt.lower()
-    suppress_policy_optional = any(
+    explicit_furniture_count = sum(n for c,n in explicit_counts.items() if c not in {'window','door'})
+    suppress_policy_optional = explicit_furniture_count >= int(policy['object_budget']['hard_min']) or any(
         phrase in lowered_prompt
         for phrase in (
             "avoid adding decorative clutter",
@@ -1266,6 +1278,10 @@ def build_baseline_brief(
             if item.get("required", True) or str(item["category"]) in explicit_counts
         ]
     for category, requested_count in explicit_counts.items():
+        # The requested main window is an architectural opening. Do not add
+        # a second decorative window object on a default wall.
+        if category == 'window' and requested_count == 1 and re.search(r'\bmain\s+window\b|主窗', prompt, re.IGNORECASE) and policy['architecture'].get('windows'):
+            continue
         existing = [item for item in objects if str(item["category"]) == category]
         for item in existing:
             item["required"] = True
@@ -1291,7 +1307,16 @@ def build_baseline_brief(
                 grouped_component_counts[category]
             )
     _apply_prompt_support_relationships(objects, prompt)
+    # Presence/count provenance and size provenance are independent. A unit or
+    # dimensional expression keeps the strict path until explicitly grounded.
+    has_dimension_expression = bool(re.search(
+        r"\d(?:[\d.,]*\s*)(?:mm|cm|met(?:er|re)s?|feet|foot|inches|inch|m\b|毫米|厘米|米|[x×])",
+        prompt, re.IGNORECASE,
+    ))
     for obj in objects:
+        if not has_dimension_expression and obj["dimension_policy"].get("mode") != "opening_fit":
+            obj["dimension_policy"]["request_origin"] = "inferred_category_prior"
+            obj["dimension_grounding"] = "inferred_category_prior"
         obj["provenance"] = (
             "user_explicit"
             if obj["category"] in explicit
@@ -1316,6 +1341,23 @@ def build_baseline_brief(
     object_budget["required_object_ids"] = [
         str(obj["id"]) for obj in objects if obj.get("required", True)
     ]
+    relations = deepcopy(policy['relations'])
+    rule_facing = []
+    for match in re.finditer(r'\bface\s+(?:the\s+)?(seating|chairs|sofas?)\s+towards?\s+(?:the\s+)?([^.!?]+?)(?=\s+and\b|[.!?]|$)', prompt, re.IGNORECASE):
+        target_categories = detect_explicit_category_counts(match.group(2))
+        targets = [o for o in objects if o['category'] in target_categories]
+        if len(targets) != 1:
+            continue
+        sources = [o for o in objects if o['category'] in {'sofa','accent_chair','office_chair','dining_chair','loveseat'}]
+        if match.group(1).lower().startswith('sofa'):
+            sources = [o for o in sources if o['category']=='sofa']
+        elif match.group(1).lower() == 'chairs':
+            sources = [o for o in sources if o['category'].endswith('_chair')]
+        for obj in sources:
+            relation = dict(source=obj['id'], type='faces', target=targets[0]['id'], strength='hard', parameters={})
+            relations = [r for r in relations if not ((r.get('source') if isinstance(r,dict) else r[0]) == obj['id'] and (r.get('type') if isinstance(r,dict) else r[1]) == 'faces')]
+            relations.append(relation)
+            rule_facing.append(dict(relation=deepcopy(relation), evidence=match.group(0)))
     return {
         "schema": "codex_trellis_scene_brief_v2",
         "original_prompt": prompt,
@@ -1325,6 +1367,8 @@ def build_baseline_brief(
         "room": deepcopy(policy["room"]),
         "architecture": deepcopy(policy["architecture"]),
         "explicit_categories": explicit,
+        "architectural_object_mentions": {'window': 1} if ('window' in explicit and not any(o['category']=='window' for o in objects)) else {},
+        "rule_facing_grounding": rule_facing,
         "explicit_category_counts": explicit_counts,
         "explicit_component_count_contracts": grouped_component_counts,
         "policy_optional_suppressed": suppress_policy_optional,
@@ -1369,7 +1413,7 @@ def build_baseline_brief(
             "rejected_count": 0,
             "normalization_count": 0,
         },
-        "relations": deepcopy(policy["relations"]),
+        "relations": relations,
         "hard_rules": deepcopy(policy["hard_rules"]),
         "soft_rules": deepcopy(policy["soft_rules"]),
         "object_budget": object_budget,

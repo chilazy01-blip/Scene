@@ -1640,6 +1640,11 @@ class ArchitecturePlanningTest(unittest.TestCase):
             "light_gray_matte_paint",
             "muted_sage_matte_paint",
             "blue_gray_matte_paint",
+            "warm_clay_plaster",
+            "natural_linen_wallpaper",
+            "vertical_light_oak_slat",
+            "charcoal_microcement",
+            "soft_red_brick",
         }
         self.assertEqual(set(WALL_MATERIAL_PRESETS), expected)
         self.assertTrue(

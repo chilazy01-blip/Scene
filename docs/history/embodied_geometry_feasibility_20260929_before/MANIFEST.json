@@ -1,0 +1,22 @@
+{
+  "/data/wsj/main/scene/AGENT.md": {
+    "snapshot": "/data/wsj/main/scene/docs/history/embodied_geometry_feasibility_20260929_before/AGENT.md",
+    "sha256": "cd0978c28410fcc667438d221aeffb8af40ab2c6fc587352b6eb7a8ee0e7b352"
+  },
+  "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_HANDOFF_20260926.md": {
+    "snapshot": "/data/wsj/main/scene/docs/history/embodied_geometry_feasibility_20260929_before/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+    "sha256": "8715b2a5e16a8fab1a44bdf64d9c0b3c5858bb4bff5d2228ff1810fb3b23684b"
+  },
+  "/data/wsj/main/scene/docs/EMBODIED_FULL_BODY_GOALS_20260928.md": {
+    "snapshot": "/data/wsj/main/scene/docs/history/embodied_geometry_feasibility_20260929_before/EMBODIED_FULL_BODY_GOALS_20260928.md",
+    "sha256": "54f43b6731f01fa021d3aeacff855f564f63debaed29a20fa21a3851de490ae6"
+  },
+  "/data/wsj/main/scene/docs/EMBODIED_DATA_ROADMAP_20260926.md": {
+    "snapshot": "/data/wsj/main/scene/docs/history/embodied_geometry_feasibility_20260929_before/EMBODIED_DATA_ROADMAP_20260926.md",
+    "sha256": "6cc5407ed5a794cb6c7f3e5aa3681c835a737cfa77cd185f620484945c1b9fba"
+  },
+  "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_PROGRESS_20260926.md": {
+    "snapshot": "/data/wsj/main/scene/docs/history/embodied_geometry_feasibility_20260929_before/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+    "sha256": "50d45cb4e656bf90578ee048a6531d44b8452ff94f3656c14f724474d9c1b25b"
+  }
+}

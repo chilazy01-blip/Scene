@@ -1,0 +1,70 @@
+{
+  "all_video_frames_automatically_decoded": 1823,
+  "complete": true,
+  "content_sha256_excluding_this_field": "a5a78a42b7f3cbe9f2b623005b32c63e3e2c6678ecfc85de36ed642fbcfa3eeb",
+  "dataset_split": "unassigned",
+  "evidence": {
+    "audit": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/full/AUDIT_v2.json",
+      "sha256": "ed21d9ba4dae28d1be73edccdeb9241ed5d67a5a584dfd0b8e2fcb0bbe09ab3f",
+      "size_bytes": 2601
+    },
+    "delivery": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/partial_delivery_v4/REVIEW.json",
+      "sha256": "6d1a541b134045cc72973a36d6445bbc1c3d65f26e0cc346f13b911d090515f4",
+      "size_bytes": 20739
+    },
+    "force": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/FORCE_CHECK.json",
+      "sha256": "80825521aa1f91b2a62081a656ca840e865bc0e1ccfdb77b03bce3496b187bc3",
+      "size_bytes": 15039939
+    },
+    "measurements": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/MEASUREMENTS.json",
+      "sha256": "0d957317e071cef56925607ae5cf4906745f2a1951370a60991c1a1897c9e425",
+      "size_bytes": 44877
+    },
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/full/REPORT.json",
+      "sha256": "2981b704d86c9ee2daeaf7d0d28e86a1f44f927ed0d75b5dfa463d3a151bb80e",
+      "size_bytes": 5970774
+    },
+    "video": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/actual_video_v3/MANIFEST.json",
+      "sha256": "bdee4f4bb2ed6119d093ddade3bddb98990329a6e0e20944e148b81bc9bd4ac7",
+      "size_bytes": 5925
+    }
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/tools/verify_completed_v1.py",
+    "sha256": "3cce78cd219fe0359a4885708e8ce6395db753d39727cbaaa0211dc2c52bcbb7",
+    "size_bytes": 4596
+  },
+  "new_physics_steps": 0,
+  "npz_shapes": {},
+  "numerically_quarantined": false,
+  "positive": false,
+  "primary_visual_observations": {
+    "claim_every_frame_manually_reviewed": false,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "observation": "Full-body lift, carry and early placement frames and twelve hand-object closeups viewed. Bottle is airborne during carry; loss of hand contact and bottle tilt occur at placement. Original slip rejection retained; no completed release/settle or positive NPZ.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "reviewed_images": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "2404ef301ddec5319c12075f114f23c221e7aefac64b93292bb7b0de3f40dcba",
+      "size_bytes": 984436
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/placement_detail/review.jpg",
+      "sha256": "50c596d6a57c3b5316ef9c20e6edcee23d544abf66b421a2949a650eb2c5f8a9",
+      "size_bytes": 677397
+    }
+  ],
+  "source_role": "development_validation",
+  "verified_epoch_utc": 1793002774.0703294
+}

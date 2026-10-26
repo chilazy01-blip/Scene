@@ -1,0 +1,145 @@
+{
+  "content_sha256_excluding_this_field": "5b57a8e1e4b8aa03d4fb561aaa5c99eb56989dcd0830097f6487e37b48c34fca",
+  "max_new_physics_steps": 180000,
+  "prior_native_steps": 143686,
+  "reservations": [
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v001/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v001/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v001/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v001/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_floor_v3/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v001/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v001/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v001/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v001/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v001/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v001/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/continuous_replay_numerical_diagnostic",
+      "maximum_steps": 3200,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/continuous_replay_numerical_diagnostic",
+      "success_replay_headroom": 0
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v002/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v002/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/numerical_admission/S02_book/continuous_replay_capacity_probe",
+      "maximum_steps": 40,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/numerical_admission/S02_book/continuous_replay_capacity_probe",
+      "success_replay_headroom": 0
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/numerical_admission/S03_book/continuous_replay_capacity_probe",
+      "maximum_steps": 40,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/numerical_admission/S03_book/continuous_replay_capacity_probe",
+      "success_replay_headroom": 0
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v002/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v003/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v003/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v003/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/continuous_replay",
+      "maximum_steps": 8536,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/continuous_replay",
+      "success_replay_headroom": 0
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/continuous_replay",
+      "maximum_steps": 8936,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/continuous_replay",
+      "success_replay_headroom": 0
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v007/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v007/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s03_v004/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/cost",
+      "success_replay_headroom": 12840
+    }
+  ]
+}

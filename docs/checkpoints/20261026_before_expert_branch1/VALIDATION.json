@@ -1,0 +1,20 @@
+{
+  "scope": "Static parsing and metadata identity checks for a faithful checkpoint; not a full repository test run.",
+  "paths_to_stage": 2576,
+  "bytes": 38018885,
+  "python_ast_errors": [
+    {
+      "path": "sage/experiments/embodied_native_sonic_grasp_feedback_v1/delivery_review.py",
+      "error": "invalid syntax (delivery_review.py, line 35)"
+    },
+    {
+      "path": "sage/experiments/embodied_native_sonic_grasp_feedback_v1/diagnose_top.py",
+      "error": "unmatched ')' (diagnose_top.py, line 11)"
+    }
+  ],
+  "existing_diff_check_returncode": 0,
+  "existing_diff_check_lines": 0,
+  "metadata_bindings_passed": true,
+  "runtime_log_ignored": true,
+  "model_weight_link_ignored": true
+}

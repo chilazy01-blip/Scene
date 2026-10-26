@@ -6,7 +6,6 @@ from typing import Any
 
 import numpy as np
 import trimesh
-from trimesh.bounds import corners
 from trimesh.transformations import transform_points
 
 from .instance_groups import validate_instance_groups
@@ -20,7 +19,7 @@ from .validator import aabb, overlap, validate_layout
 
 
 SCHEMA = "codex_trellis_whole_scene_regression_audit_v2"
-GLB_TRANSFORM_SCHEMA = "codex_trellis_glb_world_transform_audit_v1"
+GLB_TRANSFORM_SCHEMA = "codex_trellis_glb_world_transform_audit_v2"
 _POSE_TOLERANCE_M = 0.02
 _YAW_TOLERANCE_DEGREES = 0.1
 _OPERATION_DEPTH_BY_CATEGORY = {
@@ -567,7 +566,7 @@ def audit_plan(
 
 
 def _geometry_world_bounds(
-    scene: trimesh.Scene, nodes: list[str]
+    scene: trimesh.Scene, nodes: list[str], frame: np.ndarray | None = None
 ) -> tuple[np.ndarray, np.ndarray]:
     transformed: list[np.ndarray] = []
     for node in nodes:
@@ -575,7 +574,7 @@ def _geometry_world_bounds(
         if geometry_name is None:
             continue
         transformed.append(
-            transform_points(corners(scene.geometry[geometry_name].bounds), matrix)
+            transform_points(scene.geometry[geometry_name].vertices, matrix if frame is None else frame @ matrix)
         )
     if not transformed:
         raise ValueError("no geometry bounds")
@@ -609,27 +608,23 @@ def audit_glb_world_transforms(
                 }
             )
             continue
-        minimum, maximum = _geometry_world_bounds(scene, matching)
+        dims = obj["dimensions"]
+        expected_yaw = (float(obj.get("yaw", 0.0)) + float(obj.get("footprint_yaw_offset_degrees", 0.0) or 0.0)) % 360.0
+        angle = math.radians(expected_yaw)
+        gltf_to_z = np.array([[1,0,0,0],[0,0,-1,0],[0,1,0,0],[0,0,0,1]], dtype=float)
+        undo_yaw = np.array([[math.cos(angle),math.sin(angle),0,0],[-math.sin(angle),math.cos(angle),0,0],[0,0,1,0],[0,0,0,1]], dtype=float)
+        frame = undo_yaw @ gltf_to_z
+        expected_extents = np.array([float(dims[key]) for key in ("width", "length", "height")])
+        expected_center = (undo_yaw @ np.array([float(obj.get("x",0)),float(obj.get("y",0)),float(obj.get("z",0))+expected_extents[2]/2,1]))[:3]
+        if obj.get("rigid_body_pose_matrix_z_up") is not None:
+            frame = np.linalg.inv(np.asarray(obj["rigid_body_pose_matrix_z_up"],dtype=float)) @ gltf_to_z
+            expected_center = np.zeros(3)
+        minimum, maximum = _geometry_world_bounds(scene, matching, frame=frame)
         actual_center = (minimum + maximum) * 0.5
         actual_extents = maximum - minimum
-        dims = obj["dimensions"]
-        quarter_turn = int(round(float(obj.get("yaw", 0.0)) / 90.0)) % 2 == 1
-        expected_width = float(dims["length"] if quarter_turn else dims["width"])
-        expected_length = float(dims["width"] if quarter_turn else dims["length"])
-        expected_height = float(dims["height"])
-        expected_center = np.asarray(
-            [
-                float(obj.get("x", 0.0)),
-                float(obj.get("z", 0.0)) + expected_height * 0.5,
-                -float(obj.get("y", 0.0)),
-            ],
-            dtype=np.float64,
-        )
-        expected_extents = np.asarray(
-            [expected_width, expected_height, expected_length], dtype=np.float64
-        )
         center_error = float(np.max(np.abs(actual_center - expected_center)))
         extent_error = float(np.max(np.abs(actual_extents - expected_extents)))
+        extent_tolerance = max(2e-5, float(expected_extents.max()) * 1e-5)
         root_matrix, _ = scene.graph.get(root_node)
         determinant = float(np.linalg.det(np.asarray(root_matrix[:3, :3], dtype=np.float64)))
         actual_yaw = math.degrees(
@@ -644,6 +639,10 @@ def audit_glb_world_transforms(
             {
                 "object_id": object_id,
                 "geometry_node_count": len(matching),
+                "bounds_method": "actual_vertices_in_placement_frame",
+                "actual_dimensions_m": actual_extents.tolist(),
+                "expected_dimensions_m": expected_extents.tolist(),
+                "extent_tolerance_m": extent_tolerance,
                 "center_max_error_m": round(center_error, 6),
                 "extent_max_error_m": round(extent_error, 6),
                 "expected_yaw_degrees": round(expected_yaw, 6),
@@ -653,7 +652,7 @@ def audit_glb_world_transforms(
                 "positive_determinant": determinant > 0.0,
                 "ok": bool(
                     center_error <= _POSE_TOLERANCE_M
-                    and extent_error <= _POSE_TOLERANCE_M
+                    and extent_error <= extent_tolerance
                     and yaw_error <= _YAW_TOLERANCE_DEGREES
                     and determinant > 0.0
                 ),

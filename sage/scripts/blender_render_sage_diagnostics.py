@@ -21,6 +21,7 @@ from mathutils import Vector
 
 
 TARGET_TYPES = {"MESH", "CURVE", "SURFACE", "META", "FONT"}
+RENDER_ENGINE = "eevee"
 
 
 def parse_args() -> argparse.Namespace:
@@ -35,6 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--asset-dir", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--resolution", type=int, default=900)
+    parser.add_argument("--engine", choices=("eevee", "cycles_cpu"), default="eevee")
     parser.add_argument("--skip-assets", action="store_true")
     parser.add_argument(
         "--qa-passes",
@@ -108,6 +110,11 @@ def setup_render(output: Path, resolution: int) -> None:
         scene.render.engine = "BLENDER_EEVEE_NEXT"
     except Exception:
         scene.render.engine = "BLENDER_EEVEE"
+    if RENDER_ENGINE == "cycles_cpu":
+        scene.render.engine = "CYCLES"
+        scene.cycles.device = "CPU"
+        scene.cycles.samples = 32
+        scene.cycles.use_denoising = False  # Keep index-pass colours unmixed.
     scene.render.resolution_x = resolution
     scene.render.resolution_y = resolution
     scene.render.resolution_percentage = 100
@@ -149,18 +156,26 @@ def _planned_object_rows(plan: dict) -> list[dict]:
     ]
 
 
-def _objects_for_plan_id(object_id: str) -> list[bpy.types.Object]:
-    prefix = str(object_id).lower() + "_"
-    return [
-        obj
-        for obj in renderable_objects()
-        if obj.name.lower() == str(object_id).lower()
-        or obj.name.lower().startswith(prefix)
-        or (
-            getattr(obj, "data", None) is not None
-            and str(obj.data.name).lower().startswith(prefix)
-        )
-    ]
+def _objects_for_plan_id(object_id: str, planned_ids=None) -> list[bpy.types.Object]:
+    matched = []
+    identifiers = list(planned_ids or [object_id])
+    for obj in renderable_objects():
+        current = obj
+        owner = None
+        while current is not None:
+            if current.get('scene_object_id'):
+                owner = str(current['scene_object_id'])
+                break
+            current = current.parent
+        if owner is None:
+            # Legacy imports lack semantic extras. Resolve the longest ID,
+            # so `tv` cannot take ownership of `tv_stand` geometry.
+            names = [obj.name.lower(), str(getattr(getattr(obj,'data',None),'name','')).lower()]
+            candidates = [i for i in identifiers if any(n == i.lower() or n.startswith(i.lower()+'_') for n in names)]
+            owner = max(candidates, key=len) if candidates else None
+        if owner == object_id:
+            matched.append(obj)
+    return matched
 
 
 def _projected_bbox(
@@ -224,6 +239,12 @@ def render_object_index_pass(output: Path, plan: dict, resolution: int) -> None:
     """
 
     scene = bpy.context.scene
+    if scene.render.engine == 'CYCLES':
+        # The preceding RGB render writes the native, non-antialiased IndexOB
+        # scalar EXR. Emission gray values can mix at edges into unrelated IDs.
+        if output.suffix != '.exr' or not output.is_file():
+            raise RuntimeError('Native Cycles object index output is missing')
+        return
     original_view_transform = scene.view_settings.view_transform
     original_look = scene.view_settings.look
     original_color_mode = scene.render.image_settings.color_mode
@@ -240,7 +261,7 @@ def render_object_index_pass(output: Path, plan: dict, resolution: int) -> None:
     denominator = max(1, len(planned_rows))
     object_indices = {obj.name: 0 for obj in renderable_objects()}
     for index, row in enumerate(planned_rows, start=1):
-        for obj in _objects_for_plan_id(str(row["id"])):
+        for obj in _objects_for_plan_id(str(row["id"]), [str(r['id']) for r in planned_rows]):
             object_indices[obj.name] = index
 
     index_materials: dict[int, bpy.types.Material] = {}
@@ -315,6 +336,11 @@ def configure_qa_passes(
         scene.render.engine = "BLENDER_EEVEE_NEXT"
     except Exception:
         scene.render.engine = "BLENDER_EEVEE"
+    if RENDER_ENGINE == "cycles_cpu":
+        scene.render.engine = "CYCLES"
+        scene.cycles.device = "CPU"
+        scene.cycles.samples = 32
+        scene.cycles.use_denoising = False
     scene.use_nodes = True
     view_layer = scene.view_layers[0]
     view_layer.use_pass_object_index = True
@@ -328,12 +354,24 @@ def configure_qa_passes(
 
     qa_root = output_dir / "qa_passes" / view_name
     qa_root.mkdir(parents=True, exist_ok=True)
+    native_ids = scene.render.engine == 'CYCLES'
+    index_path = qa_root / ('object_index_0001.exr' if native_ids else 'object_index.png')
+    index_denominator = 1 if native_ids else max(1, len(_planned_object_rows(plan)))
+    index_maximum = 1 if native_ids else 255
+    if native_ids:
+        index_output = tree.nodes.new('CompositorNodeOutputFile')
+        index_output.base_path = str(qa_root)
+        index_output.format.file_format = 'OPEN_EXR'
+        index_output.format.color_mode = 'BW'
+        index_output.format.color_depth = '32'
+        index_output.file_slots[0].path = 'object_index_'
+        tree.links.new(render_layers.outputs['IndexOB'], index_output.inputs[0])
     object_rows: dict[str, dict] = {}
     planned_rows = _planned_object_rows(plan)
     bpy.context.view_layer.update()
     for index, row in enumerate(planned_rows, start=1):
         object_id = str(row["id"])
-        matched = _objects_for_plan_id(object_id)
+        matched = _objects_for_plan_id(object_id, [str(r['id']) for r in planned_rows])
         for obj in matched:
             obj.pass_index = index
         safe_id = "".join(
@@ -344,9 +382,9 @@ def configure_qa_passes(
             "required": bool(row.get("required", True)),
             "category": str(row.get("category") or ""),
             "pass_index": index,
-            "object_index_path": str(qa_root / "object_index.png"),
-            "object_index_denominator": max(1, len(planned_rows)),
-            "object_index_max_pixel_value": 255,
+            "object_index_path": str(index_path),
+            "object_index_denominator": index_denominator,
+            "object_index_max_pixel_value": index_maximum,
             "object_index_transfer": "linear",
             "projection": _projected_bbox(matched, camera, resolution),
         }
@@ -374,9 +412,10 @@ def configure_qa_passes(
     return {
         "view": view_name,
         "depth_path": str(qa_root / "depth_0001.png"),
-        "object_index_path": str(qa_root / "object_index.png"),
-        "object_index_denominator": max(1, len(planned_rows)),
-        "object_index_max_pixel_value": 255,
+        "object_index_path": str(index_path),
+        "object_index_denominator": index_denominator,
+        "object_index_max_pixel_value": index_maximum,
+        "object_index_encoding": 'native_integer_ids' if native_ids else 'emission_gray_preview',
         "object_index_transfer": "linear",
         "camera": {
             "name": camera.name,
@@ -422,13 +461,37 @@ def is_room_shell(obj: bpy.types.Object) -> bool:
     )
 
 
-def set_room_shell_hidden(hidden: bool, hide_floor: bool = False) -> None:
+def _architecture_wall_side(obj: bpy.types.Object) -> str:
+    explicit = str(obj.get("architecture_wall", ""))
+    if explicit in {"north", "south", "east", "west"}:
+        return explicit
+    text = f"{obj.name} {getattr(getattr(obj, 'data', None), 'name', '')}".lower()
+    for wall in ("north", "south", "east", "west"):
+        if f"wall_{wall}" in text:
+            return wall
+    return ""
+
+
+def set_room_shell_visibility(
+    hidden_walls: set[str], *, hide_floor: bool = False
+) -> None:
+    """Hide cutaway walls together with fixtures mounted on those walls."""
+
     for obj in bpy.context.scene.objects:
         if obj.type not in TARGET_TYPES:
             continue
-        if is_room_shell(obj) and (hide_floor or "floor" not in obj.name.lower()):
-            obj.hide_render = hidden
-            obj.hide_viewport = hidden
+        wall = _architecture_wall_side(obj)
+        mounted_wall = str(obj.get("scene_mounted_wall", ""))
+        floor_hidden = bool(
+            hide_floor and is_room_shell(obj) and "floor" in obj.name.lower()
+        )
+        hidden = bool(
+            floor_hidden
+            or (wall and wall in hidden_walls)
+            or (mounted_wall and mounted_wall in hidden_walls)
+        )
+        obj.hide_render = hidden
+        obj.hide_viewport = hidden
 
 
 def object_world_extents(obj: bpy.types.Object) -> Vector:
@@ -540,7 +603,7 @@ def render_scene_views(
     views: list[Path] = []
     qa_views: dict[str, dict] = {}
 
-    set_room_shell_hidden(True)
+    set_room_shell_visibility({"north", "south", "east", "west"})
     top = add_camera("SceneTopCamera", (center[0], center[1], float(max_v.z) + diag * 1.05), center)
     top.data.type = "ORTHO"
     top.data.ortho_scale = max(width, length) * 1.12
@@ -557,6 +620,7 @@ def render_scene_views(
         )
     views.append(top_path)
 
+    set_room_shell_visibility({"south", "east"})
     corner = add_camera(
         "SceneCornerCamera",
         (center[0] + width * 0.90, center[1] - length * 1.10, float(max_v.z) + diag * 0.48),
@@ -576,6 +640,7 @@ def render_scene_views(
         )
     views.append(corner_path)
 
+    set_room_shell_visibility({"south"})
     front = add_camera(
         "SceneFrontCamera",
         (
@@ -605,8 +670,31 @@ def render_scene_views(
         )
     views.append(front_path)
 
+    # A fixture-facing view keeps the south wall visible, so required wall art
+    # is evidenced on its support instead of floating in a wall-less cutaway.
+    set_room_shell_visibility({"north", "east", "west"})
+    south_wall = add_camera(
+        "SceneSouthWallCamera",
+        (center[0], center[1] + length * 0.22, float(min_v.z) + min(1.55, height * 0.72)),
+        (center[0], float(min_v.y), float(min_v.z) + min(1.35, height * 0.56)),
+    )
+    south_wall.data.lens = 52
+    south_wall_path = output_dir / "scene_south_wall.png"
+    if qa_passes:
+        qa_views["south_wall"] = configure_qa_passes(
+            view_name="south_wall", output_dir=output_dir, plan=plan, camera=south_wall, resolution=resolution
+        )
+    render_current(south_wall_path, resolution)
+    if qa_passes:
+        qa_views["south_wall"]["rgb_path"] = str(south_wall_path)
+        render_object_index_pass(
+            Path(qa_views["south_wall"]["object_index_path"]), plan, resolution
+        )
+    views.append(south_wall_path)
+
     desk_bbox = object_bbox_by_keywords(("desk",))
     if desk_bbox:
+        set_room_shell_visibility({"south", "east"})
         if qa_passes:
             # The close-up is a human diagnostic only. Do not overwrite the
             # front camera's depth/index outputs with a different camera.
@@ -631,7 +719,7 @@ def render_scene_views(
         render_current(close_path, resolution)
         views.append(close_path)
 
-    set_room_shell_hidden(False)
+    set_room_shell_visibility(set())
     return views, axis_validation, {"enabled": qa_passes, "views": qa_views}
 
 
@@ -689,7 +777,9 @@ def render_asset_views(asset_dir: Path, plan: dict, output_dir: Path, resolution
 
 
 def main() -> None:
+    global RENDER_ENGINE
     args = parse_args()
+    RENDER_ENGINE = args.engine
     if not args.scene_glb.exists():
         raise FileNotFoundError(f"Missing scene GLB: {args.scene_glb}")
     if not args.plan.exists():

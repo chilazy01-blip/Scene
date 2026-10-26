@@ -1,0 +1,3949 @@
+{
+  "scene_id": "layout_tree_sage_bedroom_wood_blue",
+  "room_type": "bedroom",
+  "style": "modern warm wood bedroom with blue accents",
+  "description": "Infer a complete static indoor scene from the attached reference image. Use the image as the primary source for room type, style, object identities, object counts, sizes, poses, wall contacts, support relations, and left/right/front/back spatial relationships. Do not assume an office or any other preset scene unless it is visible in the image. TreeSAGE Flow 2 lays out rigid or approximately rigid objects only; pillows, cushions, blankets, bedding, duvets, quilts, bed throws, and other soft bed textiles should be treated as visual details integrated into the bed or sofa, not as separate scene objects.",
+  "room": {
+    "width": 5.2,
+    "length": 4.6,
+    "height": 2.7,
+    "materials": {
+      "schema": "tree_sage_wall_material_plan_v1",
+      "source": "reference_image_bright_wall_color_heuristic",
+      "global_wall": {
+        "texture_type": "solid_color",
+        "base_color": [
+          0.8229,
+          0.7653,
+          0.7241
+        ],
+        "roughness": 0.78,
+        "alpha": 1.0
+      },
+      "walls": {
+        "wall_north": {
+          "texture_type": "solid_color",
+          "base_color": [
+            0.8229,
+            0.7653,
+            0.7241
+          ],
+          "roughness": 0.78,
+          "alpha": 1.0
+        },
+        "wall_south": {
+          "texture_type": "solid_color",
+          "base_color": [
+            0.8229,
+            0.7653,
+            0.7241
+          ],
+          "roughness": 0.78,
+          "alpha": 1.0
+        },
+        "wall_west": {
+          "texture_type": "solid_color",
+          "base_color": [
+            0.8229,
+            0.7653,
+            0.7241
+          ],
+          "roughness": 0.78,
+          "alpha": 1.0
+        },
+        "wall_east": {
+          "texture_type": "solid_color",
+          "base_color": [
+            0.8229,
+            0.7653,
+            0.7241
+          ],
+          "roughness": 0.78,
+          "alpha": 1.0
+        }
+      },
+      "ceiling": {
+        "texture_type": "solid_color",
+        "base_color": [
+          0.8229,
+          0.7653,
+          0.7241
+        ],
+        "roughness": 0.82,
+        "alpha": 1.0
+      },
+      "floor": {
+        "texture_type": "sampled_image_texture",
+        "base_color": [
+          0.5882,
+          0.4353,
+          0.298
+        ],
+        "roughness": 0.82,
+        "alpha": 1.0,
+        "source": "reference_image_floor_color_heuristic",
+        "texture_image": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/floor_material_sampled_texture.png"
+      }
+    }
+  },
+  "objects": [
+    {
+      "id": "double_bed",
+      "category": "bed",
+      "description": "wood double bed with low headboard, integrated white and blue bedding and pillows",
+      "asset_prompt": "wooden double bed frame with low rectangular headboard, white bedding, blue pillows and blue folded bed runner integrated, object only",
+      "image_bbox": [
+        0.277,
+        0.349,
+        0.746,
+        0.814
+      ],
+      "priority": "furniture",
+      "dimensions": {
+        "width": 1.75,
+        "length": 2.15,
+        "height": 0.935
+      },
+      "agent_semantics": {
+        "semantic_class": "floor_furniture",
+        "layout_role": "floor_branch_anchor",
+        "pose_sensitive": true,
+        "expected_pose": "long_axis_front_back",
+        "wall_relation": {
+          "mode": "against",
+          "wall_id": "wall_north",
+          "confidence": 0.9
+        },
+        "pose_constraints": {
+          "expected_pose": "long_axis_front_back",
+          "long_axis_world": "y",
+          "wall_id": "wall_north",
+          "contact_face": "back",
+          "front_yaw_world": 270.0,
+          "visible_front_direction": "camera",
+          "confidence": 0.94,
+          "evidence": "headboard is against the back wall and the foot of the bed faces the camera"
+        },
+        "reference_evidence": "wood double bed is centered on the back wall below framed landscape art",
+        "support_hint": "floor",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "medium",
+          "regeneration_hint": "one coherent bed asset with integrated bedding and pillows, no loose textile fragments",
+          "failure_action": "regenerate",
+          "confidence": 0.95,
+          "evidence": "Wood bed frame, headboard, pillows, blanket, and runner should form one rigid scene asset with attached/integrated soft details.",
+          "fallback_used": false
+        },
+        "functional_cluster_memberships": [
+          {
+            "cluster_id": "functional_rug_underlay_cluster_02",
+            "type": "rug_underlay_cluster",
+            "role": "object_on_visual_underlay"
+          }
+        ],
+        "functional_cluster_roles": {
+          "functional_rug_underlay_cluster_02": {
+            "type": "rug_underlay_cluster",
+            "role": "object_on_visual_underlay"
+          }
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R01",
+        "bbox": [
+          0.277,
+          0.349,
+          0.746,
+          0.814
+        ],
+        "spatial_alias": "center_back_bed",
+        "visible_instance_description": "wood double bed centered on back wall with low headboard and integrated blue-white bedding",
+        "confidence": 0.98,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R01 encloses the central bed frame, headboard, mattress, and bedding.",
+        "duplicate_key": "floor_furniture",
+        "duplicate_count": 2
+      }
+    },
+    {
+      "id": "left_nightstand",
+      "category": "nightstand",
+      "description": "small wood nightstand with one drawer and open lower shelf",
+      "asset_prompt": "small wooden bedside nightstand with one drawer, black pull handle, open lower shelf, object only",
+      "image_bbox": [
+        0.297,
+        0.496,
+        0.39,
+        0.647
+      ],
+      "priority": "support",
+      "dimensions": {
+        "width": 0.48,
+        "length": 0.42,
+        "height": 0.55
+      },
+      "agent_semantics": {
+        "semantic_class": "table_anchor",
+        "layout_role": "floor_branch_anchor",
+        "pose_sensitive": true,
+        "expected_pose": "long_axis_left_right",
+        "wall_relation": {
+          "mode": "against",
+          "wall_id": "wall_north",
+          "confidence": 0.82
+        },
+        "pose_constraints": {
+          "expected_pose": "long_axis_left_right",
+          "long_axis_world": "x",
+          "wall_id": "wall_north",
+          "contact_face": "back",
+          "front_yaw_world": 270.0,
+          "visible_front_direction": "camera",
+          "confidence": 0.9,
+          "evidence": "drawer front is visible and faces into the room from the back wall"
+        },
+        "reference_evidence": "small wood nightstand stands to the image-left side of the bed",
+        "support_hint": "floor",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "single wooden cabinet body with attached drawer handle and shelf, no separate loose pieces",
+          "failure_action": "regenerate",
+          "confidence": 0.96,
+          "evidence": "Small cabinet with one main wooden body plus drawer pull and open shelf.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R02",
+        "bbox": [
+          0.297,
+          0.496,
+          0.39,
+          0.647
+        ],
+        "spatial_alias": "left_bedside_nightstand",
+        "visible_instance_description": "small wood nightstand to the left of the bed with drawer and lower shelf",
+        "confidence": 0.96,
+        "ambiguous_with": [
+          "right_nightstand"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R02 is the left bedside table adjacent to the bed and below the lamp/clock.",
+        "duplicate_key": "table_anchor",
+        "duplicate_count": 3
+      }
+    },
+    {
+      "id": "right_nightstand",
+      "category": "nightstand",
+      "description": "small wood nightstand with one drawer and open lower shelf",
+      "asset_prompt": "small wooden bedside nightstand with one drawer, black pull handle, open lower shelf, object only",
+      "image_bbox": [
+        0.645,
+        0.497,
+        0.737,
+        0.645
+      ],
+      "priority": "support",
+      "dimensions": {
+        "width": 0.48,
+        "length": 0.42,
+        "height": 0.55
+      },
+      "agent_semantics": {
+        "semantic_class": "table_anchor",
+        "layout_role": "floor_branch_anchor",
+        "pose_sensitive": true,
+        "expected_pose": "long_axis_left_right",
+        "wall_relation": {
+          "mode": "against",
+          "wall_id": "wall_north",
+          "confidence": 0.82
+        },
+        "pose_constraints": {
+          "expected_pose": "long_axis_left_right",
+          "long_axis_world": "x",
+          "wall_id": "wall_north",
+          "contact_face": "back",
+          "front_yaw_world": 270.0,
+          "visible_front_direction": "camera",
+          "confidence": 0.9,
+          "evidence": "drawer front is visible and faces into the room from the back wall"
+        },
+        "reference_evidence": "small wood nightstand stands to the image-right side of the bed",
+        "support_hint": "floor",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "single wooden cabinet body with attached drawer handle and shelf, no separate loose pieces",
+          "failure_action": "regenerate",
+          "confidence": 0.96,
+          "evidence": "Small cabinet with one main wooden body plus drawer pull and open shelf.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R03",
+        "bbox": [
+          0.645,
+          0.497,
+          0.737,
+          0.645
+        ],
+        "spatial_alias": "right_bedside_nightstand",
+        "visible_instance_description": "small wood nightstand to the right of the bed with drawer and lower shelf",
+        "confidence": 0.96,
+        "ambiguous_with": [
+          "left_nightstand"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R03 is the matching bedside table on the bed's right side supporting the plant and mug.",
+        "duplicate_key": "table_anchor",
+        "duplicate_count": 3
+      }
+    },
+    {
+      "id": "wardrobe",
+      "category": "wardrobe",
+      "description": "large wood wardrobe with multiple vertical doors and black handles",
+      "asset_prompt": "large freestanding wooden wardrobe closet with four tall flat doors, black vertical handles, warm oak finish, object only",
+      "image_bbox": [
+        0.794,
+        0.071,
+        1.0,
+        0.782
+      ],
+      "priority": "furniture",
+      "dimensions": {
+        "width": 1.0725,
+        "length": 0.62,
+        "height": 1.87
+      },
+      "agent_semantics": {
+        "semantic_class": "floor_furniture",
+        "layout_role": "floor_branch_anchor",
+        "pose_sensitive": true,
+        "expected_pose": "wall_flush",
+        "wall_relation": {
+          "mode": "against",
+          "wall_id": "wall_east",
+          "confidence": 0.9
+        },
+        "pose_constraints": {
+          "expected_pose": "wall_flush",
+          "long_axis_world": "y",
+          "wall_id": "wall_east",
+          "contact_face": "back",
+          "front_yaw_world": 180.0,
+          "visible_front_direction": "left",
+          "confidence": 0.82,
+          "evidence": "wardrobe is flush along the right wall with door faces opening toward the room"
+        },
+        "reference_evidence": "large oak wardrobe occupies the right side of the room against the right wall",
+        "support_hint": "floor",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one large continuous wardrobe cabinet with doors and attached handles",
+          "failure_action": "regenerate",
+          "confidence": 0.98,
+          "evidence": "Large freestanding cabinet should be one continuous case with door seams and black handles.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R04",
+        "bbox": [
+          0.794,
+          0.071,
+          1.0,
+          0.782
+        ],
+        "spatial_alias": "right_wall_wardrobe",
+        "visible_instance_description": "large wooden wardrobe with vertical doors and black handles along right wall",
+        "confidence": 0.99,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R04 encloses the tall multi-door wardrobe occupying the right side of the room.",
+        "duplicate_key": "floor_furniture",
+        "duplicate_count": 2
+      }
+    },
+    {
+      "id": "desk",
+      "category": "desk",
+      "description": "wood rectangular writing desk tucked into left corner under wall shelf",
+      "asset_prompt": "simple rectangular wooden writing desk with side panel legs, warm oak finish, object only",
+      "image_bbox": [
+        0.047,
+        0.451,
+        0.283,
+        0.686
+      ],
+      "priority": "furniture",
+      "dimensions": {
+        "width": 1.25,
+        "length": 0.62,
+        "height": 0.76
+      },
+      "agent_semantics": {
+        "semantic_class": "table_anchor",
+        "layout_role": "floor_branch_anchor",
+        "pose_sensitive": true,
+        "expected_pose": "wall_flush",
+        "wall_relation": {
+          "mode": "against",
+          "wall_id": "wall_west",
+          "confidence": 0.78
+        },
+        "pose_constraints": {
+          "expected_pose": "wall_flush",
+          "long_axis_world": "y",
+          "wall_id": "wall_west",
+          "contact_face": "back",
+          "front_yaw_world": 270.0,
+          "visible_front_direction": "camera",
+          "confidence": 0.86,
+          "evidence": "desk back edge is against the rear wall and chair sits at the camera-facing side"
+        },
+        "reference_evidence": "Reference side-wall cluster member.",
+        "support_hint": "floor",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one coherent wooden desk with tabletop and connected side panel legs",
+          "failure_action": "regenerate",
+          "confidence": 0.95,
+          "evidence": "Simple desk reads as one table structure with tabletop and side supports.",
+          "fallback_used": false
+        },
+        "functional_cluster_memberships": [
+          {
+            "cluster_id": "functional_desk_workstation_00",
+            "type": "desk_workstation",
+            "role": "desk"
+          }
+        ],
+        "functional_cluster_roles": {
+          "functional_desk_workstation_00": {
+            "type": "desk_workstation",
+            "role": "desk"
+          }
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R05",
+        "bbox": [
+          0.047,
+          0.451,
+          0.283,
+          0.686
+        ],
+        "spatial_alias": "left_corner_desk",
+        "visible_instance_description": "wood rectangular desk tucked under the shelf near the window",
+        "confidence": 0.94,
+        "ambiguous_with": [
+          "left_nightstand",
+          "right_nightstand"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R05 outlines the desk surface and legs in the left corner, distinct from bedside tables.",
+        "duplicate_key": "table_anchor",
+        "duplicate_count": 3
+      }
+    },
+    {
+      "id": "office_chair",
+      "category": "office chair",
+      "description": "black mesh swivel desk chair with armrests and caster base",
+      "asset_prompt": "black mesh ergonomic office chair with armrests, five caster wheels, swivel base, object only",
+      "image_bbox": [
+        0.064,
+        0.448,
+        0.213,
+        0.718
+      ],
+      "priority": "furniture",
+      "dimensions": {
+        "width": 0.77,
+        "length": 0.62,
+        "height": 0.95
+      },
+      "agent_semantics": {
+        "semantic_class": "seating",
+        "layout_role": "floor_branch_anchor",
+        "pose_sensitive": true,
+        "expected_pose": "faces_anchor",
+        "wall_relation": {
+          "mode": "near",
+          "wall_id": "wall_west",
+          "confidence": 0.66
+        },
+        "pose_constraints": {
+          "expected_pose": "faces_anchor",
+          "long_axis_world": "none",
+          "wall_id": "wall_west",
+          "contact_face": "unknown",
+          "front_yaw_world": 90.0,
+          "visible_front_direction": "back",
+          "confidence": 0.88,
+          "evidence": "chair back faces camera while seat is pulled toward the desk",
+          "facing_target": "desk"
+        },
+        "reference_evidence": "Reference side-wall cluster member.",
+        "support_hint": "floor",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "medium",
+          "regeneration_hint": "one assembled chair with connected seat, back, arms, central base, and caster wheels",
+          "failure_action": "regenerate",
+          "confidence": 0.94,
+          "evidence": "Chair has multiple functional parts, including arms and wheels, but must remain one assembled object.",
+          "fallback_used": false
+        },
+        "functional_cluster_memberships": [
+          {
+            "cluster_id": "functional_desk_workstation_00",
+            "type": "desk_workstation",
+            "role": "chair"
+          }
+        ],
+        "functional_cluster_roles": {
+          "functional_desk_workstation_00": {
+            "type": "desk_workstation",
+            "role": "chair"
+          }
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R06",
+        "bbox": [
+          0.064,
+          0.448,
+          0.213,
+          0.718
+        ],
+        "spatial_alias": "left_desk_chair",
+        "visible_instance_description": "black mesh swivel office chair with arms and caster base in front of desk",
+        "confidence": 0.97,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R06 encloses the black office chair positioned at the desk.",
+        "duplicate_key": "seating",
+        "duplicate_count": 1
+      }
+    },
+    {
+      "id": "floating_shelf",
+      "category": "wall shelf",
+      "description": "thin wooden floating shelf mounted above desk",
+      "asset_prompt": "minimal thin wooden floating wall shelf, warm oak finish, object only",
+      "image_bbox": [
+        0.173,
+        0.272,
+        0.316,
+        0.285
+      ],
+      "priority": "support",
+      "dimensions": {
+        "width": 1.05,
+        "length": 0.41250000000000003,
+        "height": 0.3375
+      },
+      "agent_semantics": {
+        "semantic_class": "wall_attached",
+        "layout_role": "wall_branch",
+        "pose_sensitive": true,
+        "expected_pose": "wall_flush",
+        "wall_relation": {
+          "mode": "attached",
+          "wall_id": "wall_north",
+          "confidence": 0.84
+        },
+        "pose_constraints": {
+          "expected_pose": "wall_flush",
+          "long_axis_world": "x",
+          "wall_id": "wall_north",
+          "contact_face": "back",
+          "front_yaw_world": 270.0,
+          "visible_front_direction": "camera",
+          "confidence": 0.9,
+          "evidence": "thin shelf is mounted horizontally on the back wall above the desk"
+        },
+        "reference_evidence": "wood floating shelf is above the desk on the back wall",
+        "support_hint": "wall_north",
+        "asset_component_policy": {
+          "component_policy": "single_integrated_panel",
+          "allow_disconnected_detail": false,
+          "requires_backing_body": true,
+          "max_fragment_tolerance": "very_low",
+          "regeneration_hint": "one continuous thin wooden shelf slab, no separate planks or floating fragments",
+          "failure_action": "procedural_fallback",
+          "confidence": 0.95,
+          "evidence": "Thin wall-mounted shelf is a single slab-like wooden panel.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R07",
+        "bbox": [
+          0.173,
+          0.272,
+          0.316,
+          0.285
+        ],
+        "spatial_alias": "left_wall_floating_shelf",
+        "visible_instance_description": "thin wooden floating shelf mounted above the desk",
+        "confidence": 0.96,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R07 marks the narrow horizontal shelf on the left wall above the desk.",
+        "duplicate_key": "wall_attached",
+        "duplicate_count": 4
+      }
+    },
+    {
+      "id": "framed_landscape_art",
+      "category": "framed wall art",
+      "description": "rectangular framed landscape picture above bed",
+      "asset_prompt": "rectangular framed landscape painting showing lake and trees, wood frame, object only",
+      "image_bbox": [
+        0.443,
+        0.219,
+        0.591,
+        0.349
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 1.1,
+        "length": 0.8250000000000001,
+        "height": 0.55
+      },
+      "agent_semantics": {
+        "semantic_class": "wall_attached",
+        "layout_role": "wall_branch",
+        "pose_sensitive": true,
+        "expected_pose": "wall_flush",
+        "wall_relation": {
+          "mode": "attached",
+          "wall_id": "wall_north",
+          "confidence": 0.96
+        },
+        "pose_constraints": {
+          "expected_pose": "wall_flush",
+          "long_axis_world": "x",
+          "wall_id": "wall_north",
+          "contact_face": "back",
+          "front_yaw_world": 270.0,
+          "visible_front_direction": "camera",
+          "confidence": 0.97,
+          "evidence": "framed picture is flat on the back wall above the bed"
+        },
+        "reference_evidence": "rectangular framed lake landscape hangs centered above the bed",
+        "support_hint": "wall_north",
+        "asset_component_policy": {
+          "component_policy": "single_integrated_panel",
+          "allow_disconnected_detail": false,
+          "requires_backing_body": true,
+          "max_fragment_tolerance": "very_low",
+          "regeneration_hint": "single framed flat picture with one backing panel and printed landscape, no separate scene objects",
+          "failure_action": "procedural_fallback",
+          "confidence": 0.98,
+          "evidence": "Wall art is a flat framed image and needs a continuous backing/frame.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R08",
+        "bbox": [
+          0.443,
+          0.219,
+          0.591,
+          0.349
+        ],
+        "spatial_alias": "center_wall_landscape_art",
+        "visible_instance_description": "framed landscape picture centered above the bed",
+        "confidence": 0.98,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R08 encloses the wall-mounted landscape artwork above the headboard.",
+        "duplicate_key": "wall_attached",
+        "duplicate_count": 4
+      }
+    },
+    {
+      "id": "window",
+      "category": "window",
+      "description": "white framed window on left wall",
+      "asset_prompt": "white framed rectangular residential window with sill, object only",
+      "image_bbox": [
+        0.033,
+        0.112,
+        0.119,
+        0.443
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 1.0,
+        "length": 0.08,
+        "height": 1.45
+      },
+      "agent_semantics": {
+        "semantic_class": "wall_attached",
+        "layout_role": "wall_branch",
+        "pose_sensitive": true,
+        "expected_pose": "wall_flush",
+        "wall_relation": {
+          "mode": "attached",
+          "wall_id": "wall_west",
+          "confidence": 0.93
+        },
+        "pose_constraints": {
+          "expected_pose": "wall_flush",
+          "long_axis_world": "none",
+          "wall_id": "wall_west",
+          "contact_face": "back",
+          "front_yaw_world": 0.0,
+          "visible_front_direction": "right",
+          "confidence": 0.9,
+          "evidence": "window is set into the left wall plane"
+        },
+        "reference_evidence": "white framed window is visible on the left wall",
+        "support_hint": "wall_west",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": true,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one wall-inset window frame with connected panes and sill, no loose frame segments",
+          "failure_action": "procedural_fallback",
+          "confidence": 0.94,
+          "evidence": "Window is a framed wall element with panes and sill, not independent loose pieces.",
+          "fallback_used": false
+        },
+        "functional_cluster_memberships": [
+          {
+            "cluster_id": "functional_window_curtain_cluster_01",
+            "type": "window_curtain_cluster",
+            "role": "window"
+          }
+        ],
+        "functional_cluster_roles": {
+          "functional_window_curtain_cluster_01": {
+            "type": "window_curtain_cluster",
+            "role": "window"
+          }
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R09",
+        "bbox": [
+          0.033,
+          0.112,
+          0.119,
+          0.443
+        ],
+        "spatial_alias": "left_wall_window",
+        "visible_instance_description": "white framed window on the left wall between curtain panels",
+        "confidence": 0.97,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R09 surrounds the visible white window frame and glass on the left side.",
+        "duplicate_key": "wall_attached",
+        "duplicate_count": 4
+      }
+    },
+    {
+      "id": "left_curtain",
+      "category": "curtain",
+      "description": "dark blue curtain panel at left side of window",
+      "asset_prompt": "dark blue hanging curtain panel with gathered folds and tieback, object only",
+      "image_bbox": [
+        0.0,
+        0.047,
+        0.043,
+        0.507
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 0.55,
+        "length": 0.04,
+        "height": 1.9
+      },
+      "agent_semantics": {
+        "semantic_class": "hanging",
+        "layout_role": "hanging",
+        "pose_sensitive": true,
+        "expected_pose": "wall_flush",
+        "wall_relation": {
+          "mode": "attached",
+          "wall_id": "wall_west",
+          "confidence": 0.86
+        },
+        "pose_constraints": {
+          "expected_pose": "wall_flush",
+          "long_axis_world": "none",
+          "wall_id": "wall_west",
+          "contact_face": "back",
+          "front_yaw_world": 0.0,
+          "visible_front_direction": "right",
+          "confidence": 0.84,
+          "evidence": "curtain panel hangs flat beside the window on the left wall"
+        },
+        "reference_evidence": "dark blue curtain panel hangs at the far left of the window",
+        "support_hint": "curtain_rod",
+        "asset_component_policy": {
+          "component_policy": "soft_or_irregular_integrated",
+          "allow_disconnected_detail": false,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one continuous hanging curtain cloth panel with folds and tieback, no detached strips",
+          "failure_action": "regenerate",
+          "confidence": 0.92,
+          "evidence": "Curtain is one soft hanging fabric panel with folds.",
+          "fallback_used": false
+        },
+        "functional_cluster_memberships": [
+          {
+            "cluster_id": "functional_window_curtain_cluster_01",
+            "type": "window_curtain_cluster",
+            "role": "curtain"
+          }
+        ],
+        "functional_cluster_roles": {
+          "functional_window_curtain_cluster_01": {
+            "type": "window_curtain_cluster",
+            "role": "curtain"
+          }
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R10",
+        "bbox": [
+          0.0,
+          0.047,
+          0.043,
+          0.507
+        ],
+        "spatial_alias": "left_window_curtain",
+        "visible_instance_description": "dark blue curtain panel on the far left side of the window",
+        "confidence": 0.95,
+        "ambiguous_with": [
+          "right_curtain"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R10 covers the left blue curtain panel at the window edge.",
+        "duplicate_key": "hanging",
+        "duplicate_count": 2
+      }
+    },
+    {
+      "id": "right_curtain",
+      "category": "curtain",
+      "description": "dark blue curtain panel at right side of window",
+      "asset_prompt": "dark blue hanging curtain panel with gathered folds and tieback, object only",
+      "image_bbox": [
+        0.103,
+        0.049,
+        0.136,
+        0.508
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 0.55,
+        "length": 0.04,
+        "height": 1.9
+      },
+      "agent_semantics": {
+        "semantic_class": "hanging",
+        "layout_role": "hanging",
+        "pose_sensitive": true,
+        "expected_pose": "wall_flush",
+        "wall_relation": {
+          "mode": "attached",
+          "wall_id": "wall_west",
+          "confidence": 0.86
+        },
+        "pose_constraints": {
+          "expected_pose": "wall_flush",
+          "long_axis_world": "none",
+          "wall_id": "wall_west",
+          "contact_face": "back",
+          "front_yaw_world": 0.0,
+          "visible_front_direction": "right",
+          "confidence": 0.84,
+          "evidence": "curtain panel hangs flat beside the window on the left wall"
+        },
+        "reference_evidence": "dark blue curtain panel hangs on the right side of the window",
+        "support_hint": "curtain_rod",
+        "asset_component_policy": {
+          "component_policy": "soft_or_irregular_integrated",
+          "allow_disconnected_detail": false,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one continuous hanging curtain cloth panel with folds and tieback, no detached strips",
+          "failure_action": "regenerate",
+          "confidence": 0.92,
+          "evidence": "Curtain is one soft hanging fabric panel with folds.",
+          "fallback_used": false
+        },
+        "functional_cluster_memberships": [
+          {
+            "cluster_id": "functional_window_curtain_cluster_01",
+            "type": "window_curtain_cluster",
+            "role": "curtain"
+          }
+        ],
+        "functional_cluster_roles": {
+          "functional_window_curtain_cluster_01": {
+            "type": "window_curtain_cluster",
+            "role": "curtain"
+          }
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R11",
+        "bbox": [
+          0.103,
+          0.049,
+          0.136,
+          0.508
+        ],
+        "spatial_alias": "right_window_curtain",
+        "visible_instance_description": "dark blue curtain panel to the right of the window",
+        "confidence": 0.95,
+        "ambiguous_with": [
+          "left_curtain"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R11 covers the right curtain panel beside the window.",
+        "duplicate_key": "hanging",
+        "duplicate_count": 2
+      }
+    },
+    {
+      "id": "curtain_rod",
+      "category": "curtain rod",
+      "description": "wood curtain rod above window",
+      "asset_prompt": "wooden curtain rod with round finials, object only",
+      "image_bbox": [
+        0.0,
+        0.032,
+        0.139,
+        0.058
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 1.35,
+        "length": 0.05,
+        "height": 0.7
+      },
+      "agent_semantics": {
+        "semantic_class": "wall_attached",
+        "layout_role": "wall_branch",
+        "pose_sensitive": true,
+        "expected_pose": "wall_flush",
+        "wall_relation": {
+          "mode": "attached",
+          "wall_id": "wall_west",
+          "confidence": 0.86
+        },
+        "pose_constraints": {
+          "expected_pose": "wall_flush",
+          "long_axis_world": "y",
+          "wall_id": "wall_west",
+          "contact_face": "back",
+          "front_yaw_world": 0.0,
+          "visible_front_direction": "right",
+          "confidence": 0.86,
+          "evidence": "rod runs horizontally along the left wall above the window"
+        },
+        "reference_evidence": "wood curtain rod with finials is mounted above the window",
+        "support_hint": "wall_west",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one straight wooden rod with attached round finials and brackets",
+          "failure_action": "regenerate",
+          "confidence": 0.94,
+          "evidence": "Rod is a simple bar with small end finials and possible supports.",
+          "fallback_used": false
+        },
+        "functional_cluster_memberships": [
+          {
+            "cluster_id": "functional_window_curtain_cluster_01",
+            "type": "window_curtain_cluster",
+            "role": "curtain"
+          }
+        ],
+        "functional_cluster_roles": {
+          "functional_window_curtain_cluster_01": {
+            "type": "window_curtain_cluster",
+            "role": "curtain"
+          }
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R12",
+        "bbox": [
+          0.0,
+          0.032,
+          0.139,
+          0.058
+        ],
+        "spatial_alias": "left_wall_curtain_rod",
+        "visible_instance_description": "horizontal rod above the window and curtains",
+        "confidence": 0.94,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R12 spans the top of the window treatment above both curtains.",
+        "duplicate_key": "wall_attached",
+        "duplicate_count": 4
+      }
+    },
+    {
+      "id": "desk_lamp",
+      "category": "desk lamp",
+      "description": "white adjustable task lamp on desk",
+      "asset_prompt": "white adjustable desk task lamp with round base, angled arm and conical shade, object only",
+      "image_bbox": [
+        0.159,
+        0.315,
+        0.204,
+        0.491
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 0.77,
+        "length": 0.41250000000000003,
+        "height": 0.55
+      },
+      "agent_semantics": {
+        "semantic_class": "lighting",
+        "layout_role": "tabletop_child",
+        "pose_sensitive": true,
+        "expected_pose": "upright_on_support",
+        "wall_relation": {
+          "mode": "near",
+          "wall_id": "wall_north",
+          "confidence": 0.62
+        },
+        "pose_constraints": {
+          "expected_pose": "upright_on_support",
+          "long_axis_world": "none",
+          "wall_id": "wall_north",
+          "contact_face": "unknown",
+          "front_yaw_world": "270",
+          "visible_front_direction": "unknown",
+          "confidence": 0.84,
+          "evidence": "lamp base stands upright on the desk with articulated arm visible"
+        },
+        "reference_evidence": "white adjustable task lamp sits on the left desk surface",
+        "support_hint": "desk",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "medium",
+          "regeneration_hint": "one assembled task lamp with base, connected arm, and shade, no loose lamp parts",
+          "failure_action": "regenerate",
+          "confidence": 0.94,
+          "evidence": "Task lamp has base, articulated arm, and shade as one assembled object.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R13",
+        "bbox": [
+          0.159,
+          0.315,
+          0.204,
+          0.491
+        ],
+        "spatial_alias": "left_desk_task_lamp",
+        "visible_instance_description": "white adjustable task lamp on the desk",
+        "confidence": 0.95,
+        "ambiguous_with": [
+          "bedside_table_lamp"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R13 encloses the angled white task lamp sitting on the desk.",
+        "duplicate_key": "lighting",
+        "duplicate_count": 2
+      }
+    },
+    {
+      "id": "bedside_table_lamp",
+      "category": "table lamp",
+      "description": "small white shade lamp on left nightstand",
+      "asset_prompt": "small bedside table lamp with white fabric drum shade and slim base, object only",
+      "image_bbox": [
+        0.326,
+        0.413,
+        0.371,
+        0.525
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 0.30250000000000005,
+        "length": 0.24750000000000003,
+        "height": 0.42
+      },
+      "agent_semantics": {
+        "semantic_class": "lighting",
+        "layout_role": "tabletop_child",
+        "pose_sensitive": true,
+        "expected_pose": "upright_on_support",
+        "wall_relation": {
+          "mode": "near",
+          "wall_id": "wall_north",
+          "confidence": 0.64
+        },
+        "pose_constraints": {
+          "expected_pose": "upright_on_support",
+          "long_axis_world": "none",
+          "wall_id": "wall_north",
+          "contact_face": "unknown",
+          "front_yaw_world": "null",
+          "visible_front_direction": "unknown",
+          "confidence": 0.9,
+          "evidence": "table lamp sits upright on the left nightstand"
+        },
+        "reference_evidence": "white shade lamp is on the left nightstand",
+        "support_hint": "left_nightstand",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "medium",
+          "regeneration_hint": "one assembled table lamp with base, stem, and shade aligned together",
+          "failure_action": "regenerate",
+          "confidence": 0.95,
+          "evidence": "Lamp consists of a shade and small base but should remain one coherent tabletop object.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R14",
+        "bbox": [
+          0.326,
+          0.413,
+          0.371,
+          0.525
+        ],
+        "spatial_alias": "left_nightstand_table_lamp",
+        "visible_instance_description": "small lamp with white shade on the left nightstand",
+        "confidence": 0.96,
+        "ambiguous_with": [
+          "desk_lamp"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R14 marks the white shade lamp placed on the left bedside table.",
+        "duplicate_key": "lighting",
+        "duplicate_count": 2
+      }
+    },
+    {
+      "id": "alarm_clock",
+      "category": "alarm clock",
+      "description": "small black twin-bell alarm clock on left nightstand",
+      "asset_prompt": "small black vintage twin bell alarm clock, round face, object only",
+      "image_bbox": [
+        0.373,
+        0.477,
+        0.397,
+        0.526
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 0.30250000000000005,
+        "length": 0.24750000000000003,
+        "height": 0.27
+      },
+      "agent_semantics": {
+        "semantic_class": "small_electronics",
+        "layout_role": "tabletop_child",
+        "pose_sensitive": true,
+        "expected_pose": "upright_on_support",
+        "wall_relation": {
+          "mode": "near",
+          "wall_id": "wall_north",
+          "confidence": 0.62
+        },
+        "pose_constraints": {
+          "expected_pose": "upright_on_support",
+          "long_axis_world": "x",
+          "wall_id": "wall_north",
+          "contact_face": "unknown",
+          "front_yaw_world": 270.0,
+          "visible_front_direction": "camera",
+          "confidence": 0.78,
+          "evidence": "clock sits upright on the nightstand with its face visible toward camera"
+        },
+        "reference_evidence": "black twin-bell alarm clock is on the left nightstand beside the lamp",
+        "support_hint": "left_nightstand",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "single clock body with attached bells, legs, and hands, no loose parts",
+          "failure_action": "regenerate",
+          "confidence": 0.93,
+          "evidence": "Twin-bell clock has one main round body with attached small details.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R15",
+        "bbox": [
+          0.373,
+          0.477,
+          0.397,
+          0.526
+        ],
+        "spatial_alias": "left_nightstand_alarm_clock",
+        "visible_instance_description": "small black twin-bell alarm clock on the left nightstand",
+        "confidence": 0.93,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R15 encloses the small black clock beside the table lamp on the left nightstand.",
+        "duplicate_key": "small_electronics",
+        "duplicate_count": 1
+      }
+    },
+    {
+      "id": "potted_plant",
+      "category": "potted plant",
+      "description": "small green plant in white pot on right nightstand",
+      "asset_prompt": "small leafy green houseplant in a white cylindrical pot, object only",
+      "image_bbox": [
+        0.667,
+        0.449,
+        0.704,
+        0.514
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 0.30250000000000005,
+        "length": 0.24750000000000003,
+        "height": 0.28
+      },
+      "agent_semantics": {
+        "semantic_class": "plant",
+        "layout_role": "tabletop_child",
+        "pose_sensitive": true,
+        "expected_pose": "upright_on_support",
+        "wall_relation": {
+          "mode": "near",
+          "wall_id": "wall_north",
+          "confidence": 0.62
+        },
+        "pose_constraints": {
+          "expected_pose": "upright_on_support",
+          "long_axis_world": "none",
+          "wall_id": "wall_north",
+          "contact_face": "unknown",
+          "front_yaw_world": "null",
+          "visible_front_direction": "unknown",
+          "confidence": 0.88,
+          "evidence": "plant pot rests upright on the right nightstand"
+        },
+        "reference_evidence": "small green plant in a white pot sits on the right nightstand",
+        "support_hint": "right_nightstand",
+        "asset_component_policy": {
+          "component_policy": "many_details_on_base",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "medium",
+          "regeneration_hint": "leaf clusters attached to stems emerging from one visible pot, no remote leaves",
+          "failure_action": "regenerate",
+          "confidence": 0.94,
+          "evidence": "Many leaves are acceptable only as part of a houseplant anchored in a pot.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R16",
+        "bbox": [
+          0.667,
+          0.449,
+          0.704,
+          0.514
+        ],
+        "spatial_alias": "right_nightstand_plant",
+        "visible_instance_description": "small green plant in a white pot on the right nightstand",
+        "confidence": 0.97,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R16 encloses the green plant and white pot on top of the right bedside table.",
+        "duplicate_key": "plant",
+        "duplicate_count": 1
+      }
+    },
+    {
+      "id": "white_mug",
+      "category": "mug",
+      "description": "white ceramic mug on right nightstand",
+      "asset_prompt": "plain white ceramic coffee mug with handle, object only",
+      "image_bbox": [
+        0.7,
+        0.488,
+        0.719,
+        0.525
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 0.30250000000000005,
+        "length": 0.24750000000000003,
+        "height": 0.27
+      },
+      "agent_semantics": {
+        "semantic_class": "drinkware",
+        "layout_role": "tabletop_child",
+        "pose_sensitive": true,
+        "expected_pose": "upright_on_support",
+        "wall_relation": {
+          "mode": "near",
+          "wall_id": "wall_north",
+          "confidence": 0.6
+        },
+        "pose_constraints": {
+          "expected_pose": "upright_on_support",
+          "long_axis_world": "x",
+          "wall_id": "wall_north",
+          "contact_face": "unknown",
+          "front_yaw_world": "null",
+          "visible_front_direction": "unknown",
+          "confidence": 0.84,
+          "evidence": "mug sits upright on the right nightstand"
+        },
+        "reference_evidence": "white mug is on the right nightstand next to the plant",
+        "support_hint": "right_nightstand",
+        "asset_component_policy": {
+          "component_policy": "single_main_body_with_parts",
+          "allow_disconnected_detail": true,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one ceramic mug body with attached handle, no separate pieces",
+          "failure_action": "regenerate",
+          "confidence": 0.93,
+          "evidence": "Mug is a single cup body with one handle.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R17",
+        "bbox": [
+          0.7,
+          0.488,
+          0.719,
+          0.525
+        ],
+        "spatial_alias": "right_nightstand_mug",
+        "visible_instance_description": "small white mug on the right nightstand",
+        "confidence": 0.9,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R17 marks the small white cylindrical mug to the right of the plant.",
+        "duplicate_key": "drinkware",
+        "duplicate_count": 1
+      }
+    },
+    {
+      "id": "area_rug",
+      "category": "area rug",
+      "description": "large light beige rectangular rug under and in front of bed",
+      "asset_prompt": "large light beige rectangular area rug with subtle woven pattern, thin flat floor covering, object only",
+      "image_bbox": [
+        0.163,
+        0.651,
+        0.871,
+        0.926
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 2.8,
+        "length": 2.3,
+        "height": 0.24750000000000003
+      },
+      "agent_semantics": {
+        "semantic_class": "floor_covering",
+        "layout_role": "floor_decor",
+        "pose_sensitive": true,
+        "expected_pose": "flat_on_support",
+        "wall_relation": {
+          "mode": "none",
+          "wall_id": "null",
+          "confidence": 0.0
+        },
+        "pose_constraints": {
+          "expected_pose": "flat_on_support",
+          "long_axis_world": "y",
+          "wall_id": "null",
+          "contact_face": "unknown",
+          "front_yaw_world": "null",
+          "visible_front_direction": "unknown",
+          "confidence": 0.94,
+          "evidence": "rectangular rug lies flat under and in front of bed, longer front to back"
+        },
+        "reference_evidence": "large light beige rug is centered under the bed and extends toward camera",
+        "support_hint": "floor",
+        "asset_component_policy": {
+          "component_policy": "single_integrated_panel",
+          "allow_disconnected_detail": false,
+          "requires_backing_body": true,
+          "max_fragment_tolerance": "very_low",
+          "regeneration_hint": "one thin continuous rectangular rug plane with woven texture, no separate fibers or patches",
+          "failure_action": "procedural_fallback",
+          "confidence": 0.97,
+          "evidence": "Rug is a flat rectangular floor covering with subtle pattern.",
+          "fallback_used": false
+        },
+        "functional_cluster_memberships": [
+          {
+            "cluster_id": "functional_rug_underlay_cluster_02",
+            "type": "rug_underlay_cluster",
+            "role": "visual_floor_underlay"
+          }
+        ],
+        "functional_cluster_roles": {
+          "functional_rug_underlay_cluster_02": {
+            "type": "rug_underlay_cluster",
+            "role": "visual_floor_underlay"
+          }
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R18",
+        "bbox": [
+          0.163,
+          0.651,
+          0.871,
+          0.926
+        ],
+        "spatial_alias": "center_floor_area_rug",
+        "visible_instance_description": "large light beige rectangular rug under and in front of the bed",
+        "confidence": 0.98,
+        "ambiguous_with": [],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R18 outlines the large rug extending from under the bed toward the foreground.",
+        "duplicate_key": "floor_covering",
+        "duplicate_count": 1
+      }
+    },
+    {
+      "id": "left_slipper",
+      "category": "slipper",
+      "description": "dark striped slipper on rug near foot of bed",
+      "asset_prompt": "single dark navy house slipper with white horizontal stripes, object only",
+      "image_bbox": [
+        0.599,
+        0.821,
+        0.639,
+        0.871
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 1.1,
+        "length": 0.8250000000000001,
+        "height": 0.24750000000000003
+      },
+      "agent_semantics": {
+        "semantic_class": "decor",
+        "layout_role": "floor_decor",
+        "pose_sensitive": true,
+        "expected_pose": "flat_on_support",
+        "wall_relation": {
+          "mode": "none",
+          "wall_id": "null",
+          "confidence": 0.0
+        },
+        "pose_constraints": {
+          "expected_pose": "flat_on_support",
+          "long_axis_world": "y",
+          "wall_id": "null",
+          "contact_face": "unknown",
+          "front_yaw_world": 90.0,
+          "visible_front_direction": "back",
+          "confidence": 0.66,
+          "evidence": "slipper lies flat on rug with its length roughly front to back, toe likely toward bed"
+        },
+        "reference_evidence": "left dark striped slipper rests on the rug near the bed foot",
+        "support_hint": "area_rug",
+        "asset_component_policy": {
+          "component_policy": "soft_or_irregular_integrated",
+          "allow_disconnected_detail": false,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one continuous slipper body with printed stripe pattern, no detached stripe pieces",
+          "failure_action": "regenerate",
+          "confidence": 0.93,
+          "evidence": "Single soft slipper should be one continuous wearable object with stripe detail on its surface.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R19",
+        "bbox": [
+          0.599,
+          0.821,
+          0.639,
+          0.871
+        ],
+        "spatial_alias": "left_front_rug_slipper",
+        "visible_instance_description": "dark striped slipper on the rug near the foot of the bed, left of the pair",
+        "confidence": 0.94,
+        "ambiguous_with": [
+          "right_slipper"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R19 encloses the left slipper of the pair on the rug.",
+        "duplicate_key": "decor",
+        "duplicate_count": 2
+      }
+    },
+    {
+      "id": "right_slipper",
+      "category": "slipper",
+      "description": "dark striped slipper on rug near foot of bed",
+      "asset_prompt": "single dark navy house slipper with white horizontal stripes, object only",
+      "image_bbox": [
+        0.641,
+        0.82,
+        0.685,
+        0.872
+      ],
+      "priority": "decor",
+      "dimensions": {
+        "width": 1.1,
+        "length": 0.8250000000000001,
+        "height": 0.24750000000000003
+      },
+      "agent_semantics": {
+        "semantic_class": "decor",
+        "layout_role": "floor_decor",
+        "pose_sensitive": true,
+        "expected_pose": "flat_on_support",
+        "wall_relation": {
+          "mode": "none",
+          "wall_id": "null",
+          "confidence": 0.0
+        },
+        "pose_constraints": {
+          "expected_pose": "flat_on_support",
+          "long_axis_world": "y",
+          "wall_id": "null",
+          "contact_face": "unknown",
+          "front_yaw_world": 90.0,
+          "visible_front_direction": "back",
+          "confidence": 0.66,
+          "evidence": "slipper lies flat on rug with its length roughly front to back, toe likely toward bed"
+        },
+        "reference_evidence": "right dark striped slipper rests on the rug near the bed foot",
+        "support_hint": "area_rug",
+        "asset_component_policy": {
+          "component_policy": "soft_or_irregular_integrated",
+          "allow_disconnected_detail": false,
+          "requires_backing_body": false,
+          "max_fragment_tolerance": "low",
+          "regeneration_hint": "one continuous slipper body with printed stripe pattern, no detached stripe pieces",
+          "failure_action": "regenerate",
+          "confidence": 0.93,
+          "evidence": "Single soft slipper should be one continuous wearable object with stripe detail on its surface.",
+          "fallback_used": false
+        }
+      },
+      "reference_instance": {
+        "reference_label": "R20",
+        "bbox": [
+          0.641,
+          0.82,
+          0.685,
+          0.872
+        ],
+        "spatial_alias": "right_front_rug_slipper",
+        "visible_instance_description": "dark striped slipper on the rug near the foot of the bed, right of the pair",
+        "confidence": 0.94,
+        "ambiguous_with": [
+          "left_slipper"
+        ],
+        "usable_for_spatial_order": true,
+        "ambiguity_overridden_for_spatial_order": false,
+        "evidence": "R20 encloses the right slipper of the pair on the rug.",
+        "duplicate_key": "decor",
+        "duplicate_count": 2
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel_000",
+      "type": "against_wall",
+      "subject": "double_bed",
+      "object": "wall_north",
+      "confidence": 0.88,
+      "evidence": "bed headboard touches the back wall"
+    },
+    {
+      "id": "rel_001",
+      "type": "left_of",
+      "subject": "left_nightstand",
+      "object": "double_bed",
+      "confidence": 0.92,
+      "evidence": "left nightstand is beside the bed's left side"
+    },
+    {
+      "id": "rel_002",
+      "type": "right_of",
+      "subject": "right_nightstand",
+      "object": "double_bed",
+      "confidence": 0.92,
+      "evidence": "right nightstand is beside the bed's right side"
+    },
+    {
+      "id": "rel_003",
+      "type": "against_wall",
+      "subject": "left_nightstand",
+      "object": "wall_north",
+      "confidence": 0.82,
+      "evidence": "nightstand is along the back wall"
+    },
+    {
+      "id": "rel_004",
+      "type": "against_wall",
+      "subject": "right_nightstand",
+      "object": "wall_north",
+      "confidence": 0.82,
+      "evidence": "nightstand is along the back wall"
+    },
+    {
+      "id": "rel_005",
+      "type": "against_wall",
+      "subject": "wardrobe",
+      "object": "wall_east",
+      "confidence": 0.9,
+      "evidence": "wardrobe is flush with the right wall"
+    },
+    {
+      "id": "rel_006",
+      "type": "left_of",
+      "subject": "desk",
+      "object": "double_bed",
+      "confidence": 0.93,
+      "evidence": "desk is on the left side of the room"
+    },
+    {
+      "id": "rel_007",
+      "type": "near",
+      "subject": "office_chair",
+      "object": "desk",
+      "confidence": 0.94,
+      "evidence": "chair is pulled up to desk"
+    },
+    {
+      "id": "rel_008",
+      "type": "facing",
+      "subject": "office_chair",
+      "object": "desk",
+      "confidence": 0.82,
+      "evidence": "chair back faces camera while seat faces desk"
+    },
+    {
+      "id": "rel_009",
+      "type": "attached_to",
+      "subject": "floating_shelf",
+      "object": "wall_north",
+      "confidence": 0.78,
+      "evidence": "shelf is mounted on the wall above desk"
+    },
+    {
+      "id": "rel_010",
+      "type": "attached_to",
+      "subject": "framed_landscape_art",
+      "object": "wall_north",
+      "confidence": 0.95,
+      "evidence": "framed art hangs above bed"
+    },
+    {
+      "id": "rel_011",
+      "type": "on",
+      "subject": "framed_landscape_art",
+      "object": "double_bed",
+      "confidence": 0.95,
+      "evidence": "picture is centered above headboard"
+    },
+    {
+      "id": "rel_012",
+      "type": "attached_to",
+      "subject": "window",
+      "object": "wall_west",
+      "confidence": 0.92,
+      "evidence": "window is set into left wall"
+    },
+    {
+      "id": "rel_013",
+      "type": "attached_to",
+      "subject": "curtain_rod",
+      "object": "wall_west",
+      "confidence": 0.84,
+      "evidence": "rod spans above window"
+    },
+    {
+      "id": "rel_014",
+      "type": "attached_to",
+      "subject": "left_curtain",
+      "object": "curtain_rod",
+      "confidence": 0.78,
+      "evidence": "curtain hangs from rod"
+    },
+    {
+      "id": "rel_015",
+      "type": "attached_to",
+      "subject": "right_curtain",
+      "object": "curtain_rod",
+      "confidence": 0.78,
+      "evidence": "curtain hangs from rod"
+    },
+    {
+      "id": "rel_016",
+      "type": "on",
+      "subject": "desk_lamp",
+      "object": "desk",
+      "confidence": 0.9,
+      "evidence": "lamp base rests on desk surface"
+    },
+    {
+      "id": "rel_021",
+      "type": "near",
+      "subject": "area_rug",
+      "object": "double_bed",
+      "confidence": 0.92,
+      "evidence": "rug visually underlays bed and extends in front",
+      "_floor_covering_visual_layer": true
+    },
+    {
+      "id": "rel_022",
+      "type": "on",
+      "subject": "left_slipper",
+      "object": "area_rug",
+      "confidence": 0.86,
+      "evidence": "slipper rests on visible rug surface"
+    },
+    {
+      "id": "rel_023",
+      "type": "on",
+      "subject": "right_slipper",
+      "object": "area_rug",
+      "confidence": 0.86,
+      "evidence": "slipper rests on visible rug surface"
+    },
+    {
+      "id": "rel_024",
+      "type": "right_of",
+      "subject": "right_slipper",
+      "object": "left_slipper",
+      "confidence": 0.92,
+      "evidence": "two slippers are side by side with right slipper to image right"
+    },
+    {
+      "id": "agent_wall_attachment_026",
+      "type": "attached_to",
+      "subject": "left_curtain",
+      "object": "wall_west",
+      "confidence": 0.86,
+      "evidence": "dark blue curtain panel hangs at the far left of the window"
+    },
+    {
+      "id": "agent_wall_attachment_027",
+      "type": "attached_to",
+      "subject": "right_curtain",
+      "object": "wall_west",
+      "confidence": 0.86,
+      "evidence": "dark blue curtain panel hangs on the right side of the window"
+    },
+    {
+      "id": "agent_spatial_order_028",
+      "type": "left_of",
+      "subject": "desk",
+      "object": "office_chair",
+      "confidence": 0.86,
+      "evidence": "R05/R06 are left of the bed group, R02/R01/R03 span center, and R04 is at the far right; R18 rug is foreground."
+    },
+    {
+      "id": "agent_spatial_order_030",
+      "type": "left_of",
+      "subject": "office_chair",
+      "object": "left_nightstand",
+      "confidence": 0.86,
+      "evidence": "R05/R06 are left of the bed group, R02/R01/R03 span center, and R04 is at the far right; R18 rug is foreground."
+    },
+    {
+      "id": "agent_spatial_order_032",
+      "type": "left_of",
+      "subject": "double_bed",
+      "object": "right_nightstand",
+      "confidence": 0.86,
+      "evidence": "R05/R06 are left of the bed group, R02/R01/R03 span center, and R04 is at the far right; R18 rug is foreground."
+    },
+    {
+      "id": "agent_spatial_order_034",
+      "type": "left_of",
+      "subject": "right_nightstand",
+      "object": "wardrobe",
+      "confidence": 0.86,
+      "evidence": "R05/R06 are left of the bed group, R02/R01/R03 span center, and R04 is at the far right; R18 rug is foreground."
+    },
+    {
+      "id": "agent_spatial_order_036",
+      "type": "in_front_of",
+      "subject": "area_rug",
+      "object": "office_chair",
+      "confidence": 0.86,
+      "evidence": "R05/R06 are left of the bed group, R02/R01/R03 span center, and R04 is at the far right; R18 rug is foreground."
+    },
+    {
+      "id": "agent_spatial_order_038",
+      "type": "in_front_of",
+      "subject": "office_chair",
+      "object": "double_bed",
+      "confidence": 0.86,
+      "evidence": "R05/R06 are left of the bed group, R02/R01/R03 span center, and R04 is at the far right; R18 rug is foreground."
+    },
+    {
+      "id": "agent_spatial_order_040",
+      "type": "left_of",
+      "subject": "office_chair",
+      "object": "desk_lamp",
+      "confidence": 0.9,
+      "evidence": "R06 chair sits in front of R05 desk, while R13 lamp is on the desktop."
+    },
+    {
+      "id": "agent_spatial_order_042",
+      "type": "left_of",
+      "subject": "desk_lamp",
+      "object": "desk",
+      "confidence": 0.9,
+      "evidence": "R06 chair sits in front of R05 desk, while R13 lamp is on the desktop."
+    },
+    {
+      "id": "agent_spatial_order_044",
+      "type": "in_front_of",
+      "subject": "office_chair",
+      "object": "desk",
+      "confidence": 0.9,
+      "evidence": "R06 chair sits in front of R05 desk, while R13 lamp is on the desktop."
+    },
+    {
+      "id": "agent_spatial_order_046",
+      "type": "above",
+      "subject": "desk_lamp",
+      "object": "desk",
+      "confidence": 0.9,
+      "evidence": "R06 chair sits in front of R05 desk, while R13 lamp is on the desktop."
+    },
+    {
+      "id": "agent_spatial_order_048",
+      "type": "above",
+      "subject": "desk",
+      "object": "office_chair",
+      "confidence": 0.9,
+      "evidence": "R06 chair sits in front of R05 desk, while R13 lamp is on the desktop."
+    },
+    {
+      "id": "agent_spatial_order_050",
+      "type": "left_of",
+      "subject": "bedside_table_lamp",
+      "object": "alarm_clock",
+      "confidence": 0.93,
+      "evidence": "R14 lamp is left and higher than R15 alarm clock on R02."
+    },
+    {
+      "id": "agent_spatial_order_052",
+      "type": "above",
+      "subject": "bedside_table_lamp",
+      "object": "alarm_clock",
+      "confidence": 0.93,
+      "evidence": "R14 lamp is left and higher than R15 alarm clock on R02."
+    },
+    {
+      "id": "agent_spatial_order_054",
+      "type": "left_of",
+      "subject": "potted_plant",
+      "object": "white_mug",
+      "confidence": 0.9,
+      "evidence": "R16 plant is left and higher than R17 mug on R03."
+    },
+    {
+      "id": "agent_spatial_order_056",
+      "type": "above",
+      "subject": "potted_plant",
+      "object": "white_mug",
+      "confidence": 0.9,
+      "evidence": "R16 plant is left and higher than R17 mug on R03."
+    },
+    {
+      "id": "agent_spatial_order_058",
+      "type": "above",
+      "subject": "curtain_rod",
+      "object": "left_curtain",
+      "confidence": 0.92,
+      "evidence": "R12 rod spans above R09 window, with R10 curtain at image-left and R11 curtain at image-right."
+    },
+    {
+      "id": "agent_spatial_order_060",
+      "type": "above",
+      "subject": "left_curtain",
+      "object": "right_curtain",
+      "confidence": 0.92,
+      "evidence": "R12 rod spans above R09 window, with R10 curtain at image-left and R11 curtain at image-right."
+    },
+    {
+      "id": "agent_spatial_order_062",
+      "type": "above",
+      "subject": "right_curtain",
+      "object": "window",
+      "confidence": 0.92,
+      "evidence": "R12 rod spans above R09 window, with R10 curtain at image-left and R11 curtain at image-right."
+    },
+    {
+      "id": "agent_spatial_order_064",
+      "type": "left_of",
+      "subject": "floating_shelf",
+      "object": "framed_landscape_art",
+      "confidence": 0.88,
+      "evidence": "R07 shelf is left of R08 art; their vertical placement is similar but R08 top edge is slightly higher."
+    },
+    {
+      "id": "agent_spatial_order_066",
+      "type": "above",
+      "subject": "framed_landscape_art",
+      "object": "floating_shelf",
+      "confidence": 0.88,
+      "evidence": "R07 shelf is left of R08 art; their vertical placement is similar but R08 top edge is slightly higher."
+    },
+    {
+      "id": "agent_spatial_order_068",
+      "type": "left_of",
+      "subject": "left_slipper",
+      "object": "right_slipper",
+      "confidence": 0.96,
+      "evidence": "R19 slipper is immediately left of R20 slipper on R18 rug."
+    },
+    {
+      "id": "agent_spatial_order_070",
+      "type": "right_of",
+      "subject": "wardrobe",
+      "object": "double_bed",
+      "confidence": 0.98,
+      "evidence": "R04 wardrobe is far to the image-right of R01 bed."
+    },
+    {
+      "id": "agent_spatial_order_072",
+      "type": "above",
+      "subject": "framed_landscape_art",
+      "object": "double_bed",
+      "confidence": 0.96,
+      "evidence": "R08 art is mounted above the R01 bed headboard."
+    },
+    {
+      "id": "agent_spatial_order_074",
+      "type": "above",
+      "subject": "floating_shelf",
+      "object": "desk",
+      "confidence": 0.94,
+      "evidence": "R07 shelf is mounted above R05 desk."
+    },
+    {
+      "id": "agent_spatial_order_076",
+      "type": "in_front_of",
+      "subject": "left_slipper",
+      "object": "double_bed",
+      "confidence": 0.94,
+      "evidence": "R19 slipper is on the foreground rug near the foot of R01 bed."
+    },
+    {
+      "id": "agent_spatial_order_078",
+      "type": "in_front_of",
+      "subject": "right_slipper",
+      "object": "double_bed",
+      "confidence": 0.94,
+      "evidence": "R20 slipper is on the foreground rug near the foot of R01 bed."
+    },
+    {
+      "id": "reference_consistency_wall_053",
+      "type": "against_wall",
+      "subject": "desk",
+      "object": "wall_west",
+      "confidence": 0.76,
+      "evidence": "Reference side-wall cluster: keep local floor-neighbor branch on the same side wall."
+    },
+    {
+      "id": "reference_consistency_wall_054",
+      "type": "near",
+      "subject": "office_chair",
+      "object": "wall_west",
+      "confidence": 0.66,
+      "evidence": "Reference side-wall cluster: keep local floor-neighbor branch on the same side wall."
+    },
+    {
+      "id": "reference_tabletop_support_054",
+      "type": "on",
+      "subject": "bedside_table_lamp",
+      "object": "left_nightstand",
+      "confidence": 0.96,
+      "evidence": "A small lamp with a white shade sits on the left bedside table."
+    },
+    {
+      "id": "reference_tabletop_support_054",
+      "type": "on",
+      "subject": "alarm_clock",
+      "object": "left_nightstand",
+      "confidence": 0.93,
+      "evidence": "A small black twin-bell alarm clock sits to the right of the lamp on the left bedside table."
+    },
+    {
+      "id": "reference_tabletop_support_054",
+      "type": "on",
+      "subject": "potted_plant",
+      "object": "right_nightstand",
+      "confidence": 0.97,
+      "evidence": "A small leafy green plant in a white pot sits on the right bedside table."
+    },
+    {
+      "id": "reference_tabletop_support_054",
+      "type": "on",
+      "subject": "white_mug",
+      "object": "right_nightstand",
+      "confidence": 0.9,
+      "evidence": "A small white mug sits to the right of the plant on the right bedside table."
+    }
+  ],
+  "task": {
+    "description": "",
+    "source_objects": [],
+    "target_objects": []
+  },
+  "_invalid_integrated_wall_detail_scrub": {
+    "schema": "tree_sage_invalid_integrated_wall_detail_scrub_v1",
+    "enabled": true,
+    "stages": [
+      "pre_normalize_raw_scene_graph",
+      "post_normalize_scene_graph"
+    ],
+    "fixes": [],
+    "fix_count": 0,
+    "ok": true
+  },
+  "_soft_layout_detail_policy": {
+    "schema": "tree_sage_soft_layout_detail_policy_v1",
+    "enabled": true,
+    "stages": [
+      "pre_normalize_raw_scene_graph",
+      "post_normalize_scene_graph"
+    ],
+    "removed": [],
+    "removed_count": 0,
+    "updated_parent_ids": [],
+    "ok": true
+  },
+  "_integrated_window_sill_policy": {
+    "schema": "tree_sage_integrated_window_sill_policy_v1",
+    "enabled": true,
+    "stages": [
+      "pre_normalize_raw_scene_graph",
+      "post_normalize_scene_graph"
+    ],
+    "removed": [],
+    "redirected_relations": [],
+    "updated_window_ids": [],
+    "removed_count": 0,
+    "ok": true
+  },
+  "_room_size_grounding": {
+    "source": "raw_graph:room",
+    "before": {
+      "width": 5.2,
+      "length": 4.6,
+      "height": 2.7
+    },
+    "after": {
+      "width": 5.2,
+      "length": 4.6,
+      "height": 2.7
+    },
+    "fix_count": 0,
+    "warnings": []
+  },
+  "_room_axis_grounding": {
+    "mode": "auto",
+    "swapped": false,
+    "reason": "reference_image_aspect_matches_room_axis_order",
+    "before": {
+      "width": 5.2,
+      "length": 4.6,
+      "height": 2.7
+    },
+    "after": {
+      "width": 5.2,
+      "length": 4.6,
+      "height": 2.7
+    },
+    "axis_mapping": {
+      "image_horizontal": "world_x_width",
+      "image_vertical_depth": "world_y_length",
+      "world_x_width_source": "grounded_width",
+      "world_y_length_source": "grounded_length"
+    }
+  },
+  "_wall_material_plan": {
+    "enabled": true,
+    "source": "reference_image_bright_wall_color_heuristic",
+    "global_wall": {
+      "texture_type": "solid_color",
+      "base_color": [
+        0.8229,
+        0.7653,
+        0.7241
+      ],
+      "roughness": 0.78,
+      "alpha": 1.0
+    },
+    "floor": {
+      "texture_type": "sampled_image_texture",
+      "base_color": [
+        0.5882,
+        0.4353,
+        0.298
+      ],
+      "roughness": 0.82,
+      "alpha": 1.0,
+      "source": "reference_image_floor_color_heuristic",
+      "texture_image": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/floor_material_sampled_texture.png"
+    },
+    "warnings": []
+  },
+  "_reference_instance_map": {
+    "double_bed": {
+      "reference_label": "R01",
+      "bbox": [
+        0.277,
+        0.349,
+        0.746,
+        0.814
+      ],
+      "spatial_alias": "center_back_bed",
+      "visible_instance_description": "wood double bed centered on back wall with low headboard and integrated blue-white bedding",
+      "confidence": 0.98,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R01 encloses the central bed frame, headboard, mattress, and bedding.",
+      "duplicate_key": "floor_furniture",
+      "duplicate_count": 2
+    },
+    "left_nightstand": {
+      "reference_label": "R02",
+      "bbox": [
+        0.297,
+        0.496,
+        0.39,
+        0.647
+      ],
+      "spatial_alias": "left_bedside_nightstand",
+      "visible_instance_description": "small wood nightstand to the left of the bed with drawer and lower shelf",
+      "confidence": 0.96,
+      "ambiguous_with": [
+        "right_nightstand"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R02 is the left bedside table adjacent to the bed and below the lamp/clock.",
+      "duplicate_key": "table_anchor",
+      "duplicate_count": 3
+    },
+    "right_nightstand": {
+      "reference_label": "R03",
+      "bbox": [
+        0.645,
+        0.497,
+        0.737,
+        0.645
+      ],
+      "spatial_alias": "right_bedside_nightstand",
+      "visible_instance_description": "small wood nightstand to the right of the bed with drawer and lower shelf",
+      "confidence": 0.96,
+      "ambiguous_with": [
+        "left_nightstand"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R03 is the matching bedside table on the bed's right side supporting the plant and mug.",
+      "duplicate_key": "table_anchor",
+      "duplicate_count": 3
+    },
+    "wardrobe": {
+      "reference_label": "R04",
+      "bbox": [
+        0.794,
+        0.071,
+        1.0,
+        0.782
+      ],
+      "spatial_alias": "right_wall_wardrobe",
+      "visible_instance_description": "large wooden wardrobe with vertical doors and black handles along right wall",
+      "confidence": 0.99,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R04 encloses the tall multi-door wardrobe occupying the right side of the room.",
+      "duplicate_key": "floor_furniture",
+      "duplicate_count": 2
+    },
+    "desk": {
+      "reference_label": "R05",
+      "bbox": [
+        0.047,
+        0.451,
+        0.283,
+        0.686
+      ],
+      "spatial_alias": "left_corner_desk",
+      "visible_instance_description": "wood rectangular desk tucked under the shelf near the window",
+      "confidence": 0.94,
+      "ambiguous_with": [
+        "left_nightstand",
+        "right_nightstand"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R05 outlines the desk surface and legs in the left corner, distinct from bedside tables.",
+      "duplicate_key": "table_anchor",
+      "duplicate_count": 3
+    },
+    "office_chair": {
+      "reference_label": "R06",
+      "bbox": [
+        0.064,
+        0.448,
+        0.213,
+        0.718
+      ],
+      "spatial_alias": "left_desk_chair",
+      "visible_instance_description": "black mesh swivel office chair with arms and caster base in front of desk",
+      "confidence": 0.97,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R06 encloses the black office chair positioned at the desk.",
+      "duplicate_key": "seating",
+      "duplicate_count": 1
+    },
+    "floating_shelf": {
+      "reference_label": "R07",
+      "bbox": [
+        0.173,
+        0.272,
+        0.316,
+        0.285
+      ],
+      "spatial_alias": "left_wall_floating_shelf",
+      "visible_instance_description": "thin wooden floating shelf mounted above the desk",
+      "confidence": 0.96,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R07 marks the narrow horizontal shelf on the left wall above the desk.",
+      "duplicate_key": "wall_attached",
+      "duplicate_count": 4
+    },
+    "framed_landscape_art": {
+      "reference_label": "R08",
+      "bbox": [
+        0.443,
+        0.219,
+        0.591,
+        0.349
+      ],
+      "spatial_alias": "center_wall_landscape_art",
+      "visible_instance_description": "framed landscape picture centered above the bed",
+      "confidence": 0.98,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R08 encloses the wall-mounted landscape artwork above the headboard.",
+      "duplicate_key": "wall_attached",
+      "duplicate_count": 4
+    },
+    "window": {
+      "reference_label": "R09",
+      "bbox": [
+        0.033,
+        0.112,
+        0.119,
+        0.443
+      ],
+      "spatial_alias": "left_wall_window",
+      "visible_instance_description": "white framed window on the left wall between curtain panels",
+      "confidence": 0.97,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R09 surrounds the visible white window frame and glass on the left side.",
+      "duplicate_key": "wall_attached",
+      "duplicate_count": 4
+    },
+    "left_curtain": {
+      "reference_label": "R10",
+      "bbox": [
+        0.0,
+        0.047,
+        0.043,
+        0.507
+      ],
+      "spatial_alias": "left_window_curtain",
+      "visible_instance_description": "dark blue curtain panel on the far left side of the window",
+      "confidence": 0.95,
+      "ambiguous_with": [
+        "right_curtain"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R10 covers the left blue curtain panel at the window edge.",
+      "duplicate_key": "hanging",
+      "duplicate_count": 2
+    },
+    "right_curtain": {
+      "reference_label": "R11",
+      "bbox": [
+        0.103,
+        0.049,
+        0.136,
+        0.508
+      ],
+      "spatial_alias": "right_window_curtain",
+      "visible_instance_description": "dark blue curtain panel to the right of the window",
+      "confidence": 0.95,
+      "ambiguous_with": [
+        "left_curtain"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R11 covers the right curtain panel beside the window.",
+      "duplicate_key": "hanging",
+      "duplicate_count": 2
+    },
+    "curtain_rod": {
+      "reference_label": "R12",
+      "bbox": [
+        0.0,
+        0.032,
+        0.139,
+        0.058
+      ],
+      "spatial_alias": "left_wall_curtain_rod",
+      "visible_instance_description": "horizontal rod above the window and curtains",
+      "confidence": 0.94,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R12 spans the top of the window treatment above both curtains.",
+      "duplicate_key": "wall_attached",
+      "duplicate_count": 4
+    },
+    "desk_lamp": {
+      "reference_label": "R13",
+      "bbox": [
+        0.159,
+        0.315,
+        0.204,
+        0.491
+      ],
+      "spatial_alias": "left_desk_task_lamp",
+      "visible_instance_description": "white adjustable task lamp on the desk",
+      "confidence": 0.95,
+      "ambiguous_with": [
+        "bedside_table_lamp"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R13 encloses the angled white task lamp sitting on the desk.",
+      "duplicate_key": "lighting",
+      "duplicate_count": 2
+    },
+    "bedside_table_lamp": {
+      "reference_label": "R14",
+      "bbox": [
+        0.326,
+        0.413,
+        0.371,
+        0.525
+      ],
+      "spatial_alias": "left_nightstand_table_lamp",
+      "visible_instance_description": "small lamp with white shade on the left nightstand",
+      "confidence": 0.96,
+      "ambiguous_with": [
+        "desk_lamp"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R14 marks the white shade lamp placed on the left bedside table.",
+      "duplicate_key": "lighting",
+      "duplicate_count": 2
+    },
+    "alarm_clock": {
+      "reference_label": "R15",
+      "bbox": [
+        0.373,
+        0.477,
+        0.397,
+        0.526
+      ],
+      "spatial_alias": "left_nightstand_alarm_clock",
+      "visible_instance_description": "small black twin-bell alarm clock on the left nightstand",
+      "confidence": 0.93,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R15 encloses the small black clock beside the table lamp on the left nightstand.",
+      "duplicate_key": "small_electronics",
+      "duplicate_count": 1
+    },
+    "potted_plant": {
+      "reference_label": "R16",
+      "bbox": [
+        0.667,
+        0.449,
+        0.704,
+        0.514
+      ],
+      "spatial_alias": "right_nightstand_plant",
+      "visible_instance_description": "small green plant in a white pot on the right nightstand",
+      "confidence": 0.97,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R16 encloses the green plant and white pot on top of the right bedside table.",
+      "duplicate_key": "plant",
+      "duplicate_count": 1
+    },
+    "white_mug": {
+      "reference_label": "R17",
+      "bbox": [
+        0.7,
+        0.488,
+        0.719,
+        0.525
+      ],
+      "spatial_alias": "right_nightstand_mug",
+      "visible_instance_description": "small white mug on the right nightstand",
+      "confidence": 0.9,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R17 marks the small white cylindrical mug to the right of the plant.",
+      "duplicate_key": "drinkware",
+      "duplicate_count": 1
+    },
+    "area_rug": {
+      "reference_label": "R18",
+      "bbox": [
+        0.163,
+        0.651,
+        0.871,
+        0.926
+      ],
+      "spatial_alias": "center_floor_area_rug",
+      "visible_instance_description": "large light beige rectangular rug under and in front of the bed",
+      "confidence": 0.98,
+      "ambiguous_with": [],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R18 outlines the large rug extending from under the bed toward the foreground.",
+      "duplicate_key": "floor_covering",
+      "duplicate_count": 1
+    },
+    "left_slipper": {
+      "reference_label": "R19",
+      "bbox": [
+        0.599,
+        0.821,
+        0.639,
+        0.871
+      ],
+      "spatial_alias": "left_front_rug_slipper",
+      "visible_instance_description": "dark striped slipper on the rug near the foot of the bed, left of the pair",
+      "confidence": 0.94,
+      "ambiguous_with": [
+        "right_slipper"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R19 encloses the left slipper of the pair on the rug.",
+      "duplicate_key": "decor",
+      "duplicate_count": 2
+    },
+    "right_slipper": {
+      "reference_label": "R20",
+      "bbox": [
+        0.641,
+        0.82,
+        0.685,
+        0.872
+      ],
+      "spatial_alias": "right_front_rug_slipper",
+      "visible_instance_description": "dark striped slipper on the rug near the foot of the bed, right of the pair",
+      "confidence": 0.94,
+      "ambiguous_with": [
+        "left_slipper"
+      ],
+      "usable_for_spatial_order": true,
+      "ambiguity_overridden_for_spatial_order": false,
+      "evidence": "R20 encloses the right slipper of the pair on the rug.",
+      "duplicate_key": "decor",
+      "duplicate_count": 2
+    }
+  },
+  "_reference_instance_artifact_report": {
+    "schema": "tree_sage_reference_instance_artifacts_v1",
+    "enabled": true,
+    "ok": true,
+    "flux_image": "/data/wsj/main/scene/examples/bedroom_fin_test/213a6be9-3d27-45d3-b7d3-80eccc58816e.png",
+    "overlay_image": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_overlay.png",
+    "crop_dir": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops",
+    "objects": [
+      {
+        "id": "double_bed",
+        "reference_label": "R01",
+        "category": "bed",
+        "description": "wood double bed with low headboard, integrated white and blue bedding and pillows",
+        "image_bbox": [
+          0.277,
+          0.349,
+          0.746,
+          0.814
+        ],
+        "duplicate_key": "floor_furniture",
+        "duplicate_count": 2,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R01_double_bed.png"
+      },
+      {
+        "id": "left_nightstand",
+        "reference_label": "R02",
+        "category": "nightstand",
+        "description": "small wood nightstand with one drawer and open lower shelf",
+        "image_bbox": [
+          0.297,
+          0.496,
+          0.39,
+          0.647
+        ],
+        "duplicate_key": "table_anchor",
+        "duplicate_count": 3,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R02_left_nightstand.png"
+      },
+      {
+        "id": "right_nightstand",
+        "reference_label": "R03",
+        "category": "nightstand",
+        "description": "small wood nightstand with one drawer and open lower shelf",
+        "image_bbox": [
+          0.645,
+          0.497,
+          0.737,
+          0.645
+        ],
+        "duplicate_key": "table_anchor",
+        "duplicate_count": 3,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R03_right_nightstand.png"
+      },
+      {
+        "id": "wardrobe",
+        "reference_label": "R04",
+        "category": "wardrobe",
+        "description": "large wood wardrobe with multiple vertical doors and black handles",
+        "image_bbox": [
+          0.794,
+          0.071,
+          1.0,
+          0.782
+        ],
+        "duplicate_key": "floor_furniture",
+        "duplicate_count": 2,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R04_wardrobe.png"
+      },
+      {
+        "id": "desk",
+        "reference_label": "R05",
+        "category": "desk",
+        "description": "wood rectangular writing desk tucked into left corner under wall shelf",
+        "image_bbox": [
+          0.047,
+          0.451,
+          0.283,
+          0.686
+        ],
+        "duplicate_key": "table_anchor",
+        "duplicate_count": 3,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R05_desk.png"
+      },
+      {
+        "id": "office_chair",
+        "reference_label": "R06",
+        "category": "office chair",
+        "description": "black mesh swivel desk chair with armrests and caster base",
+        "image_bbox": [
+          0.064,
+          0.448,
+          0.213,
+          0.718
+        ],
+        "duplicate_key": "seating",
+        "duplicate_count": 1,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R06_office_chair.png"
+      },
+      {
+        "id": "floating_shelf",
+        "reference_label": "R07",
+        "category": "wall shelf",
+        "description": "thin wooden floating shelf mounted above desk",
+        "image_bbox": [
+          0.173,
+          0.272,
+          0.316,
+          0.285
+        ],
+        "duplicate_key": "wall_attached",
+        "duplicate_count": 4,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R07_floating_shelf.png"
+      },
+      {
+        "id": "framed_landscape_art",
+        "reference_label": "R08",
+        "category": "framed wall art",
+        "description": "rectangular framed landscape picture above bed",
+        "image_bbox": [
+          0.443,
+          0.219,
+          0.591,
+          0.349
+        ],
+        "duplicate_key": "wall_attached",
+        "duplicate_count": 4,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R08_framed_landscape_art.png"
+      },
+      {
+        "id": "window",
+        "reference_label": "R09",
+        "category": "window",
+        "description": "white framed window on left wall",
+        "image_bbox": [
+          0.033,
+          0.112,
+          0.119,
+          0.443
+        ],
+        "duplicate_key": "wall_attached",
+        "duplicate_count": 4,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R09_window.png"
+      },
+      {
+        "id": "left_curtain",
+        "reference_label": "R10",
+        "category": "curtain",
+        "description": "dark blue curtain panel at left side of window",
+        "image_bbox": [
+          0.0,
+          0.047,
+          0.043,
+          0.507
+        ],
+        "duplicate_key": "hanging",
+        "duplicate_count": 2,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R10_left_curtain.png"
+      },
+      {
+        "id": "right_curtain",
+        "reference_label": "R11",
+        "category": "curtain",
+        "description": "dark blue curtain panel at right side of window",
+        "image_bbox": [
+          0.103,
+          0.049,
+          0.136,
+          0.508
+        ],
+        "duplicate_key": "hanging",
+        "duplicate_count": 2,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R11_right_curtain.png"
+      },
+      {
+        "id": "curtain_rod",
+        "reference_label": "R12",
+        "category": "curtain rod",
+        "description": "wood curtain rod above window",
+        "image_bbox": [
+          0.0,
+          0.032,
+          0.139,
+          0.058
+        ],
+        "duplicate_key": "wall_attached",
+        "duplicate_count": 4,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R12_curtain_rod.png"
+      },
+      {
+        "id": "desk_lamp",
+        "reference_label": "R13",
+        "category": "desk lamp",
+        "description": "white adjustable task lamp on desk",
+        "image_bbox": [
+          0.159,
+          0.315,
+          0.204,
+          0.491
+        ],
+        "duplicate_key": "lighting",
+        "duplicate_count": 2,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R13_desk_lamp.png"
+      },
+      {
+        "id": "bedside_table_lamp",
+        "reference_label": "R14",
+        "category": "table lamp",
+        "description": "small white shade lamp on left nightstand",
+        "image_bbox": [
+          0.326,
+          0.413,
+          0.371,
+          0.525
+        ],
+        "duplicate_key": "lighting",
+        "duplicate_count": 2,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R14_bedside_table_lamp.png"
+      },
+      {
+        "id": "alarm_clock",
+        "reference_label": "R15",
+        "category": "alarm clock",
+        "description": "small black twin-bell alarm clock on left nightstand",
+        "image_bbox": [
+          0.373,
+          0.477,
+          0.397,
+          0.526
+        ],
+        "duplicate_key": "small_electronics",
+        "duplicate_count": 1,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R15_alarm_clock.png"
+      },
+      {
+        "id": "potted_plant",
+        "reference_label": "R16",
+        "category": "potted plant",
+        "description": "small green plant in white pot on right nightstand",
+        "image_bbox": [
+          0.667,
+          0.449,
+          0.704,
+          0.514
+        ],
+        "duplicate_key": "plant",
+        "duplicate_count": 1,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R16_potted_plant.png"
+      },
+      {
+        "id": "white_mug",
+        "reference_label": "R17",
+        "category": "mug",
+        "description": "white ceramic mug on right nightstand",
+        "image_bbox": [
+          0.7,
+          0.488,
+          0.719,
+          0.525
+        ],
+        "duplicate_key": "drinkware",
+        "duplicate_count": 1,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R17_white_mug.png"
+      },
+      {
+        "id": "area_rug",
+        "reference_label": "R18",
+        "category": "area rug",
+        "description": "large light beige rectangular rug under and in front of bed",
+        "image_bbox": [
+          0.163,
+          0.651,
+          0.871,
+          0.926
+        ],
+        "duplicate_key": "floor_covering",
+        "duplicate_count": 1,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R18_area_rug.png"
+      },
+      {
+        "id": "left_slipper",
+        "reference_label": "R19",
+        "category": "slipper",
+        "description": "dark striped slipper on rug near foot of bed",
+        "image_bbox": [
+          0.599,
+          0.821,
+          0.639,
+          0.871
+        ],
+        "duplicate_key": "decor",
+        "duplicate_count": 2,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R19_left_slipper.png"
+      },
+      {
+        "id": "right_slipper",
+        "reference_label": "R20",
+        "category": "slipper",
+        "description": "dark striped slipper on rug near foot of bed",
+        "image_bbox": [
+          0.641,
+          0.82,
+          0.685,
+          0.872
+        ],
+        "duplicate_key": "decor",
+        "duplicate_count": 2,
+        "crop_path": "/data/wsj/main/scene_runs/tree_sage_flow2/protect/bedroom_fin_test_phase1_scene_graph_v1/reference_instance_crops/R20_right_slipper.png"
+      }
+    ],
+    "warnings": []
+  },
+  "_reference_spatial_order_groups": [
+    {
+      "group_id": "major_floor_anchors",
+      "scope": "global_anchor",
+      "anchor_id": null,
+      "objects": [
+        "area_rug",
+        "desk",
+        "double_bed",
+        "left_nightstand",
+        "office_chair",
+        "right_nightstand",
+        "wardrobe"
+      ],
+      "left_to_right": [
+        "desk",
+        "office_chair",
+        "left_nightstand",
+        "double_bed",
+        "right_nightstand",
+        "wardrobe"
+      ],
+      "front_to_back": [],
+      "top_to_bottom": [],
+      "confidence": 0.86,
+      "evidence": "R05/R06 are left of the bed group, R02/R01/R03 span center, and R04 is at the far right; R18 rug is foreground. Global depth order disabled by view-conditioned branch mode."
+    },
+    {
+      "group_id": "bedside_row",
+      "scope": "floor_anchor",
+      "anchor_id": "double_bed",
+      "objects": [
+        "double_bed",
+        "left_nightstand",
+        "right_nightstand"
+      ],
+      "left_to_right": [
+        "left_nightstand",
+        "double_bed",
+        "right_nightstand"
+      ],
+      "front_to_back": [],
+      "top_to_bottom": [],
+      "confidence": 0.97,
+      "evidence": "R02 is directly left of R01 and R03 is directly right of R01."
+    },
+    {
+      "group_id": "desk_branch",
+      "scope": "local_branch",
+      "anchor_id": "desk",
+      "objects": [
+        "desk",
+        "desk_lamp",
+        "office_chair"
+      ],
+      "left_to_right": [
+        "office_chair",
+        "desk_lamp",
+        "desk"
+      ],
+      "front_to_back": [
+        "office_chair",
+        "desk"
+      ],
+      "top_to_bottom": [
+        "desk_lamp",
+        "desk",
+        "office_chair"
+      ],
+      "confidence": 0.9,
+      "evidence": "R06 chair sits in front of R05 desk, while R13 lamp is on the desktop."
+    },
+    {
+      "group_id": "left_nightstand_top",
+      "scope": "tabletop",
+      "anchor_id": "left_nightstand",
+      "objects": [
+        "alarm_clock",
+        "bedside_table_lamp"
+      ],
+      "left_to_right": [
+        "bedside_table_lamp",
+        "alarm_clock"
+      ],
+      "front_to_back": [],
+      "top_to_bottom": [
+        "bedside_table_lamp",
+        "alarm_clock"
+      ],
+      "confidence": 0.93,
+      "evidence": "R14 lamp is left and higher than R15 alarm clock on R02."
+    },
+    {
+      "group_id": "right_nightstand_top",
+      "scope": "tabletop",
+      "anchor_id": "right_nightstand",
+      "objects": [
+        "potted_plant",
+        "white_mug"
+      ],
+      "left_to_right": [
+        "potted_plant",
+        "white_mug"
+      ],
+      "front_to_back": [],
+      "top_to_bottom": [
+        "potted_plant",
+        "white_mug"
+      ],
+      "confidence": 0.9,
+      "evidence": "R16 plant is left and higher than R17 mug on R03."
+    },
+    {
+      "group_id": "window_wall",
+      "scope": "wall",
+      "anchor_id": "wall_west",
+      "objects": [
+        "curtain_rod",
+        "left_curtain",
+        "right_curtain",
+        "window"
+      ],
+      "left_to_right": [
+        "left_curtain",
+        "window",
+        "right_curtain"
+      ],
+      "front_to_back": [],
+      "top_to_bottom": [
+        "curtain_rod",
+        "left_curtain",
+        "right_curtain",
+        "window"
+      ],
+      "confidence": 0.92,
+      "evidence": "R12 rod spans above R09 window, with R10 curtain at image-left and R11 curtain at image-right."
+    },
+    {
+      "group_id": "north_wall_mounts",
+      "scope": "wall",
+      "anchor_id": "wall_north",
+      "objects": [
+        "floating_shelf",
+        "framed_landscape_art"
+      ],
+      "left_to_right": [
+        "floating_shelf",
+        "framed_landscape_art"
+      ],
+      "front_to_back": [],
+      "top_to_bottom": [
+        "framed_landscape_art",
+        "floating_shelf"
+      ],
+      "confidence": 0.88,
+      "evidence": "R07 shelf is left of R08 art; their vertical placement is similar but R08 top edge is slightly higher."
+    },
+    {
+      "group_id": "slippers_on_rug",
+      "scope": "floor_anchor",
+      "anchor_id": "area_rug",
+      "objects": [
+        "left_slipper",
+        "right_slipper"
+      ],
+      "left_to_right": [
+        "left_slipper",
+        "right_slipper"
+      ],
+      "front_to_back": [],
+      "top_to_bottom": [],
+      "confidence": 0.96,
+      "evidence": "R19 slipper is immediately left of R20 slipper on R18 rug."
+    }
+  ],
+  "_view_condition_report": {
+    "schema": "tree_sage_reference_view_condition_v1",
+    "enabled": true,
+    "mode": "view_conditioned_branch_relations",
+    "camera_view_type": "oblique",
+    "global_order_reliable": false,
+    "depth_readability_score": 0.52,
+    "left_right_readability_score": 0.811325,
+    "floor_anchor_count": 6,
+    "floor_anchor_ids": [
+      "left_nightstand",
+      "right_nightstand",
+      "wardrobe",
+      "desk",
+      "office_chair",
+      "area_rug"
+    ],
+    "reference_grounding_usable_coverage": 1.0,
+    "back_wall_anchor_density": 0.5,
+    "repeated_anchor_density": 0.666667,
+    "bbox_center_x_span": 0.7585,
+    "bbox_center_y_span": 0.362,
+    "global_axis_pair_hard_enabled": false,
+    "branch_relation_mode_enabled": true,
+    "failure_reasons": [
+      "many_floor_anchors_near_back_wall",
+      "many_similar_or_repeated_anchor_instances"
+    ]
+  },
+  "_reference_consistency_refiner": {
+    "schema": "tree_sage_reference_consistency_refiner_v1",
+    "enabled": true,
+    "ok": true,
+    "fixes": [
+      {
+        "type": "side_wall_cluster",
+        "group_id": "desk_branch",
+        "wall_id": "wall_west",
+        "layout_mode": "wall_depth_queue",
+        "object_ids": [
+          "desk",
+          "desk_lamp",
+          "office_chair"
+        ],
+        "evidence": "reference side-wall cluster lacks a dominant lateral same-depth pattern; preserve wall-tangent depth packing"
+      },
+      {
+        "type": "side_wall_cluster_wall_relation",
+        "id": "desk",
+        "new_wall_id": "wall_west",
+        "relation_type": "against_wall",
+        "removed": [
+          {
+            "id": "agent_wall_against_025",
+            "type": "against_wall",
+            "subject": "desk",
+            "object": "wall_north",
+            "confidence": 0.78,
+            "evidence": "wood writing desk is left of the bed, under the floating shelf and near the window"
+          }
+        ],
+        "added": {
+          "id": "reference_consistency_wall_053",
+          "type": "against_wall",
+          "subject": "desk",
+          "object": "wall_west",
+          "confidence": 0.76,
+          "evidence": "Reference side-wall cluster: keep local floor-neighbor branch on the same side wall."
+        }
+      },
+      {
+        "type": "side_wall_cluster_wall_relation",
+        "id": "office_chair",
+        "new_wall_id": "wall_west",
+        "relation_type": "near",
+        "removed": [],
+        "added": {
+          "id": "reference_consistency_wall_054",
+          "type": "near",
+          "subject": "office_chair",
+          "object": "wall_west",
+          "confidence": 0.66,
+          "evidence": "Reference side-wall cluster: keep local floor-neighbor branch on the same side wall."
+        }
+      }
+    ],
+    "fix_count": 3,
+    "side_wall_branches": [
+      {
+        "wall_id": "wall_west",
+        "object_ids": [
+          "desk",
+          "desk_lamp",
+          "office_chair"
+        ],
+        "group_id": "desk_branch",
+        "group_anchor_id": "desk",
+        "layout_mode": "wall_depth_queue",
+        "lateral_order": [
+          "desk",
+          "office_chair"
+        ],
+        "trigger": "reference local side-wall placement cluster",
+        "evidence": "reference side-wall cluster lacks a dominant lateral same-depth pattern; preserve wall-tangent depth packing; desk: reference bbox is on the left edge (cx=0.165, x1=0.047); office_chair: semantic wall relation near"
+      }
+    ],
+    "warnings": []
+  },
+  "_task_relation_overrides": [],
+  "_task_relation_override_skipped": "static_scene_prompt",
+  "_closet_door_panel_assembly_merge": {
+    "schema": "tree_sage_closet_door_panel_assembly_merge_v1",
+    "enabled": true,
+    "merged": [],
+    "skipped": [],
+    "removed_ids": [],
+    "merge_count": 0,
+    "ok": true,
+    "reason": "fewer_than_two_closet_door_panel_candidates"
+  },
+  "_wall_local_layout_plan": {
+    "schema": "tree_sage_wall_local_layout_plan_v1",
+    "enabled": true,
+    "walls": {
+      "wall_east": {
+        "wall_id": "wall_east",
+        "tangent_axis": "y",
+        "members": [
+          {
+            "id": "wardrobe",
+            "role": "wall_storage",
+            "wall_id": "wall_east",
+            "bbox": [
+              0.794,
+              0.071,
+              1.0,
+              0.782
+            ],
+            "bbox_center": [
+              0.897,
+              0.4265
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          }
+        ],
+        "tangent_order": [],
+        "order_source": null
+      },
+      "wall_north": {
+        "wall_id": "wall_north",
+        "tangent_axis": "x",
+        "members": [
+          {
+            "id": "floating_shelf",
+            "role": "wall_attached",
+            "wall_id": "wall_north",
+            "bbox": [
+              0.173,
+              0.272,
+              0.316,
+              0.285
+            ],
+            "bbox_center": [
+              0.2445,
+              0.2785
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          },
+          {
+            "id": "framed_landscape_art",
+            "role": "wall_attached",
+            "wall_id": "wall_north",
+            "bbox": [
+              0.443,
+              0.219,
+              0.591,
+              0.349
+            ],
+            "bbox_center": [
+              0.517,
+              0.284
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          },
+          {
+            "id": "alarm_clock",
+            "role": "wall_attached",
+            "wall_id": "wall_north",
+            "bbox": [
+              0.373,
+              0.477,
+              0.397,
+              0.526
+            ],
+            "bbox_center": [
+              0.385,
+              0.5015
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          },
+          {
+            "id": "white_mug",
+            "role": "wall_storage",
+            "wall_id": "wall_north",
+            "bbox": [
+              0.7,
+              0.488,
+              0.719,
+              0.525
+            ],
+            "bbox_center": [
+              0.7095,
+              0.5065
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          }
+        ],
+        "tangent_order": [
+          "floating_shelf",
+          "alarm_clock",
+          "framed_landscape_art",
+          "white_mug"
+        ],
+        "order_source": "reference_bbox_x_left_to_right"
+      },
+      "wall_west": {
+        "wall_id": "wall_west",
+        "tangent_axis": "y",
+        "members": [
+          {
+            "id": "desk",
+            "role": "wall_storage",
+            "wall_id": "wall_west",
+            "bbox": [
+              0.047,
+              0.451,
+              0.283,
+              0.686
+            ],
+            "bbox_center": [
+              0.165,
+              0.5685
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          },
+          {
+            "id": "window",
+            "role": "window",
+            "wall_id": "wall_west",
+            "bbox": [
+              0.033,
+              0.112,
+              0.119,
+              0.443
+            ],
+            "bbox_center": [
+              0.076,
+              0.2775
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          },
+          {
+            "id": "left_curtain",
+            "role": "curtain",
+            "wall_id": "wall_west",
+            "bbox": [
+              0.0,
+              0.047,
+              0.043,
+              0.507
+            ],
+            "bbox_center": [
+              0.0215,
+              0.277
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          },
+          {
+            "id": "right_curtain",
+            "role": "curtain",
+            "wall_id": "wall_west",
+            "bbox": [
+              0.103,
+              0.049,
+              0.136,
+              0.508
+            ],
+            "bbox_center": [
+              0.1195,
+              0.2785
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          },
+          {
+            "id": "curtain_rod",
+            "role": "curtain_rod",
+            "wall_id": "wall_west",
+            "bbox": [
+              0.0,
+              0.032,
+              0.139,
+              0.058
+            ],
+            "bbox_center": [
+              0.0695,
+              0.045
+            ],
+            "reference_frontness": null,
+            "reference_depth_confidence": null
+          }
+        ],
+        "tangent_order": [
+          "left_curtain",
+          "curtain_rod",
+          "window",
+          "right_curtain",
+          "desk"
+        ],
+        "order_source": "side_wall_image_edge_order"
+      }
+    },
+    "pair_orders": [
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "left_curtain",
+        "back_id": "curtain_rod",
+        "expected_low_tangent_id": "left_curtain",
+        "expected_high_tangent_id": "curtain_rod",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.5864,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.048
+      },
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "left_curtain",
+        "back_id": "window",
+        "expected_low_tangent_id": "left_curtain",
+        "expected_high_tangent_id": "window",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.5981,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.0545
+      },
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "left_curtain",
+        "back_id": "right_curtain",
+        "expected_low_tangent_id": "left_curtain",
+        "expected_high_tangent_id": "right_curtain",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.6764,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.098
+      },
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "left_curtain",
+        "back_id": "desk",
+        "expected_low_tangent_id": "left_curtain",
+        "expected_high_tangent_id": "desk",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.7583,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.1435
+      },
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "curtain_rod",
+        "back_id": "right_curtain",
+        "expected_low_tangent_id": "curtain_rod",
+        "expected_high_tangent_id": "right_curtain",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.59,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.05
+      },
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "curtain_rod",
+        "back_id": "desk",
+        "expected_low_tangent_id": "curtain_rod",
+        "expected_high_tangent_id": "desk",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.6719,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.0955
+      },
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "window",
+        "back_id": "right_curtain",
+        "expected_low_tangent_id": "window",
+        "expected_high_tangent_id": "right_curtain",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.5783,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.0435
+      },
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "window",
+        "back_id": "desk",
+        "expected_low_tangent_id": "window",
+        "expected_high_tangent_id": "desk",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.6602,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.089
+      },
+      {
+        "wall_id": "wall_west",
+        "axis": "y",
+        "front_id": "right_curtain",
+        "back_id": "desk",
+        "expected_low_tangent_id": "right_curtain",
+        "expected_high_tangent_id": "desk",
+        "source": "side_wall_image_edge_order",
+        "confidence": 0.5819,
+        "evidence": "For side-wall wall-mounted/window/curtain objects, the image edge side disambiguates along-wall front/back when depth samples are missing or too sparse: west wall uses smaller image-x as the front/outside low tangent; east wall uses larger image-x as the front/outside low tangent.",
+        "image_x_gap": 0.0455
+      }
+    ],
+    "corner_affinities": [
+      {
+        "id": "wardrobe",
+        "wall_id": "wall_east",
+        "corner_id": "northeast",
+        "tangent_end": "high",
+        "source": "reference_bbox_top_edge_and_depth",
+        "confidence": 0.58,
+        "evidence": "Tall side-wall storage reaches high in the reference crop and has rear/deeper depth evidence, so it should occupy the rear side-wall corner."
+      }
+    ],
+    "warnings": [],
+    "ok": true,
+    "pair_order_count": 9,
+    "corner_affinity_count": 1
+  },
+  "_bedside_tabletop_reference": {
+    "schema": "tree_sage_bedside_tabletop_reference_merge_v1",
+    "enabled": true,
+    "fixes": [
+      {
+        "type": "bedside_tabletop_support",
+        "id": "bedside_table_lamp",
+        "support_id": "left_nightstand",
+        "action": "keep",
+        "relation": {
+          "id": "reference_tabletop_support_054",
+          "type": "on",
+          "subject": "bedside_table_lamp",
+          "object": "left_nightstand",
+          "confidence": 0.96,
+          "evidence": "A small lamp with a white shade sits on the left bedside table."
+        },
+        "confidence": 0.96
+      },
+      {
+        "type": "bedside_tabletop_support",
+        "id": "alarm_clock",
+        "support_id": "left_nightstand",
+        "action": "keep",
+        "relation": {
+          "id": "reference_tabletop_support_054",
+          "type": "on",
+          "subject": "alarm_clock",
+          "object": "left_nightstand",
+          "confidence": 0.93,
+          "evidence": "A small black twin-bell alarm clock sits to the right of the lamp on the left bedside table."
+        },
+        "confidence": 0.93
+      },
+      {
+        "type": "bedside_tabletop_support",
+        "id": "potted_plant",
+        "support_id": "right_nightstand",
+        "action": "keep",
+        "relation": {
+          "id": "reference_tabletop_support_054",
+          "type": "on",
+          "subject": "potted_plant",
+          "object": "right_nightstand",
+          "confidence": 0.97,
+          "evidence": "A small leafy green plant in a white pot sits on the right bedside table."
+        },
+        "confidence": 0.97
+      },
+      {
+        "type": "bedside_tabletop_support",
+        "id": "white_mug",
+        "support_id": "right_nightstand",
+        "action": "keep",
+        "relation": {
+          "id": "reference_tabletop_support_054",
+          "type": "on",
+          "subject": "white_mug",
+          "object": "right_nightstand",
+          "confidence": 0.9,
+          "evidence": "A small white mug sits to the right of the plant on the right bedside table."
+        },
+        "confidence": 0.9
+      }
+    ],
+    "skipped": [],
+    "created": [],
+    "relabelled": [],
+    "removed_relations": [
+      {
+        "id": "rel_017",
+        "type": "on",
+        "subject": "bedside_table_lamp",
+        "object": "left_nightstand",
+        "confidence": 0.91,
+        "evidence": "lamp sits on left nightstand"
+      },
+      {
+        "id": "rel_018",
+        "type": "on",
+        "subject": "alarm_clock",
+        "object": "left_nightstand",
+        "confidence": 0.88,
+        "evidence": "clock sits on left nightstand"
+      },
+      {
+        "id": "rel_019",
+        "type": "on",
+        "subject": "potted_plant",
+        "object": "right_nightstand",
+        "confidence": 0.9,
+        "evidence": "plant sits on right nightstand"
+      },
+      {
+        "id": "rel_020",
+        "type": "on",
+        "subject": "white_mug",
+        "object": "right_nightstand",
+        "confidence": 0.86,
+        "evidence": "mug sits on right nightstand"
+      }
+    ],
+    "removed_objects": [],
+    "reused_create_requests": [],
+    "fix_count": 4,
+    "ok": true,
+    "allow_create_missing": true,
+    "raw_report": {
+      "schema": "tree_sage_bedside_tabletop_reference_agent_v1",
+      "supports": [
+        {
+          "support_id": "left_nightstand",
+          "visible_children": [
+            {
+              "role": "lamp",
+              "object_id": "bedside_table_lamp",
+              "action": "keep",
+              "support_id": "left_nightstand",
+              "category": "table lamp",
+              "description": "small white shade lamp on the left nightstand",
+              "asset_prompt": "small bedside table lamp with white fabric drum shade and slim base, object only",
+              "confidence": 0.96,
+              "evidence": "A small lamp with a white shade sits on the left bedside table."
+            },
+            {
+              "role": "clock",
+              "object_id": "alarm_clock",
+              "action": "keep",
+              "support_id": "left_nightstand",
+              "category": "alarm clock",
+              "description": "small black twin-bell alarm clock on the left nightstand",
+              "asset_prompt": "small black vintage twin bell alarm clock, round face, object only",
+              "confidence": 0.93,
+              "evidence": "A small black twin-bell alarm clock sits to the right of the lamp on the left bedside table."
+            }
+          ]
+        },
+        {
+          "support_id": "right_nightstand",
+          "visible_children": [
+            {
+              "role": "plant",
+              "object_id": "potted_plant",
+              "action": "keep",
+              "support_id": "right_nightstand",
+              "category": "potted plant",
+              "description": "small green plant in a white pot on the right nightstand",
+              "asset_prompt": "small leafy green houseplant in a white cylindrical pot, object only",
+              "confidence": 0.97,
+              "evidence": "A small leafy green plant in a white pot sits on the right bedside table."
+            },
+            {
+              "role": "other",
+              "object_id": "white_mug",
+              "action": "keep",
+              "support_id": "right_nightstand",
+              "category": "mug",
+              "description": "white ceramic mug on the right nightstand",
+              "asset_prompt": "plain white ceramic coffee mug with handle, object only",
+              "confidence": 0.9,
+              "evidence": "A small white mug sits to the right of the plant on the right bedside table."
+            }
+          ]
+        }
+      ],
+      "remove_from_bedside": [],
+      "notes": []
+    },
+    "removed_object_count": 0
+  },
+  "_floor_covering_underlay_support_report": {
+    "schema": "tree_sage_floor_covering_underlay_support_v1",
+    "enabled": true,
+    "fixes": [
+      {
+        "type": "floor_covering_visual_layer_relation",
+        "id": "double_bed",
+        "rug_id": "area_rug",
+        "relation_id": "rel_021",
+        "relation_type": "near",
+        "evidence": "rug visually underlays bed and extends in front",
+        "note": "Floor coverings are visual floor layers, not ordinary support parents; large furniture may partly overlap rug and floor."
+      }
+    ],
+    "fix_count": 1,
+    "ok": true
+  },
+  "_functional_spatial_clusters": [
+    {
+      "cluster_id": "functional_desk_workstation_00",
+      "type": "desk_workstation",
+      "anchor_id": "desk",
+      "members": [
+        "desk",
+        "office_chair"
+      ],
+      "member_roles": {
+        "desk": "desk",
+        "office_chair": "chair"
+      },
+      "confidence": 0.92,
+      "constraints": {
+        "chair_faces_table": true,
+        "allow_chair_under_table_overlap": true,
+        "chair_scale_relative_to_table": true,
+        "preserve_as_workstation": true
+      },
+      "reference_bbox": [
+        0.047,
+        0.448,
+        0.283,
+        0.718
+      ],
+      "reference_center": [
+        0.165,
+        0.583
+      ],
+      "evidence": "A desk/table and facing nearby chair form one workstation; the chair may tuck partly under the table in top-down layout."
+    },
+    {
+      "cluster_id": "functional_window_curtain_cluster_01",
+      "type": "window_curtain_cluster",
+      "anchor_id": "window",
+      "members": [
+        "window",
+        "left_curtain",
+        "right_curtain",
+        "curtain_rod"
+      ],
+      "member_roles": {
+        "window": "window",
+        "left_curtain": "curtain",
+        "right_curtain": "curtain",
+        "curtain_rod": "curtain"
+      },
+      "confidence": 0.76,
+      "constraints": {
+        "same_wall_plane": true,
+        "curtain_matches_window_span": true
+      },
+      "reference_bbox": [
+        0.0,
+        0.032,
+        0.139,
+        0.508
+      ],
+      "reference_center": [
+        0.0695,
+        0.27
+      ],
+      "evidence": "Window, curtain, and curtain rod should be handled as one wall fixture group."
+    },
+    {
+      "cluster_id": "functional_rug_underlay_cluster_02",
+      "type": "rug_underlay_cluster",
+      "anchor_id": "area_rug",
+      "members": [
+        "area_rug",
+        "double_bed"
+      ],
+      "member_roles": {
+        "area_rug": "visual_floor_underlay",
+        "double_bed": "object_on_visual_underlay"
+      },
+      "confidence": 0.74,
+      "constraints": {
+        "thin_visual_layer": true,
+        "does_not_create_support_parent": true
+      },
+      "reference_bbox": [
+        0.163,
+        0.349,
+        0.871,
+        0.926
+      ],
+      "reference_center": [
+        0.517,
+        0.6375
+      ],
+      "evidence": "Rug/carpet is a thin visual floor layer; objects may visually overlap it without support-tree parenting."
+    }
+  ],
+  "_branch_reference_by_root": {
+    "window": {
+      "root_object": "window",
+      "priority_rank": 1,
+      "wall_relation": {
+        "mode": "attached",
+        "wall_id": "wall_west",
+        "confidence": 0.93
+      },
+      "reference_position": "left_wall",
+      "scale_relation": "medium",
+      "evidence": "White framed window is set into the left wall."
+    },
+    "curtain_rod": {
+      "root_object": "curtain_rod",
+      "priority_rank": 2,
+      "wall_relation": {
+        "mode": "attached",
+        "wall_id": "wall_west",
+        "confidence": 0.86
+      },
+      "reference_position": "left_wall",
+      "scale_relation": "small",
+      "evidence": "Wood rod spans above the left-wall window."
+    },
+    "left_curtain": {
+      "root_object": "left_curtain",
+      "priority_rank": 3,
+      "wall_relation": {
+        "mode": "attached",
+        "wall_id": "wall_west",
+        "confidence": 0.86
+      },
+      "reference_position": "left_wall",
+      "scale_relation": "small",
+      "evidence": "Blue curtain panel hangs at the far left side of the window."
+    },
+    "right_curtain": {
+      "root_object": "right_curtain",
+      "priority_rank": 4,
+      "wall_relation": {
+        "mode": "attached",
+        "wall_id": "wall_west",
+        "confidence": 0.86
+      },
+      "reference_position": "left_wall",
+      "scale_relation": "small",
+      "evidence": "Blue curtain panel hangs at the right side of the window."
+    },
+    "floating_shelf": {
+      "root_object": "floating_shelf",
+      "priority_rank": 5,
+      "wall_relation": {
+        "mode": "attached",
+        "wall_id": "wall_north",
+        "confidence": 0.84
+      },
+      "reference_position": "back_wall",
+      "scale_relation": "small",
+      "evidence": "Thin wood shelf is mounted on the back wall above the desk."
+    },
+    "framed_landscape_art": {
+      "root_object": "framed_landscape_art",
+      "priority_rank": 6,
+      "wall_relation": {
+        "mode": "attached",
+        "wall_id": "wall_north",
+        "confidence": 0.96
+      },
+      "reference_position": "back_wall",
+      "scale_relation": "medium",
+      "evidence": "Landscape picture hangs centered above the bed headboard on the back wall."
+    },
+    "wardrobe": {
+      "root_object": "wardrobe",
+      "priority_rank": 7,
+      "wall_relation": {
+        "mode": "against",
+        "wall_id": "wall_east",
+        "confidence": 0.9
+      },
+      "reference_position": "right_wall",
+      "scale_relation": "large_anchor",
+      "evidence": "Tall wardrobe is flush against the right wall."
+    },
+    "double_bed": {
+      "root_object": "double_bed",
+      "priority_rank": 8,
+      "wall_relation": {
+        "mode": "against",
+        "wall_id": "wall_north",
+        "confidence": 0.9
+      },
+      "reference_position": "back_wall",
+      "scale_relation": "large_anchor",
+      "evidence": "Headboard touches the back wall near the room center."
+    },
+    "desk": {
+      "root_object": "desk",
+      "priority_rank": 9,
+      "wall_relation": {
+        "mode": "against",
+        "wall_id": "wall_north",
+        "confidence": 0.82
+      },
+      "reference_position": "back_wall",
+      "scale_relation": "medium",
+      "evidence": "Desk sits in the left back corner with its rear edge against the back wall under the shelf."
+    },
+    "left_nightstand": {
+      "root_object": "left_nightstand",
+      "priority_rank": 10,
+      "wall_relation": {
+        "mode": "against",
+        "wall_id": "wall_north",
+        "confidence": 0.82
+      },
+      "reference_position": "back_wall",
+      "scale_relation": "medium",
+      "evidence": "Left bedside table is along the back wall beside the bed."
+    },
+    "right_nightstand": {
+      "root_object": "right_nightstand",
+      "priority_rank": 11,
+      "wall_relation": {
+        "mode": "against",
+        "wall_id": "wall_north",
+        "confidence": 0.82
+      },
+      "reference_position": "back_wall",
+      "scale_relation": "medium",
+      "evidence": "Right bedside table is along the back wall beside the bed."
+    },
+    "office_chair": {
+      "root_object": "office_chair",
+      "priority_rank": 12,
+      "wall_relation": {
+        "mode": "near",
+        "wall_id": "wall_west",
+        "confidence": 0.66
+      },
+      "reference_position": "left_wall",
+      "scale_relation": "medium",
+      "evidence": "Chair is pulled up to the desk near the left side of the room."
+    },
+    "area_rug": {
+      "root_object": "area_rug",
+      "priority_rank": 13,
+      "wall_relation": {
+        "mode": "none",
+        "wall_id": null,
+        "confidence": 0.0
+      },
+      "reference_position": "center",
+      "scale_relation": "large_anchor",
+      "evidence": "Large beige rug lies centrally under and in front of the bed."
+    },
+    "left_slipper": {
+      "root_object": "left_slipper",
+      "priority_rank": 14,
+      "wall_relation": {
+        "mode": "none",
+        "wall_id": null,
+        "confidence": 0.0
+      },
+      "reference_position": "front",
+      "scale_relation": "small",
+      "evidence": "Left slipper rests loose on the front portion of the rug."
+    },
+    "right_slipper": {
+      "root_object": "right_slipper",
+      "priority_rank": 15,
+      "wall_relation": {
+        "mode": "none",
+        "wall_id": null,
+        "confidence": 0.0
+      },
+      "reference_position": "front",
+      "scale_relation": "small",
+      "evidence": "Right slipper rests loose on the front portion of the rug."
+    }
+  }
+}

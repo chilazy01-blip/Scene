@@ -1,0 +1,32 @@
+[
+  {
+    "source": "/data/wsj/main/scene/AGENT.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_mass_dynamics_approved_20260928_before/AGENT.md",
+    "sha256": "f50cf8ec2c4222272065717435d7ae3431d0ee08585a76d9e69d95f4a6c41a91"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_mass_dynamics_approved_20260928_before/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+    "sha256": "bc319b582425146b72e4f965b14980353df50f893691b6044d4656810f7a4ead"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_DATA_ROADMAP_20260926.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_mass_dynamics_approved_20260928_before/EMBODIED_DATA_ROADMAP_20260926.md",
+    "sha256": "0c1d330918a4ad9ff1d63f3c07200203e3ff2c77e8b3b37921d42093d8e69183"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_mass_dynamics_approved_20260928_before/EMBODIED_LONG_RUN_PROGRESS_20260926.md",
+    "sha256": "bb3b203c0b3fedfcdc5ac9372df5a88ac7028504a0e60b942b3f2061f208f26a"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_CAPABILITY_RESULTS_20260926.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_mass_dynamics_approved_20260928_before/EMBODIED_CAPABILITY_RESULTS_20260926.md",
+    "sha256": "32253d9ed8833661b3d1a78ac19e98a87b8104ba0460b34428871dac337bb8c4"
+  },
+  {
+    "source": "/data/wsj/main/scene/docs/EMBODIED_TRAINING_DATA_20260927.md",
+    "archive": "/data/wsj/main/scene/docs/history/embodied_mass_dynamics_approved_20260928_before/EMBODIED_TRAINING_DATA_20260927.md",
+    "sha256": "1ea492bf0bc86d168421912421ab21617df7c300a0d73fec7f5a82f220e9a1a6"
+  }
+]

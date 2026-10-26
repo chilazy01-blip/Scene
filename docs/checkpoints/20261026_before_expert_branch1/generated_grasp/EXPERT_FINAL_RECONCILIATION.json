@@ -1,0 +1,57 @@
+{
+  "scope": "Parent reconciles completed actual reports after finite helper/continuation ended; this document is not a model-generated final response.",
+  "legacy_expert_final": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/FINAL.json",
+    "sha256": "9e146322f6603bc3474ef2db9662ebc374f1513a3833fc3620acee6a4d54e004",
+    "size_bytes": 1120152
+  },
+  "actual_reports_manifest": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/context/FINAL_PARENT_RECONCILED.json",
+    "sha256": "87668cf4052aaa3ebd8034348b5c2994830fde6c71dfe68836ecc2b4b9f0a631",
+    "size_bytes": 1147539
+  },
+  "actual_status": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/context/final_status_parent_001.json",
+    "sha256": "f2865009b69d3893a128d609a2e50f090722da8127f1e2a1567189b4eeef8efa",
+    "size_bytes": 903113
+  },
+  "manifest_builder": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/context/build_final_manifest_v003.py",
+    "sha256": "406072d94cece435595a97f9c4740e17f3dc7c083aad06f390c88aa0007cc854",
+    "size_bytes": 10983
+  },
+  "invocations": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/agent_01/INVOCATION.json",
+      "sha256": "a3d029b458c9b68e3d0c4b91cfc2f018c5037eefd21f3005ea9bb5b41d48862b",
+      "size_bytes": 4684
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/agent_02/INVOCATION.json",
+      "sha256": "24c539d36d476d6759bbf0c0bcdadf0e95b22faabc9b8d6b8bd26fac0b740215",
+      "size_bytes": 998
+    }
+  ],
+  "continuation_service_failed": true,
+  "continuation_errors": [
+    {
+      "type": "error",
+      "message": "Selected model is at capacity. Please try a different model."
+    },
+    {
+      "type": "turn.failed",
+      "error": {
+        "message": "Selected model is at capacity. Please try a different model."
+      }
+    }
+  ],
+  "untested_strategy": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/bottle_v011.py",
+    "sha256": "5917959ba56d2762a5542980aad516c8680281e55ac65d8f7d4cf9b309b0e815",
+    "size_bytes": 47371
+  },
+  "untested_strategy_not_selected": true,
+  "no_new_trial_due_to_remaining_declared_verification_headroom": true,
+  "new_physics_steps": 0,
+  "finished_epoch_utc": 1793002835.5172267
+}

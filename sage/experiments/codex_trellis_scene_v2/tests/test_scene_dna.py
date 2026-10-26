@@ -86,6 +86,7 @@ class SceneDNATest(unittest.TestCase):
     def _bridge_args(output_dir: str) -> Namespace:
         return Namespace(
             output_dir=output_dir,
+            image_provider="flux1-schnell",
             flux_background_mode="contrast",
             flux_retry_count=2,
             alpha_quality_check=True,

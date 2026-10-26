@@ -1,0 +1,190 @@
+{
+  "additional_upright_quality_passed": true,
+  "all_held_samples_have_hand_contact_and_offtable": true,
+  "arm": "expert_code",
+  "case_id": "S02_cup",
+  "content_sha256_excluding_this_field": "5a252ff8417cbb81eb4cc71ce4459da55dfc261e035ad3103f5872731a232457",
+  "cup_upright_cosine": 0.9997742342128324,
+  "final200_cup_speed_max_m_s": 4.262996843097713e-08,
+  "final200_root_speed_max_m_s": 0.04600943481586532,
+  "final200_root_speed_p95_m_s": 0.03336686697819943,
+  "final_cup_position_m": [
+    3.0482737465043828,
+    1.8556652163081684,
+    0.7861837847103473
+  ],
+  "final_root_speed_margin_m_s": 0.013990565184134676,
+  "full_episode_physics_steps": 8536,
+  "full_episode_seconds": 42.68,
+  "goal_error_m": 0.005711577711826629,
+  "implementation": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/review.py",
+    "sha256": "af9a23c6ca59c560b93492b475de21a696ba55fd035f67e9ff6ec9d80127b86d",
+    "size_bytes": 4813
+  },
+  "max_held_slip_m": 0.012666753604509539,
+  "new_physics_steps": 0,
+  "new_suffix_physics_steps": 8536,
+  "object_orientation_cosine": 0.9997742342128324,
+  "orientation_definition": "local Z dot world Z",
+  "original_stability_gate_all200_passed": true,
+  "original_stability_gate_bad_samples": [],
+  "paired_case_id": "S02_cup",
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/full/REPORT.json",
+    "sha256": "7173dd96c4d4255740fea2d1cdbe480be0a32b209077f53be1ffeeae4198739c",
+    "size_bytes": 5510493
+  },
+  "schema": "codex-reference-physical-measurements/v1",
+  "stage_metrics": {
+    "approach": {
+      "physics_steps": 520,
+      "root_acceleration_max_m_s2": 5.870278925355354,
+      "root_acceleration_rms_m_s2": 1.693856235712617,
+      "root_speed_max_m_s": 0.4987590974999673,
+      "seconds": 2.6
+    },
+    "carry": {
+      "physics_steps": 484,
+      "root_acceleration_max_m_s2": 4.822167514288416,
+      "root_acceleration_rms_m_s2": 1.5722780799535254,
+      "root_speed_max_m_s": 0.43742058826000796,
+      "seconds": 2.42
+    },
+    "close": {
+      "physics_steps": 420,
+      "root_acceleration_max_m_s2": 2.462466578704233,
+      "root_acceleration_rms_m_s2": 0.5597338969004487,
+      "root_speed_max_m_s": 0.0658917137236613,
+      "seconds": 2.1
+    },
+    "force_balance": {
+      "physics_steps": 60,
+      "root_acceleration_max_m_s2": 2.430297582800232,
+      "root_acceleration_rms_m_s2": 0.639996075207379,
+      "root_speed_max_m_s": 0.061814197548299546,
+      "seconds": 0.3
+    },
+    "initial_stand": {
+      "physics_steps": 900,
+      "root_acceleration_max_m_s2": 13.798204231229649,
+      "root_acceleration_rms_m_s2": 0.6894236005189399,
+      "root_speed_max_m_s": 0.16110636707208734,
+      "seconds": 4.5
+    },
+    "insert": {
+      "physics_steps": 200,
+      "root_acceleration_max_m_s2": 1.9424008708564822,
+      "root_acceleration_rms_m_s2": 0.6246368776532981,
+      "root_speed_max_m_s": 0.06422754453687368,
+      "seconds": 1.0
+    },
+    "lift": {
+      "physics_steps": 392,
+      "root_acceleration_max_m_s2": 2.7806013708988826,
+      "root_acceleration_rms_m_s2": 0.5734636738426386,
+      "root_speed_max_m_s": 0.05864604457694274,
+      "seconds": 1.96
+    },
+    "load_probe": {
+      "physics_steps": 280,
+      "root_acceleration_max_m_s2": 2.725556435770271,
+      "root_acceleration_rms_m_s2": 0.5987276707879785,
+      "root_speed_max_m_s": 0.07709723156259157,
+      "seconds": 1.4000000000000001
+    },
+    "loaded_hover": {
+      "physics_steps": 284,
+      "root_acceleration_max_m_s2": 1.0674468949696252,
+      "root_acceleration_rms_m_s2": 0.40941387919696065,
+      "root_speed_max_m_s": 0.06303809298968728,
+      "seconds": 1.42
+    },
+    "lower": {
+      "physics_steps": 200,
+      "root_acceleration_max_m_s2": 2.7285573744041622,
+      "root_acceleration_rms_m_s2": 0.5634237076142488,
+      "root_speed_max_m_s": 0.05639305635257675,
+      "seconds": 1.0
+    },
+    "place": {
+      "physics_steps": 1048,
+      "root_acceleration_max_m_s2": 3.2263380361370877,
+      "root_acceleration_rms_m_s2": 0.5211312603125702,
+      "root_speed_max_m_s": 0.08937883221834489,
+      "seconds": 5.24
+    },
+    "preinsert": {
+      "physics_steps": 360,
+      "root_acceleration_max_m_s2": 2.75717076545934,
+      "root_acceleration_rms_m_s2": 0.6508803815599823,
+      "root_speed_max_m_s": 0.09079252734684172,
+      "seconds": 1.8
+    },
+    "ready_arm": {
+      "physics_steps": 1376,
+      "root_acceleration_max_m_s2": 2.3905892059666964,
+      "root_acceleration_rms_m_s2": 0.29594567274530414,
+      "root_speed_max_m_s": 0.048326052312132585,
+      "seconds": 6.88
+    },
+    "release": {
+      "physics_steps": 460,
+      "root_acceleration_max_m_s2": 1.0897200984823088,
+      "root_acceleration_rms_m_s2": 0.3361075246882599,
+      "root_speed_max_m_s": 0.03805040776467879,
+      "seconds": 2.3000000000000003
+    },
+    "retract": {
+      "physics_steps": 320,
+      "root_acceleration_max_m_s2": 1.3821690506154325,
+      "root_acceleration_rms_m_s2": 0.4632302500145421,
+      "root_speed_max_m_s": 0.06938449547154261,
+      "seconds": 1.6
+    },
+    "settle": {
+      "physics_steps": 208,
+      "root_acceleration_max_m_s2": 6.500429642893373,
+      "root_acceleration_rms_m_s2": 0.5218354600814737,
+      "root_speed_max_m_s": 0.06798362964164985,
+      "seconds": 1.04
+    },
+    "source_stop": {
+      "physics_steps": 364,
+      "root_acceleration_max_m_s2": 6.276705501274445,
+      "root_acceleration_rms_m_s2": 1.280044692667456,
+      "root_speed_max_m_s": 0.4586057476627497,
+      "seconds": 1.82
+    },
+    "target_stop": {
+      "physics_steps": 380,
+      "root_acceleration_max_m_s2": 5.293383640534713,
+      "root_acceleration_rms_m_s2": 1.4212268539019086,
+      "root_speed_max_m_s": 0.5018778206560842,
+      "seconds": 1.9000000000000001
+    },
+    "tuck": {
+      "physics_steps": 240,
+      "root_acceleration_max_m_s2": 1.433883472456932,
+      "root_acceleration_rms_m_s2": 0.41386025856530817,
+      "root_speed_max_m_s": 0.07503616995490169,
+      "seconds": 1.2
+    },
+    "warmup": {
+      "physics_steps": 40,
+      "root_acceleration_max_m_s2": 10.305903095629343,
+      "root_acceleration_rms_m_s2": 2.586543273233837,
+      "root_speed_max_m_s": 0.15746987930627496,
+      "seconds": 0.2
+    }
+  },
+  "strict_held_forward_distance_m": 0.5470503620283376,
+  "strict_held_robot_net_distance_m": 0.5476946170861019,
+  "suffix_seconds": 42.68,
+  "target_object_xyz_m": [
+    3.049,
+    1.8499999999999999,
+    0.7872000090000001
+  ],
+  "task_passed": true
+}

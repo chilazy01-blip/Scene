@@ -1,0 +1,68 @@
+{
+  "schema": "scene-v2-material-library/v1",
+  "library_id": "p018_material_library_v1",
+  "packages": [
+    {
+      "package_id": "light_oak_satin_v1",
+      "material_family": "wood",
+      "compatible_slot_roles": ["architectural_wood", "furniture_body", "furniture_wood", "wood_trim"],
+      "palette_tags": ["light_oak", "warm", "natural"],
+      "pbr": {"base_color_srgb": [0.60, 0.38, 0.18, 1.0], "roughness": 0.64, "metallic": 0.0, "alpha_mode": "OPAQUE", "double_sided": true},
+      "texture": {"generator": "procedural_wood_v1", "resolution": 512, "real_scale_m": 0.5, "color_space": "sRGB", "tileable": true},
+      "license": {"source": "deterministic_project_generated", "redistribution": "project_internal"}
+    },
+    {
+      "package_id": "smoked_walnut_satin_v1",
+      "material_family": "wood",
+      "compatible_slot_roles": ["furniture_body", "furniture_wood", "wood_trim"],
+      "palette_tags": ["smoked_walnut", "warm", "dark_wood"],
+      "pbr": {"base_color_srgb": [0.255, 0.105, 0.045, 1.0], "roughness": 0.57, "metallic": 0.0, "alpha_mode": "OPAQUE", "double_sided": true},
+      "texture": {"generator": "procedural_wood_v1", "resolution": 512, "real_scale_m": 0.5, "color_space": "sRGB", "tileable": true},
+      "license": {"source": "deterministic_project_generated", "redistribution": "project_internal"}
+    },
+    {
+      "package_id": "cream_boucle_v1",
+      "material_family": "fabric",
+      "compatible_slot_roles": ["upholstery", "soft_furnishing", "lamp_shade"],
+      "palette_tags": ["cream", "warm", "boucle"],
+      "pbr": {"base_color_srgb": [0.78, 0.70, 0.59, 1.0], "roughness": 0.92, "metallic": 0.0, "alpha_mode": "OPAQUE", "double_sided": true},
+      "texture": {"generator": "procedural_weave_v1", "resolution": 512, "real_scale_m": 0.35, "color_space": "sRGB", "tileable": true},
+      "license": {"source": "deterministic_project_generated", "redistribution": "project_internal"}
+    },
+    {
+      "package_id": "muted_sage_wool_v1",
+      "material_family": "fabric",
+      "compatible_slot_roles": ["upholstery", "soft_furnishing", "lamp_shade"],
+      "palette_tags": ["muted_sage", "natural", "wool"],
+      "pbr": {"base_color_srgb": [0.30, 0.39, 0.30, 1.0], "roughness": 0.91, "metallic": 0.0, "alpha_mode": "OPAQUE", "double_sided": true},
+      "texture": {"generator": "procedural_weave_v1", "resolution": 512, "real_scale_m": 0.35, "color_space": "sRGB", "tileable": true},
+      "license": {"source": "deterministic_project_generated", "redistribution": "project_internal"}
+    },
+    {
+      "package_id": "brushed_brass_v1",
+      "material_family": "metal",
+      "compatible_slot_roles": ["metal_hardware", "furniture_metal", "lamp_hardware"],
+      "palette_tags": ["brass", "warm_metal"],
+      "pbr": {"base_color_srgb": [0.50, 0.31, 0.08, 1.0], "roughness": 0.34, "metallic": 0.72, "alpha_mode": "OPAQUE", "double_sided": true},
+      "texture": {"generator": "procedural_brushed_metal_v1", "resolution": 512, "real_scale_m": 0.4, "color_space": "sRGB", "tileable": true},
+      "license": {"source": "deterministic_project_generated", "redistribution": "project_internal"}
+    },
+    {
+      "package_id": "blackened_steel_v1",
+      "material_family": "metal",
+      "compatible_slot_roles": ["metal_hardware", "furniture_metal", "lamp_hardware"],
+      "palette_tags": ["blackened_steel", "dark_metal", "matte"],
+      "pbr": {"base_color_srgb": [0.035, 0.045, 0.050, 1.0], "roughness": 0.42, "metallic": 0.82, "alpha_mode": "OPAQUE", "double_sided": true},
+      "texture": {"generator": "procedural_brushed_metal_v1", "resolution": 512, "real_scale_m": 0.4, "color_space": "sRGB", "tileable": true},
+      "license": {"source": "deterministic_project_generated", "redistribution": "project_internal"}
+    },
+    {
+      "package_id": "clear_glass_v1",
+      "material_family": "glass",
+      "compatible_slot_roles": ["glazing", "glass_panel", "table_glass"],
+      "palette_tags": ["clear", "neutral"],
+      "pbr": {"base_color_srgb": [0.86, 0.94, 0.98, 0.18], "roughness": 0.08, "metallic": 0.0, "alpha_mode": "BLEND", "double_sided": true, "ior": 1.45},
+      "license": {"source": "deterministic_project_generated", "redistribution": "project_internal"}
+    }
+  ]
+}

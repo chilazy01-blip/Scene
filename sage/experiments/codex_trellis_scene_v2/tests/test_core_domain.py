@@ -5,7 +5,9 @@ import unittest
 from pathlib import Path
 
 from sage.experiments.codex_trellis_scene_v2.cli import build_parser
-from sage.experiments.codex_trellis_scene_v2.core_domain import CORE_STAGE_OWNERSHIP, SceneRequest
+from sage.experiments.codex_trellis_scene_v2.core_domain import (
+    CORE_STAGE_OWNERSHIP, SceneRequest, request_from_pipeline_args,
+)
 from sage.experiments.codex_trellis_scene_v2.legacy_adapter import adapt_legacy_args
 from sage.experiments.codex_trellis_scene_v2.project_facts import build_project_facts, parser_defaults
 
@@ -14,6 +16,30 @@ ROOT = Path(__file__).resolve().parents[4]
 
 
 class CoreDomainTest(unittest.TestCase):
+    def test_image_provider_is_bound_in_request_and_all_text_adapters(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            base = ["--prompt", "a study", "--output-dir", temp, "--plan-only"]
+            for flow in ("flow2_text", "selfmade_text"):
+                default = adapt_legacy_args(flow, base)
+                explicit = adapt_legacy_args(flow, [*base, "--image-provider", "flux1-schnell"])
+                self.assertEqual(default.image_provider, "builtin_imagegen")
+                self.assertEqual(default.scene_request.image_provider, "builtin_imagegen")
+                self.assertEqual(explicit.image_provider, "flux1-schnell")
+                self.assertEqual(explicit.scene_request.image_provider, "flux1-schnell")
+                self.assertNotEqual(default.scene_request.as_document()["content_hash"], explicit.scene_request.as_document()["content_hash"])
+                explicit.image_provider = "builtin_imagegen"
+                with self.assertRaisesRegex(ValueError, "image provider differs"):
+                    request_from_pipeline_args(explicit, "a study")
+
+    def test_direct_cli_provider_and_invalid_provider(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            argv = ["--prompt", "a study", "--output-dir", temp]
+            for provider in ("builtin_imagegen", "flux1-schnell"):
+                args = build_parser().parse_args([*argv, "--image-provider", provider])
+                self.assertEqual(request_from_pipeline_args(args, "a study").image_provider, provider)
+            with self.assertRaises(ValueError):
+                SceneRequest.create(prompt="a study", output_dir=temp, image_provider="openai_image_api")
+
     def test_text_front_ends_share_the_same_core_request_contract(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             a = adapt_legacy_args("flow2_text", ["--prompt", "a study", "--output-dir", temp, "--plan-only"])

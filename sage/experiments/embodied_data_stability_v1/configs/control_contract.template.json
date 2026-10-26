@@ -1,0 +1,36 @@
+{
+  "schema": "embodied-control-contract-template/v1",
+  "policy": {
+    "native_contract_must_be_preserved": true,
+    "no_weight_changes_during_s1": true,
+    "unknown_fields_block_adaptation_instead_of_being_guessed": true,
+    "privileged_fields_are_not_policy_inputs": true
+  },
+  "required_leaf_paths": [
+    "identity.repository",
+    "identity.commit",
+    "robot.model_dimensions",
+    "robot.joint_and_actuator_order",
+    "robot.actuator_types_gains_limits",
+    "simulation.engine_and_version",
+    "simulation.physics_timestep_s",
+    "simulation.solver_contact_friction",
+    "runtime.dependencies",
+    "policy.raw_interfaces",
+    "observation.fields_order_units",
+    "observation.normalization_and_history",
+    "action.fields_order_units_bounds",
+    "action.duration_and_hold_semantics",
+    "control.physics_low_high_frequencies",
+    "control.native_transition_semantics",
+    "frames.world_base_task_camera",
+    "task.stage_and_transition_predicates",
+    "hooks.policy_rgbd_proprio_action",
+    "hooks.privileged_contact_wbc_events",
+    "hooks.checkpoint_and_replay",
+    "failure.stop_codes_and_taxonomy",
+    "failure.reset_and_recovery",
+    "reproducibility.seeds_environment_command"
+  ]
+}
+

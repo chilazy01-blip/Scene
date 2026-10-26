@@ -1,0 +1,47 @@
+{
+  "book_capacity_repair": "16MiB->256MiB, all guarded physical arrays/options exact; original-init40step numerical probe all actual warning counters zero for both layouts.",
+  "cases": {
+    "S02_book": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/cases_v3/S02_book/ADMISSION_NUMERICAL.json",
+      "sha256": "5b9cb174145f59f65bc2b947decea7d894658c8e57f642b969bee0b93d2812d9",
+      "size_bytes": 2765
+    },
+    "S02_bottle": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/cases_v2/S02_bottle/ADMISSION.json",
+      "sha256": "2ea695bb5baf08115f801c38104feed6640e3f638e48be927296fc7a4776b256",
+      "size_bytes": 1812
+    },
+    "S02_cup": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/cases_v2/S02_cup/ADMISSION.json",
+      "sha256": "e6c986d65beb8ace9cad49e9d383ade555258d67e5d27ad36604611940a4d33b",
+      "size_bytes": 1803
+    },
+    "S03_book": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/cases_v3/S03_book/ADMISSION_NUMERICAL.json",
+      "sha256": "ea4b22d6a553209ba12211b956d449279af6faa3128f1724b53172d67c30a0d5",
+      "size_bytes": 2790
+    },
+    "S03_bottle": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/cases_v2/S03_bottle/ADMISSION.json",
+      "sha256": "937b5b1e2bd2d968f75a35b828b88350c070328140862ccb28e8c7f37f01da53",
+      "size_bytes": 1825
+    },
+    "S03_cup": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/cases_v2/S03_cup/ADMISSION.json",
+      "sha256": "8dc6928b378fc9ffa9496b9463d85132e3e2385d60a61e586cfdefce510a4fa3",
+      "size_bytes": 1813
+    }
+  },
+  "content_sha256_excluding_this_field": "b5c72ca96aa8c3c58ef033b77ba0b664f22871a5df9df766ea5e2f012d28caef",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/tools/activate_capacity_admission.py",
+    "sha256": "c29538026548cc1924dab9efc338638c131693d4ffdbfb97a1ea61517de4f44f",
+    "size_bytes": 913
+  },
+  "old_book_numerical_diagnostic": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/book_s02_v001/continuous_replay_numerical_diagnostic/REPORT.json",
+    "sha256": "baab6fb0a879f62e885776d6096a90c9606a69fc535fc1d416077573ddc92b58",
+    "size_bytes": 2551
+  },
+  "schema": "generated-grasp-admission-registry/v1"
+}

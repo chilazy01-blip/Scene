@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 from .io_utils import write_json
+from .core_domain import DEFAULT_IMAGE_PROVIDER, IMAGE_PROVIDERS
 from .pipeline import run_pipeline
 from .policies import FLOOR_MATERIAL_PRESETS, WALL_MATERIAL_PRESETS
 
@@ -16,6 +17,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--prompt")
     parser.add_argument("--prompt-file", type=Path)
+    parser.add_argument("--furnishing-config", type=Path, help="Explicit furniture groups, window treatments and local attachments.")
+    parser.add_argument("--physics-config", type=Path,
+                        help="Explicit source-bound leaning-book group and normal-friction simulation configuration.")
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument(
@@ -96,6 +100,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser.add_argument("--asset-mode", choices=("plan", "reuse", "trellis2"), default="plan")
     parser.add_argument(
+        "--image-provider", choices=IMAGE_PROVIDERS, default=DEFAULT_IMAGE_PROVIDER,
+        help="Provider for missing-asset candidate images; builtin_imagegen requires a connected Codex tool executor.",
+    )
+    parser.add_argument(
         "--scene-dna-mode",
         choices=(
             "legacy_coarse_tags",
@@ -170,6 +178,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="After assembly, render RGB/depth/instance-mask diagnostics and reject missing or invisible required objects.",
     )
     parser.add_argument("--scene-render-acceptance-resolution", type=int, default=512)
+    parser.add_argument("--scene-render-acceptance-engine", choices=("eevee", "cycles_cpu"), default="eevee")
     parser.add_argument(
         "--allow-render-acceptance-failure",
         action="store_true",

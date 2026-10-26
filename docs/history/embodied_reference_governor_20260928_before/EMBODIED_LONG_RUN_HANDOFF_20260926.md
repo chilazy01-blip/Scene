@@ -1,0 +1,209 @@
+# 具身数据长跑：当前交接与恢复入口
+
+## 当前：FB2物理参考域退出，后继因果准入证据不足
+
+完整FB2里程碑已实际执行并科学闭合：原候选8/11、第二候选10/11，第三候选11/11几何通过；57650次真实原生前向及独立输入/目标重建通过。10个未进入恢复分支的第二候选轨迹哈希复用，第三候选只新增body_high路径5650状态；不将复用计为新增样本。
+
+本包唯一物理尝试在0.04秒/20步因参考跟踪域退出，实际2次动态前向，独立输入/目标/控制/原始力/接触重建误差均0；无物理守卫或禁止接触失败。已定位第10步新参考使6个腕部残差越出旧经验包络，第20步原门才拒绝。新发令前检查能在第10步识别；57650命令过渡审计、区间约束与1002既有因果区间提取均完成。旧FB1参考变化不覆盖新候选，未放宽门或重试物理。
+
+累计568服务、21036.239841738/24000秒，余2963.760158262秒；批准后55服务/1556.069913095秒（其中2个工程失败保留），含准备共58服务/1604.548574045秒。磁盘31GiB内约余3.95GiB，无新下载/训练/GPU，无活动服务；full-body累计3动态/14003步、57656静态与1401动态前向、18次准备预览渲染。合格完整full-body任务仍0，FB3未准入，旧单臂145/92保持。
+
+当前后继是命令变化与因果跟踪证据，具体代码、已提取数据和缺口见`M/successor_v3/NEXT_TASK_ADMISSION.md`。当前包的一次物理尝试已消耗，不启动第二次，也不以静态通过启动成功数据导出。普通工程授权持续有效，不等待用户回复；本轮科学退出和费用都不清零。当前根`M=T/full_body_milestone`，结果根`A=M/successor_v3`，账本入口`T/tools/refresh_milestone_closed.py`。旧PTY与旧待批准文字均为历史。
+
+先读[A/RESULT.json](/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/successor_v3/RESULT.json)、[诊断与下一准入](/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/successor_v3/NEXT_TASK_ADMISSION.md)、[执行报告](EMBODIED_FULL_BODY_MILESTONE_EXECUTION_20260928.md)以及`M/evidence/GLOBAL_PHYSICAL_ATTEMPT.json`。凭据已存在且对应20步，禁止恢复任何物理队列。`M/RESULT.json`和`M/prepared/*`仍是准备历史。当前无PTY或后台服务需要接管。
+
+只刷新账本：
+
+```bash
+/data/wsj/anaconda3/envs/simgen/bin/python -I -B /data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/tools/refresh_milestone_closed.py
+```
+
+529历史账本行及F356/C546/N248/M98旧绑定已逐项保持。更新前文档[归档](history/embodied_milestone_execution_20260928_before/MANIFEST.json)。
+
+以下为历史接续；旧执行中、等待批准、PTY与余额不代表当前状态。
+
+## 执行中历史：successor_v3原生命令覆盖
+
+完整里程碑授权持续有效：累计24000服务秒、本包新增4500、磁盘31GiB，用户要求后续不等待回复。原M候选8/11、第二候选successor 10/11均已独立审计并保留关闭。当前successor_v3已11/11几何通过，审计57650状态；10个未进入恢复分支的原轨迹哈希复用，body_high完整新路径5650状态。6毫米门、每阶段额外300tick、原11扰动均保持。
+
+当前在successor_v3执行真实原生命令覆盖（PTY19752），已10/11通过，预计共57650前向；独立输入/目标重建、条件性一次物理及审计/RGB-D/官方消费者队列已具体绑定，尚未执行物理。全局唯一物理尝试凭据M/evidence/GLOBAL_PHYSICAL_ATTEMPT.json当前不存在；存在后绝不重复积分。新队列为M/tools/run_native_coverage_v3.py与run_physical_delivery_v3.py；账本用T/tools/refresh_milestone_active.py，原静态准备RESULT仅作历史。当前科学终态以successor_v3下实际文件为准，普通错误自主修复并保留费用。
+
+下方为本轮早期执行记录，旧活动PTY和状态不覆盖本节。
+
+## 批准后早期历史：完整里程碑开始执行
+
+用户已明确“批准。后面都不需要等我回复”。完整FB2里程碑+4500服务秒已应用，累计19500→24000；31GiB/CPU8/内存12与16GiB及原科学门保持。M/evidence/AUTHORIZATION.json已绑定完整提案，不能重复应用或再询问同一授权；旧+600静态子包不执行。普通工程、失败诊断和阶段衔接持续自主推进。
+
+已启动M/tools/run_milestone.py完整串行队列。先核对execution/QUEUE、各静态case和覆盖RESULT、trial尝试凭据及原始services/fbm_*；终态由实际结果决定。开始前共享513服务19480.169929秒，历史费用保持，本包最多新增4500服务秒。没有重新运行FB0/FB1或旧关闭物理配置。
+
+`M=/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone`。活动队列本会话PTY75702；若终端已结束，先读实际结果和服务日志，再恢复队列，勿直接重跑物理。以下是批准前历史状态，不覆盖本节。
+
+## 批准前历史：完整FB2里程碑准备
+
+已按用户持续执行要求，把FB2完整参考矩阵、原生命令覆盖、条件性一次物理、独立审计、全长双相机RGB-D、官方/真实消费者与有限失败闭合准备为一个里程碑队列。初始动作/恢复/旧触桌守卫及数据尾部预检通过，6RGB-D相机对/18渲染pass预览通过，45项队列/计数工程检查与26份源码编译通过；整矩阵、物理和完整消费者尚未执行，合格full-body任务仍0。详见[本轮结果](EMBODIED_FULL_BODY_MILESTONE_20260928.md)。
+
+本轮3服务48.478660950秒，含一次导入超时且保留；共享513服务、19480.169928643/19500秒，余19.830071357秒，盘余约4.106GiB。0新物理/推理/训练/下载，无活动服务、主PID0、环境清理。旧F356/C546/N248绑定及529历史服务行不变，FB0/FB1不重跑、旧物理失败不重开、单臂145/92保持。
+
+完整提案申请累计19500→24000（+4500服务秒），包括自动条件性后继与失败分支，磁盘31GiB/CPU8/内存12与16GiB保持；1203输入冻结。**尚未授权/应用**。旧+600静态提案保留为历史子包，不再单独申请、不叠加应用。当前准备已完成，仅完整实验包确需这一新累计资源决定；普通工程不再按小包等待“继续”。
+
+运行根`M=/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone`。恢复先读[M/RESULT.json](/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/RESULT.json)、[具体完整提案](/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/prepared/MILESTONE.md)、[唯一恢复入口](/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/prepared/NEXT_TASK_ADMISSION.md)及实际services/fbm_*。原生矩阵/物理/数据尚未执行，不能把准备代码或静态预览当成新任务资格。
+
+明确批准新+4500后，按入口应用一次；不要运行旧N的+600授权脚本。队列自动衔接，不因服务结束反复要求回复。失败或中断必须保留全部费用；物理trial已创建即不再启动第二次。只有重要新范围/真实资源限制才需要决定。
+
+仅刷新账本：
+
+```bash
+/data/wsj/anaconda3/envs/simgen/bin/python -I -B /data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/tools/refresh_milestone_checkpoint.py
+```
+
+以下全文为历史交接，旧“当前”“下一项”和余额不覆盖上方。
+
+## 历史执行补充：减少人为停点
+
+用户指出每隔半小时到一小时仍需回复。已按既有持续执行要求纠偏，详见[执行方式修正](EMBODIED_CONTINUOUS_EXECUTION_CORRECTION_20260928.md)。下方600秒方案只覆盖静态子包，保留原件且仍未授权；当前优先自主补齐原生协调、条件性物理、审计/数据交付和有限失败后继的完整里程碑方案及总体估算，再提出必要的新资源决定。不能再等待“继续”来做普通准备，也不能把本次质疑当作新增预算。19500秒上限及68.308732秒余额、原科学退出保持。本补充覆盖下方旧“只等待600秒批准”的执行安排，不改写实验结果。
+
+
+## 2026-09-28：阶段协调与局部站位恢复已验证，完整静态包待新计算额度（历史 HANDOFF）
+
+已接续FB2后继：新增观测驱动阶段协调器、限幅与6秒恢复退出、快照恢复及原生43通道动作包适配。固定五类失败的首个失败端点×七候选共35局部诊断，4类可恢复、yminus网格失败关闭；另对齐原既定站位，原4/5通过，漏计FB1原生偏航的坐标域错误单独修复后，该例复核通过。五类局部恢复证据不改变旧整矩阵失败，不等于完整任务通过。详见[本轮结果](EMBODIED_FULL_BODY_PHASE_COORDINATOR_20260928.md)。
+
+4500保存配置/41候选结果独立审计通过，误差最大8.84709e-17m；15项协调器检查、40个原生动作包、7类矩阵拒绝通过。旧F356/C546绑定及原524服务行保持。0新物理/策略推理/渲染/训练/下载，完整full-body任务仍0，单臂145/92保持。未重复FB0/FB1，没有ready物理包。
+
+具体下一包已冻结928输入：原11条件、15阶段、每条件5200静态参考状态，含全部站位恢复与原误差重引入，最多57200；可恢复队列与独立审计已准备但尚未执行。静态通过仍缺原生协调器全部命令/真实任务守卫覆盖；不能直接物理。运行根 `T/full_body_phase_coordinator`，入口 `tools/run_geometry_queue.py`。
+
+本轮5服务/62.629205秒；共享510服务、19431.691268/19500秒，余68.308732秒，盘余约4.109GiB。无活动服务、主PID0、环境清理。整包预留600秒，已提交[具体计算增量](/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_phase_coordinator/prepared/COMPUTE_EXTENSION.md)：累计19500→20100（+600），31GiB/8CPU/12与16GiB不变，0物理/下载/训练。**尚未批准或应用**；请求源于真实累计额度，不能将“继续下一轮”当扩容，不重新问full-body方向。明确获批后按提案应用一次并续队列；已有qualification/AUTHORIZATION.json则直接恢复。原结果与费用保留。
+
+当前账本刷新 `T/tools/refresh_phase_checkpoint.py`；精确终态 `T/full_body_phase_coordinator/CHECKPOINT.json`。本轮前五文档[已归档](history/embodied_phase_coordinator_20260928_before/MANIFEST.json)。
+
+恢复先核对 `T/full_body_phase_coordinator/RESULT.json`、`CHECKPOINT.json`、`evidence/AUDIT.json`、`READY_INTERFACE_CHECK.json`、`prepared/COMPUTE_EXTENSION.md/.json` 及 `qualification/AUTHORIZATION.json` 是否存在。当前无授权凭据，不能启动完整矩阵；旧七候选和旧C失败均不能补跑。审批只针对新增600服务秒，不涉及方向、已完成阶段或物理资格。
+
+仅刷新账本（不会运行矩阵）：
+
+```bash
+/data/wsj/anaconda3/envs/simgen/bin/python -I -B /data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/tools/refresh_phase_checkpoint.py
+```
+
+以下是前轮交接原文；“当前/下一步/没有扩容申请”与旧余额均为当时状态，不能覆盖上方。
+
+
+## 当前断点：全路径专家的固定开发矩阵未准入
+
+本轮接续FB2后继，没有重跑FB0/FB1或旧关闭物理配置。新增碰撞约束双臂参考、绕障站位、观测残差反馈与全矩阵拒绝接口；名义59秒/2950tick/15阶段通过。参考版11条件4通过，反馈原矩阵5通过，1项纯数值边界修复复核通过，仍5项末端目标未达标。固定姿态正则诊断0/2，不调系数补数；不能宣布本体物理不可达。详见[本轮结果](EMBODIED_FULL_BODY_COLLISION_EXPERT_20260928.md)。
+
+73750静态保存配置的几何与末端误差独立审计通过，误差最大7.77634e-16m；原FB2失败回归及6类矩阵拒绝通过，历史356绑定逐项不变。0新物理/策略推理/渲染/训练/下载，完整full-body任务仍0，单臂145/92保持。已关闭固定矩阵保存为回归；下一项是基座/身体与末端联合可行性、基于实际状态的阶段协调器，前置在`T/full_body_collision_expert/prepared/NEXT_TASK_ADMISSION.md`，没有ready物理包。
+
+本包24服务/753.456018秒；共享505服务、19369.062063/19500秒，余130.937937秒，盘余约4.111GiB。历史500条服务行不变，无活动服务、主PID0、环境清理。下一完整静态复验实测估算260–320秒，当前余额不足；不能只检成功子集。先做具体新候选/冻结包再提出必要增量，本轮未申请或应用扩容、不重新问方向。精确入口`T/full_body_collision_expert/CHECKPOINT.json`及`T/evidence/LONG_RUN_CHECKPOINT.json`；新账本脚本`tools/refresh_collision_checkpoint.py`。本轮前五文档[已归档](history/embodied_collision_expert_20260928_before/MANIFEST.json)。
+
+运行根`T=/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1`；`C=T/full_body_collision_expert`。恢复先读C的RESULT/CHECKPOINT、四份审计、NEXT_TASK_ADMISSION，再核对原始services/fbc_*。旧F的FB1与FB2结果保留，不以本轮静态结果替代。没有后台任务需要接管。
+
+仅刷新当前账本（不积分/推理/训练）：
+
+```bash
+/data/wsj/anaconda3/envs/simgen/bin/python -I -B /data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/tools/refresh_collision_checkpoint.py
+```
+
+以下为上一断点历史；其中旧余额、下一项和旧刷新命令不代表当前状态。
+
+
+**2026-09-28最新实测：FB0定型完成，FB1全身控制与独立保存审计通过；FB2第一固定完整任务按接触门失败关闭。** full-body方向保持，不回单臂扩量、不重复已完成B/FB0/FB1。先看[本轮详细结果](EMBODIED_FULL_BODY_FB0_20260928.md)、[三阶段目标](EMBODIED_FULL_BODY_GOALS_20260928.md)、[路线图](EMBODIED_DATA_ROADMAP_20260926.md)。
+
+## 实际断点与下一项
+
+- 本体/控制器：G1 29身体+14 Dex3手，固定Decoupled WBC Balance/Walk、官方GroundOnly，复用CPU隔离运行时。43通道映射与混合单位、50Hz高层/策略及500Hz原生命令已固定，350文件绑定。详见`T/full_body_bootstrap/REPORT.md`。
+- FB1：20秒10000步，降高0.112307m、前进1.010276m、双臂/14手实际动作及稳定停止通过。1000策略输入、10000实际命令和接触力保存重建误差0，恢复状态与历史一致。它是组成能力资格，不是成功任务episode。
+- FB2：250g刚性箱双手取起/携带/放置固定尝试，在7.966s/3983步左手中指触源支撑面（18.014538N/0.110111mm）关闭；未到取物/携带阶段。399输入/3983步独立重建，首个真实失败确定。禁止碰桌由角色门判定，不是单臂15N门。剩13017步不补跑。
+- 原67静态姿态只覆盖抓握/升降/释放局部，漏掉完整走近和降高阶段。新增全tick覆盖拒绝及保存失败回归。下一项为**FB2全路径碰撞感知任务专家的静态准入**，要求实际基座/身体跟踪误差包络与所有阶段/过渡。`prepared/NEXT_TASK_ADMISSION.md`是明确前置，不是ready新动态包；关闭配置不能仅改时序/摆桌后重跑。
+- 完整full-body合格任务0，FB3自生成场景/独立初态未准入；目标不降低，旧145/92单臂数据仅作工程底座。
+
+## 恢复入口与资源
+
+`T=/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1`；`F=T/full_body_bootstrap`。
+
+先核对`F/RESULT.json`、`CHECKPOINT.json`、`evidence/FB1_AUDIT.json`、`evidence/FB2_AUDIT.json`、`full_task/FAILURE_DIAGNOSIS.json`、`prepared/NEXT_TASK_ADMISSION.md`及T的原始`services/fb*`。不能根据旧prepared文件或服务exit0推断科学通过。旧原生PnPBottleTableToTable/B与本次GroundOnly/箱体任务分别记账。
+
+本轮20服务400.262740秒：FB0 226.213461秒，FB1 155.347785秒，FB2 18.701494秒，全部失败与被终止审计成本保留。共享481服务、18615.606045/19500服务秒，余884.393955秒；31GiB下余约4.14GiB；下载6434499284B不变，无GPU。8CPU/内存12与16GiB/单服务≤900秒保持。无自有活动服务、所有主PID0与临时环境清理。
+
+只刷新账本时可运行（不会积分/推理/训练）：
+
+```bash
+/data/wsj/anaconda3/envs/simgen/bin/python -I -B /data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/tools/refresh_full_body_checkpoint.py
+```
+
+不要重新运行已完成的FB1或已关闭的FB2物理worker；服务目录/冻结/原始结果是消耗凭据。普通源码/接口/静态规划继续按已有授权处理，不人为增加修订次数审批。资源未耗尽，未提出重复31GiB/19500秒申请；新控制或任务实验范围先准备具体准入与累计退出。
+
+## 历史保护与统计口径
+
+原7389 capability绑定、32 MD绑定及9旧B输入全部未变。旧480历史服务行逐项保持，共享服务只是其中R/N/T三个根；原累计费用不能按阶段改名清零。新增2次动态13983步、6静态/1399动态推理均单独记入full_body；0渲染/训练/下载。旧单臂145成功开发/391500转移、92完整RGB-D仍保持；本轮全身控制/失败轨迹不混入成功任务训练目录。
+
+更新前五计划与哈希在[归档](history/embodied_fb0_20260928_before/MANIFEST.json)。原最高目标、科学门、来源隔离与关闭分支保持；以下为MD/单臂历史快照，资源余额与旧“下一项”不代表当前队列。
+
+更新：2026-09-28。用户已批准独立6模型离线学习，本包训练、审计、报告及证据封存全部完成，固定学习门未通过。本页与AGENT顶部覆盖旧“待新训练范围批准”；更新前六份文档及哈希在[归档](history/embodied_mass_dynamics_approved_20260928_before/MANIFEST.json)。
+
+## 当前成果与负结果
+
+- MG固定56条件已完成：开发48/48、验证8/8成功，756000积分，0失败/未运行；原产量门通过。
+- 151200状态/动作行、48完整腕部RGB-D的12960时刻/129600动作步已完成全量审计及官方读取；8×3验证稀疏观测隔离。
+- 当前训练入口145成功开发/391500转移；其中92完整RGB-D/24840时刻/248400动作步。真实Torch全量及7类拒绝通过，旧97/44入口保持。
+- 新MD离线学习：窄250g16源对多质量48源；同布局×几何、每模型2400窗口，种子7/17/27共6固定岭回归。六模型及索引在读取验证目标数组前冻结，8条MG验证仅评价。
+- 配对宏误差比1.860885、1.967214、0.878913；中位1.860885超过≤0.90门，仅1/3对改善，三对平均0/8验证条件改善，五活动通道均恶化超过10%；所有预测有限。**固定学习门未通过，分支关闭，不重拟合或改门。**
+- 独立审计重新加载保存权重，验证来源/隔离/等量分层采样及正规方程，复现全部72组结果，0新拟合。该负结果不证明多质量数据普遍有害，也未确定唯一根因。
+- 无新任务策略成功、稳定量产或硬件资格；公开本体一步预测结果与采集质量分别报告。
+
+## 阅读顺序与运行根
+
+先读[AGENT顶部](../AGENT.md)，再读本页、[路线图](EMBODIED_DATA_ROADMAP_20260926.md)、[进展台账](EMBODIED_LONG_RUN_PROGRESS_20260926.md)、[结果详表](EMBODIED_CAPABILITY_RESULTS_20260926.md)和[训练说明](EMBODIED_TRAINING_DATA_20260927.md)。
+
+`T=/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1`；`MD=T/capability_mass_dynamics_probe`。共享账本为同级G1运行时、RoboCasa控制和T三个根，旧费用不清零。
+
+## 已批准授权与实际终态
+
+|项目|实际状态|
+|---|---|
+|MD学习范围|已批准并完成；`MD/evidence/AUTHORIZATION.json`与`USER_APPROVAL.json`绑定原提案，不重问|
+|MG计算|13500→19500已批准应用，56条件及数据交付完成，不重跑|
+|磁盘|31GiB已批准；检查点剩余约4.11GiB，文档/账本有小幅变化|
+|共享服务|461次、18215.343304/19500秒，余1284.656696秒；次数只统计|
+|MD整包成本|4服务、106.421656/600秒，0新失败服务；6拟合模型、0物理/渲染/下载/GPU|
+|MD空间|交付检查时共享新增3153920B，低于128MiB；含保存历史证据开销|
+|MG历史成本|121服务4829.709496秒，加原静态142.079514秒，共4971.789009秒，保持|
+|单项边界|8CPU、MemoryHigh12GiB/Max16GiB；单服务≤900秒、CPU子任务≤600秒；串行可终止|
+|进程|无自有活动服务，主PID0、临时环境已清理；本轮所有PTY已结束|
+
+精确资源读`T/evidence/LONG_RUN_CHECKPOINT.json`、`MD/evidence/CHECKPOINT.json`和原始`services/*/supervisor.json`。历史服务索引`T/evidence/SERVICE_LEDGER.json`已追加本轮，原476条各字段保持；元数据含出处，旧索引存`SERVICE_LEDGER_BEFORE_MASS_DYNAMICS.json`。共享额度不能与更早全部历史总费用混比，服务秒不包含全部开发/对话/人工时间。
+
+## 已完成MD的历史恢复与原后继说明
+
+本批准包已完整结束，不能再运行`apply_mass_dynamics_scope.py`或固定训练worker；已冻结模型存在时入口会拒绝，不能删除凭据/模型绕过。文档中原prepared提案的“尚未批准”是冻结提案原文，以本轮有效授权凭据为准。
+
+如只需恢复中断的文档工作，先读`MD/RESULT.json`、`evidence/AUDIT.json`、`evidence/DELIVERY.json`、`REPORT.md`及本轮服务终态，再更新文档/检查点。可用以下只做账本更新的入口；它不会训练、重采或改变模型：
+
+```bash
+/data/wsj/anaconda3/envs/simgen/bin/python -I -B /data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/tools/refresh_mass_dynamics_checkpoint.py
+```
+
+[下一独立任务检验前置](/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/capability_mass_dynamics_probe/NEXT_TASK_ADMISSION.md)已准备，状态`not_admitted`：当前六模型仅预测速度增量，既无动作策略接口，也未通过本固定比较，不能直接转任务控制。原L/V/W关闭范围不重开。该说明只是缺口与准入要求，**不是ready整包、不含新训练/物理授权，不请求笼统“批准继续”**。
+
+上述NEXT_TASK_ADMISSION是MD结束时的前置说明，原件保留为历史；当前后继已由用户批准的新full-body路线接管，以本页FB0–FB3为准。MD按原质量门失败关闭，不能重训或转成任务策略；该科学负结果不阻止全身主线的独立选型与准备。
+
+## 关键交付与完整性
+
+|用途|相对T路径|
+|---|---|
+|固定学习结果/条件级误差|`capability_mass_dynamics_probe/RESULT.json`、`REPORT.md`|
+|六冻结权重/2400行索引|`capability_mass_dynamics_probe/models`、`evidence/MODELS_FROZEN.json`|
+|独立审计|`capability_mass_dynamics_probe/evidence/AUDIT.json`，72组全部复现|
+|误差图|`capability_mass_dynamics_probe/COMPARISON.png/.svg`|
+|新完整性闭包|`capability_mass_dynamics_probe/BINDING.json`、`evidence/DELIVERY.json`|
+|完整训练入口|`capability_mass_geometry/training_bundle/TRAINING_CATALOG.json`，145/92|
+|MG原终态|`capability_mass_geometry/RESULT.json`、`evidence/SUCCESSOR_QUEUE.json`|
+|MG历史审计|`evidence/MASS_GEOMETRY_SAVED_AUDIT.json`、`MASS_GEOMETRY_RGBD_NATIVE_READER.json`、`MASS_GEOMETRY_INTEGRITY.json`|
+
+旧7389绑定逐项核验完全不变，包括全部已绑定原失败/数据/工具；原148模型、9旧B、31严格适配另行核验。旧`T/capability/BINDING.json`字节保持，MD单独绑定32新文件，SHA-256 `36cdc116abc1969de58e98211f68e1423f3e5e05a290017e251e1c6b2ebc3bd8`。旧绑定快照`T/evidence/CAPABILITY_BINDING_BEFORE_MASS_DYNAMICS.json`。新交付证明`T/evidence/MASS_DYNAMICS_INTEGRITY.json`。
+
+U/P/MG三个训练入口哈希保持；MG统一目录为`87a18a44ff5aab748e36b99ee20a3273f6b94d037e5627e5f20d82c6926f53f0`。模型、复制、压缩或观测重建均不增加开发轨迹，验证和失败继续隔离。
+
+## 长期边界
+
+原B恢复已完成；D最小g1八失败和原整批产量门失败、W累计3物理无效/18未运行、低桌、L、旧V、A/G1关闭结论保持。MG采集通过与MD学习失败都不覆盖这些原结论。
+
+有限有效出力/轮摩擦仍为仿真假设，外部gravcomp及外加力0，内部有限前馈保留；理想配准/FK/底盘反馈假设、严格SG3来源缺口及无硬件/稳定量产资格保持。所有Python继续`-I -B`，保留工作树既有改动，不运行git reset/clean、不擅自提交。

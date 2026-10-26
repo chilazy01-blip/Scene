@@ -1,0 +1,66 @@
+{
+  "at": 1791420736.2078495,
+  "purpose": "preserve pre-review handoff and mutable recovery metadata; no scientific artifact modified",
+  "files": [
+    {
+      "source": "/data/wsj/main/scene/AGENT.md",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/AGENT.md",
+      "sha256": "bfbf6f126a0ac17214a4b0d27abe1eefd4a8757865c18f698ba9354b3d71eee8"
+    },
+    {
+      "source": "/data/wsj/main/scene/docs/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/EMBODIED_LONG_RUN_HANDOFF_20260926.md",
+      "sha256": "4b53d52a35b541e34c502ef56e26082b03088613c8933bc583fd4cd4de8e4c51"
+    },
+    {
+      "source": "/data/wsj/main/scene/docs/EMBODIED_NEW_CHAT_HANDOFF_20261006.md",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/EMBODIED_NEW_CHAT_HANDOFF_20261006.md",
+      "sha256": "dac03cfd32583bf75396c4d885e656f05a896dce18ad29f9bf123bd4f7773ac6"
+    },
+    {
+      "source": "/data/wsj/main/scene/docs/EMBODIED_FULL_BODY_GOALS_20260928.md",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/EMBODIED_FULL_BODY_GOALS_20260928.md",
+      "sha256": "c5d5024353a8d68baadf6bf76ac8b2be98151fd49d472ba9f20b80571271ee89"
+    },
+    {
+      "source": "/data/wsj/main/scene/docs/EMBODIED_DATA_ROADMAP_20260926.md",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/EMBODIED_DATA_ROADMAP_20260926.md",
+      "sha256": "2bc3c379f7799a169812aeb5c96f4beb416718f22bf6bd85a7a2ee8861ada2fa"
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/RECOVERY_POINTER.json",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/05_RECOVERY_POINTER.json",
+      "sha256": "6ab02dd04331efdf54f10c2e418716068dc49972106abc9d1c5d3aa18c518062"
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/PROGRESS.json",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/06_PROGRESS.json",
+      "sha256": "8b23cb5cba524c16d3ede65b74c5a38db8882a8c21d6829bf53a81ad8cd5d58a"
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/SCIENTIST_STATE.json",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/07_SCIENTIST_STATE.json",
+      "sha256": "274134dab5d8904c5443613c88f2b55611cc7610ec2b64a6c310f4f1bcd316bf"
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/CURRENT_LEDGER.json",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/08_CURRENT_LEDGER.json",
+      "sha256": "eef93ca06427c6fa2588a510b419286a9ac39e9343e1cf0af09850be5a45cbf1"
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/CHECKPOINT.json",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/09_CHECKPOINT.json",
+      "sha256": "7b345b2bb099c563cef89a10e458b71bf40878bfaa202951e20b43f119be56c4"
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/CHECKPOINT.json",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/10_CHECKPOINT.json",
+      "sha256": "7b345b2bb099c563cef89a10e458b71bf40878bfaa202951e20b43f119be56c4"
+    },
+    {
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/evidence/LONG_RUN_CHECKPOINT.json",
+      "copy": "/data/wsj/main/scene/docs/history/embodied_fb2_review_20261008_before/11_LONG_RUN_CHECKPOINT.json",
+      "sha256": "7b345b2bb099c563cef89a10e458b71bf40878bfaa202951e20b43f119be56c4"
+    }
+  ]
+}

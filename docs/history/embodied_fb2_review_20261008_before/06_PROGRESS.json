@@ -1,0 +1,61 @@
+{
+  "at": 1791388008.259254,
+  "objective": "FB2 actual complete task, synchronized public data, independent audit, export and actual reader",
+  "status": "blocked_pending_candidate5_scope_approval",
+  "current_candidate_number": 5,
+  "current_candidate_scope": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/passive_damping_r1",
+  "physical_admitted": false,
+  "qualified_fb2_episodes": 0,
+  "full_task_started": false,
+  "next_report_epoch": 1791401756.5606642,
+  "report_is_not_stop": true,
+  "static_cap": 92000,
+  "static_used": 91431,
+  "previous_candidates": [
+    {
+      "number": 1,
+      "scope": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007",
+      "closed": true,
+      "actual_failure": "arm_speed at3.48sec reference71.5",
+      "independent_audit_passed": true
+    },
+    {
+      "number": 2,
+      "scope": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/smooth_command_r1",
+      "closed": true,
+      "actual_failure": "torso-left-wrist contact at3.095sec reference35.5",
+      "independent_audit_passed": true
+    },
+    {
+      "number": 3,
+      "scope": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/stage_aware_r1",
+      "closed": true,
+      "actual_failure": "workspace/progress_timeout at9.46sec phase156",
+      "independent_audit_passed": true
+    },
+    {
+      "number": 4,
+      "scope": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/wbc_intent_r1",
+      "closed": true,
+      "actual_failure": "right-middle-finger/table contact at8.295sec phase158",
+      "independent_audit_passed": true
+    }
+  ],
+  "ledger": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/CURRENT_LEDGER.json",
+  "pending_user_approval": true,
+  "current_candidate_closed": false,
+  "new_static_forwards": 7838,
+  "approval_scope": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/passive_damping_r1/CANDIDATE_SCOPE_PROPOSAL_R1.json",
+  "last_report": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/FOUR_HOUR_REPORT_R1.json",
+  "last_report_epoch": 1791387356.5606642,
+  "data_code_preflight": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/fb2_delivery_preparation_r1/CODE_PREFLIGHT_R2.json",
+  "data_actual_validation_pending": true,
+  "integrity_verification": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/REPORT_CHECKPOINT_VERIFICATION_R2.json",
+  "no_active_services": true,
+  "independent_data_audit_preflight": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/fb2_delivery_preparation_r1/INDEPENDENT_AUDIT_PREFLIGHT_R1.json",
+  "delivery_plan": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/prepared/phase_feedback_20261007/fb2_delivery_preparation_r1/PLAN_R2.json",
+  "goal_status": "blocked",
+  "goal_complete": false,
+  "blocked_audit": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_stretch_ai_admission_20260926_v1/full_body_milestone/feasibility_guard_v4/execution/fb2_goal_20261007_01/SCOPE_BLOCKER_AUDIT_R3.json",
+  "orchestrator_active": false
+}
