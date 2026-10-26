@@ -1,0 +1,996 @@
+{
+  "schema": "branch1-github-critical-source-bindings/v1",
+  "checkpoint_commit": "2f2791348af1f80adf6dad17876b46e79641b28a",
+  "local_root": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1",
+  "source_role": "development_validation",
+  "dataset_split": "unassigned",
+  "new_physics_steps": 0,
+  "files": [
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/AUTHORIZATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/AUTHORIZATION.json",
+      "sha256": "d1ee7ff48ca6c07296291620eeb72c8b8e0de385bc5638c27b9950dcca17ef70",
+      "size_bytes": 632
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PLAN.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/PLAN.json",
+      "sha256": "e403f1b9dc434796bef27be89e5cc4184cfb93faa8adce1aa023f90680ed0a53",
+      "size_bytes": 2116
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PLAN_v2.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/PLAN_v2.json",
+      "sha256": "feff05dc4ba75db8798ffee8c38f9ce81366bcde7196d3433a6220d1a1fd1656",
+      "size_bytes": 2411
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PLAN_v3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/PLAN_v3.json",
+      "sha256": "319858eaf249b53becb6aa4b99a427fc1add38ad3af4fcb32fa57f8d68e2e746",
+      "size_bytes": 2385
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PLAN_v4.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/PLAN_v4.json",
+      "sha256": "564aed23f80ab5c37dd936becac19396cbf99cfa90c22fd22b0bcb5b8157b1cc",
+      "size_bytes": 2484
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/FINAL_REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/FINAL_REVIEW.json",
+      "sha256": "6e9e7287fc817b79d2c7b9cea5e7bfcbe6400b5d8085108f0f29342cdf9c453f",
+      "size_bytes": 33672
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/DATASET_MANIFEST.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/DATASET_MANIFEST.json",
+      "sha256": "542beec5ec66f7f87802a43492c215f066b6e6d801f67d0fbae9398b4cc83bde",
+      "size_bytes": 12276
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/COST_FINAL_SNAPSHOT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/COST_FINAL_SNAPSHOT.json",
+      "sha256": "45044eec7a75ef2352b6546281e56b7f85a5c56587572b97be6871a00bbe55bf",
+      "size_bytes": 2710
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/EXPERIENCE_CATALOG_V2.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/EXPERIENCE_CATALOG_V2.json",
+      "sha256": "7637864e068e53d850b2643fc11f26a8f9e3b4280d394247a470e9281fd0a1a2",
+      "size_bytes": 54380
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/EXPERIENCE_UPDATE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/EXPERIENCE_UPDATE_CHECK.json",
+      "sha256": "0ca835857eb82f129f2976d57a44867108e3e8ee3f927bbd0e8fd1443d3b9df6",
+      "size_bytes": 1022
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/EXPERT_ALL_CALLS_REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/EXPERT_ALL_CALLS_REVIEW.json",
+      "sha256": "9f66c9cb22c1065760d7c589c2027d341d6651fb7a799ba9c2c971f597d4721c",
+      "size_bytes": 3041
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CUP_REGRESSION_COMPARISON.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CUP_REGRESSION_COMPARISON.json",
+      "sha256": "b8b13f3cdf8906992518e335cb2e92c11b7d69579677cb17c4964a28df980788",
+      "size_bytes": 1107
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/FINAL_V004_FAILURE_DIAGNOSIS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/FINAL_V004_FAILURE_DIAGNOSIS.json",
+      "sha256": "adcdf24b3ab7b7422719ffce63b434118c288991867eb086f9a9ecf3b766a8e4",
+      "size_bytes": 52216
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/S02_V002_FORCE_BALANCE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/S02_V002_FORCE_BALANCE_CHECK.json",
+      "sha256": "5bedaced0e994fd95938239855de033b655fd6d0527c5869660a79145a5bae9d",
+      "size_bytes": 3786
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/S03_CLOSE_OBSERVATIONS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/S03_CLOSE_OBSERVATIONS.json",
+      "sha256": "afeb12f3e5785a57483fd982c3ff76e5e92a9ac62ca1a0c97f5b6693a3393130",
+      "size_bytes": 821
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/ROBOT_DATA_SCHEMA.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/ROBOT_DATA_SCHEMA.json",
+      "sha256": "cdbff6a21fe64cb644b21e2f584be45b1e991b5d56f12e6560084eed98c7bbcb",
+      "size_bytes": 23616
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/FEEDBACK_FRAME_CORRECTION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/FEEDBACK_FRAME_CORRECTION.json",
+      "sha256": "18ef52afbcbb71062255b48f08870076777e4123a6e0ede3ee6115281f2bf26b",
+      "size_bytes": 1347
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/FEEDBACK_STATE_ORDER_CORRECTION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/FEEDBACK_STATE_ORDER_CORRECTION.json",
+      "sha256": "7d3f152cc044757c5ac430ee9783927a0e7128159a8816406581ac85dd9e8c51",
+      "size_bytes": 1014
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PROPOSAL_POINTER_RECONCILIATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/PROPOSAL_POINTER_RECONCILIATION.json",
+      "sha256": "c4860e90c6b0b90c5268131763b3438949a8e4a8be04c6c63d55e4407b8254f7",
+      "size_bytes": 1218
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/V003_REVIEW_IMAGE_REUSE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/V003_REVIEW_IMAGE_REUSE_CHECK.json",
+      "sha256": "7ee1099b5116cd2b4fae2a96e9a97683d1c54fedd8de72614a98f5d89035e7cc",
+      "size_bytes": 572
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/V004_REVIEW_IMAGE_REUSE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/V004_REVIEW_IMAGE_REUSE_CHECK.json",
+      "sha256": "fecdd46406b8eb8149ebccfb105de8eb5f57f8b4636b3ffd8ed8f5e33e9f2149",
+      "size_bytes": 453
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CHECKPOINT_BOUND_EVIDENCE_PROTECTION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CHECKPOINT_BOUND_EVIDENCE_PROTECTION.json",
+      "sha256": "26680dc7be6a22465fbd2be09b6ef05c3214c894ead8bd941ee02d9ed56c7cfe",
+      "size_bytes": 11770
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/OLD_SOURCE_PROTECTION_CHECK_FINAL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/OLD_SOURCE_PROTECTION_CHECK_FINAL.json",
+      "sha256": "96c9f7ea39fffd5ae5dc65643910ef29fb55c17a3348ae6e8f24910c21656b03",
+      "size_bytes": 640
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/FORK_PROVENANCE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/FORK_PROVENANCE.json",
+      "sha256": "1056cd3648dd0cf02e9f63b5b56248a078f01c4d16b7a9ef8ca7430af1d3fa32",
+      "size_bytes": 3598
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/SCOPE_IDENTITY_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/SCOPE_IDENTITY_CHECK.json",
+      "sha256": "987bd27da9311bf07d798dc71f42b5d0ee32c0906485e012ee92b8a6e4eb18a8",
+      "size_bytes": 1039
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/TEST_PREFLIGHT_RESULT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/TEST_PREFLIGHT_RESULT.json",
+      "sha256": "efd711a6b0c428d9418a34158388c186b42c4ebde81b43262fd3f2d27962fcaa",
+      "size_bytes": 783
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/HISTORICAL_CUP_PROMOTION_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/HISTORICAL_CUP_PROMOTION_CHECK.json",
+      "sha256": "bbb1647c0fca772b6cd3f5c967e206ff01611c714a65ccf9384e7e3289d70296",
+      "size_bytes": 2661
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/HISTORICAL_BOTTLE_PROMOTION_REJECTION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/HISTORICAL_BOTTLE_PROMOTION_REJECTION.json",
+      "sha256": "fb5453305950a7f9f5ec65768a52cda34eb1119912b5cb7be0dc67ebd029f12c",
+      "size_bytes": 2999
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PRIMARY_VISUAL_OBSERVATIONS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/PRIMARY_VISUAL_OBSERVATIONS.json",
+      "sha256": "d43170ac9345d25b0c61c4a9dbc2121bde1496974bf1cbf74c19677f2e32b56d",
+      "size_bytes": 4144
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/FINAL_ARTIFACT_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/FINAL_ARTIFACT_CHECK.json",
+      "sha256": "88231d1ab42d1310f618b645f69709143295ccb8fb17b1c12ca1f814109bafda",
+      "size_bytes": 7900
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/SESSION_CLOSEOUT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/SESSION_CLOSEOUT.json",
+      "sha256": "fad20cf401b19952c1eb20b2056e69555bc43e3a8d4b4244945252f2dc093dea",
+      "size_bytes": 1837
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/V004_RELEASE_PLOT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/V004_RELEASE_PLOT.json",
+      "sha256": "ee51680b5211e7d36955fd1d1cdad42f6163e052b5b5b094c083fa122ac7ed20",
+      "size_bytes": 1054
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CANDIDATE_CONTRACT_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CANDIDATE_CONTRACT_CHECK.json",
+      "sha256": "edaf7cd056ddf6732c951e527aa196713a65e19b10b76481e1dce6eb708e35f8",
+      "size_bytes": 1062
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CANDIDATE_V002_RECORDED_STATE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CANDIDATE_V002_RECORDED_STATE_CHECK.json",
+      "sha256": "e0c0435af94d3d6516eeb9d61321ca6af2f4652a5f1a041bce3f0302d2e7fc14",
+      "size_bytes": 3185
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CANDIDATE_V003_ACTUAL_HOLD_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CANDIDATE_V003_ACTUAL_HOLD_CHECK.json",
+      "sha256": "1220fe75637a44311f674e45b7ad99020375c5f106c926a689dea54171cf3f6e",
+      "size_bytes": 1327
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CANDIDATE_V004_REAL_WRENCH_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CANDIDATE_V004_REAL_WRENCH_CHECK.json",
+      "sha256": "5c95851cfc9e036ed51763c66764d71243765563d28dbc054bd109be7aa96564",
+      "size_bytes": 1688
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CANDIDATE_SOURCE_REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CANDIDATE_SOURCE_REVIEW.json",
+      "sha256": "d75e645451643b483888d6b7b7e9cab46646446e0d88d169d7f96776da256ea8",
+      "size_bytes": 973
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CANDIDATE_V002_SOURCE_REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CANDIDATE_V002_SOURCE_REVIEW.json",
+      "sha256": "8fd4d0e8044a8ab002d1e6ab5006dcbd990d6db0b0153a19626720504e7698dd",
+      "size_bytes": 864
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CANDIDATE_V003_SOURCE_REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CANDIDATE_V003_SOURCE_REVIEW.json",
+      "sha256": "a36ce688a3aa06f7a3efbae15282256ffe521e9e2697d5f0fc1dc3a00df69de5",
+      "size_bytes": 999
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/CANDIDATE_V004_SOURCE_REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/CANDIDATE_V004_SOURCE_REVIEW.json",
+      "sha256": "cd74e71b5b4b2726615a895ac434b85dc009480e8c0ca43251d15025a69f7de1",
+      "size_bytes": 1034
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/S02_bottle_FINAL_COMPLETE_SKILL_RETRIEVAL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/S02_bottle_FINAL_COMPLETE_SKILL_RETRIEVAL.json",
+      "sha256": "628b71db75801bfb194fc0c1a35f09c9a0903bcd0c3f0aef39d5a7da1f3783bc",
+      "size_bytes": 2472
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/S02_bottle_FINAL_DIAGNOSIS_RETRIEVAL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/S02_bottle_FINAL_DIAGNOSIS_RETRIEVAL.json",
+      "sha256": "d8b23c380094ea0b67171d67cefb3c3d3984d99b8e22313142a9bb2a6472b2a1",
+      "size_bytes": 19378
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/S03_bottle_FINAL_COMPLETE_SKILL_RETRIEVAL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/S03_bottle_FINAL_COMPLETE_SKILL_RETRIEVAL.json",
+      "sha256": "3fa7b2cf307586e5ced5450d8eaaf917f6bb0a219b2981a36774e2362c06a5ae",
+      "size_bytes": 2664
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/S03_bottle_FINAL_DIAGNOSIS_RETRIEVAL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/S03_bottle_FINAL_DIAGNOSIS_RETRIEVAL.json",
+      "sha256": "be5c56d507ab35c0555df4acecc436d73459c9ecbe296005360e4f02e8b0d362",
+      "size_bytes": 7318
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/V004_RELEASE_DIAGNOSIS.png",
+      "repository_path": "docs/experiments/expert_branch1_20261026/V004_RELEASE_DIAGNOSIS.png",
+      "sha256": "73edf406665c7b058c70769e40d8525b910cfd960e0e32913482b323e2d787ea",
+      "size_bytes": 175473
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/TEST_PREFLIGHT.log",
+      "repository_path": "docs/experiments/expert_branch1_20261026/validation/TEST_PREFLIGHT.log",
+      "sha256": "269e0c7b0f30ea279070e006c6c28f93974df1cc2b6356eaead6a37be1ba0e70",
+      "size_bytes": 4266
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/TEST_PREFLIGHT_V2.log",
+      "repository_path": "docs/experiments/expert_branch1_20261026/validation/TEST_PREFLIGHT_V2.log",
+      "sha256": "ea1ce9a68348a0a0d3ffe88c0e035ba24ac8666e7b9a7cb809029e57c0b240fa",
+      "size_bytes": 99
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/TEST_ACCOUNTING.log",
+      "repository_path": "docs/experiments/expert_branch1_20261026/validation/TEST_ACCOUNTING.log",
+      "sha256": "d2d744b6b2df2bbb0d73cb7a43f6675bd03881bc2a2c2a74e54ecf18667789e2",
+      "size_bytes": 98
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/CASE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/CASE.json",
+      "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+      "size_bytes": 12643
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/PROTOCOL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/PROTOCOL.json",
+      "sha256": "c470b55716378f1e27333a768f852f121022388fc3df3ecc843f56ef7e331278",
+      "size_bytes": 161149
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/MEASUREMENTS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/MEASUREMENTS.json",
+      "sha256": "59e462aac2aaafde97a5ca593908becc25d4bd8337520cc658bc0aaec853a0bb",
+      "size_bytes": 45219
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/FINAL_VERIFICATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/FINAL_VERIFICATION.json",
+      "sha256": "e27076483762e9006a73976a8c1a409a45aea2b5c6f20bb340ceb1fb85afdd3f",
+      "size_bytes": 3668
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/PHASE_FEEDBACK_V3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/PHASE_FEEDBACK_V3.json",
+      "sha256": "2322e4a875188bb8cedc98cbfad98474ee2ed6a25bf35d1c28ec8bd597a99140",
+      "size_bytes": 166094
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/SPATIAL_FEEDBACK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/SPATIAL_FEEDBACK.json",
+      "sha256": "5acc8aba85ec72b8cbc14beb1abf98092e0ecfa51e72c939b25122bf422752c1",
+      "size_bytes": 158354
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/FEEDBACK_STATE_ORDER_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/FEEDBACK_STATE_ORDER_CHECK.json",
+      "sha256": "5bb5143b654fd020d7a30af776a3b4e501c4eea5ce99c89966a4b6a02991c613",
+      "size_bytes": 1845
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/FORCE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/FORCE_CHECK.json",
+      "sha256": "d37adf144686c81a829e9845ec5841f6469c0789a37d62fddf1eedec51800797",
+      "size_bytes": 15629408
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/NATIVE_CALL_COUNT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/NATIVE_CALL_COUNT.json",
+      "sha256": "4a57cb645b77c35ae4ca0dca62852b6d3a8fc7ec93ab390871d150237d118860",
+      "size_bytes": 369
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/JOB.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/JOB.json",
+      "sha256": "e50b51c0731f9f0c60e34f3e20cce026807a61af806418d240a22deb75e45f1f",
+      "size_bytes": 28615
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/REPORT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/full/REPORT.json",
+      "sha256": "7f56e82296b82c9cbea09dcfcb98867a14d364828162fec4010b7fc67e783291",
+      "size_bytes": 6798006
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/AUDIT_v2.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/full/AUDIT_v2.json",
+      "sha256": "2f8836cad562e3a1141c7095d15be745e14e561e503fa74d12ca8ecb650800cf",
+      "size_bytes": 2594
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/partial_delivery_v4/REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/partial_delivery_v4/REVIEW.json",
+      "sha256": "9ea6d6601d38832248e76a1cdc11580b020a32abffc8ed08b11479255c1a3978",
+      "size_bytes": 11691
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/partial_delivery_v4/decoded_review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "ed144be91e3ba61b41661c0565036a76b981952a573efe6e272f42117a8ed94c",
+      "size_bytes": 1146060
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/placement_detail/review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v001/placement_detail/review.jpg",
+      "sha256": "853813195d72fb92807a6967708979ce05f6914481818874464fe4e19b3f8033",
+      "size_bytes": 822875
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/CASE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/CASE.json",
+      "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+      "size_bytes": 12643
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/PROTOCOL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/PROTOCOL.json",
+      "sha256": "38ad9db65d12da9f802ae99973d647a962dd03560a27a6b903fcebd02fcc8e53",
+      "size_bytes": 163260
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/MEASUREMENTS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/MEASUREMENTS.json",
+      "sha256": "5dc14d037bdb8c5b29249af5370290a46a59d412bf9c58549c558f9bb6d30c1a",
+      "size_bytes": 45198
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/FINAL_VERIFICATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/FINAL_VERIFICATION.json",
+      "sha256": "3ff828752edb291e1c60620b5f862b13d012cd74741646bc833f0a66633030ee",
+      "size_bytes": 3632
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/PHASE_FEEDBACK_V3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/PHASE_FEEDBACK_V3.json",
+      "sha256": "f08b6b87634a15f9722b1c72472a44ba3ab366592eb1c67d9d3ae282ced18b7c",
+      "size_bytes": 168611
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/SPATIAL_FEEDBACK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/SPATIAL_FEEDBACK.json",
+      "sha256": "3f4f9c6fb9129f6765c0052197344a78550043950ffc279b351abd8b042f4275",
+      "size_bytes": 163291
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/FEEDBACK_STATE_ORDER_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/FEEDBACK_STATE_ORDER_CHECK.json",
+      "sha256": "e2ade37351f8b045380ed07aacc7505f9c882bdb0d9b05c76413b461fc5a9344",
+      "size_bytes": 1845
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/FORCE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/FORCE_CHECK.json",
+      "sha256": "765c506fc193ad356ef34c2673062bf1762aa4d581344e1506149e97153edce5",
+      "size_bytes": 15629408
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/NATIVE_CALL_COUNT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/NATIVE_CALL_COUNT.json",
+      "sha256": "8ba334d6bf1121c21ce2591b6c9f2a2b047094ec7717989e699f2f24a040f9c3",
+      "size_bytes": 369
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/JOB.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/JOB.json",
+      "sha256": "a4c17ba37d03b1aef0e6ba16fafca4b480d00c844670d3934797c8b58afaa5da",
+      "size_bytes": 28609
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/full/REPORT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/full/REPORT.json",
+      "sha256": "40734830f1060200095590cceef2dbbb568b784a0855a382e066a398f2ccc128",
+      "size_bytes": 7071430
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/full/AUDIT_v2.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/full/AUDIT_v2.json",
+      "sha256": "07956e98805df21c66f5f49b6a46278a0a9041bfae1a350949cd2f4c6cf83d0f",
+      "size_bytes": 2594
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/partial_delivery_v4/REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/partial_delivery_v4/REVIEW.json",
+      "sha256": "c0d29abf9e5f45976f4b81391ed51dd25c33ed1e1905dc8d6223fc63a318f64c",
+      "size_bytes": 11956
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/partial_delivery_v4/decoded_review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "de61d3ff4a504744f33ab5a617666cdc9ef7429c2ac6be32dfb4136bc5a65db5",
+      "size_bytes": 1144446
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/placement_detail/review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v002/placement_detail/review.jpg",
+      "sha256": "7559fc2a438a2cb5cc6d70a57c70fbe54e1fbc60128857d3d929338321ab8c70",
+      "size_bytes": 823036
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/CASE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/CASE.json",
+      "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+      "size_bytes": 12643
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/PROTOCOL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/PROTOCOL.json",
+      "sha256": "4c675eaba066c7c2b6d3bb3d66721ea33a2c68530fb4aa5f554fed448eb1b690",
+      "size_bytes": 164388
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/MEASUREMENTS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/MEASUREMENTS.json",
+      "sha256": "4109239f172c0210e22e659132746ea852f7964ddde592d5ee7d3c5a6da78186",
+      "size_bytes": 45206
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/FINAL_VERIFICATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/FINAL_VERIFICATION.json",
+      "sha256": "096a3b8a2e6c425fe56db24ff69df945761753fc8886b0f87c1d1cdb19556e20",
+      "size_bytes": 3605
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/PHASE_FEEDBACK_V3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/PHASE_FEEDBACK_V3.json",
+      "sha256": "9818e6057df446867f73a320c38980c07adff49e97bdeb48d8c28309f4251c04",
+      "size_bytes": 180619
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/SPATIAL_FEEDBACK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/SPATIAL_FEEDBACK.json",
+      "sha256": "bb596cad68bb660f5b7449c460549d1612990cae2c6163cbdae24d092d602993",
+      "size_bytes": 163286
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/FEEDBACK_STATE_ORDER_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/FEEDBACK_STATE_ORDER_CHECK.json",
+      "sha256": "8edb5313d21a1b08461525189ac7e6ccb3ff4217e0cd8c86ac3c87ec1b0d344d",
+      "size_bytes": 1845
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/FORCE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/FORCE_CHECK.json",
+      "sha256": "57a146b7f76bfc98f8ed6c4e0d1a7c26f5cbd6121fe2c015401f9292f68ab598",
+      "size_bytes": 15629408
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/NATIVE_CALL_COUNT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/NATIVE_CALL_COUNT.json",
+      "sha256": "eedebbde96b052719e635228c470ef2d1a888ca2ca6482214fcda885b1ab6297",
+      "size_bytes": 369
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/JOB.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/JOB.json",
+      "sha256": "7f2d389d134bc1d8255eade3f6418a8c3ec0fa254b5e905900043b1b646191be",
+      "size_bytes": 28604
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/REPORT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/full/REPORT.json",
+      "sha256": "c550f91994f7c1b3da549d0f191ad88f886be0366c28e08d6d4bc7953f0869e7",
+      "size_bytes": 7917635
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/AUDIT_v4.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/full/AUDIT_v4.json",
+      "sha256": "358d05646e7e521f02a5866f5f65337bc30ee8b86d5402171074d696794dea5c",
+      "size_bytes": 7795
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/partial_delivery_v6/REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/partial_delivery_v6/REVIEW.json",
+      "sha256": "c19efc462c777fc308ee8ea4898bfcdac3f96530b85903837444dd6305bbcc18",
+      "size_bytes": 12958
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/AUDIT_OBSERVATIONS_v3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/full/AUDIT_OBSERVATIONS_v3.json",
+      "sha256": "a476fdb424a1d9ebe553c59a77fb79754c431e143ab275cdb10eec2a8c76715c",
+      "size_bytes": 1772
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/AUDIT_v3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/full/AUDIT_v3.json",
+      "sha256": "f1e0314e8e6068e90b9247d882beada05b911d538b0e3629ada81340580f5c00",
+      "size_bytes": 2707
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/partial_delivery_v4/decoded_review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "322f6f30f47b7ea37a4463ead1ce6fde3d686cc9529477fb723cb2b017858990",
+      "size_bytes": 1144105
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/placement_detail/review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v003/placement_detail/review.jpg",
+      "sha256": "0459ce279dc9dff7b8d264e9ed598a48e10854b058d4ecc30d83be43e83cfeba",
+      "size_bytes": 823149
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/CASE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/CASE.json",
+      "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+      "size_bytes": 12643
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/PROTOCOL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/PROTOCOL.json",
+      "sha256": "a56e12d3189c9e87e5a3c608dfc6f20885164b9ae986bdf5201e811f316e7356",
+      "size_bytes": 165249
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/MEASUREMENTS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/MEASUREMENTS.json",
+      "sha256": "07d00553eed3d589880e30ed68d82c8ca77af9d149cd8dd8c9f3e141334a6563",
+      "size_bytes": 45214
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/FINAL_VERIFICATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/FINAL_VERIFICATION.json",
+      "sha256": "8992452cfa9e1b038d2c3d840c2305783b1e6980a6b80bb3225a33fd227675ba",
+      "size_bytes": 3651
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/PHASE_FEEDBACK_V3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/PHASE_FEEDBACK_V3.json",
+      "sha256": "7c195a4cfb6875d31fe8bb517fd69ed59025fc3f99a8a2c8fc64b78de675d7bf",
+      "size_bytes": 235046
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/SPATIAL_FEEDBACK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/SPATIAL_FEEDBACK.json",
+      "sha256": "055063c60a097e4fea3a038f8f709771de5bd5eaf4a91df65d69306970063600",
+      "size_bytes": 165714
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/FEEDBACK_STATE_ORDER_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/FEEDBACK_STATE_ORDER_CHECK.json",
+      "sha256": "353d12e17d9d3e861be9828a638449f7d36d82ec5b5f24da851da492cdb937bc",
+      "size_bytes": 1845
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/FORCE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/FORCE_CHECK.json",
+      "sha256": "3ea0ed2d9800c12dcaa56de0ee2dc491db0526c76394c9ce652e445fa6348c89",
+      "size_bytes": 15629408
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/NATIVE_CALL_COUNT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/NATIVE_CALL_COUNT.json",
+      "sha256": "07c8b055815a4bf9aa6addfa90d7feb18a875d7663b1e7274bfa4202dc2ea42c",
+      "size_bytes": 369
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/JOB.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/JOB.json",
+      "sha256": "f31be197c2161366ff79766448898157f32143158a03e3eb8065bec2577f410d",
+      "size_bytes": 28624
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/REPORT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/full/REPORT.json",
+      "sha256": "79c0688c8e91bfe83c3cf3687580025f9a570ac13098697a61e311d661155b75",
+      "size_bytes": 9758663
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/AUDIT_v4.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/full/AUDIT_v4.json",
+      "sha256": "f5e41378f905af2078f6304b4486c67231b3bf63a732b78ddee9f27972972f87",
+      "size_bytes": 7795
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/partial_delivery_v6/REVIEW.json",
+      "sha256": "5c87a4d6d9622da09155292107861b73cce9b568b27de621a48ae685eefdc2e1",
+      "size_bytes": 12956
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/AUDIT_OBSERVATIONS_v3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/full/AUDIT_OBSERVATIONS_v3.json",
+      "sha256": "ac5ba7ff6d044538248b4a2af9ef228a84173a51ba728c1ec56837b54d1d7d53",
+      "size_bytes": 1772
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/AUDIT_v3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/full/AUDIT_v3.json",
+      "sha256": "0f4e0e216588dd1f1cebe0263b70031e09cfadaa8813427dca3d1543fdbd6942",
+      "size_bytes": 2707
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v4/decoded_review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "aca0d3cdc4d4c3878f5ab682a7fbf01b1a4f2300bbd92fed34e5974a0dba5687",
+      "size_bytes": 1143939
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/placement_detail/review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s02_branch1_v004/placement_detail/review.jpg",
+      "sha256": "e0555743eaade466daeb62b5fce1d74b21417015760319bbd53c2796ab8a3482",
+      "size_bytes": 823198
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/CASE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/CASE.json",
+      "sha256": "2e6e5e43892a065e0336f6c5b47c08d56691e573857718265a32e47e4847905d",
+      "size_bytes": 12543
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/PROTOCOL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/PROTOCOL.json",
+      "sha256": "b9b83297d561081afc6a5f70690bb781ce8837cb063d9ca29ada3724cd44b3ea",
+      "size_bytes": 161149
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/MEASUREMENTS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/MEASUREMENTS.json",
+      "sha256": "50397987d050f47f345d4fe18213f04c37809d2bf00b65f2a87690f0383081ea",
+      "size_bytes": 43060
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/FINAL_VERIFICATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/FINAL_VERIFICATION.json",
+      "sha256": "1b55162b7c181b16ec5f3f15128c6ac7b069508c8f7850727273b51e2d3d49ea",
+      "size_bytes": 3680
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/PHASE_FEEDBACK_V3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/PHASE_FEEDBACK_V3.json",
+      "sha256": "e30ceffcdccb21429ade6f3be239efaba24de0b48a32e3c39b0a50a9367e82f5",
+      "size_bytes": 92471
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/SPATIAL_FEEDBACK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/SPATIAL_FEEDBACK.json",
+      "sha256": "6bd4dc6877af5aa33e232f475ab20fd1acddc9c2ea0ba1ef5e04240e76fe93d7",
+      "size_bytes": 75396
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/FEEDBACK_STATE_ORDER_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/FEEDBACK_STATE_ORDER_CHECK.json",
+      "sha256": "e174e9a6c7dc769393b09a7bdad8a2a740e44a9fafaf26c4b423e7a284349316",
+      "size_bytes": 1844
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/FORCE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/FORCE_CHECK.json",
+      "sha256": "0403a6b6f81713989cce6fadfb4b8e108de07c7eedcab0e7efa0fde4fe558c89",
+      "size_bytes": 3496005
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/NATIVE_CALL_COUNT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/NATIVE_CALL_COUNT.json",
+      "sha256": "58044c9f5fbbb2cb1d87386324d90a6ab536aeee8105a20f83ab000a5b6bce51",
+      "size_bytes": 369
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/JOB.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/JOB.json",
+      "sha256": "428e9da0b65435624a270adb99a13d47842c5dde2bd3cfebca90f26ce485ce1c",
+      "size_bytes": 19539
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/full/REPORT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/full/REPORT.json",
+      "sha256": "ce299a7a032d7fcad3bd58f4db516e34709af28a12a35b63b15e22e813b2bf7e",
+      "size_bytes": 462903
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/full/AUDIT_v2.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/full/AUDIT_v2.json",
+      "sha256": "2d43aa21224da07366c2ad2e2d290b63c7136e6e6cc36b42e965bac98a6c34fb",
+      "size_bytes": 2592
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/partial_delivery_v4/REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/partial_delivery_v4/REVIEW.json",
+      "sha256": "da9b735ad0fdaa5e6c942199f1b59f86ab27f6929a984d5333d41049b9423734",
+      "size_bytes": 9180
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/partial_delivery_v4/decoded_review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "cbb06a53266219ece057db34ce9a9f390173ecfe76997bc796763acf5e5a40df",
+      "size_bytes": 522934
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/placement_detail/review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/bottle_s03_branch1_v001/placement_detail/review.jpg",
+      "sha256": "d10a15aea1c1a69ad884b8b71ecbd1b99cc45932358c62fa860774fa789d5579",
+      "size_bytes": 343416
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/CASE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/CASE.json",
+      "sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+      "size_bytes": 12416
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/PROTOCOL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/PROTOCOL.json",
+      "sha256": "c79921700f33acb0cc6d1cfabe4f642a9ebdf0d0333338bcadd1b07c5aa2e7e9",
+      "size_bytes": 158920
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/MEASUREMENTS.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/MEASUREMENTS.json",
+      "sha256": "15e48bae63fb2c50adb2eea911aed11aadcce958d6f25bceccd154f9534b76ea",
+      "size_bytes": 6628
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/FINAL_VERIFICATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/FINAL_VERIFICATION.json",
+      "sha256": "4967c22b65d8f3da67f7a9582f41317d3c583f9ffdcb41b3c2bff67f21bc3ce7",
+      "size_bytes": 4836
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/PHASE_FEEDBACK_V3.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/PHASE_FEEDBACK_V3.json",
+      "sha256": "bdde64bc0598d8088e336f5e347bfd11037c6c73f3a089290fe8e156c0d23b14",
+      "size_bytes": 166902
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/SPATIAL_FEEDBACK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/SPATIAL_FEEDBACK.json",
+      "sha256": "3ed75e0e111ed1858a45fb0317a57aeea63ae56c1193811681f1546ad747b396",
+      "size_bytes": 180925
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/FEEDBACK_STATE_ORDER_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/FEEDBACK_STATE_ORDER_CHECK.json",
+      "sha256": "3cf66a4207e1fd84c72468c24a627b7916828d6037dc6f424a7b1cb320d94637",
+      "size_bytes": 1835
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/FORCE_CHECK.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/FORCE_CHECK.json",
+      "sha256": "041324780f74b5532dd8148a0892c98416c3971ad143e74415becc17eab27019",
+      "size_bytes": 10192628
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/NATIVE_CALL_COUNT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/NATIVE_CALL_COUNT.json",
+      "sha256": "aa9abfc06b14424bf15b3dce4f80f8afe06741b5f07669d6dea722fa86ffc523",
+      "size_bytes": 369
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/JOB.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/JOB.json",
+      "sha256": "ea1f5423af1adbfdfef676a9af93fb0f9d1bf1e7e169e40c535426f9c339f14f",
+      "size_bytes": 26775
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/REPORT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/full/REPORT.json",
+      "sha256": "95418e0fd080dd6f09f208dab173960f91a489887f7030f520762e4d8cd1496a",
+      "size_bytes": 5510472
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/AUDIT_v2.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/full/AUDIT_v2.json",
+      "sha256": "66c444ff6e488e5276c8aa9a1471bf20b9081652db6fe0610ed55815b0c509e6",
+      "size_bytes": 2581
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/REVIEW.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/delivery_v4/REVIEW.json",
+      "sha256": "cb54024c47c55207f9c38a27d08d25c70913e7898c0fb1ce50a60ee6a07bc4b8",
+      "size_bytes": 12018
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay/REPORT.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/continuous_replay/REPORT.json",
+      "sha256": "1e3ef8789a341cfa9f88075e80ce8491ab0811eb5b67177e0f0b6147583f80bc",
+      "size_bytes": 1652
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/delivery_v4/decoded_review.jpg",
+      "sha256": "009d6749801a3ed5dac1d04f2bff8e9e664be2c875908cc905e763330e3c91db",
+      "size_bytes": 1289488
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/placement_detail/review.jpg",
+      "repository_path": "docs/experiments/expert_branch1_20261026/trials/cup_s02_regression/placement_detail/review.jpg",
+      "sha256": "e16ff0a1b2148fd29be26a04fc24f774915fb5620dd3eae11b27f2304ac7435e",
+      "size_bytes": 1203735
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/expert_proposal_01/INVOCATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/expert_calls/expert_proposal_01/INVOCATION.json",
+      "sha256": "d71a6287b84333389b085b866fb84e4e47e833156a9c1e2a8d5475565b2dd35b",
+      "size_bytes": 552
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/expert_repair_v2_01/INVOCATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/expert_calls/expert_repair_v2_01/INVOCATION.json",
+      "sha256": "645791c660d4988fb038b0d3487bf1dc1f814ec9a81b95dd20a187724a1ff8ef",
+      "size_bytes": 553
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/expert_repair_v3_01/INVOCATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/expert_calls/expert_repair_v3_01/INVOCATION.json",
+      "sha256": "672cf80f2dadd0c5dc3a4d3f906c5847f838d1886de3ba17c78e4bd4fbdf6497",
+      "size_bytes": 553
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/expert_repair_v4_01/INVOCATION.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/expert_calls/expert_repair_v4_01/INVOCATION.json",
+      "sha256": "316fdc4485cf1b5f83c25a09aafa9ba31ddd245bfcdd386931775ca90bffd990",
+      "size_bytes": 553
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/proposals/PROPOSAL.json",
+      "sha256": "a081bc9ba7cbccdc1144616f035c7218bd41649a8a6135b4041b7cbfeead1d25",
+      "size_bytes": 19168
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V002.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/proposals/PROPOSAL_V002.json",
+      "sha256": "fa64c6bca0387c3c732b5e0028a06e00eaf5bdce2f03ba525973c7433e15b5f1",
+      "size_bytes": 47464
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V003.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/proposals/PROPOSAL_V003.json",
+      "sha256": "5addd6a34fcbc57fab779c40cfe3045210b4bbc66b57e57d3fc7ac4f2d2d6e3e",
+      "size_bytes": 70095
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V004.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/proposals/PROPOSAL_V004.json",
+      "sha256": "560a1ec1e7c759d85181312e83921d9fc6aa1bdc85cd7452c3fde80a1813ce09",
+      "size_bytes": 42726
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V001_RELEASE_CAUSE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/diagnoses/S02_V001_RELEASE_CAUSE.json",
+      "sha256": "e2463b912e0228a9779453f98d837d78fb919e90230ba579e60cb6101b70bb8f",
+      "size_bytes": 3527
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V002_LOAD_SHARE_CAUSE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/diagnoses/S02_V002_LOAD_SHARE_CAUSE.json",
+      "sha256": "11214a63ec0ccd88f48da6604b0d50955f30ecb9d76529981e7468c3cec116ca",
+      "size_bytes": 35442
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V002_RELEASE_WRENCH_POSE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/diagnoses/S02_V002_RELEASE_WRENCH_POSE.json",
+      "sha256": "9db849f76e4530076efd5abf3982b3918bb2cdeb6a9c27ba8c36f262d7588ad0",
+      "size_bytes": 12647
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V003_CONTACT_LOSS_CAUSE.json",
+      "repository_path": "docs/experiments/expert_branch1_20261026/diagnoses/S02_V003_CONTACT_LOSS_CAUSE.json",
+      "sha256": "eaa2f8a65d563ab409ecee76863d80fe258f03b73c1cd832bb802637a78807ae",
+      "size_bytes": 123005
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/native.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/native.py",
+      "sha256": "4a51275062b68d534ed26dfb5a32233493cd7501859d660f91699bf46ad3c221",
+      "size_bytes": 678
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/check_feedback_state_order.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/check_feedback_state_order.py",
+      "sha256": "8835796af9f4c36dc385e27eb392ee5174cf8ad2896420d34fcdd9f0bf4d4118",
+      "size_bytes": 1567
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/verify_completed_v3.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/verify_completed_v3.py",
+      "sha256": "34ea12a40ade83550c6e043cf81c9387262e6ef11d9bdbccc322f2869111174d",
+      "size_bytes": 4850
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/build_final_experience_catalog_v2.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/build_final_experience_catalog_v2.py",
+      "sha256": "3a028e261978cc6a8a3b6d7e7d9a9a3e0a0cdd0e04854766e2228c5abcbc86b3",
+      "size_bytes": 3676
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/finalize_branch1_v2.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/finalize_branch1_v2.py",
+      "sha256": "ca9463cb427e7a4d8cb553f892d88e8b47d32a2b89f99fdac0b1918b6644e786",
+      "size_bytes": 6849
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/plot_v004_diagnosis.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/plot_v004_diagnosis.py",
+      "sha256": "38b4f43be5162e8d2a2368cd154b55be0572f671ffca76f12f1ecefd9510a6e9",
+      "size_bytes": 1990
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/complete_compact_feedback.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/complete_compact_feedback.py",
+      "sha256": "8fa977387bac8a24a25ad9ef6906c2e414ca039949a92c4b216f61888c72c3e5",
+      "size_bytes": 704
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/check_final_artifacts.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/check_final_artifacts.py",
+      "sha256": "796e365e15b8828c72837fc65a621afd1f727a5c37b57e47017d1d19c322c9a6",
+      "size_bytes": 3134
+    },
+    {
+      "source_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/archive_branch1.py",
+      "repository_path": "docs/experiments/expert_branch1_20261026/tools/archive_branch1.py",
+      "sha256": "0b1270313f6fccbc4c995cf124e124a05c43399ee6cf669ad49f9854ecc78a7d",
+      "size_bytes": 5936
+    }
+  ],
+  "not_uploaded": "Full models, full TRACE, policy input archives, continuous replay state archive, full videos and cup NPZ remain local; exact paths and hashes in bound reports. Git contains critical reports and sampled actual review images.",
+  "historical_failure_policy": "Earlier audit versions retained locally; official final audit path is bound in per-trial FINAL_VERIFICATION. V003/V004 base observation and metadata reconciliation reports included here. Preliminary mutable-progress reports are not authoritative final outputs."
+}

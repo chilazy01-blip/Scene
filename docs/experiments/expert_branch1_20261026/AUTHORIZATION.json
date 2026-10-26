@@ -1,0 +1,18 @@
+{
+  "checkpoint_commit": "2f2791348af1f80adf6dad17876b46e79641b28a",
+  "content_sha256_excluding_this_field": "5f4959e6723f460ae249316ca68401efde98ce27ea75f2da35e03e0ea8143805",
+  "cumulative_native_cap": 359138,
+  "deadline_epoch_utc": 1793043631.3818104,
+  "max_new_physics_steps": 120000,
+  "old_round_not_resumed": true,
+  "prior_native_steps": 239138,
+  "resource_limits": {
+    "blas_threads": 1,
+    "cpus": 8,
+    "memory_gib": 16
+  },
+  "schema": "expert-branch-one-authorization/v1",
+  "started_epoch_utc": 1793029231.3818104,
+  "user_authorized_expert_code_and_tools": true,
+  "user_authorized_github_checkpoint": true
+}

@@ -1,0 +1,255 @@
+{
+  "actual_seconds": 41.7,
+  "added_task_object": {
+    "acceptance": "axis dot world up >=.98",
+    "asset": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/living_room_reconstruction_20260914_v1/generation/glass_bottle/asset.glb",
+      "sha256": "b7110852729ff4796b2488ce0dc07834365677d1e071bfc68e282fdba7a8ae31",
+      "size_bytes": 10181332
+    },
+    "book_cover_basis": "thin local X dimension .03m; cover spans local YZ",
+    "bottle_basis": "empty rigid bottle, no fluid",
+    "content_sha256_excluding_this_field": "265028adccff01b163d68843f188d0a51cf41ef3638eb28a69818e18ffd07573",
+    "dimensions_m": [
+      0.0749679643,
+      0.07495568255,
+      0.25
+    ],
+    "friction": "payload native contact unchanged from cup template",
+    "geometry": "full original triangles, fixed manifest dimensions; no grasp-dependent scaling",
+    "inertia_basis": "unchanged original cup; manifest bounding-box rigid-body inertia for new objects",
+    "mass_inertia_are_assumptions": true,
+    "mass_kg": 0.2,
+    "object_id": "bottle",
+    "physics_steps": 0,
+    "semantic_local_up_or_cover_axis": [
+      0,
+      0,
+      1
+    ]
+  },
+  "all_decoded_frames": 2085,
+  "audit": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/AUDIT_v4.json",
+    "sha256": "f5e41378f905af2078f6304b4486c67231b3bf63a732b78ddee9f27972972f87",
+    "size_bytes": 7795
+  },
+  "audit_passed": false,
+  "carry_distance_m": 0.562420419323466,
+  "carry_foot_cycles": {
+    "left": 1,
+    "right": 1
+  },
+  "content_sha256_excluding_this_field": "6b43e8ceeca4513a1b5a10efd872f823a3a8bdcd27248a2c9225d022bda88944",
+  "continuous_dynamics_passed": false,
+  "cost_items": [
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/cost/REPORT.json",
+        "sha256": "f4fad360f9dd986e5ff5c6016fce6eb650edae2677d568606489d65acf7ac8ec",
+        "size_bytes": 735
+      },
+      "steps": 8536,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/cost/REPORT.json",
+        "sha256": "2f5fdf4dbceeb8ecf7aaebc5f859d4ece711b1508beb2b0041348ead9a4f175c",
+        "size_bytes": 740
+      },
+      "steps": 8288,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay/REPORT.json",
+        "sha256": "1e3ef8789a341cfa9f88075e80ce8491ab0811eb5b67177e0f0b6147583f80bc",
+        "size_bytes": 1652
+      },
+      "steps": 8536,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/cost/REPORT.json",
+        "sha256": "1d6cc6ca6e23020485d4a2b6d77cf8665c624a1712dd7bd633f5731b094096f4",
+        "size_bytes": 739
+      },
+      "steps": 5228,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/cost/REPORT.json",
+        "sha256": "4eee11137d48e4cfcd988acdbedc2a7b6e7f8d53d60f398a38bb2dcf4c524e68",
+        "size_bytes": 740
+      },
+      "steps": 8308,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/cost/REPORT.json",
+        "sha256": "b8611d2b391d01b126a43725d7d97693b7191e5d63dea3fefc6ab801fd403d37",
+        "size_bytes": 740
+      },
+      "steps": 8312,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/cost/REPORT.json",
+        "sha256": "0a983e097fe4ba8e102eb7bcedb1d0c0e7c3010de3338dea9b4dd442c9a3fe2c",
+        "size_bytes": 740
+      },
+      "steps": 8340,
+      "unknown_full_reservation_charged": false
+    }
+  ],
+  "dataset_split": "unassigned",
+  "dynamics": null,
+  "export_schema": {
+    "contacts_and_exact_policy_io": "retained in bound original TRACE and POLICY_IO archives",
+    "nq": 57,
+    "nu": 43,
+    "nv": 55,
+    "state_order": "original frozen native MuJoCo model, named29 body +14hand joints + free task object; no slicing all body joints fromqpos[7:]",
+    "units": "seconds/meters/radians/Newton-meters"
+  },
+  "failures_preserved": [],
+  "files": {
+    "decoded_0000.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_0000.jpg",
+      "sha256": "776a11d488128daecca5b1f9df7fd6c116349097df7c6da419111ffdb187626d",
+      "size_bytes": 117234
+    },
+    "decoded_0235.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_0235.jpg",
+      "sha256": "c30ebf5b76b62396875fc81b29075980f21ee1c8038bdd3fca1bca2e6a5600bf",
+      "size_bytes": 123734
+    },
+    "decoded_0300.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_0300.jpg",
+      "sha256": "df7680cda2268a573476d7ae1afcac0bc1604c0f8fae3e5eeb9b4e0107c084ad",
+      "size_bytes": 120974
+    },
+    "decoded_1038.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1038.jpg",
+      "sha256": "66dfd72e955ec85a3b99c435c729e4e5f7d250b5c881a226155746a096dbeb59",
+      "size_bytes": 131781
+    },
+    "decoded_1063.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1063.jpg",
+      "sha256": "07a1beeb84464e29295a2022f0fb4d0ea4afc2d417c6e1560746ad8fc4cbe0c1",
+      "size_bytes": 133264
+    },
+    "decoded_1088.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1088.jpg",
+      "sha256": "fc2c681e693da5a4e3a0b8e4e7fca021c3814abd0ea8c170beeaa48460339e56",
+      "size_bytes": 133637
+    },
+    "decoded_1156.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1156.jpg",
+      "sha256": "6cbcbecff82dc950e6f4cee8b7d5f2010690566ece7afa2cbd5f90886e4fefbe",
+      "size_bytes": 133725
+    },
+    "decoded_1365.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1365.jpg",
+      "sha256": "b62c725ecb5f40030e2cbcf3a61e159ba9d5c9764ecede640798f166a63a7a75",
+      "size_bytes": 131007
+    },
+    "decoded_1414.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1414.jpg",
+      "sha256": "f2d8560be1c6b21e759fac4247601bd553749fe0f96506347337e0bb057dee60",
+      "size_bytes": 133353
+    },
+    "decoded_1573.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1573.jpg",
+      "sha256": "759a060b05a00e1c23c243ad0d1da726d4612967d2d58381fff0d3b563a593cc",
+      "size_bytes": 131027
+    },
+    "decoded_1635.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1635.jpg",
+      "sha256": "90995558b2553809566fc7a148a9a6902a06f366994633ef494d2fd0b1350fb7",
+      "size_bytes": 133199
+    },
+    "decoded_1802.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1802.jpg",
+      "sha256": "aff6aa703f3152836b155e0e051f9b75a25e7105b250c6dfd10e6f073ecd0d45",
+      "size_bytes": 145833
+    },
+    "decoded_1935.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_1935.jpg",
+      "sha256": "47e355618a20352875b9b0f2c64f333aaddc616fb9c33cf87baaa4138d7a2a9c",
+      "size_bytes": 141935
+    },
+    "decoded_2069.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_2069.jpg",
+      "sha256": "ad4663b6a06881e226509b4d36eb233d4d57e16d14a44dfb87a37e80fa8d59d0",
+      "size_bytes": 143826
+    },
+    "decoded_2077.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_2077.jpg",
+      "sha256": "4fda6d4f86988abd66462c4f9a546e66ecfa745f15386507a54266be2efd963f",
+      "size_bytes": 141194
+    },
+    "decoded_2084.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_2084.jpg",
+      "sha256": "638a7eecb4a72c097c495ccfa0bafd7454a11b1318ba2de85cc1b272c6a7c519",
+      "size_bytes": 142096
+    },
+    "decoded_review.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_review.jpg",
+      "sha256": "aca0d3cdc4d4c3878f5ab682a7fbf01b1a4f2300bbd92fed34e5974a0dba5687",
+      "size_bytes": 1143939
+    }
+  },
+  "goal_error_m": 0.007349973732424784,
+  "implementation": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/delivery_v6.py",
+    "sha256": "9afccbcf71b7ad11473d4cca0b765d5d911c76e2cc76e6ddff9da26f8cf74c48",
+    "size_bytes": 9769
+  },
+  "manual_video_review_pending": true,
+  "max_held_slip_m": 0.015899739730012127,
+  "maximum_contact_force_n": 155.38951352099127,
+  "maximum_joint_acceleration_rad_s2": 436.90700516925733,
+  "maximum_joint_speed_rad_s": 4.081511162071015,
+  "maximum_penetration_m": 0.0026685681295843993,
+  "maximum_root_acceleration_m_s2": 13.798204231229734,
+  "maximum_target_projection_rad": 0.08454107301318725,
+  "mechanically_qualified": false,
+  "native_cumulative_physics_cost": 294686,
+  "new_physics_cost": 55548,
+  "no_layout_or_native_collision_changes": true,
+  "object_displacement_xy_m": 0.507696272330616,
+  "positive_episode_count": 0,
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/REPORT.json",
+    "sha256": "79c0688c8e91bfe83c3cf3687580025f9a570ac13098697a61e311d661155b75",
+    "size_bytes": 9758663
+  },
+  "schema": "native-mug-task-delivery/v1",
+  "scope": "one task-level native-room development demo, no training/heldout/generalization/production qualification",
+  "source_role": "development_validation",
+  "target_projection_count": 6,
+  "task_passed": false,
+  "video": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/actual_video_v3/MANIFEST.json",
+    "sha256": "5124e5856a42c5d90a22135a06e8a77fcdd0da97bc5933f9299254c5ca6b1e65",
+    "size_bytes": 6182
+  },
+  "video_mp4": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/actual_video_v3/motion.mp4",
+    "sha256": "9fb0f81d92aecdcc1b9efe9b096e3f28eb014c89d5e366f3a8c2e6b359e048bd",
+    "size_bytes": 6260606
+  }
+}

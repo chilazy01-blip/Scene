@@ -1,0 +1,1384 @@
+{
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/strategy.py",
+    "sha256": "125c397ece48168614d44f7faabc660514a886be73631f4f5ff891a26034d415",
+    "size_bytes": 84772
+  },
+  "content_sha256_excluding_this_field": "8c97d8f4d3480e9c8f3d41fe24e9d9b504af91a68fcb7a6efd95751cf1ca4cbe",
+  "exit": "Original sixty-minute QA-headroom cutoff reached; no more native rollouts in this round.",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/summarize_v004_failure.py",
+    "sha256": "079487debb98ff8ec9e8860924689b065574dbada11b608ec298ef48b7a3beb9",
+    "size_bytes": 3523
+  },
+  "interpretation": "The bounded active reference intervention did not restore measured table support before recovery protection stopped it. Object speed .08844 exceeds its expert-added .08 recovery limit, while native hand contacts remain; do not infer grasp loss solely from the compound reason string. No complete release/retract/settle, so no qualified bottle episode. Source, forces and poses identify an unresolved dynamic handoff, not a model-service capacity failure.",
+  "limits": "No unique mechanical cause established: body/reference tracking, cap/finger geometry and force dynamics remain coupled. Do not infer that the .08 bound is the sole failure or remove a stop to relabel this existing record successful.",
+  "new_physics_steps": 0,
+  "next_experiment_hypotheses": [
+    "Matched-budget diagnostic comparison with the original supported-release controller, treating proposed phase predicates as observations until physically validated.",
+    "Object-centric release geometry and wrist/reference tracking validation on actual states, with explicit load-transfer feedback and unchanged independent native judge."
+  ],
+  "physical_steps": 8340,
+  "release_reference_observations": [
+    {
+      "actual_wrist_m": [
+        2.9735845332390487,
+        1.8452275370834814,
+        1.1135526056463771
+      ],
+      "desk_supported": true,
+      "hand_vertical_n": -1.3635030937144457,
+      "object_bottom_above_table_m": 0.0018733392205894095,
+      "object_speed_m_s": 0.02456190150167084,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 1,
+      "requested_wrist_m": [
+        2.971026469133193,
+        1.8464574992912772,
+        1.1141784981460054
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 3.3307369739684063,
+      "tick": 2060,
+      "time_s": 41.40000000000273,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.974124401077204,
+        1.8446187119060453,
+        1.1132709097561244
+      ],
+      "desk_supported": true,
+      "hand_vertical_n": -1.4009317120009233,
+      "object_bottom_above_table_m": 0.001918538543518089,
+      "object_speed_m_s": 0.030484062246585293,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 2,
+      "requested_wrist_m": [
+        2.9709621555805836,
+        1.8465050783512806,
+        1.1142163119540929
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 3.3492779533400427,
+      "tick": 2061,
+      "time_s": 41.42000000000274,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9747585925852666,
+        1.8438892058793652,
+        1.1129527313914116
+      ],
+      "desk_supported": true,
+      "hand_vertical_n": -1.6220586703070086,
+      "object_bottom_above_table_m": 0.001919361474046366,
+      "object_speed_m_s": 0.032377257866972535,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 3,
+      "requested_wrist_m": [
+        2.9709010899081876,
+        1.8465567599113852,
+        1.114256311954093
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 3.583202206711242,
+      "tick": 2062,
+      "time_s": 41.44000000000275,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9754689382416593,
+        1.8431402813293734,
+        1.1126769095249063
+      ],
+      "desk_supported": true,
+      "hand_vertical_n": -2.824561297769432,
+      "object_bottom_above_table_m": 0.0018816804298410483,
+      "object_speed_m_s": 0.0342414422491401,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 4,
+      "requested_wrist_m": [
+        2.9708397897886236,
+        1.8466081631733582,
+        1.114296311954093
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 4.814652909292981,
+      "tick": 2063,
+      "time_s": 41.46000000000276,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9762294496453063,
+        1.8425990569211255,
+        1.1125023699131105
+      ],
+      "desk_supported": true,
+      "hand_vertical_n": -2.910608599029044,
+      "object_bottom_above_table_m": 0.001878700301121916,
+      "object_speed_m_s": 0.031340571266469476,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 5,
+      "requested_wrist_m": [
+        2.9707732831678055,
+        1.846652625172721,
+        1.114336311954093
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 4.900551117315509,
+      "tick": 2064,
+      "time_s": 41.48000000000277,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9768671292622177,
+        1.8422405667482646,
+        1.1124196459660425
+      ],
+      "desk_supported": true,
+      "hand_vertical_n": -2.0500329831781277,
+      "object_bottom_above_table_m": 0.0018710129468511028,
+      "object_speed_m_s": 0.023393781910499897,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 6,
+      "requested_wrist_m": [
+        2.9707090469720474,
+        1.8467003086201064,
+        1.114376311954093
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 4.017566141088076,
+      "tick": 2065,
+      "time_s": 41.50000000000278,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.977364553848887,
+        1.841804215369942,
+        1.1123637624432932
+      ],
+      "desk_supported": true,
+      "hand_vertical_n": -0.2764574221886098,
+      "object_bottom_above_table_m": 0.0018807315100737299,
+      "object_speed_m_s": 0.02168325057997106,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 7,
+      "requested_wrist_m": [
+        2.970650115311571,
+        1.8467544109249878,
+        1.1143452231845221
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 2.2445578426266324,
+      "tick": 2066,
+      "time_s": 41.52000000000279,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9778343408731507,
+        1.8413286011114638,
+        1.1124013571574969
+      ],
+      "desk_supported": true,
+      "hand_vertical_n": 1.5560133284542381,
+      "object_bottom_above_table_m": 0.0019115161113891777,
+      "object_speed_m_s": 0.020938887120277604,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 8,
+      "requested_wrist_m": [
+        2.9705957688398517,
+        1.8468131174920113,
+        1.1142364370674078
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 0.40985926308856124,
+      "tick": 2067,
+      "time_s": 41.5400000000028,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.978337405874036,
+        1.8413269045236471,
+        1.1127540581157207
+      ],
+      "desk_supported": false,
+      "hand_vertical_n": 2.023445317119801,
+      "object_bottom_above_table_m": 0.0020195687485633496,
+      "object_speed_m_s": 0.020933117039509938,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 9,
+      "requested_wrist_m": [
+        2.970596256643966,
+        1.8468931160047921,
+        1.114116437067408
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 0.0,
+      "tick": 2068,
+      "time_s": 41.56000000000281,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9788612237464362,
+        1.8417796101725092,
+        1.1134888857171175
+      ],
+      "desk_supported": false,
+      "hand_vertical_n": 2.0948234207597753,
+      "object_bottom_above_table_m": 0.002304017240254641,
+      "object_speed_m_s": 0.034976997088028254,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 10,
+      "requested_wrist_m": [
+        2.970626324421185,
+        1.8469672505363757,
+        1.113996437067408
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 0.0,
+      "tick": 2069,
+      "time_s": 41.58000000000282,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9792630021420274,
+        1.84223337828328,
+        1.1142117284350235
+      ],
+      "desk_supported": false,
+      "hand_vertical_n": 1.931172503991121,
+      "object_bottom_above_table_m": 0.0027087384359580913,
+      "object_speed_m_s": 0.023562830486237283,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 11,
+      "requested_wrist_m": [
+        2.9705618410873202,
+        1.8470145992391425,
+        1.1138764370674081
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 0.0,
+      "tick": 2070,
+      "time_s": 41.60000000000283,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.979544943481814,
+        1.8425424264974948,
+        1.1146741088500347
+      ],
+      "desk_supported": false,
+      "hand_vertical_n": 1.902075159861148,
+      "object_bottom_above_table_m": 0.003022068643891207,
+      "object_speed_m_s": 0.032867053591108114,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 12,
+      "requested_wrist_m": [
+        2.9705338172756774,
+        1.8469396681642736,
+        1.1137564370674082
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 0.0,
+      "tick": 2071,
+      "time_s": 41.62000000000284,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9797034832006006,
+        1.84281442478982,
+        1.1149392032747012
+      ],
+      "desk_supported": false,
+      "hand_vertical_n": 1.8892918617532135,
+      "object_bottom_above_table_m": 0.0032289493678970826,
+      "object_speed_m_s": 0.04624343860609789,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 13,
+      "requested_wrist_m": [
+        2.9705274169210343,
+        1.846859924603653,
+        1.1136364370674083
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 0.0,
+      "tick": 2072,
+      "time_s": 41.64000000000285,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.979573522975746,
+        1.8428943101301911,
+        1.1149122156372995
+      ],
+      "desk_supported": false,
+      "hand_vertical_n": 1.8104308051183609,
+      "object_bottom_above_table_m": 0.0032283382958512297,
+      "object_speed_m_s": 0.055820875323299345,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 14,
+      "requested_wrist_m": [
+        2.970546626792582,
+        1.8467822652137822,
+        1.1135164370674084
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 0.0,
+      "tick": 2073,
+      "time_s": 41.66000000000286,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "actual_wrist_m": [
+        2.9791312291335696,
+        1.8428343290503248,
+        1.114572580643413
+      ],
+      "desk_supported": false,
+      "hand_vertical_n": 1.7977630744277027,
+      "object_bottom_above_table_m": 0.002874845103186252,
+      "object_speed_m_s": 0.0695528116858439,
+      "opening_progress_ticks": 0,
+      "release_age_ticks": 15,
+      "requested_wrist_m": [
+        2.970596918242784,
+        1.8467200497009533,
+        1.1133964370674085
+      ],
+      "support_state": "preseat_pending",
+      "table_vertical_n": 0.0,
+      "tick": 2074,
+      "time_s": 41.68000000000287,
+      "weight_n": 1.9620000000000002
+    }
+  ],
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/REPORT.json",
+    "sha256": "79c0688c8e91bfe83c3cf3687580025f9a570ac13098697a61e311d661155b75",
+    "size_bytes": 9758663
+  },
+  "stop_event": {
+    "action": "hold_last_issued_native_reference_and_stop",
+    "entry_certificate": {
+      "consecutive_observations": 21,
+      "evidence": {
+        "base_inside_target_table": true,
+        "desk_supported": true,
+        "entry_motion_predicates": {
+          "angular_quiet": true,
+          "object_linear_quiet": true,
+          "root_linear_quiet": true,
+          "wrist_reference_reached": true
+        },
+        "entry_ready": true,
+        "failed_entry_motion_predicates": [],
+        "failed_persistent_predicates": [],
+        "measured_target_contact": true,
+        "object_angular_speed_rad_s": 0.1532631638354017,
+        "object_axis_cosine": 0.9996359406281643,
+        "object_bottom_above_table_m": 0.0018524948753143589,
+        "object_speed_m_s": 0.019793526985618894,
+        "observation_current": true,
+        "observation_time_s": 41.38000000000272,
+        "persistent_predicates": {
+          "base_inside_target_table": true,
+          "bottom_height_in_band": true,
+          "desk_supported": true,
+          "object_upright": true,
+          "original_target_in_range": true,
+          "planned_target_in_range": true,
+          "target_load_bearing": true
+        },
+        "persistent_support": true,
+        "planned_error_xy_m": 0.006671405399279835,
+        "policy_tick": 2059,
+        "ready": true,
+        "root_speed_m_s": 0.037356673505834534,
+        "target_contact_normal_n": 3.4263307911701246,
+        "target_error_xy_m": 0.006671405399279835,
+        "weight_n": 1.9620000000000002
+      },
+      "first_observation_tick": 2039,
+      "last_observation_tick": 2059,
+      "observations": [
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.0594335086572811,
+            "object_axis_cosine": 0.9983299448213769,
+            "object_bottom_above_table_m": 0.0018406230614524954,
+            "object_speed_m_s": 0.006272466722587907,
+            "observation_current": true,
+            "observation_time_s": 40.98000000000251,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.0024020938578846337,
+            "policy_tick": 2039,
+            "ready": true,
+            "root_speed_m_s": 0.038371911283419484,
+            "target_contact_normal_n": 3.7144783530225784,
+            "target_error_xy_m": 0.0024020938578846337,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2039,
+          "time_s": 40.98000000000251
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.05953644801984702,
+            "object_axis_cosine": 0.9983779095357451,
+            "object_bottom_above_table_m": 0.0018622474148315415,
+            "object_speed_m_s": 0.006407035553896676,
+            "observation_current": true,
+            "observation_time_s": 41.00000000000252,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.0025084499361626295,
+            "policy_tick": 2040,
+            "ready": true,
+            "root_speed_m_s": 0.03885623266331604,
+            "target_contact_normal_n": 5.000147151013882,
+            "target_error_xy_m": 0.0025084499361626295,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2040,
+          "time_s": 41.00000000000252
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.1087081974287555,
+            "object_axis_cosine": 0.998431435095594,
+            "object_bottom_above_table_m": 0.0018813522500370494,
+            "object_speed_m_s": 0.007135231280722696,
+            "observation_current": true,
+            "observation_time_s": 41.02000000000253,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.00263330032723041,
+            "policy_tick": 2041,
+            "ready": true,
+            "root_speed_m_s": 0.03306068399253362,
+            "target_contact_normal_n": 5.465596576291222,
+            "target_error_xy_m": 0.00263330032723041,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2041,
+          "time_s": 41.02000000000253
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.14236685414102332,
+            "object_axis_cosine": 0.9984905846979433,
+            "object_bottom_above_table_m": 0.001891691877202506,
+            "object_speed_m_s": 0.008136085307460496,
+            "observation_current": true,
+            "observation_time_s": 41.04000000000254,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.0027779725725194347,
+            "policy_tick": 2042,
+            "ready": true,
+            "root_speed_m_s": 0.025098566390718616,
+            "target_contact_normal_n": 5.3843289953051245,
+            "target_error_xy_m": 0.0027779725725194347,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2042,
+          "time_s": 41.04000000000254
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.15132538095512704,
+            "object_axis_cosine": 0.9985466673401817,
+            "object_bottom_above_table_m": 0.0018993731818287563,
+            "object_speed_m_s": 0.00876758003923144,
+            "observation_current": true,
+            "observation_time_s": 41.06000000000255,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.0029287288744977704,
+            "policy_tick": 2043,
+            "ready": true,
+            "root_speed_m_s": 0.018331904286209944,
+            "target_contact_normal_n": 5.099956600206013,
+            "target_error_xy_m": 0.0029287288744977704,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2043,
+          "time_s": 41.06000000000255
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.14461476817125196,
+            "object_axis_cosine": 0.9985917062541303,
+            "object_bottom_above_table_m": 0.0019025308860974866,
+            "object_speed_m_s": 0.008332350180910586,
+            "observation_current": true,
+            "observation_time_s": 41.08000000000256,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.003066241795874573,
+            "policy_tick": 2044,
+            "ready": true,
+            "root_speed_m_s": 0.01298850197173219,
+            "target_contact_normal_n": 4.920462343044313,
+            "target_error_xy_m": 0.003066241795874573,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2044,
+          "time_s": 41.08000000000256
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.14288271402995276,
+            "object_axis_cosine": 0.9986156093041539,
+            "object_bottom_above_table_m": 0.0018789962811609495,
+            "object_speed_m_s": 0.011600648087296455,
+            "observation_current": true,
+            "observation_time_s": 41.100000000002574,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.003177599299667951,
+            "policy_tick": 2045,
+            "ready": true,
+            "root_speed_m_s": 0.014646530528746694,
+            "target_contact_normal_n": 4.337643308156229,
+            "target_error_xy_m": 0.003177599299667951,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2045,
+          "time_s": 41.100000000002574
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.14193480999316446,
+            "object_axis_cosine": 0.9986261088776771,
+            "object_bottom_above_table_m": 0.0018617280805959258,
+            "object_speed_m_s": 0.016987506274857962,
+            "observation_current": true,
+            "observation_time_s": 41.120000000002584,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.003324945238328886,
+            "policy_tick": 2046,
+            "ready": true,
+            "root_speed_m_s": 0.017489369316168256,
+            "target_contact_normal_n": 3.535648294508141,
+            "target_error_xy_m": 0.003324945238328886,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2046,
+          "time_s": 41.120000000002584
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.1482365097428624,
+            "object_axis_cosine": 0.9986374483434035,
+            "object_bottom_above_table_m": 0.001858780666768367,
+            "object_speed_m_s": 0.01875398020360203,
+            "observation_current": true,
+            "observation_time_s": 41.140000000002594,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.003545894504590295,
+            "policy_tick": 2047,
+            "ready": true,
+            "root_speed_m_s": 0.024009510141867814,
+            "target_contact_normal_n": 3.6747433078268665,
+            "target_error_xy_m": 0.003545894504590295,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2047,
+          "time_s": 41.140000000002594
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.1461421981274829,
+            "object_axis_cosine": 0.9986426936246084,
+            "object_bottom_above_table_m": 0.0018490978674071679,
+            "object_speed_m_s": 0.016107532822857425,
+            "observation_current": true,
+            "observation_time_s": 41.160000000002604,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.0037746308045233075,
+            "policy_tick": 2048,
+            "ready": true,
+            "root_speed_m_s": 0.028010005216634524,
+            "target_contact_normal_n": 4.018456382495788,
+            "target_error_xy_m": 0.0037746308045233075,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2048,
+          "time_s": 41.160000000002604
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.18056073557996952,
+            "object_axis_cosine": 0.9986652194215099,
+            "object_bottom_above_table_m": 0.0018258961947941188,
+            "object_speed_m_s": 0.01398599942636164,
+            "observation_current": true,
+            "observation_time_s": 41.180000000002615,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.0040242713949295815,
+            "policy_tick": 2049,
+            "ready": true,
+            "root_speed_m_s": 0.03326565107383554,
+            "target_contact_normal_n": 5.380442965846473,
+            "target_error_xy_m": 0.0040242713949295815,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2049,
+          "time_s": 41.180000000002615
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.16084385770524354,
+            "object_axis_cosine": 0.998727796504744,
+            "object_bottom_above_table_m": 0.0018395032567722902,
+            "object_speed_m_s": 0.012020271999234554,
+            "observation_current": true,
+            "observation_time_s": 41.200000000002625,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.004271312323209517,
+            "policy_tick": 2050,
+            "ready": true,
+            "root_speed_m_s": 0.04130236439372949,
+            "target_contact_normal_n": 5.28852495539359,
+            "target_error_xy_m": 0.004271312323209517,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2050,
+          "time_s": 41.200000000002625
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.1841836708477659,
+            "object_axis_cosine": 0.9988167793417547,
+            "object_bottom_above_table_m": 0.001862331824645569,
+            "object_speed_m_s": 0.013277982130355765,
+            "observation_current": true,
+            "observation_time_s": 41.220000000002635,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.004490053015993179,
+            "policy_tick": 2051,
+            "ready": true,
+            "root_speed_m_s": 0.047111134447260325,
+            "target_contact_normal_n": 4.941656363967079,
+            "target_error_xy_m": 0.004490053015993179,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2051,
+          "time_s": 41.220000000002635
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.168950204749497,
+            "object_axis_cosine": 0.9989191559504716,
+            "object_bottom_above_table_m": 0.001888675571625642,
+            "object_speed_m_s": 0.01414561508286854,
+            "observation_current": true,
+            "observation_time_s": 41.240000000002645,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.004707699891661748,
+            "policy_tick": 2052,
+            "ready": true,
+            "root_speed_m_s": 0.052294172093593945,
+            "target_contact_normal_n": 4.3547301855642475,
+            "target_error_xy_m": 0.004707699891661748,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2052,
+          "time_s": 41.240000000002645
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.13346537215362186,
+            "object_axis_cosine": 0.9990128844807631,
+            "object_bottom_above_table_m": 0.00190095821218228,
+            "object_speed_m_s": 0.01321532287053301,
+            "observation_current": true,
+            "observation_time_s": 41.260000000002655,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.004913001424677039,
+            "policy_tick": 2053,
+            "ready": true,
+            "root_speed_m_s": 0.05247766101791316,
+            "target_contact_normal_n": 4.365371233715893,
+            "target_error_xy_m": 0.004913001424677039,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2053,
+          "time_s": 41.260000000002655
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.10889552055030391,
+            "object_axis_cosine": 0.9990955700559074,
+            "object_bottom_above_table_m": 0.0019016717035412745,
+            "object_speed_m_s": 0.012317594799073132,
+            "observation_current": true,
+            "observation_time_s": 41.280000000002666,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.00510284325893487,
+            "policy_tick": 2054,
+            "ready": true,
+            "root_speed_m_s": 0.04990746674499172,
+            "target_contact_normal_n": 4.481809766204545,
+            "target_error_xy_m": 0.00510284325893487,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2054,
+          "time_s": 41.280000000002666
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.16397231663983092,
+            "object_axis_cosine": 0.9992011113862562,
+            "object_bottom_above_table_m": 0.001879460080668638,
+            "object_speed_m_s": 0.018546770462980533,
+            "observation_current": true,
+            "observation_time_s": 41.300000000002676,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.0053496059704307595,
+            "policy_tick": 2055,
+            "ready": true,
+            "root_speed_m_s": 0.04579853917483669,
+            "target_contact_normal_n": 4.140054587884211,
+            "target_error_xy_m": 0.0053496059704307595,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2055,
+          "time_s": 41.300000000002676
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.17635763239536614,
+            "object_axis_cosine": 0.9993182534217853,
+            "object_bottom_above_table_m": 0.0018579802020678438,
+            "object_speed_m_s": 0.0210199995559752,
+            "observation_current": true,
+            "observation_time_s": 41.320000000002686,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.005652571795254952,
+            "policy_tick": 2056,
+            "ready": true,
+            "root_speed_m_s": 0.039843784516264885,
+            "target_contact_normal_n": 3.8476469992727598,
+            "target_error_xy_m": 0.005652571795254952,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2056,
+          "time_s": 41.320000000002686
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.18931621800232745,
+            "object_axis_cosine": 0.9994354880705335,
+            "object_bottom_above_table_m": 0.0018483959088584356,
+            "object_speed_m_s": 0.022351715528189875,
+            "observation_current": true,
+            "observation_time_s": 41.340000000002696,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.005978345815672264,
+            "policy_tick": 2057,
+            "ready": true,
+            "root_speed_m_s": 0.039479646288979,
+            "target_contact_normal_n": 3.055836096684482,
+            "target_error_xy_m": 0.005978345815672264,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2057,
+          "time_s": 41.340000000002696
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.19967492731830985,
+            "object_axis_cosine": 0.9995482322997072,
+            "object_bottom_above_table_m": 0.0018495709637686986,
+            "object_speed_m_s": 0.02360644180842728,
+            "observation_current": true,
+            "observation_time_s": 41.36000000000271,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.006324363277174419,
+            "policy_tick": 2058,
+            "ready": true,
+            "root_speed_m_s": 0.03897415461645473,
+            "target_contact_normal_n": 2.947609619867899,
+            "target_error_xy_m": 0.006324363277174419,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2058,
+          "time_s": 41.36000000000271
+        },
+        {
+          "evidence": {
+            "base_inside_target_table": true,
+            "desk_supported": true,
+            "entry_motion_predicates": {
+              "angular_quiet": true,
+              "object_linear_quiet": true,
+              "root_linear_quiet": true,
+              "wrist_reference_reached": true
+            },
+            "entry_ready": true,
+            "failed_entry_motion_predicates": [],
+            "failed_persistent_predicates": [],
+            "measured_target_contact": true,
+            "object_angular_speed_rad_s": 0.1532631638354017,
+            "object_axis_cosine": 0.9996359406281643,
+            "object_bottom_above_table_m": 0.0018524948753143589,
+            "object_speed_m_s": 0.019793526985618894,
+            "observation_current": true,
+            "observation_time_s": 41.38000000000272,
+            "persistent_predicates": {
+              "base_inside_target_table": true,
+              "bottom_height_in_band": true,
+              "desk_supported": true,
+              "object_upright": true,
+              "original_target_in_range": true,
+              "planned_target_in_range": true,
+              "target_load_bearing": true
+            },
+            "persistent_support": true,
+            "planned_error_xy_m": 0.006671405399279835,
+            "policy_tick": 2059,
+            "ready": true,
+            "root_speed_m_s": 0.037356673505834534,
+            "target_contact_normal_n": 3.4263307911701246,
+            "target_error_xy_m": 0.006671405399279835,
+            "weight_n": 1.9620000000000002
+          },
+          "tick": 2059,
+          "time_s": 41.38000000000272
+        }
+      ]
+    },
+    "entry_history_valid": true,
+    "evidence": {
+      "base_inside_target_table": true,
+      "desk_supported": false,
+      "entry_motion_predicates": {
+        "angular_quiet": true,
+        "object_linear_quiet": false,
+        "root_linear_quiet": true,
+        "wrist_reference_reached": true
+      },
+      "entry_ready": false,
+      "failed_entry_motion_predicates": [
+        "object_linear_quiet"
+      ],
+      "failed_persistent_predicates": [
+        "desk_supported",
+        "target_load_bearing"
+      ],
+      "measured_target_contact": false,
+      "object_angular_speed_rad_s": 0.18657681113664285,
+      "object_axis_cosine": 0.9996858461410879,
+      "object_bottom_above_table_m": 0.002172875837288535,
+      "object_speed_m_s": 0.0884449084049357,
+      "observation_current": true,
+      "observation_time_s": 41.70000000000288,
+      "persistent_predicates": {
+        "base_inside_target_table": true,
+        "bottom_height_in_band": true,
+        "desk_supported": false,
+        "object_upright": true,
+        "original_target_in_range": true,
+        "planned_target_in_range": true,
+        "target_load_bearing": false
+      },
+      "persistent_support": false,
+      "planned_error_xy_m": 0.007349973732424784,
+      "policy_tick": 2075,
+      "ready": false,
+      "root_speed_m_s": 0.017634988014376858,
+      "target_contact_normal_n": 0,
+      "target_error_xy_m": 0.007349973732424784,
+      "weight_n": 1.9620000000000002
+    },
+    "hold_duration_ticks": 16,
+    "hold_start_tick": 2059,
+    "kind": "branch1_release_stopped",
+    "load_requalification_observations": 0,
+    "measured_wrench": {
+      "desk_force_world_n": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hand_force_world_n": [
+        -0.21814903115819406,
+        -0.11547036977668815,
+        1.8353779041424285
+      ],
+      "query": "current native contactForce; no integration",
+      "role_normals_n": {
+        "index": 3.743196522676764,
+        "middle": 1.657891253784957,
+        "thumb": 3.1892452451270743
+      }
+    },
+    "no_physics_substep_continuity_claim": true,
+    "nominal_opening_fraction": 0.0,
+    "opening_authorized": false,
+    "opening_progress_ticks": 0,
+    "opening_suspended": true,
+    "physical_release_age_ticks": 16,
+    "physical_release_limit_ticks": 200,
+    "reference_path_length_m": 0.0017654260339950024,
+    "reseating_attempts": 0,
+    "stop_reason": "branch1_release_reseating_unsafe_or_grasp_lost",
+    "support_state": "failed",
+    "tick": 2075,
+    "time_s": 41.70000000000288,
+    "total_held_ticks": 15,
+    "total_tick_limit": 3200
+  },
+  "trace": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/TRACE.json",
+    "sha256": "a1532bae4313f559b35663422648499620cbd86a1f596d4c0990993736e5ac0b",
+    "size_bytes": 623948303
+  },
+  "verified_facts": {
+    "all_original_physical_samples_safe": true,
+    "explicit_recovery_speed_boundary_m_s": 0.08,
+    "hand_role_normals_n": {
+      "index": 3.743196522676764,
+      "middle": 1.657891253784957,
+      "thumb": 3.1892452451270743
+    },
+    "held_ticks": 15,
+    "object_axis_cosine": 0.9996858461410879,
+    "object_bottom_above_table_m": 0.002172875837288535,
+    "object_speed_m_s": 0.0884449084049357,
+    "opening_progress_ticks": 0,
+    "seating_reference_path_length_m": 0.0017654260339950024,
+    "table_force_n": 0,
+    "target_error_m": 0.007349973732424784
+  }
+}

@@ -1,0 +1,258 @@
+{
+  "schema": "branch-one-task-proposal/v1",
+  "candidate_path": "strategies/bottle_branch1_v001.py",
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v001.py",
+    "sha256": "2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363",
+    "size_bytes": 58784
+  },
+  "status": "untested_design_candidate",
+  "untested": true,
+  "new_physics_steps": 0,
+  "broker_trials_submitted": 0,
+  "new_outcomes": null,
+  "learning_completed": false,
+  "explanation": [
+    "Test whether retaining the acquired bottle neck motor geometry across successful hover, tuck, carry, braking and placement avoids the observed later contact loss. Temporal evidence supports this intervention, not a unique root cause.",
+    "Embed V010 geometry/planning directly in one Task(BaseTask) module. Retain its probe/lift/hover acquisition-only running floor, then freeze the successful-hover reference once at tuck. All later hand feedback shares a fixed signed floor with reversible bounded extra closure. Keep it protected throughout place; opening begins only after sustained measured target-table handoff.",
+    "S03 V010 fails during close. This first intervention preserves its initial geometry and close logic rather than adding an unsupported independent repair. Repeating that failure is a material expected limitation; S02 improvement alone cannot establish paired improvement."
+  ],
+  "applicability": {
+    "case_ids": [
+      "S02_bottle",
+      "S03_bottle"
+    ],
+    "object_asset": "living_20260914_glass_bottle",
+    "grasp_region": "shape-derived upper neck/cap, original bottle local contact band .103 to .122 m",
+    "robot": "official G1 with original native14 hands",
+    "body_control": "SONIC29",
+    "hand_control": "original native14 PD",
+    "loaded_reference_ratio": 0.65,
+    "mass_assumption_kg": 0.2,
+    "observation_access": "privileged native geometry, state and measured contact forces; not vision-only or hardware qualification",
+    "admitted_inputs": {
+      "S02_bottle": {
+        "case": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/CASE.json",
+          "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+          "size_bytes": 12643
+        },
+        "model": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+          "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+          "size_bytes": 47744485
+        }
+      },
+      "S03_bottle": {
+        "case": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/CASE.json",
+          "sha256": "2e6e5e43892a065e0336f6c5b47c08d56691e573857718265a32e47e4847905d",
+          "size_bytes": 12543
+        },
+        "model": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_bottle/model.xml",
+          "sha256": "5498b72c2a3f21654713696498057188fd93aa5b6a3dfd69248f5be8e58dfeeb",
+          "size_bytes": 47742816
+        }
+      }
+    },
+    "binding_enforcement": "Runtime rejects other case IDs, objects, orientation axes or reference ratios; parent must enforce exact admitted case/model hashes and initialization."
+  },
+  "fixed_invariants": [
+    "Frozen plant, geometry, PD gains/effort/friction, cases, controller, judge and original eight gates; no infrastructure edits.",
+    "NoSlip iterations 0 to 3 at physics step 3960; all29 body actions remain SONIC and hands remain original native14 PD.",
+    "Right-hand references stay between zero and .65*RIGHT_CLOSED in native hand_ids name order; a shared tick origin caps net reference change at .006 rad per policy tick across callbacks and release/retraction.",
+    "No actual data qpos/qvel/time/ctrl writes, external forces, resets, replay state injection or native stepping. Retained private copied-state geometry/IK queries are reference planning only.",
+    "Original slip/acceptance anchors, probe and hover qualification, carry-distance/foot-cycle criteria, physical safety gates, final orientation >=.98 and final quiet-support audit remain binding."
+  ],
+  "phase_contracts": [
+    {
+      "phases": [
+        "close",
+        "force_balance"
+      ],
+      "pre": "Admitted V010 mesh/IK approach completed.",
+      "invariant": "Preserve initial geometry, native force controller and original close readiness/timeouts.",
+      "post": "Original measured opposing-role/force-balance conditions before load_probe."
+    },
+    {
+      "phases": [
+        "load_probe",
+        "lift",
+        "loaded_hover"
+      ],
+      "pre": "Original opposing contacts acquired.",
+      "invariant": "Retain V010 acquisition-only running motor floor and original anchors/quality gates; common slew/envelope projection cannot add reference authority.",
+      "post": "Original load transfer and continuous qualified hover pass, including bottom clearance >.025 m and no measured desk support."
+    },
+    {
+      "phases": [
+        "tuck",
+        "carry",
+        "target_stop"
+      ],
+      "pre": "Original probe_passed and grasp_test_passed; verified hover clearance.",
+      "invariant": "Freeze one immutable tuple from the successful-hover reference. For each right motor in signed closing coordinates require floor <= reference <= min(.65 native bound, floor+.060 rad), and .006 rad/tick net slew. No later floor ratchet.",
+      "post": "Original carry and stop requirements pass with grasp retained; diagnostics report individual role loss and wrist-relative orientation drift."
+    },
+    {
+      "phases": [
+        "place"
+      ],
+      "pre": "Original carry/stop completed; frozen hover reference exists.",
+      "invariant": "Same reference envelope covers normal_control, force_update, airborne_grip and final update commit. Tentative desk support holds preload without an upward support wrench; feedback resumes if contact vanishes.",
+      "post": "Lowering phase only: 21 consecutive policy observations spanning .400 s meet target-support criteria; original placement readiness also holds."
+    },
+    {
+      "phases": [
+        "release",
+        "retract",
+        "settle"
+      ],
+      "pre": "Qualified target-table support certificate plus original placement readiness.",
+      "invariant": "Slew-limited supported opening. Loss of target-support readiness during release stops visibly with branch1_target_support_lost_during_release; it cannot open further, reset the anchor or hide a failed transfer.",
+      "post": "Original no-hand-contact retraction and 51-observation settle logic; parent judges the complete last 200 physics samples and all original gates."
+    }
+  ],
+  "target_handoff_criteria": {
+    "phase": "place or release, place_step=lower, after qualified hover liftoff; close/probe/lift support never unlocks",
+    "contact": "Measured payload_surface/generated_desk pair normal sum >= .8*object_weight AND desk_supported",
+    "geometry": "Actual payload flex base within measured table top XY bounds with .005 m inset; actual flex-vertex bottom relative to table top in [-.003,.006] m",
+    "target": "XY object-origin distance <.10 m from BOTH original case target and geometry-projected place_goal",
+    "posture": "World-Z dot (object_rotation @ declared orientation_axis) >.985; angular speed <.25 rad/s",
+    "motion": "Object linear speed <.04 m/s, root linear speed <.06 m/s, original reached(tick,data)",
+    "dwell": "21 distinct consecutive 50 Hz policy observations; resets on a missed tick or failed observation; no continuity claim between policy observations",
+    "unlock": "No finger opening while in place, even at first contact. Unlock only through release transition with certificate; retain frozen tuple for diagnostics."
+  },
+  "changes_from_v010": [
+    "Freeze the successfully acquired hover motor vector once at tuck and project every later callback into a non-ratcheting envelope. The .060 rad extra-closing band is a conservative untested design bound, not an empirically learned optimum.",
+    "Use one tick-origin vector to enforce .006 rad net hand slew, including supported release and retraction, instead of allowing multiple callbacks or the release profile to accumulate a larger tick change.",
+    "Replace the sticky first-desk-contact shutdown in airborne_grip with tentative-support hold and resumption on contact loss. Require phase, target, actual geometry/contact and dwell before release.",
+    "Add diagnostic events for changing missing-role sets, root versus object posture, wrist-relative rotational drift, projected references and target-handoff certificates.",
+    "Retain V010 ready_arm, shape_reference, move and observe method ASTs exactly; no independent S03 geometry repair or wrist-trajectory retuning."
+  ],
+  "v011_review": {
+    "status": "Untested hypothesis, zero trial outcome claimed.",
+    "ratchet": "V011 overwrites acquired_probe_reference_floor after every projection, making every later closing increment a permanent new floor. Candidate deliberately retains the earlier V010 acquisition behavior only through hover, then uses a separate frozen tuple and permits feedback to back off extra closure to that tuple.",
+    "early_handoff": "V011 unlocks after any unsupported sample followed by desk_supported. S02 support toggles repeatedly during probe (including 1266/1283,1290/1306,1307/1325/1328/1338/1340); these are not placement handoff. Candidate requires successful hover, place/lower, measured target contact/geometry and dwell."
+  },
+  "evidence_use": {
+    "positive_scoped_reference": "Retrieved cup_airborne_support_and_settle_window is positive only for its listed cup cases; bottle retrieval rejects it by object/model scope. Use only the abstract requirement to verify support and the full final quiet interval. No cup absolute coordinates, qualified bottle skill or cross-object success claim.",
+    "partial": "bottle_acquired_preload_during_probe_and_hover: V009 probe failure versus V010 S02 probe/hover/carry progress motivates preserving V010 early acquisition. V010 S02 still failed object_slipped; its strict held net distance .5340119563 m is partial historical evidence only.",
+    "hypothesis": "bottle_all_airborne_preload_handoff and V011 are planning hypotheses. Candidate revises ratchet and early-handoff logic; neither draft has a new physical outcome.",
+    "negative": "S03 close timeout is a direct counterexample to transfer; no later-phase guard repairs missing acquisition. Flat-book bounded negatives are out of object/mass/pose scope and provide no bottle impossibility or geometry prescription.",
+    "complete_skill": "S02 bottle complete-skill retrieval has no matches; no promotion or complete learned manipulation skill is asserted.",
+    "time_order": [
+      "At last successful hover tick1502: thumb0 .23823566, middle1 .84304571. By target_stop tick1789: thumb0 .14451759, middle1 .62537865, while thumb2 closes from -.70775887 to -.94783383. Group force totals alone do not preserve per-motor geometry.",
+      "Endpoint thumb contact is transiently zero1795, returns1796, then endpoints zero from1807. Physics samples still show some thumb contact early in1808. First all-hand loss is tick1810 physics_index7280 at36.405 s, before original object_slipped rejection1813.",
+      "Object axis cosine at first physics breach is .9815234; tick1810 endpoint is .9777015. These are different observations. Robot root up is a separate quantity. Force distribution, wrist tracking and disturbances remain alternative contributors."
+    ]
+  },
+  "prior_evidence_references": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/EXPERT_CONTRACT.md",
+      "sha256": "4a710babab1d15954cabbbf5afc23dd580069b57438f4318a115ae5e92dccd1f",
+      "size_bytes": 3025
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PLAN.json",
+      "sha256": "e403f1b9dc434796bef27be89e5cc4184cfb93faa8adce1aa023f90680ed0a53",
+      "size_bytes": 2116
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_bottle_diagnosis_retrieval.json",
+      "sha256": "adecf7956ea9da2fa98f3aa66b8810bfa3258b1a1428cc9a351b8ce1749bc5b6",
+      "size_bytes": 8451
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S03_bottle_diagnosis_retrieval.json",
+      "sha256": "9b838b809eac98a948aedca8429f3f7299383f658a94185c0be815596779e984",
+      "size_bytes": 3989
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_bottle_complete_skill_retrieval.json",
+      "sha256": "0de94c61de33010379396c024b2fdc56ebf2ec57e7bf3ef15162edf4e6038dbf",
+      "size_bytes": 1589
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/EXPERIENCE_CANDIDATES.json",
+      "sha256": "a047dcec8afc21e40e5bba3f75b76c865f6275510ef8a2fe2690ebd49ea9c9c1",
+      "size_bytes": 25550
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_s02_v010_PHASE_FEEDBACK.json",
+      "sha256": "6fb1b71761706a7766e38f9e108539e5f2fde5ecb45df10748b17d4be14f6c70",
+      "size_bytes": 177809
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_s03_v010_PHASE_FEEDBACK.json",
+      "sha256": "c19d850f6cb08d899b54a4e40a4d54541435ca9eaf0ec946acfc7165296fa2c1",
+      "size_bytes": 91349
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_v010_time_order_diagnosis_v001.json",
+      "sha256": "3f94921d69912dc6dbc4c29d97ead35e9f04dd40103dd909381174c9fc65852b",
+      "size_bytes": 31682
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_v010.py",
+      "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+      "size_bytes": 46225
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_v011_UNTESTED.py",
+      "sha256": "5917959ba56d2762a5542980aad516c8680281e55ac65d8f7d4cf9b309b0e815",
+      "size_bytes": 47371
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/contracts.py",
+      "sha256": "7081433ff719df2898461977b31709ee9da4dd211e768457c4e657ff75731fb9",
+      "size_bytes": 3169
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_object_transport_v1/metrics.py",
+      "sha256": "3cb47e5fcf83b22bca916d936aeabf61c4ce5fc7d7e0aa66708f8fea0c4378c2",
+      "size_bytes": 6506
+    }
+  ],
+  "frame_and_index_notes": [
+    "Resolve each motor by hand_ids names, never by an assumed numeric index. The .843 to .625 reference is right_hand_middle_1_joint (middle distal), not index.",
+    "up is robot-root posture. Object posture is object_rotation @ declared local axis; bottle axis is [0,0,1].",
+    "Read-only metrics.py computes object_local_m in the WRIST frame, despite the PHASE_FEEDBACK object_in_root_m label. Candidate diagnostic events explicitly label it object_in_wrist_m; original slip-anchor semantics are unchanged."
+  ],
+  "design_verification": {
+    "syntax": "ast.parse and in-memory compile passed without importing or instantiating candidate",
+    "unchanged_method_ast": [
+      "ready_arm",
+      "shape_reference",
+      "move",
+      "observe"
+    ],
+    "static_scan": "No native step/reset/setState calls; no assignments to actual data/model fields. Retained qpos assignments are to private planning or copied arrays.",
+    "executed_candidate": false,
+    "runtime_tests_performed": false,
+    "actual_physics_performed": false,
+    "independent_QA_completed": false
+  },
+  "parent_tests_required": [
+    "Fresh original initialization S02 first, then the identical frozen SHA on S03; no replay prefix, state restore, blind sweep or intervening revision. Retain every failure and exact first-breach feedback.",
+    "Compare native named motor references across hover->tuck->carry->target_stop->place and all callbacks. Audit fixed floor, reversible extra-closing bound, signed .65 limits, per-tick .006 slew and retained original acceptance anchor.",
+    "Inspect per-role forces, all physics-substep contacts, actuator requested/actual torque, object/wrist rotation and drift before1810. Reconstruct force distribution; do not infer a sole cause from changed failure time.",
+    "Verify probe/lift table flicker and incidental hand-table contact never issue a target certificate; verify actual target-table support, base geometry, object axis, dwell reset and support-loss handling in release.",
+    "Require original-init all43ctrl continuous replay, independent SONIC29/native14 PD/contact/geometry audit, force reconstruction, full video decode/keyframe review, lineage/content deduplication, all eight gates and original last200-physics-sample settle acceptance.",
+    "Keep S03 close failure explicit. Paired improvement requires fresh success evidence on both frozen cases; a later airborne improvement alone is insufficient. Cup regression remains a separate parent task with its existing scoped baseline."
+  ],
+  "limits": [
+    "No new trajectory, success, causal learning, generalization, complete-skill qualification or automatic deployment approval.",
+    "Signed closing bounds preserve reference geometry but do not guarantee actual force, opposing contact, wrench feasibility or wrist alignment; extra closure can increase force and safety rejection remains authoritative.",
+    "The .060 rad band, .8 weight support threshold and geometric/motion tolerances are unvalidated. Conservative support readiness or slew-limited release can time out or fail even after a better airborne grasp.",
+    "Handoff dwell sees policy observations, not every physics substep. Parent must audit the substep history; final settle is still decided independently by the original judge.",
+    "Actual mesh-base/table checks use the admitted table top XY bounding rectangle and flex vertices, not a general support-polygon proof; geometric contact alone never certifies load transfer.",
+    "Support loss during release causes a visible stop, not a dynamically validated recovery. No regrasp rescue, wrist redesign or initial S03 acquisition repair is claimed."
+  ],
+  "immutable_delivery": {
+    "version": "bottle_branch1_v001",
+    "policy": "Freeze this file and hash for both parent trials. Any later intervention must use a new version after exact feedback; do not mutate v001."
+  },
+  "automatic_deployment_approved": false
+}

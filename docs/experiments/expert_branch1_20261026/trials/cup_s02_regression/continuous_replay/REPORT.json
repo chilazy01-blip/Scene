@@ -1,0 +1,68 @@
+{
+  "actual_numerical_warning_counters": [
+    {
+      "index": 0,
+      "lastinfo": 0,
+      "number": 0
+    },
+    {
+      "index": 1,
+      "lastinfo": 0,
+      "number": 0
+    },
+    {
+      "index": 2,
+      "lastinfo": 0,
+      "number": 0
+    },
+    {
+      "index": 3,
+      "lastinfo": 0,
+      "number": 0
+    },
+    {
+      "index": 4,
+      "lastinfo": 0,
+      "number": 0
+    },
+    {
+      "index": 5,
+      "lastinfo": 0,
+      "number": 0
+    },
+    {
+      "index": 6,
+      "lastinfo": 0,
+      "number": 0
+    }
+  ],
+  "actual_numerical_warning_events": [],
+  "content_sha256_excluding_this_field": "a519e74249dc1110a5f4976a993b64f71755f8c38add53501d2831a2f8136753",
+  "expected_steps": 8536,
+  "failure": null,
+  "implementation": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/replay_numerical_v2.py",
+    "sha256": "43c5b043001658345a0cce95df3f39a06bbbad29d4e29cf437ac310f95068c78",
+    "size_bytes": 6007
+  },
+  "initializations": 1,
+  "intermediate_state_injections": 0,
+  "maximum_absolute_error": {
+    "qpos": 0.0,
+    "qvel": 0.0,
+    "time": 0.0,
+    "warmstart": 0.0
+  },
+  "maximum_actual_ncon": 119,
+  "no_numerical_warnings": true,
+  "not_an_additional_autonomous_success": true,
+  "passed": true,
+  "physics_steps": 8536,
+  "schema": "native-mug-continuous-dynamics-replay/v1",
+  "started": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay/STARTED.json",
+    "sha256": "dee5233aa0450935d6bf569e5c472321ef9926fa1f7c3c9eb9795d3c31cb2583",
+    "size_bytes": 979
+  },
+  "wall_s": 556.174987190403
+}

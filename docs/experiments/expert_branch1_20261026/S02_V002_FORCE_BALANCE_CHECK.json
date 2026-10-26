@@ -1,0 +1,96 @@
+{
+  "content_sha256_excluding_this_field": "cd26c63119511bf73bea69c0c449dbbbceb5b85995914e74c06250b00ed7b18d",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/check_release_force_balance.py",
+    "sha256": "5fb4dbc603fe59bc496ec64941cb4fb5204e9bcb64b3b9e0f2259a3856abfed2",
+    "size_bytes": 1417
+  },
+  "interpretation": "At the actual stopping state table and fingers share the weight; the object is not in free fall. This identifies load sharing, not a guaranteed successful recovery action.",
+  "mass_assumptions": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models/S02_bottle/OBJECT_ASSUMPTIONS.json",
+    "sha256": "7b802cf2755a8c4eb28011013446467e8f0b1df4799a19dbcb03280aea0e782b",
+    "size_bytes": 1045
+  },
+  "maximum_vertical_balance_residual_n": 3.552713678800501e-15,
+  "new_physics_steps": 0,
+  "passed": true,
+  "rows": [
+    {
+      "hand_upward_force_n": -1.363503093714446,
+      "inertial_force_z_n": 0.005233880253959811,
+      "newton_residual_n": -4.5102810375396984e-17,
+      "table_load_fraction": 1.6976233302591262,
+      "table_upward_force_n": 3.330736973968406,
+      "tick": 2059,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "hand_upward_force_n": -1.4009467916267762,
+      "inertial_force_z_n": -0.01365419665397525,
+      "newton_residual_n": -1.3183898417423734e-16,
+      "table_load_fraction": 1.7070808333194702,
+      "table_upward_force_n": 3.349292594972801,
+      "tick": 2060,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "hand_upward_force_n": -1.6221179332167681,
+      "inertial_force_z_n": -0.0008581616494037548,
+      "newton_residual_n": -1.2433630514063765e-15,
+      "table_load_fraction": 1.8263301588008987,
+      "table_upward_force_n": 3.5832597715673633,
+      "tick": 2061,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "hand_upward_force_n": -2.824753573762911,
+      "inertial_force_z_n": 0.028093462658814874,
+      "newton_residual_n": -3.5735303605122226e-16,
+      "table_load_fraction": 2.4540504772791665,
+      "table_upward_force_n": 4.8148470364217255,
+      "tick": 2062,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "hand_upward_force_n": -2.9120088562192707,
+      "inertial_force_z_n": 0.028114399958778694,
+      "newton_residual_n": -2.400857290751901e-15,
+      "table_load_fraction": 2.4985337697135814,
+      "table_upward_force_n": 4.902123256178047,
+      "tick": 2063,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "hand_upward_force_n": -2.0509172258739965,
+      "inertial_force_z_n": 0.00552192662381934,
+      "newton_residual_n": 3.552713678800501e-15,
+      "table_load_fraction": 2.0481341246166256,
+      "table_upward_force_n": 4.01843915249782,
+      "tick": 2064,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "hand_upward_force_n": -0.27990110575292043,
+      "inertial_force_z_n": 0.006476687864401143,
+      "newton_residual_n": 0.0,
+      "table_load_fraction": 1.1459621781943534,
+      "table_upward_force_n": 2.2483777936173217,
+      "tick": 2065,
+      "weight_n": 1.9620000000000002
+    },
+    {
+      "hand_upward_force_n": 1.0180686953713631,
+      "inertial_force_z_n": -0.0035086468872652433,
+      "newton_residual_n": 3.1094918306884267e-16,
+      "table_load_fraction": 0.4793183780537064,
+      "table_upward_force_n": 0.9404226577413721,
+      "tick": 2066,
+      "weight_n": 1.9620000000000002
+    }
+  ],
+  "source": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V002_RELEASE_WRENCH_POSE.json",
+    "sha256": "9db849f76e4530076efd5abf3982b3918bb2cdeb6a9c27ba8c36f262d7588ad0",
+    "size_bytes": 12647
+  }
+}

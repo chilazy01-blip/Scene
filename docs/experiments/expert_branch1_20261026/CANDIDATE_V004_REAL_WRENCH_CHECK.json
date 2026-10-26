@@ -1,0 +1,45 @@
+{
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v004.py",
+    "sha256": "125c397ece48168614d44f7faabc660514a886be73631f4f5ff891a26034d415",
+    "size_bytes": 84772
+  },
+  "content_sha256_excluding_this_field": "f4ca9c54c11691a9dd01e0b7eb562741d9e95faf93075fd1f6f46932a37db3bf",
+  "hand_wrench": {
+    "desk_force_world_n": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "hand_force_world_n": [
+      -0.19038594534704575,
+      -0.1825192760160032,
+      2.0965652127863748
+    ],
+    "query": "current native contactForce; no integration",
+    "role_normals_n": {
+      "index": 3.88823243233397,
+      "middle": 0.0,
+      "thumb": 3.4707813355700594
+    }
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/check_v004_real_wrench.py",
+    "sha256": "a26fa6f8a59f794610d0c8313c14828f1f505b4b80dbd51b97ac6c1f34ce319f",
+    "size_bytes": 3828
+  },
+  "limits": "Actual recorded force/pose, independent wrench comparison. Reference origin/anchor/desired callbacks isolated; no full entry/recovery, new trajectory or successful seating is certified.",
+  "new_physics_steps": 0,
+  "passed": true,
+  "physical_state_and_model_unchanged": true,
+  "reference_increment_m": [
+    1.3086101787871934e-05,
+    7.89224552329529e-05,
+    -0.00012
+  ],
+  "source_report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/REPORT.json",
+    "sha256": "c550f91994f7c1b3da549d0f191ad88f886be0366c28e08d6d4bc7953f0869e7",
+    "size_bytes": 7917635
+  }
+}

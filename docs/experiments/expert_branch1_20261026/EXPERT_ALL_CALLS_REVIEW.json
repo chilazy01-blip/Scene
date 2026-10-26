@@ -1,0 +1,87 @@
+{
+  "all_actual_cli_calls_returned_zero": true,
+  "calls": [
+    {
+      "actual_cli_returncode": 0,
+      "completed_turn_usage": [
+        {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 1518080,
+          "input_tokens": 1621070,
+          "output_tokens": 17487,
+          "reasoning_output_tokens": 5552
+        }
+      ],
+      "invocation": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/expert_proposal_01/INVOCATION.json",
+        "sha256": "d71a6287b84333389b085b866fb84e4e47e833156a9c1e2a8d5475565b2dd35b",
+        "size_bytes": 552
+      },
+      "wall_s": 586.4648258686066
+    },
+    {
+      "actual_cli_returncode": 0,
+      "completed_turn_usage": [
+        {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 1211904,
+          "input_tokens": 1282355,
+          "output_tokens": 15149,
+          "reasoning_output_tokens": 2506
+        }
+      ],
+      "invocation": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/expert_repair_v2_01/INVOCATION.json",
+        "sha256": "645791c660d4988fb038b0d3487bf1dc1f814ec9a81b95dd20a187724a1ff8ef",
+        "size_bytes": 553
+      },
+      "wall_s": 428.34618377685547
+    },
+    {
+      "actual_cli_returncode": 0,
+      "completed_turn_usage": [
+        {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 1856896,
+          "input_tokens": 1951743,
+          "output_tokens": 25255,
+          "reasoning_output_tokens": 7038
+        }
+      ],
+      "invocation": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/expert_repair_v3_01/INVOCATION.json",
+        "sha256": "672cf80f2dadd0c5dc3a4d3f906c5847f838d1886de3ba17c78e4bd4fbdf6497",
+        "size_bytes": 553
+      },
+      "wall_s": 553.7372651100159
+    },
+    {
+      "actual_cli_returncode": 0,
+      "completed_turn_usage": [
+        {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 2596608,
+          "input_tokens": 2712915,
+          "output_tokens": 27879,
+          "reasoning_output_tokens": 7057
+        }
+      ],
+      "invocation": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/expert_repair_v4_01/INVOCATION.json",
+        "sha256": "316fdc4485cf1b5f83c25a09aafa9ba31ddd245bfcdd386931775ca90bffd990",
+        "size_bytes": 553
+      },
+      "wall_s": 743.2119338512421
+    }
+  ],
+  "captured_completed_turn_totals": {
+    "cached_input_tokens": 7183488,
+    "input_tokens": 7568083,
+    "output_tokens": 85770,
+    "reasoning_output_tokens": 22153
+  },
+  "content_sha256_excluding_this_field": "95afa693dcd19af364941d195a1e618f35d064febcad6dda4e61066f103ff319",
+  "native_integration_by_expert_design_calls": 0,
+  "noncached_input_tokens": 384595,
+  "scope": "Only reported completed external CLI turns; primary orchestration token use is not metered here. Cached tokens are a subset of input_tokens."
+}

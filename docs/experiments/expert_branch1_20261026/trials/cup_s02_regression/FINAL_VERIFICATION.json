@@ -1,0 +1,133 @@
+{
+  "all_video_frames_automatically_decoded": 2134,
+  "complete": true,
+  "content_sha256_excluding_this_field": "12d49467ca383486500028689772cc22999f26b0fada5778da8d5382f3516fec",
+  "dataset_split": "unassigned",
+  "evidence": {
+    "audit": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/AUDIT_v2.json",
+      "sha256": "66c444ff6e488e5276c8aa9a1471bf20b9081652db6fe0610ed55815b0c509e6",
+      "size_bytes": 2581
+    },
+    "delivery": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/REVIEW.json",
+      "sha256": "cb54024c47c55207f9c38a27d08d25c70913e7898c0fb1ce50a60ee6a07bc4b8",
+      "size_bytes": 12018
+    },
+    "episode": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/episode.npz",
+      "sha256": "3bbd02e3fbe22578da8a0384601485475e760b49e94767f0913a95f004aff6e4",
+      "size_bytes": 25084443
+    },
+    "force": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/FORCE_CHECK.json",
+      "sha256": "041324780f74b5532dd8148a0892c98416c3971ad143e74415becc17eab27019",
+      "size_bytes": 10192628
+    },
+    "measurements": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/MEASUREMENTS.json",
+      "sha256": "15e48bae63fb2c50adb2eea911aed11aadcce958d6f25bceccd154f9534b76ea",
+      "size_bytes": 6628
+    },
+    "replay": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay/REPORT.json",
+      "sha256": "1e3ef8789a341cfa9f88075e80ce8491ab0811eb5b67177e0f0b6147583f80bc",
+      "size_bytes": 1652
+    },
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/REPORT.json",
+      "sha256": "95418e0fd080dd6f09f208dab173960f91a489887f7030f520762e4d8cd1496a",
+      "size_bytes": 5510472
+    },
+    "video": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/actual_video_v3/MANIFEST.json",
+      "sha256": "4cce59769c8efb31afd0c6c52a63422fdf8f03b015296315a2f492cb0ae7f7b5",
+      "size_bytes": 6399
+    }
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/verify_completed_v1.py",
+    "sha256": "3cce78cd219fe0359a4885708e8ce6395db753d39727cbaaa0211dc2c52bcbb7",
+    "size_bytes": 4596
+  },
+  "new_physics_steps": 0,
+  "npz_shapes": {
+    "body_feedforward_nm": [
+      8536,
+      29
+    ],
+    "body_target_rad": [
+      8536,
+      29
+    ],
+    "ctrl": [
+      8536,
+      43
+    ],
+    "hand_target_rad": [
+      8536,
+      14
+    ],
+    "object_position_m": [
+      8536,
+      3
+    ],
+    "qacc_warmstart_after": [
+      8536,
+      55
+    ],
+    "qacc_warmstart_before": [
+      8536,
+      55
+    ],
+    "qpos_after": [
+      8536,
+      57
+    ],
+    "qpos_before": [
+      8536,
+      57
+    ],
+    "qvel_after": [
+      8536,
+      55
+    ],
+    "qvel_before": [
+      8536,
+      55
+    ],
+    "stage": [
+      8536
+    ],
+    "time_s": [
+      8536
+    ]
+  },
+  "numerically_quarantined": false,
+  "positive": true,
+  "primary_visual_observations": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 18,
+    "files": [
+      "delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 21,
+    "observations": "Actual overview shows approach, grasp, held walking, place, release and settle. Closeups show supported upright cup at end and fingers clearing it. Initial placement tilt recovers. Main camera stays inside room; closeups clarify finger/object contact. Mechanical conclusions additionally rely on independent audit/force/replay; no per-frame manual or fully unoccluded-surface claim.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "reviewed_images": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_review.jpg",
+      "sha256": "009d6749801a3ed5dac1d04f2bff8e9e664be2c875908cc905e763330e3c91db",
+      "size_bytes": 1289488
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/placement_detail/review.jpg",
+      "sha256": "e16ff0a1b2148fd29be26a04fc24f774915fb5620dd3eae11b27f2304ac7435e",
+      "size_bytes": 1203735
+    }
+  ],
+  "source_role": "development_validation",
+  "verified_epoch_utc": 1793032317.549807
+}

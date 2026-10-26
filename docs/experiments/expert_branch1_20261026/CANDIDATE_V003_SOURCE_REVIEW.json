@@ -1,0 +1,29 @@
+{
+  "added_methods": [
+    "release_entry_valid",
+    "release_event",
+    "stop_release",
+    "observe_release_permission"
+  ],
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v003.py",
+    "sha256": "2dbdaf1ec66f26edfa690dc1489753eefbeccb16343248eb2056704c447a5933",
+    "size_bytes": 73646
+  },
+  "changed_methods": [
+    "__init__",
+    "change",
+    "observe_target_handoff",
+    "update",
+    "update_phase"
+  ],
+  "content_sha256_excluding_this_field": "500482e9eb139e22e57d141f71df65965f01e013eb1ec1f7edeb0a62f2ed0057",
+  "new_physics_steps": 0,
+  "proposal": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V003.json",
+    "sha256": "5addd6a34fcbc57fab779c40cfe3045210b4bbc66b57e57d3fc7ac4f2d2d6e3e",
+    "size_bytes": 70095
+  },
+  "unchanged_geometry_gripping_projection_and_body_reference_methods": true,
+  "untested": true
+}

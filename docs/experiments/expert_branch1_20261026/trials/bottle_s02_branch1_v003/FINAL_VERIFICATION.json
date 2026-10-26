@@ -1,0 +1,72 @@
+{
+  "all_video_frames_automatically_decoded": 2078,
+  "complete": true,
+  "content_sha256_excluding_this_field": "80fa054d64fbe0c660b85b9c9d57479436469d14da1beac6a407973d758e4360",
+  "dataset_split": "unassigned",
+  "evidence": {
+    "audit": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/AUDIT_v4.json",
+      "sha256": "358d05646e7e521f02a5866f5f65337bc30ee8b86d5402171074d696794dea5c",
+      "size_bytes": 7795
+    },
+    "delivery": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/partial_delivery_v6/REVIEW.json",
+      "sha256": "c19efc462c777fc308ee8ea4898bfcdac3f96530b85903837444dd6305bbcc18",
+      "size_bytes": 12958
+    },
+    "force": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/FORCE_CHECK.json",
+      "sha256": "57a146b7f76bfc98f8ed6c4e0d1a7c26f5cbd6121fe2c015401f9292f68ab598",
+      "size_bytes": 15629408
+    },
+    "measurements": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/MEASUREMENTS.json",
+      "sha256": "4109239f172c0210e22e659132746ea852f7964ddde592d5ee7d3c5a6da78186",
+      "size_bytes": 45206
+    },
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/REPORT.json",
+      "sha256": "c550f91994f7c1b3da549d0f191ad88f886be0366c28e08d6d4bc7953f0869e7",
+      "size_bytes": 7917635
+    },
+    "video": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/actual_video_v3/MANIFEST.json",
+      "sha256": "2a801028c34ababc2ba5686d12e4dae1e48cd1b0a704a9ee4742e6f48ccf21db",
+      "size_bytes": 6184
+    }
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/verify_completed_v3.py",
+    "sha256": "34ea12a40ade83550c6e043cf81c9387262e6ef11d9bdbccc322f2869111174d",
+    "size_bytes": 4850
+  },
+  "new_physics_steps": 0,
+  "npz_shapes": {},
+  "numerically_quarantined": false,
+  "positive": false,
+  "primary_visual_observations": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 16,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 15,
+    "observations": "Held-walk and upright target placement visible. Terminal early-release frames remain grasped, no completed opening/retract/settle. The sub-millimetre target support loss is established by native measurements, not resolved visually from these frames. Negative despite near-upright appearance.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "reviewed_images": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "322f6f30f47b7ea37a4463ead1ce6fde3d686cc9529477fb723cb2b017858990",
+      "size_bytes": 1144105
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/placement_detail/review.jpg",
+      "sha256": "0459ce279dc9dff7b8d264e9ed598a48e10854b058d4ecc30d83be43e83cfeba",
+      "size_bytes": 823149
+    }
+  ],
+  "source_role": "development_validation",
+  "verified_epoch_utc": 1793041108.1058135
+}

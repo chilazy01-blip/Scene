@@ -1,0 +1,72 @@
+{
+  "all_video_frames_automatically_decoded": 2085,
+  "complete": true,
+  "content_sha256_excluding_this_field": "49801eb49e8e26ce9f6586fd3b6c92bfc071d94155bcc58a8c7fbb5bdd407c35",
+  "dataset_split": "unassigned",
+  "evidence": {
+    "audit": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/AUDIT_v4.json",
+      "sha256": "f5e41378f905af2078f6304b4486c67231b3bf63a732b78ddee9f27972972f87",
+      "size_bytes": 7795
+    },
+    "delivery": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/REVIEW.json",
+      "sha256": "5c87a4d6d9622da09155292107861b73cce9b568b27de621a48ae685eefdc2e1",
+      "size_bytes": 12956
+    },
+    "force": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/FORCE_CHECK.json",
+      "sha256": "3ea0ed2d9800c12dcaa56de0ee2dc491db0526c76394c9ce652e445fa6348c89",
+      "size_bytes": 15629408
+    },
+    "measurements": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/MEASUREMENTS.json",
+      "sha256": "07d00553eed3d589880e30ed68d82c8ca77af9d149cd8dd8c9f3e141334a6563",
+      "size_bytes": 45214
+    },
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/REPORT.json",
+      "sha256": "79c0688c8e91bfe83c3cf3687580025f9a570ac13098697a61e311d661155b75",
+      "size_bytes": 9758663
+    },
+    "video": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/actual_video_v3/MANIFEST.json",
+      "sha256": "5124e5856a42c5d90a22135a06e8a77fcdd0da97bc5933f9299254c5ca6b1e65",
+      "size_bytes": 6182
+    }
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/verify_completed_v3.py",
+    "sha256": "34ea12a40ade83550c6e043cf81c9387262e6ef11d9bdbccc322f2869111174d",
+    "size_bytes": 4850
+  },
+  "new_physics_steps": 0,
+  "npz_shapes": {},
+  "numerically_quarantined": false,
+  "positive": false,
+  "primary_visual_observations": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 16,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 15,
+    "observations": "Full-body approach, upper neck/cap contact, lift, carried walk and upright target placement are visible. Hand remains at bottle cap at terminal release frames, with no completed opening, retract or settle. Visual appearance does not resolve submillimetre support or certify speed; measured native evidence determines the negative result.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "reviewed_images": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "aca0d3cdc4d4c3878f5ab682a7fbf01b1a4f2300bbd92fed34e5974a0dba5687",
+      "size_bytes": 1143939
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/placement_detail/review.jpg",
+      "sha256": "e0555743eaade466daeb62b5fce1d74b21417015760319bbd53c2796ab8a3482",
+      "size_bytes": 823198
+    }
+  ],
+  "source_role": "development_validation",
+  "verified_epoch_utc": 1793041329.7594788
+}

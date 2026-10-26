@@ -1,0 +1,33 @@
+{
+  "content_sha256_excluding_this_field": "60dd56b8c33255334d776df06f5d7113d5983c3ff0807bcb4b53aae570d71f37",
+  "corrected_files": [
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/contracts_v2.py",
+      "sha256": "6e6f731ea0ed7d86e968f3a631db02f9455bd9bf0999d175c7692bdb3004edfd",
+      "size_bytes": 3170
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/feedback_v2.py",
+      "sha256": "367e96f34817679d1b41304db6c540424884e1d7ff87eee0c0207eaad97e09d0",
+      "size_bytes": 4143
+    }
+  ],
+  "detected": "Source review of frozen metrics.py line120 shows object_local_m uses wrist xmat, not root.",
+  "existing_cup_protocol_sources_unchanged": true,
+  "new_physics_steps": 0,
+  "official_feedback_version": "v2",
+  "old_sources_retained": true,
+  "physical_engine_and_native_judge_unchanged": true,
+  "superseded_files": [
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/contracts.py",
+      "sha256": "7081433ff719df2898461977b31709ee9da4dd211e768457c4e657ff75731fb9",
+      "size_bytes": 3169
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/feedback.py",
+      "sha256": "c928131306b9cdb034db48f7f6a1275f7d6ddfc96aa3ed2415a11550b87fc3c2",
+      "size_bytes": 4130
+    }
+  ]
+}

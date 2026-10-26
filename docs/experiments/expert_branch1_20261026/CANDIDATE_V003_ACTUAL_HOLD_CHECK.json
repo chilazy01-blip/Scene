@@ -1,0 +1,28 @@
+{
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v003.py",
+    "sha256": "2dbdaf1ec66f26edfa690dc1489753eefbeccb16343248eb2056704c447a5933",
+    "size_bytes": 73646
+  },
+  "checks": [
+    "actual_deficit_classified",
+    "last_issued_reference_held",
+    "opening_clock_paused",
+    "physical_start_unchanged",
+    "original_200_tick_timeout_enforced"
+  ],
+  "content_sha256_excluding_this_field": "e587a96abfb0da791b738436f9b212d942ad06e52537e771652f560bceb0c893",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/check_v003_hold_v2.py",
+    "sha256": "5899218c215fe8818af329b731c9620735056e3fb30aa3964f611580da9beb06",
+    "size_bytes": 3978
+  },
+  "limits": "Private recorded pose and actual deficit. Entry-certificate validation and observation callbacks are mocked for isolated bookkeeping; no real recovery or trajectory proved.",
+  "new_physics_steps": 0,
+  "passed": true,
+  "source_report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/full/REPORT.json",
+    "sha256": "40734830f1060200095590cceef2dbbb568b784a0855a382e066a398f2ccc128",
+    "size_bytes": 7071430
+  }
+}

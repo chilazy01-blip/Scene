@@ -1,0 +1,52 @@
+{
+  "bottleneck": "Failures and partial fixes are not yet reusable phase-specific evidence; bottle carry-to-place loses acquired grasp.",
+  "cases": {
+    "S02_bottle": {
+      "object": "bottle",
+      "scene": "S02"
+    }
+  },
+  "checkpoint_commit": "2f2791348af1f80adf6dad17876b46e79641b28a",
+  "content_sha256_excluding_this_field": "1e722bb0afae18f4380e908eb266bda6515d33b485e40decfb6dc130e43ecae8",
+  "cumulative_native_cap": 359138,
+  "dataset_split": "unassigned",
+  "deadline_epoch_utc": 1793043631.3818104,
+  "exit": "Complete the scoped S02 full-task recovery experiment and independent QA, with initial matrix preserved, or the original finite deadline/physics headroom. Keep all failures and actual causes; no blind thresholds or resets.",
+  "fixed": [
+    "official G1+14 native hands",
+    "SONIC29+native handPD",
+    "plant/effort/PD/geometry frozen per admitted model",
+    "NoSlip0->3 at3960",
+    "original eight task gates",
+    "upright bottle/cup >=.98; book cover normal abs dot up >=.98"
+  ],
+  "full_ticks": 3200,
+  "max_new_physics_steps": 120000,
+  "new_budget_granted": false,
+  "objective": "Test bounded reference-only release pause and measured load requalification after actual V002 load-share deficit; do not lower thresholds.",
+  "old_round_not_resumed": true,
+  "prefix_active_ticks": 0,
+  "prefix_physics_steps": 0,
+  "prior_native_steps": 239138,
+  "prior_plan": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PLAN_v2.json",
+  "qa_headroom_seconds": 2400,
+  "repair_evidence": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V002_LOAD_SHARE_CAUSE.json",
+  "resource_limits": {
+    "blas_threads": 1,
+    "cpus": 8,
+    "memory_gib": 16
+  },
+  "same_unreset_ledger": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/COST.json",
+  "schema": "expert-branch1-bounded-release-recovery/v3",
+  "source_role": "development_validation",
+  "started_epoch_utc": 1793029231.3818104,
+  "success_requires": [
+    "original-init all43ctrl continuous replay",
+    "independent NN/PD/contact/geometry audit",
+    "force reconstruction",
+    "full real video decode and main-agent keyframe review",
+    "dataset lineage and content deduplication"
+  ],
+  "user_authorized_expert_code_and_tools": true,
+  "user_authorized_github_checkpoint": true
+}

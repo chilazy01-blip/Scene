@@ -1,0 +1,5020 @@
+{
+  "alignment": "All actual poses/forces are at policy-command time, before its first physics substep; requested references are the command for that time. Previous exact state/time chain is asserted.",
+  "bindings": {
+    "implementation": {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/spatial_feedback.py",
+      "sha256": "8680442165250f749260b784ab299eabc79614ec89903292f98e84c7973a7bce",
+      "size_bytes": 3583
+    },
+    "model": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+      "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+      "size_bytes": 45935557
+    },
+    "phase_feedback": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/PHASE_FEEDBACK_V3.json",
+      "sha256": "bdde64bc0598d8088e336f5e347bfd11037c6c73f3a089290fe8e156c0d23b14",
+      "size_bytes": 166902
+    },
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/REPORT.json",
+      "sha256": "95418e0fd080dd6f09f208dab173960f91a489887f7030f520762e4d8cd1496a",
+      "size_bytes": 5510472
+    },
+    "schema": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/ROBOT_DATA_SCHEMA.json",
+      "sha256": "cdbff6a21fe64cb644b21e2f584be45b1e991b5d56f12e6560084eed98c7bbcb",
+      "size_bytes": 23616
+    },
+    "trace": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/TRACE.json",
+      "sha256": "851fb80ce3f17c73a00f7e32dce363996ba1ffbb33c05f6043aba20a62f1183c",
+      "size_bytes": 492724856
+    }
+  },
+  "content_sha256_excluding_this_field": "1da4e4b5436c32dd6780daa2e09e8264a378b5b3ac1d4e9b1a3862d0f69aaa42",
+  "limits": "Measured tracking errors are diagnostics, not proof of a unique grasp failure cause or fresh motion.",
+  "new_physics_steps": 0,
+  "phase_summaries": {
+    "approach": {
+      "last_wrist_position_error_m": null,
+      "maximum_wrist_position_error_m": null,
+      "policy_samples": 130
+    },
+    "carry": {
+      "last_wrist_position_error_m": 0.025956940829941433,
+      "maximum_wrist_position_error_m": 0.03126473917676606,
+      "policy_samples": 121
+    },
+    "close": {
+      "last_wrist_position_error_m": 0.0018682382659808744,
+      "maximum_wrist_position_error_m": 0.011156244231749456,
+      "policy_samples": 105
+    },
+    "force_balance": {
+      "last_wrist_position_error_m": 0.00995389284886671,
+      "maximum_wrist_position_error_m": 0.00995389284886671,
+      "policy_samples": 15
+    },
+    "initial_stand": {
+      "last_wrist_position_error_m": null,
+      "maximum_wrist_position_error_m": null,
+      "policy_samples": 225
+    },
+    "insert": {
+      "last_wrist_position_error_m": 0.0065816998777144505,
+      "maximum_wrist_position_error_m": 0.01385420660125479,
+      "policy_samples": 50
+    },
+    "lift": {
+      "last_wrist_position_error_m": 0.0072738853085044025,
+      "maximum_wrist_position_error_m": 0.010583090188055958,
+      "policy_samples": 98
+    },
+    "load_probe": {
+      "last_wrist_position_error_m": 0.0033768401699136846,
+      "maximum_wrist_position_error_m": 0.008217045764026624,
+      "policy_samples": 70
+    },
+    "loaded_hover": {
+      "last_wrist_position_error_m": 0.01180944540730238,
+      "maximum_wrist_position_error_m": 0.013431072703228197,
+      "policy_samples": 71
+    },
+    "lower": {
+      "last_wrist_position_error_m": 0.01399648646510558,
+      "maximum_wrist_position_error_m": 0.014071898407328087,
+      "policy_samples": 50
+    },
+    "place": {
+      "last_wrist_position_error_m": 0.001832215895788924,
+      "maximum_wrist_position_error_m": 0.017491133487905135,
+      "policy_samples": 262
+    },
+    "preinsert": {
+      "last_wrist_position_error_m": 0.0025078282397210396,
+      "maximum_wrist_position_error_m": 0.016363038372371144,
+      "policy_samples": 90
+    },
+    "ready_arm": {
+      "last_wrist_position_error_m": null,
+      "maximum_wrist_position_error_m": null,
+      "policy_samples": 344
+    },
+    "release": {
+      "last_wrist_position_error_m": 0.004197831097456784,
+      "maximum_wrist_position_error_m": 0.007043589247395421,
+      "policy_samples": 115
+    },
+    "retract": {
+      "last_wrist_position_error_m": 0.015743675639805648,
+      "maximum_wrist_position_error_m": 0.05569592302141623,
+      "policy_samples": 80
+    },
+    "settle": {
+      "last_wrist_position_error_m": null,
+      "maximum_wrist_position_error_m": null,
+      "policy_samples": 52
+    },
+    "source_stop": {
+      "last_wrist_position_error_m": null,
+      "maximum_wrist_position_error_m": null,
+      "policy_samples": 91
+    },
+    "target_stop": {
+      "last_wrist_position_error_m": 0.0012070529916056913,
+      "maximum_wrist_position_error_m": 0.03064531526253052,
+      "policy_samples": 95
+    },
+    "tuck": {
+      "last_wrist_position_error_m": 0.007159561980248404,
+      "maximum_wrist_position_error_m": 0.016450509463418823,
+      "policy_samples": 60
+    }
+  },
+  "samples": [
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.00014470810641709992,
+        "left_hand_index_1_joint": -2.496346865077142e-05,
+        "left_hand_middle_0_joint": -0.00014341834239194393,
+        "left_hand_middle_1_joint": -2.4769512882320065e-05,
+        "left_hand_thumb_0_joint": -4.075134803426926e-05,
+        "left_hand_thumb_1_joint": 0.00044970301182593306,
+        "left_hand_thumb_2_joint": 6.949173636991237e-05,
+        "right_hand_index_0_joint": 0.00015064159511972097,
+        "right_hand_index_1_joint": 2.5872780605342063e-05,
+        "right_hand_middle_0_joint": 0.00014907991848150427,
+        "right_hand_middle_1_joint": 2.5633468356064493e-05,
+        "right_hand_thumb_0_joint": -4.120300279559748e-05,
+        "right_hand_thumb_1_joint": -0.00044659403545194317,
+        "right_hand_thumb_2_joint": -6.90318451170598e-05
+      },
+      "actual_object_in_wrist_m": [
+        0.5654987471955417,
+        -0.09467114374928146,
+        0.6341214817528075
+      ],
+      "actual_object_world_m": [
+        2.548315331910659,
+        1.8790205176187353,
+        0.786188489198848
+      ],
+      "actual_wrist_world_m": [
+        1.7029696491993698,
+        1.983893594961629,
+        0.713705204719496
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4741552823874724,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "initial_stand",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 0,
+      "time_s": 0.2000000000000001,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0012308103842115898,
+        "left_hand_index_1_joint": -0.00021836842733462356,
+        "left_hand_middle_0_joint": -0.001232988389141373,
+        "left_hand_middle_1_joint": -0.00021872731496971944,
+        "left_hand_thumb_0_joint": -0.00040889558951503796,
+        "left_hand_thumb_1_joint": 0.004888370231897226,
+        "left_hand_thumb_2_joint": 0.000751659678251444,
+        "right_hand_index_0_joint": 0.0016148004974612187,
+        "right_hand_index_1_joint": 0.0002770017144747713,
+        "right_hand_middle_0_joint": 0.0016218585655596927,
+        "right_hand_middle_1_joint": 0.00027811507225239445,
+        "right_hand_thumb_0_joint": -0.00039800605081228457,
+        "right_hand_thumb_1_joint": -0.0049146990402466955,
+        "right_hand_thumb_2_joint": -0.0007580715913574956
+      },
+      "actual_object_in_wrist_m": [
+        0.5955869395150319,
+        -0.10240528980881376,
+        0.5851316703688542
+      ],
+      "actual_object_world_m": [
+        2.548282963590214,
+        1.87898531393119,
+        0.7861836342914252
+      ],
+      "actual_wrist_world_m": [
+        1.7133320986955978,
+        1.9737096053915122,
+        0.7477898927515791
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4729675482596947,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "initial_stand",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 112,
+      "time_s": 2.43999999999997,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0024090912605790617,
+        "left_hand_index_1_joint": -0.0004156913891041703,
+        "left_hand_middle_0_joint": -0.0024090552631962176,
+        "left_hand_middle_1_joint": -0.0004157239136249781,
+        "left_hand_thumb_0_joint": -0.0006247720245299842,
+        "left_hand_thumb_1_joint": 0.007919022574581764,
+        "left_hand_thumb_2_joint": 0.0012178105531113778,
+        "right_hand_index_0_joint": 0.0036968678764866883,
+        "right_hand_index_1_joint": 0.0006184890120587643,
+        "right_hand_middle_0_joint": 0.0037073181613077747,
+        "right_hand_middle_1_joint": 0.0006201311076088191,
+        "right_hand_thumb_0_joint": -0.00023867449272389307,
+        "right_hand_thumb_1_joint": -0.009029241723857216,
+        "right_hand_thumb_2_joint": -0.001395012031687083
+      },
+      "actual_object_in_wrist_m": [
+        -0.42482127558930033,
+        -0.14323287496262152,
+        1.0412607764620732
+      ],
+      "actual_object_world_m": [
+        2.5482976932618953,
+        1.87895080758986,
+        0.7861796900918772
+      ],
+      "actual_wrist_world_m": [
+        1.4193117499824583,
+        1.9786540339363516,
+        0.7604351024021326
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4723452004593358,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "initial_stand",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 224,
+      "time_s": 4.6799999999999224,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.002415731023296535,
+        "left_hand_index_1_joint": -0.0004168291660354984,
+        "left_hand_middle_0_joint": -0.0024156675968425943,
+        "left_hand_middle_1_joint": -0.00041685743089459206,
+        "left_hand_thumb_0_joint": -0.0006263367125005973,
+        "left_hand_thumb_1_joint": 0.007940870518277703,
+        "left_hand_thumb_2_joint": 0.001221145276033738,
+        "right_hand_index_0_joint": 0.0037066217826452795,
+        "right_hand_index_1_joint": 0.0006201787529172147,
+        "right_hand_middle_0_joint": 0.0037170333334287345,
+        "right_hand_middle_1_joint": 0.0006218147410678731,
+        "right_hand_thumb_0_joint": -0.00023410227416439372,
+        "right_hand_thumb_1_joint": -0.009064697327556256,
+        "right_hand_thumb_2_joint": -0.0014004368407256604
+      },
+      "actual_object_in_wrist_m": [
+        -0.42519372924447535,
+        -0.14310285385949884,
+        1.040993450361053
+      ],
+      "actual_object_world_m": [
+        2.5482978155440636,
+        1.878950580450228,
+        0.786179665304148
+      ],
+      "actual_wrist_world_m": [
+        1.4194375436434246,
+        1.978703937104763,
+        0.7605037577888893
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4723395744925192,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "approach",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 225,
+      "time_s": 4.699999999999922,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0030384676951184654,
+        "left_hand_index_1_joint": -0.0005227843034599795,
+        "left_hand_middle_0_joint": -0.0030411635680149558,
+        "left_hand_middle_1_joint": -0.0005232044180547775,
+        "left_hand_thumb_0_joint": 0.06535871498116383,
+        "left_hand_thumb_1_joint": -0.1024288092418447,
+        "left_hand_thumb_2_joint": -0.00044362799180906775,
+        "right_hand_index_0_joint": 0.003855823322776166,
+        "right_hand_index_1_joint": 0.0006540549151091364,
+        "right_hand_middle_0_joint": 0.0038628159645734523,
+        "right_hand_middle_1_joint": 0.0006551486849849617,
+        "right_hand_thumb_0_joint": 5.6886113553315626e-05,
+        "right_hand_thumb_1_joint": -0.011055324877958126,
+        "right_hand_thumb_2_joint": -0.001702090058148655
+      },
+      "actual_object_in_wrist_m": [
+        -0.48614873930034475,
+        -0.3008937460863677,
+        0.7805713638172588
+      ],
+      "actual_object_world_m": [
+        2.5483046319461407,
+        1.8789384446350563,
+        0.7861783541783345
+      ],
+      "actual_wrist_world_m": [
+        1.5824308542036165,
+        1.9347373610330239,
+        0.7981626592034281
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4720430316540811,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "approach",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 290,
+      "time_s": 5.999999999999894,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005055627425628807,
+        "left_hand_index_1_joint": -0.0006797223880553661,
+        "left_hand_middle_0_joint": -0.00508516697379509,
+        "left_hand_middle_1_joint": -0.0006789883269813807,
+        "left_hand_thumb_0_joint": 0.029887255873704277,
+        "left_hand_thumb_1_joint": 0.16657727481483436,
+        "left_hand_thumb_2_joint": 0.043158378007896445,
+        "right_hand_index_0_joint": 0.004000687027893482,
+        "right_hand_index_1_joint": 0.0006842471380815203,
+        "right_hand_middle_0_joint": 0.004003961470803139,
+        "right_hand_middle_1_joint": 0.0006848438444470113,
+        "right_hand_thumb_0_joint": 0.00029906324194940275,
+        "right_hand_thumb_1_joint": -0.012523316631098548,
+        "right_hand_thumb_2_joint": -0.001923597785229757
+      },
+      "actual_object_in_wrist_m": [
+        -0.27587165746179165,
+        -0.18632918993472317,
+        0.4995811251167942
+      ],
+      "actual_object_world_m": [
+        2.548309481167962,
+        1.8789304517447751,
+        0.7861774943661057
+      ],
+      "actual_wrist_world_m": [
+        1.9511656674221507,
+        1.9391098610814839,
+        0.8004162928547669
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4718493489802325,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "approach",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 354,
+      "time_s": 7.279999999999867,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0050719384346385845,
+        "left_hand_index_1_joint": -0.000683016413534664,
+        "left_hand_middle_0_joint": -0.005104102102659523,
+        "left_hand_middle_1_joint": -0.0006826980131392652,
+        "left_hand_thumb_0_joint": 0.029859334545144438,
+        "left_hand_thumb_1_joint": 0.16687298337960513,
+        "left_hand_thumb_2_joint": 0.04325485102681645,
+        "right_hand_index_0_joint": 0.00401250893170745,
+        "right_hand_index_1_joint": 0.0006862474885673487,
+        "right_hand_middle_0_joint": 0.004015316894375819,
+        "right_hand_middle_1_joint": 0.0006867848778491268,
+        "right_hand_thumb_0_joint": 0.00030197952242627847,
+        "right_hand_thumb_1_joint": -0.012528527054343304,
+        "right_hand_thumb_2_joint": -0.0019242082454315442
+      },
+      "actual_object_in_wrist_m": [
+        -0.27599905754915355,
+        -0.18665072922353534,
+        0.4925667632560223
+      ],
+      "actual_object_world_m": [
+        2.5483095449058326,
+        1.8789303508038318,
+        0.7861774834428582
+      ],
+      "actual_wrist_world_m": [
+        1.9573305050636316,
+        1.9430666051016348,
+        0.802496371396716
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4718468900370612,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "source_stop",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 355,
+      "time_s": 7.299999999999867,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005128887007964045,
+        "left_hand_index_1_joint": -0.0007210875005928222,
+        "left_hand_middle_0_joint": -0.005120744467007119,
+        "left_hand_middle_1_joint": -0.0007150395513192629,
+        "left_hand_thumb_0_joint": 0.025729523339627466,
+        "left_hand_thumb_1_joint": 0.007128037155639004,
+        "left_hand_thumb_2_joint": 0.022595344923322866,
+        "right_hand_index_0_joint": 0.004264511632754369,
+        "right_hand_index_1_joint": 0.0007281003209378272,
+        "right_hand_middle_0_joint": 0.004267421615362255,
+        "right_hand_middle_1_joint": 0.000728487162321889,
+        "right_hand_thumb_0_joint": 0.0004317922144800309,
+        "right_hand_thumb_1_joint": -0.013215587449725171,
+        "right_hand_thumb_2_joint": -0.0020285226717207555
+      },
+      "actual_object_in_wrist_m": [
+        -0.18477146556073346,
+        -0.12361429643711781,
+        0.3332914098517198
+      ],
+      "actual_object_world_m": [
+        2.548312095899798,
+        1.8789264211475503,
+        0.7861770549234064
+      ],
+      "actual_wrist_world_m": [
+        2.150973454320569,
+        1.9253705283509188,
+        0.7645183046338075
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4717504218381998,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "source_stop",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 400,
+      "time_s": 8.199999999999882,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005200374798755627,
+        "left_hand_index_1_joint": -0.0007517269258633428,
+        "left_hand_middle_0_joint": -0.005230053541558359,
+        "left_hand_middle_1_joint": -0.0007522781327133876,
+        "left_hand_thumb_0_joint": 0.021195870986505494,
+        "left_hand_thumb_1_joint": 0.00827775494932972,
+        "left_hand_thumb_2_joint": 0.01995775525915335,
+        "right_hand_index_0_joint": 0.004446645128919261,
+        "right_hand_index_1_joint": 0.0007616194506416995,
+        "right_hand_middle_0_joint": 0.0044523576557253496,
+        "right_hand_middle_1_joint": 0.0007625091182716619,
+        "right_hand_thumb_0_joint": 0.0005005720354226992,
+        "right_hand_thumb_1_joint": -0.014255274274152569,
+        "right_hand_thumb_2_joint": -0.0021861714714403063
+      },
+      "actual_object_in_wrist_m": [
+        -0.14460256999941007,
+        -0.13444922812424356,
+        0.4058046014023108
+      ],
+      "actual_object_world_m": [
+        2.5483141186077143,
+        1.8789234968274209,
+        0.7861767288090795
+      ],
+      "actual_wrist_world_m": [
+        2.1057298804464284,
+        1.9584920695896633,
+        0.7480728304166367
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.471676971796444,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "source_stop",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 445,
+      "time_s": 9.100000000000023,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005195679994566265,
+        "left_hand_index_1_joint": -0.0007513688338229253,
+        "left_hand_middle_0_joint": -0.005225443625085366,
+        "left_hand_middle_1_joint": -0.0007519456834555652,
+        "left_hand_thumb_0_joint": 0.021103709441135748,
+        "left_hand_thumb_1_joint": 0.008295318010794374,
+        "left_hand_thumb_2_joint": 0.019902263115086194,
+        "right_hand_index_0_joint": 0.004451216182989267,
+        "right_hand_index_1_joint": 0.0007624320032559316,
+        "right_hand_middle_0_joint": 0.004456911658179768,
+        "right_hand_middle_1_joint": 0.0007633196576175068,
+        "right_hand_thumb_0_joint": 0.0005015250273708643,
+        "right_hand_thumb_1_joint": -0.014277189433176834,
+        "right_hand_thumb_2_joint": -0.002189499108582138
+      },
+      "actual_object_in_wrist_m": [
+        -0.14432557976035004,
+        -0.13417495224577214,
+        0.4055928682772253
+      ],
+      "actual_object_world_m": [
+        2.5483141585020794,
+        1.8789234413422329,
+        0.7861767225215796
+      ],
+      "actual_wrist_world_m": [
+        2.1060506684059823,
+        1.9582193746520997,
+        0.748051588171652
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.471675555118084,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "ready_arm",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 446,
+      "time_s": 9.120000000000026,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005147059808421765,
+        "left_hand_index_1_joint": -0.0007931047912416134,
+        "left_hand_middle_0_joint": -0.005167371847291218,
+        "left_hand_middle_1_joint": -0.0007938437604545112,
+        "left_hand_thumb_0_joint": 0.009843384238419092,
+        "left_hand_thumb_1_joint": 0.010986672695859234,
+        "left_hand_thumb_2_joint": 0.012582229673796918,
+        "right_hand_index_0_joint": 0.0061160335683130155,
+        "right_hand_index_1_joint": 0.0010271062973270038,
+        "right_hand_middle_0_joint": 0.006118035160021592,
+        "right_hand_middle_1_joint": 0.0010273722264581677,
+        "right_hand_thumb_0_joint": 0.00024815399734134176,
+        "right_hand_thumb_1_joint": -0.016404499127371616,
+        "right_hand_thumb_2_joint": -0.0025162666686593775
+      },
+      "actual_object_in_wrist_m": [
+        0.049451637534042955,
+        0.3604482471332322,
+        0.004866368595298485
+      ],
+      "actual_object_world_m": [
+        2.5483180133567185,
+        1.8789204842224425,
+        0.7861759246196606
+      ],
+      "actual_wrist_world_m": [
+        2.199852888133578,
+        1.814693589508783,
+        0.8688744576065576
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4831331602931535,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "ready_arm",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 618,
+      "time_s": 12.560000000000564,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005333726408508229,
+        "left_hand_index_1_joint": -0.0008529404122463175,
+        "left_hand_middle_0_joint": -0.005344178122225941,
+        "left_hand_middle_1_joint": -0.0008531410741791887,
+        "left_hand_thumb_0_joint": 0.004391036063036427,
+        "left_hand_thumb_1_joint": 0.012828198739114085,
+        "left_hand_thumb_2_joint": 0.008358892992518012,
+        "right_hand_index_0_joint": 0.00339716090961986,
+        "right_hand_index_1_joint": 0.0005857127897905454,
+        "right_hand_middle_0_joint": 0.003395938314414668,
+        "right_hand_middle_1_joint": 0.0005854767595944192,
+        "right_hand_thumb_0_joint": -0.0005545401892551061,
+        "right_hand_thumb_1_joint": -0.012290971354151617,
+        "right_hand_thumb_2_joint": -0.00186717784183954
+      },
+      "actual_object_in_wrist_m": [
+        0.1216835847381279,
+        0.020360507949844085,
+        -0.15895655352020324
+      ],
+      "actual_object_world_m": [
+        2.5483172465225197,
+        1.8789222567888497,
+        0.7861757866360715
+      ],
+      "actual_wrist_world_m": [
+        2.417734218468376,
+        1.851566344991118,
+        0.9368023376144544
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4717748792725913,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "ready_arm",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 789,
+      "time_s": 15.980000000001098,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0053353198098783,
+        "left_hand_index_1_joint": -0.0008533283403678641,
+        "left_hand_middle_0_joint": -0.005345762246817272,
+        "left_hand_middle_1_joint": -0.0008535323097708331,
+        "left_hand_thumb_0_joint": 0.0043694359860864075,
+        "left_hand_thumb_1_joint": 0.01283858055725128,
+        "left_hand_thumb_2_joint": 0.008340573530196104,
+        "right_hand_index_0_joint": 0.003386502790322646,
+        "right_hand_index_1_joint": 0.0005838275292444779,
+        "right_hand_middle_0_joint": 0.00338525141775135,
+        "right_hand_middle_1_joint": 0.0005835879255149689,
+        "right_hand_thumb_0_joint": -0.0005586493368175008,
+        "right_hand_thumb_1_joint": -0.012249294281388334,
+        "right_hand_thumb_2_joint": -0.0018607450893912208
+      },
+      "actual_object_in_wrist_m": [
+        0.12241846731867409,
+        0.01969423029539334,
+        -0.15932970436635527
+      ],
+      "actual_object_world_m": [
+        2.548317238170377,
+        1.8789222700880144,
+        0.7861757865241621
+      ],
+      "actual_wrist_world_m": [
+        2.416770326165009,
+        1.8521198091898907,
+        0.9369641699384945
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4717748677934497,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "preinsert",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.416770326165009,
+        1.8521198091898907,
+        0.9369641699384945
+      ],
+      "tick": 790,
+      "time_s": 16.0000000000011,
+      "wrist_position_error_m": 0.0
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005395040584160475,
+        "left_hand_index_1_joint": -0.0008683853642846296,
+        "left_hand_middle_0_joint": -0.005404373712775566,
+        "left_hand_middle_1_joint": -0.0008686075516607124,
+        "left_hand_thumb_0_joint": 0.0034775248833214378,
+        "left_hand_thumb_1_joint": 0.013195174101063792,
+        "left_hand_thumb_2_joint": 0.007560178495423654,
+        "right_hand_index_0_joint": 0.003484418677146287,
+        "right_hand_index_1_joint": 0.0005889126899016529,
+        "right_hand_middle_0_joint": 0.0035163167856913815,
+        "right_hand_middle_1_joint": 0.0005937556066726173,
+        "right_hand_thumb_0_joint": -0.00071786888058536,
+        "right_hand_thumb_1_joint": -0.010748110939495731,
+        "right_hand_thumb_2_joint": -0.001633921976838385
+      },
+      "actual_object_in_wrist_m": [
+        0.15134111232877823,
+        0.10505365374516203,
+        -0.1456581573801718
+      ],
+      "actual_object_world_m": [
+        2.5483168533343648,
+        1.8789228796291946,
+        0.7861757821050408
+      ],
+      "actual_wrist_world_m": [
+        2.439472236058908,
+        1.8669118023587246,
+        0.9939383498848732
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4717744187916657,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "preinsert",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.447101193407913,
+        1.8631372660689873,
+        0.9952753735261624
+      ],
+      "tick": 835,
+      "time_s": 16.900000000000922,
+      "wrist_position_error_m": 0.008616016867024607
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005367991799914848,
+        "left_hand_index_1_joint": -0.0008656486733815961,
+        "left_hand_middle_0_joint": -0.005376805834393922,
+        "left_hand_middle_1_joint": -0.0008658953911120895,
+        "left_hand_thumb_0_joint": 0.0032313991740939812,
+        "left_hand_thumb_1_joint": 0.01328226022688324,
+        "left_hand_thumb_2_joint": 0.007336640803868971,
+        "right_hand_index_0_joint": 0.0040254900122294445,
+        "right_hand_index_1_joint": 0.0006700582344363461,
+        "right_hand_middle_0_joint": 0.00404358812460677,
+        "right_hand_middle_1_joint": 0.0006726900179009536,
+        "right_hand_thumb_0_joint": -0.0007252351918081141,
+        "right_hand_thumb_1_joint": -0.010600107961527251,
+        "right_hand_thumb_2_joint": -0.001615576305338004
+      },
+      "actual_object_in_wrist_m": [
+        0.1767076144025434,
+        0.1523360319596647,
+        -0.11226738172646537
+      ],
+      "actual_object_world_m": [
+        2.5483166895917573,
+        1.8789230421011225,
+        0.7861757971681268
+      ],
+      "actual_wrist_world_m": [
+        2.4477349895654266,
+        1.8718098735990598,
+        1.0246470471636857
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.485482563283208,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "preinsert",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.463685677926384,
+        1.8691614539559012,
+        1.0271591058773795
+      ],
+      "tick": 849,
+      "time_s": 17.180000000000867,
+      "wrist_position_error_m": 0.016363038372371144
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005364569719349544,
+        "left_hand_index_1_joint": -0.000868608846378297,
+        "left_hand_middle_0_joint": -0.005372816635634231,
+        "left_hand_middle_1_joint": -0.0008688285703805137,
+        "left_hand_thumb_0_joint": 0.0027575334788808303,
+        "left_hand_thumb_1_joint": 0.013555398708543909,
+        "left_hand_thumb_2_joint": 0.0069046621618627955,
+        "right_hand_index_0_joint": 0.005480027471608587,
+        "right_hand_index_1_joint": 0.0008940329301812566,
+        "right_hand_middle_0_joint": 0.0054759245926602135,
+        "right_hand_middle_1_joint": 0.0008933336503122669,
+        "right_hand_thumb_0_joint": -0.0006544006307176666,
+        "right_hand_thumb_1_joint": -0.010671411940868245,
+        "right_hand_thumb_2_joint": -0.001633857396899329
+      },
+      "actual_object_in_wrist_m": [
+        0.20906185981808742,
+        0.18014866819390038,
+        -0.024890001050310525
+      ],
+      "actual_object_world_m": [
+        2.5483164674725494,
+        1.8789235295594997,
+        0.7861757745809261
+      ],
+      "actual_wrist_world_m": [
+        2.475109731818223,
+        1.8750837102781497,
+        1.05339468423674
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4717740765253227,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "preinsert",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.47743124233533,
+        1.8741544257012057,
+        1.0535850038993022
+      ],
+      "tick": 879,
+      "time_s": 17.780000000000747,
+      "wrist_position_error_m": 0.0025078282397210396
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005367783689748074,
+        "left_hand_index_1_joint": -0.0008692656323257305,
+        "left_hand_middle_0_joint": -0.00537430988237781,
+        "left_hand_middle_1_joint": -0.0008692199289219231,
+        "left_hand_thumb_0_joint": 0.0027425401089586836,
+        "left_hand_thumb_1_joint": 0.013561474034124749,
+        "left_hand_thumb_2_joint": 0.00689048865887033,
+        "right_hand_index_0_joint": 0.005524853519474884,
+        "right_hand_index_1_joint": 0.0009007989540184998,
+        "right_hand_middle_0_joint": 0.005524301710415759,
+        "right_hand_middle_1_joint": 0.0009006382291010784,
+        "right_hand_thumb_0_joint": -0.0006517074051163356,
+        "right_hand_thumb_1_joint": -0.010673336599811269,
+        "right_hand_thumb_2_joint": -0.0016345249499536568
+      },
+      "actual_object_in_wrist_m": [
+        0.20863735858096277,
+        0.182250240408035,
+        -0.023670629651748737
+      ],
+      "actual_object_world_m": [
+        2.5483164506461202,
+        1.8789235341604804,
+        0.7861757767248647
+      ],
+      "actual_wrist_world_m": [
+        2.476017174632915,
+        1.8751719862464864,
+        1.054622674283308
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4717741694664932,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "lower",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.476017174632915,
+        1.8751719862464864,
+        1.054622674283308
+      ],
+      "tick": 880,
+      "time_s": 17.800000000000743,
+      "wrist_position_error_m": 0.0
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345257570514254,
+        "left_hand_index_1_joint": -0.0008686627576234285,
+        "left_hand_middle_0_joint": -0.00535157320138402,
+        "left_hand_middle_1_joint": -0.0008686596599128259,
+        "left_hand_thumb_0_joint": 0.002388033737856216,
+        "left_hand_thumb_1_joint": 0.013735078351017957,
+        "left_hand_thumb_2_joint": 0.006555234264428998,
+        "right_hand_index_0_joint": 0.006496177042306325,
+        "right_hand_index_1_joint": 0.0010494103234196565,
+        "right_hand_middle_0_joint": 0.006488557818057644,
+        "right_hand_middle_1_joint": 0.0010481762573017965,
+        "right_hand_thumb_0_joint": -0.0005776039144476093,
+        "right_hand_thumb_1_joint": -0.010855418501192598,
+        "right_hand_thumb_2_joint": -0.0016687337975223467
+      },
+      "actual_object_in_wrist_m": [
+        0.20214187240375653,
+        0.1575379765918371,
+        -0.028175213588943766
+      ],
+      "actual_object_world_m": [
+        2.5483162100182075,
+        1.878923899670886,
+        0.7861757766066082
+      ],
+      "actual_wrist_world_m": [
+        2.4665740298654226,
+        1.8759441142302637,
+        1.0306808484781889
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.471774118791883,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "lower",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.476724223879738,
+        1.8746639866335182,
+        1.0291046207989205
+      ],
+      "tick": 905,
+      "time_s": 18.300000000000644,
+      "wrist_position_error_m": 0.010351311940477911
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005331612135249866,
+        "left_hand_index_1_joint": -0.0008681079326093941,
+        "left_hand_middle_0_joint": -0.0053367279686373096,
+        "left_hand_middle_1_joint": -0.0008679550761740387,
+        "left_hand_thumb_0_joint": 0.002154037048470823,
+        "left_hand_thumb_1_joint": 0.013836400887357918,
+        "left_hand_thumb_2_joint": 0.006327455260775036,
+        "right_hand_index_0_joint": 0.0072046190228641765,
+        "right_hand_index_1_joint": 0.0011578376520983817,
+        "right_hand_middle_0_joint": 0.007191270597159604,
+        "right_hand_middle_1_joint": 0.0011557121108327943,
+        "right_hand_thumb_0_joint": -0.0005284389397459093,
+        "right_hand_thumb_1_joint": -0.010985929712107436,
+        "right_hand_thumb_2_joint": -0.001693151834424458
+      },
+      "actual_object_in_wrist_m": [
+        0.19285322478368408,
+        0.13165332125759097,
+        -0.02086048241448791
+      ],
+      "actual_object_world_m": [
+        2.5483160484679406,
+        1.8789241752981551,
+        0.7861757694209912
+      ],
+      "actual_wrist_world_m": [
+        2.4640580522801754,
+        1.8697056924777138,
+        1.004752375413256
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4718207223708217,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "lower",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.4774001625433897,
+        1.8741783393026308,
+        1.0047093766928759
+      ],
+      "tick": 923,
+      "time_s": 18.660000000000572,
+      "wrist_position_error_m": 0.014071898407328087
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005366309002945433,
+        "left_hand_index_1_joint": -0.000874283541988992,
+        "left_hand_middle_0_joint": -0.005371760519088354,
+        "left_hand_middle_1_joint": -0.00087420006518302,
+        "left_hand_thumb_0_joint": 0.0020810050298221464,
+        "left_hand_thumb_1_joint": 0.013868905265007388,
+        "left_hand_thumb_2_joint": 0.006254130262106863,
+        "right_hand_index_0_joint": 0.007463749825836977,
+        "right_hand_index_1_joint": 0.0011978569972826761,
+        "right_hand_middle_0_joint": 0.00745974119772892,
+        "right_hand_middle_1_joint": 0.0011972567452239727,
+        "right_hand_thumb_0_joint": -0.0005098917892888909,
+        "right_hand_thumb_1_joint": -0.01105548459511048,
+        "right_hand_thumb_2_joint": -0.0017051603285519865
+      },
+      "actual_object_in_wrist_m": [
+        0.192192947519293,
+        0.13154084195486124,
+        -0.021072699043384987
+      ],
+      "actual_object_world_m": [
+        2.548315956255511,
+        1.8789242454438904,
+        0.7861757873070477
+      ],
+      "actual_wrist_world_m": [
+        2.4643457764945156,
+        1.8692278844141723,
+        1.0042128720357884
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4855867149109596,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "lower",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.4774311633653667,
+        1.874156065881597,
+        1.003590528696327
+      ],
+      "tick": 929,
+      "time_s": 18.78000000000055,
+      "wrist_position_error_m": 0.01399648646510558
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005366640424238963,
+        "left_hand_index_1_joint": -0.0008744192163892441,
+        "left_hand_middle_0_joint": -0.005372800308539451,
+        "left_hand_middle_1_joint": -0.0008744485838334502,
+        "left_hand_thumb_0_joint": 0.0020688577084314167,
+        "left_hand_thumb_1_joint": 0.013875422337710273,
+        "left_hand_thumb_2_joint": 0.006242260281427001,
+        "right_hand_index_0_joint": 0.007502969818076406,
+        "right_hand_index_1_joint": 0.00120392308647377,
+        "right_hand_middle_0_joint": 0.007498825179708342,
+        "right_hand_middle_1_joint": 0.0012033028659331542,
+        "right_hand_thumb_0_joint": -0.0005075046090233036,
+        "right_hand_thumb_1_joint": -0.011065384755751646,
+        "right_hand_thumb_2_joint": -0.001706868692851341
+      },
+      "actual_object_in_wrist_m": [
+        0.193135145511054,
+        0.13285135178850763,
+        -0.018476165482409844
+      ],
+      "actual_object_world_m": [
+        2.5483159357287395,
+        1.8789242462127063,
+        0.7861757905559081
+      ],
+      "actual_wrist_world_m": [
+        2.4641485531134326,
+        1.8682966552272435,
+        1.005481378282435
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4855899871580207,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "insert",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.4641485531134326,
+        1.8682966552272435,
+        1.005481378282435
+      ],
+      "tick": 930,
+      "time_s": 18.800000000000544,
+      "wrist_position_error_m": 0.0
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0053345907414149895,
+        "left_hand_index_1_joint": -0.0008712172499106765,
+        "left_hand_middle_0_joint": -0.005340715140348172,
+        "left_hand_middle_1_joint": -0.0008713195029489031,
+        "left_hand_thumb_0_joint": 0.0018333297063816093,
+        "left_hand_thumb_1_joint": 0.01396895474368493,
+        "left_hand_thumb_2_joint": 0.006006948336232986,
+        "right_hand_index_0_joint": 0.008171613040000796,
+        "right_hand_index_1_joint": 0.0013053343419724148,
+        "right_hand_middle_0_joint": 0.008161701355688479,
+        "right_hand_middle_1_joint": 0.0013037952248241768,
+        "right_hand_thumb_0_joint": -0.00046213968084397536,
+        "right_hand_thumb_1_joint": -0.011146788177387313,
+        "right_hand_thumb_2_joint": -0.0017240419134878669
+      },
+      "actual_object_in_wrist_m": [
+        0.18875492140000158,
+        0.12857114368172878,
+        -0.031858267223399406
+      ],
+      "actual_object_world_m": [
+        2.5483158034803712,
+        1.8789246106291164,
+        0.7861757673991708
+      ],
+      "actual_wrist_world_m": [
+        2.460611264293927,
+        1.875027640899573,
+        0.9994048366271876
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4716809429719717,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "insert",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.4683648562990266,
+        1.8701568675455693,
+        0.9890078938793105
+      ],
+      "tick": 950,
+      "time_s": 19.200000000000465,
+      "wrist_position_error_m": 0.01385420660125479
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005314924998726679,
+        "left_hand_index_1_joint": -0.0008684490460787205,
+        "left_hand_middle_0_joint": -0.005325247999771864,
+        "left_hand_middle_1_joint": -0.0008692127811573638,
+        "left_hand_thumb_0_joint": 0.001778320437957742,
+        "left_hand_thumb_1_joint": 0.013995703594103234,
+        "left_hand_thumb_2_joint": 0.0059512073657176515,
+        "right_hand_index_0_joint": 0.008331112465053622,
+        "right_hand_index_1_joint": 0.0013296635590964315,
+        "right_hand_middle_0_joint": 0.008325516014433907,
+        "right_hand_middle_1_joint": 0.0013287895028317549,
+        "right_hand_thumb_0_joint": -0.00045082195822356453,
+        "right_hand_thumb_1_joint": -0.011145668442590328,
+        "right_hand_thumb_2_joint": -0.001724710114841409
+      },
+      "actual_object_in_wrist_m": [
+        0.17941461688557617,
+        0.11841626740455852,
+        -0.027855813074426375
+      ],
+      "actual_object_world_m": [
+        2.5483156764904153,
+        1.8789246005115194,
+        0.7861757970900736
+      ],
+      "actual_wrist_world_m": [
+        2.4652869323077864,
+        1.8734880870385298,
+        0.986337320418052
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4856360109188114,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "insert",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.4707896556613065,
+        1.8712266771500097,
+        0.9795339797140056
+      ],
+      "tick": 955,
+      "time_s": 19.300000000000445,
+      "wrist_position_error_m": 0.009037664727384319
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005336518787441365,
+        "left_hand_index_1_joint": -0.0008739513572543086,
+        "left_hand_middle_0_joint": -0.005346204645535362,
+        "left_hand_middle_1_joint": -0.0008746467510864686,
+        "left_hand_thumb_0_joint": 0.001527819699334846,
+        "left_hand_thumb_1_joint": 0.014134159943766926,
+        "left_hand_thumb_2_joint": 0.005697216970209791,
+        "right_hand_index_0_joint": 0.009167671674964762,
+        "right_hand_index_1_joint": 0.0014587846592087046,
+        "right_hand_middle_0_joint": 0.009161049980197657,
+        "right_hand_middle_1_joint": 0.0014577642978483216,
+        "right_hand_thumb_0_joint": -0.00039475785420411605,
+        "right_hand_thumb_1_joint": -0.011361792709712269,
+        "right_hand_thumb_2_joint": -0.0017619082251550367
+      },
+      "actual_object_in_wrist_m": [
+        0.15705584245920726,
+        0.09372073876077812,
+        -0.02091624426650135
+      ],
+      "actual_object_world_m": [
+        2.5483154621059647,
+        1.8789249824436889,
+        0.7861757900208524
+      ],
+      "actual_wrist_world_m": [
+        2.471623032812638,
+        1.877253929736087,
+        0.9535170063143577
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4858846558065602,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "insert",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.4774297272550463,
+        1.8741562442208606,
+        0.9535906091782141
+      ],
+      "tick": 979,
+      "time_s": 19.78000000000035,
+      "wrist_position_error_m": 0.0065816998777144505
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005343682735787812,
+        "left_hand_index_1_joint": -0.0008752037150374372,
+        "left_hand_middle_0_joint": -0.005351722534956174,
+        "left_hand_middle_1_joint": -0.0008756486450344845,
+        "left_hand_thumb_0_joint": 0.0015180594127819959,
+        "left_hand_thumb_1_joint": 0.0141379915547559,
+        "left_hand_thumb_2_joint": 0.0056867228188824896,
+        "right_hand_index_0_joint": 0.009214749673787019,
+        "right_hand_index_1_joint": 0.0014661120819561666,
+        "right_hand_middle_0_joint": 0.009209942076180849,
+        "right_hand_middle_1_joint": 0.0014653707852946743,
+        "right_hand_thumb_0_joint": -0.0003921424044734676,
+        "right_hand_thumb_1_joint": -0.01136887466230118,
+        "right_hand_thumb_2_joint": -0.0017631465652214345
+      },
+      "actual_object_in_wrist_m": [
+        0.15628815062595244,
+        0.09599554035494537,
+        -0.020855789680091438
+      ],
+      "actual_object_world_m": [
+        2.5483155504035797,
+        1.878925084577121,
+        0.7861757462975071
+      ],
+      "actual_wrist_world_m": [
+        2.4715568359989164,
+        1.8771535873840872,
+        0.9540478860882922
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4718357833175384,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "close",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.47743075820918,
+        1.8741566990727758,
+        0.9535865811455762
+      ],
+      "tick": 980,
+      "time_s": 19.800000000000345,
+      "wrist_position_error_m": 0.006610378501483557
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005344282764920299,
+        "left_hand_index_1_joint": -0.0008753136027292934,
+        "left_hand_middle_0_joint": -0.005352434310670992,
+        "left_hand_middle_1_joint": -0.0008757777002728008,
+        "left_hand_thumb_0_joint": 0.0015156952667107078,
+        "left_hand_thumb_1_joint": 0.014139438482044088,
+        "left_hand_thumb_2_joint": 0.0056843415393795565,
+        "right_hand_index_0_joint": 0.009226775940498403,
+        "right_hand_index_1_joint": 0.001468009674811944,
+        "right_hand_middle_0_joint": 0.0092229211222479,
+        "right_hand_middle_1_joint": 0.0014674180148095152,
+        "right_hand_thumb_0_joint": -0.00018424911573934215,
+        "right_hand_thumb_1_joint": -0.011368690997060081,
+        "right_hand_thumb_2_joint": -0.0017631191613388605
+      },
+      "actual_object_in_wrist_m": [
+        0.15569387605422513,
+        0.0987248317912126,
+        -0.029517257800082904
+      ],
+      "actual_object_world_m": [
+        2.548315448551547,
+        1.8789250442267034,
+        0.7861757734475165
+      ],
+      "actual_wrist_world_m": [
+        2.4673888428449846,
+        1.8789432584602752,
+        0.9544295345290577
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4717702856395056,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "close",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.05999999999999999,
+        "right_hand_index_1_joint": 0.05999999999999999,
+        "right_hand_middle_0_joint": 0.05999999999999999,
+        "right_hand_middle_1_joint": 0.05999999999999999,
+        "right_hand_thumb_0_joint": 0.05999999999999999,
+        "right_hand_thumb_1_joint": -0.05999999999999999,
+        "right_hand_thumb_2_joint": -0.05999999999999999
+      },
+      "requested_wrist_world_m": [
+        2.47743075820918,
+        1.8741566990727758,
+        0.9535865811455762
+      ],
+      "tick": 990,
+      "time_s": 20.000000000000306,
+      "wrist_position_error_m": 0.011156244231749456
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.00534542334193233,
+        "left_hand_index_1_joint": -0.0008755186614674639,
+        "left_hand_middle_0_joint": -0.0053532577048206785,
+        "left_hand_middle_1_joint": -0.000875934351910166,
+        "left_hand_thumb_0_joint": 0.0015157269563741648,
+        "left_hand_thumb_1_joint": 0.014138952722590945,
+        "left_hand_thumb_2_joint": 0.005684235550146973,
+        "right_hand_index_0_joint": 0.2292032431728115,
+        "right_hand_index_1_joint": 0.21518552485436354,
+        "right_hand_middle_0_joint": 0.22922746858192172,
+        "right_hand_middle_1_joint": 0.21519287405136414,
+        "right_hand_thumb_0_joint": 0.23043179189045268,
+        "right_hand_thumb_1_joint": -0.22195939141085363,
+        "right_hand_thumb_2_joint": -0.21402133400431483
+      },
+      "actual_object_in_wrist_m": [
+        0.15721758784715448,
+        0.09760190280077315,
+        -0.017449011834204917
+      ],
+      "actual_object_world_m": [
+        2.548315395039156,
+        1.878924975068618,
+        0.7861757870494602
+      ],
+      "actual_wrist_world_m": [
+        2.4721111117160626,
+        1.8748986812490862,
+        0.9556593128981165
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4859276657959268,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "close",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.31200000000000017,
+        "right_hand_index_1_joint": 0.31200000000000017,
+        "right_hand_middle_0_joint": 0.31200000000000017,
+        "right_hand_middle_1_joint": 0.31200000000000017,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.31200000000000017,
+        "right_hand_thumb_2_joint": -0.31200000000000017
+      },
+      "requested_wrist_world_m": [
+        2.47743075820918,
+        1.8741566990727758,
+        0.9535865811455762
+      ],
+      "tick": 1032,
+      "time_s": 20.84000000000014,
+      "wrist_position_error_m": 0.005757203598943384
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345026865829366,
+        "left_hand_index_1_joint": -0.0008754262774848453,
+        "left_hand_middle_0_joint": -0.005352442632180777,
+        "left_hand_middle_1_joint": -0.0008757770509070759,
+        "left_hand_thumb_0_joint": 0.001515731732715453,
+        "left_hand_thumb_1_joint": 0.014139695369820451,
+        "left_hand_thumb_2_joint": 0.005684383345533888,
+        "right_hand_index_0_joint": 0.49678952462638915,
+        "right_hand_index_1_joint": 0.5173675702582494,
+        "right_hand_middle_0_joint": 0.3693305701449166,
+        "right_hand_middle_1_joint": 0.5092533137793984,
+        "right_hand_thumb_0_joint": 0.23453579195620458,
+        "right_hand_thumb_1_joint": -0.186305867529498,
+        "right_hand_thumb_2_joint": -0.2741112065837355
+      },
+      "actual_object_in_wrist_m": [
+        0.15091428380322228,
+        0.09704649954146409,
+        -0.020023264588603745
+      ],
+      "actual_object_world_m": [
+        2.551602657674274,
+        1.8774102315222203,
+        0.7870718721355249
+      ],
+      "actual_wrist_world_m": [
+        2.47851439226631,
+        1.873772096068148,
+        0.9521141233439622
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.716098944317919,
+        "index": 4.166487731059745,
+        "middle": 4.265729381428665,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.62307573918336
+      },
+      "phase": "close",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6240000000000004,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6240000000000004,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.47743075820918,
+        1.8741566990727758,
+        0.9535865811455762
+      ],
+      "tick": 1084,
+      "time_s": 21.87999999999993,
+      "wrist_position_error_m": 0.0018682382659808744
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005344729903218793,
+        "left_hand_index_1_joint": -0.0008753716941915557,
+        "left_hand_middle_0_joint": -0.005352072618557496,
+        "left_hand_middle_1_joint": -0.0008757117050922958,
+        "left_hand_thumb_0_joint": 0.001515718256707276,
+        "left_hand_thumb_1_joint": 0.01413987539018798,
+        "left_hand_thumb_2_joint": 0.00568442000903755,
+        "right_hand_index_0_joint": 0.49678827118231017,
+        "right_hand_index_1_joint": 0.5201241078268622,
+        "right_hand_middle_0_joint": 0.36933429129544776,
+        "right_hand_middle_1_joint": 0.5127311853890277,
+        "right_hand_thumb_0_joint": 0.2345356629523735,
+        "right_hand_thumb_1_joint": -0.18570211951825621,
+        "right_hand_thumb_2_joint": -0.2741110896760141
+      },
+      "actual_object_in_wrist_m": [
+        0.15088110466114987,
+        0.09706003304132024,
+        -0.020004976681223644
+      ],
+      "actual_object_world_m": [
+        2.551240828509301,
+        1.8772263127755404,
+        0.7870527322646386
+      ],
+      "actual_wrist_world_m": [
+        2.4777089371841563,
+        1.8735639440156364,
+        0.9518726487279738
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 2.027791909756424,
+        "index": 4.069800969229663,
+        "middle": 4.534540769061897,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.672442769359267
+      },
+      "phase": "force_balance",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6261132503833047,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6300000000000004,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.47743075820918,
+        1.8741566990727758,
+        0.9535865811455762
+      ],
+      "tick": 1085,
+      "time_s": 21.899999999999928,
+      "wrist_position_error_m": 0.0018347496919175034
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005346251362745323,
+        "left_hand_index_1_joint": -0.0008756388014992758,
+        "left_hand_middle_0_joint": -0.0053535968492202796,
+        "left_hand_middle_1_joint": -0.0008759785358352501,
+        "left_hand_thumb_0_joint": 0.0015157652945015875,
+        "left_hand_thumb_1_joint": 0.014138382899153099,
+        "left_hand_thumb_2_joint": 0.005684155146368841,
+        "right_hand_index_0_joint": 0.49678533637639044,
+        "right_hand_index_1_joint": 0.5341093689515968,
+        "right_hand_middle_0_joint": 0.3693367283924825,
+        "right_hand_middle_1_joint": 0.5394659683916564,
+        "right_hand_thumb_0_joint": 0.2345352929767957,
+        "right_hand_thumb_1_joint": -0.18056467028643888,
+        "right_hand_thumb_2_joint": -0.27411060044067326
+      },
+      "actual_object_in_wrist_m": [
+        0.15047090380624123,
+        0.09708219396254908,
+        -0.020461391066717075
+      ],
+      "actual_object_world_m": [
+        2.548755400045362,
+        1.8777377642713429,
+        0.7876125709947922
+      ],
+      "actual_wrist_world_m": [
+        2.4764852268706243,
+        1.875345104955625,
+        0.9527077285613498
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.084237667315842,
+        "middle": 4.795399084172788,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.805472960288522
+      },
+      "phase": "force_balance",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6261132503833047,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6720000000000005,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.47743075820918,
+        1.8741566990727758,
+        0.9535865811455762
+      ],
+      "tick": 1092,
+      "time_s": 22.0399999999999,
+      "wrist_position_error_m": 0.0017546281427648306
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005344922833496771,
+        "left_hand_index_1_joint": -0.0008754311009482222,
+        "left_hand_middle_0_joint": -0.005352790672272302,
+        "left_hand_middle_1_joint": -0.000875850043765132,
+        "left_hand_thumb_0_joint": 0.0015157368659991007,
+        "left_hand_thumb_1_joint": 0.014139618070711013,
+        "left_hand_thumb_2_joint": 0.005684350841151387,
+        "right_hand_index_0_joint": 0.4974149428723504,
+        "right_hand_index_1_joint": 0.546546199513023,
+        "right_hand_middle_0_joint": 0.369357462179137,
+        "right_hand_middle_1_joint": 0.565347902387849,
+        "right_hand_thumb_0_joint": 0.2345275864334015,
+        "right_hand_thumb_1_joint": -0.1754596833552318,
+        "right_hand_thumb_2_joint": -0.27411126244583117
+      },
+      "actual_object_in_wrist_m": [
+        0.1501704055825444,
+        0.09732583233461084,
+        -0.020264259839091425
+      ],
+      "actual_object_world_m": [
+        2.541538647732822,
+        1.8716791629565201,
+        0.7950608752507338
+      ],
+      "actual_wrist_world_m": [
+        2.4702541710319132,
+        1.8733651686338904,
+        0.9604385924486994
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 0.9334259744882417,
+        "middle": 4.713107077310164,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.617642590783567
+      },
+      "phase": "force_balance",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6261132503833047,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6844376568745661,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.47743075820918,
+        1.8741566990727758,
+        0.9535865811455762
+      ],
+      "tick": 1099,
+      "time_s": 22.179999999999872,
+      "wrist_position_error_m": 0.00995389284886671
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345095709867988,
+        "left_hand_index_1_joint": -0.0008754600593110384,
+        "left_hand_middle_0_joint": -0.0053529195092189485,
+        "left_hand_middle_1_joint": -0.0008758720145709642,
+        "left_hand_thumb_0_joint": 0.001515741690363277,
+        "left_hand_thumb_1_joint": 0.014139570370492002,
+        "left_hand_thumb_2_joint": 0.005684341193524345,
+        "right_hand_index_0_joint": 0.4977649816826916,
+        "right_hand_index_1_joint": 0.5475782383266715,
+        "right_hand_middle_0_joint": 0.3693574842772949,
+        "right_hand_middle_1_joint": 0.5681703701745902,
+        "right_hand_thumb_0_joint": 0.23452730571244224,
+        "right_hand_thumb_1_joint": -0.17477638518704444,
+        "right_hand_thumb_2_joint": -0.2741114138740602
+      },
+      "actual_object_in_wrist_m": [
+        0.15011969109219178,
+        0.097339851551275,
+        -0.020283120823817585
+      ],
+      "actual_object_world_m": [
+        2.541481652268211,
+        1.8747612976314356,
+        0.7951054393310478
+      ],
+      "actual_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        0.9603855956842912
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 0.947911530852331,
+        "middle": 4.644151897162306,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.580145177194269
+      },
+      "phase": "load_probe",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6261132503833047,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6844376568745661,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        0.9603855956842912
+      ],
+      "tick": 1100,
+      "time_s": 22.199999999999868,
+      "wrist_position_error_m": 0.0
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.00534495468749925,
+        "left_hand_index_1_joint": -0.0008754346500517255,
+        "left_hand_middle_0_joint": -0.00535343492885573,
+        "left_hand_middle_1_joint": -0.0008759450368098605,
+        "left_hand_thumb_0_joint": 0.0015158003235161796,
+        "left_hand_thumb_1_joint": 0.01413900200225663,
+        "left_hand_thumb_2_joint": 0.005684258684534258,
+        "right_hand_index_0_joint": 0.49785561585641586,
+        "right_hand_index_1_joint": 0.550047027293734,
+        "right_hand_middle_0_joint": 0.37018810584087103,
+        "right_hand_middle_1_joint": 0.5755169835412192,
+        "right_hand_thumb_0_joint": 0.23449490538807183,
+        "right_hand_thumb_1_joint": -0.17368363606982645,
+        "right_hand_thumb_2_joint": -0.27411084028423466
+      },
+      "actual_object_in_wrist_m": [
+        0.15021236234940327,
+        0.09811349368050487,
+        -0.018886422600333238
+      ],
+      "actual_object_world_m": [
+        2.5403910940510883,
+        1.8824127787771867,
+        0.7928753823969278
+      ],
+      "actual_wrist_world_m": [
+        2.471160184799506,
+        1.8817172208714488,
+        0.9594686169739064
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.239795518589242,
+        "middle": 4.159329423134916,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.822376796598236
+      },
+      "phase": "load_probe",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6261132503833047,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6844376568745661,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.8748587740275497,
+        0.9638517897429331
+      ],
+      "tick": 1125,
+      "time_s": 22.69999999999977,
+      "wrist_position_error_m": 0.008217045764026624
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345163954892355,
+        "left_hand_index_1_joint": -0.0008754631908030562,
+        "left_hand_middle_0_joint": -0.005353430848262537,
+        "left_hand_middle_1_joint": -0.0008759422951678143,
+        "left_hand_thumb_0_joint": 0.0015157701917234941,
+        "left_hand_thumb_1_joint": 0.014138881905645263,
+        "left_hand_thumb_2_joint": 0.005684242781189591,
+        "right_hand_index_0_joint": 0.49786497914254463,
+        "right_hand_index_1_joint": 0.550064349244604,
+        "right_hand_middle_0_joint": 0.37090259774580003,
+        "right_hand_middle_1_joint": 0.5769056798963826,
+        "right_hand_thumb_0_joint": 0.23448466061019227,
+        "right_hand_thumb_1_joint": -0.17315499349794272,
+        "right_hand_thumb_2_joint": -0.27411135619887245
+      },
+      "actual_object_in_wrist_m": [
+        0.150191441489671,
+        0.09835611888186208,
+        -0.018490204704843003
+      ],
+      "actual_object_world_m": [
+        2.537820948609247,
+        1.877304738934536,
+        0.801760243005542
+      ],
+      "actual_wrist_world_m": [
+        2.4648650401631547,
+        1.87502336317162,
+        0.9668223938327654
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.003287245534476,
+        "middle": 4.0075426278683,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.637557915215563
+      },
+      "phase": "load_probe",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6261132503833047,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6844376568745661,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        0.9669194016256493
+      ],
+      "tick": 1135,
+      "time_s": 22.89999999999973,
+      "wrist_position_error_m": 0.005172022572507278
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345513928663105,
+        "left_hand_index_1_joint": -0.0008755143175303997,
+        "left_hand_middle_0_joint": -0.005352833677247935,
+        "left_hand_middle_1_joint": -0.0008758528880901538,
+        "left_hand_thumb_0_joint": 0.001515698849734579,
+        "left_hand_thumb_1_joint": 0.014139266708020095,
+        "left_hand_thumb_2_joint": 0.005684301620645459,
+        "right_hand_index_0_joint": 0.49788777187335914,
+        "right_hand_index_1_joint": 0.5501184168667266,
+        "right_hand_middle_0_joint": 0.3745430707737888,
+        "right_hand_middle_1_joint": 0.5769779327716764,
+        "right_hand_thumb_0_joint": 0.23445501915095765,
+        "right_hand_thumb_1_joint": -0.17157973565925824,
+        "right_hand_thumb_2_joint": -0.27411239732292914
+      },
+      "actual_object_in_wrist_m": [
+        0.15018643387220815,
+        0.09914381800247749,
+        -0.017102434752780112
+      ],
+      "actual_object_world_m": [
+        2.5426514390027,
+        1.8819102812724462,
+        0.8077226330974449
+      ],
+      "actual_wrist_world_m": [
+        2.4711164525071387,
+        1.874740901406629,
+        0.9735819124316206
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.8802572220192633,
+        "middle": 4.10364270399264,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.486393655741785
+      },
+      "phase": "load_probe",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6261132503833047,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6844376568745661,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        0.9703855956842912
+      ],
+      "tick": 1169,
+      "time_s": 23.579999999999593,
+      "wrist_position_error_m": 0.0033768401699136846
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345404297065462,
+        "left_hand_index_1_joint": -0.0008754965413924763,
+        "left_hand_middle_0_joint": -0.0053527786252962044,
+        "left_hand_middle_1_joint": -0.0008758433736865448,
+        "left_hand_thumb_0_joint": 0.0015157027598473546,
+        "left_hand_thumb_1_joint": 0.014139259237692606,
+        "left_hand_thumb_2_joint": 0.005684301466838971,
+        "right_hand_index_0_joint": 0.49788795315016465,
+        "right_hand_index_1_joint": 0.5501193634756265,
+        "right_hand_middle_0_joint": 0.37454466478611415,
+        "right_hand_middle_1_joint": 0.5769774349913829,
+        "right_hand_thumb_0_joint": 0.23445445826395608,
+        "right_hand_thumb_1_joint": -0.17157960258994295,
+        "right_hand_thumb_2_joint": -0.274112402161274
+      },
+      "actual_object_in_wrist_m": [
+        0.15018577680238934,
+        0.09915659977499937,
+        -0.017077385959916435
+      ],
+      "actual_object_world_m": [
+        2.5421716137542547,
+        1.8826775312106607,
+        0.807299992655346
+      ],
+      "actual_wrist_world_m": [
+        2.4708048678455414,
+        1.8751661176055867,
+        0.9732210648190562
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.9630692006825892,
+        "middle": 4.03801068245553,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.524793570881311
+      },
+      "phase": "lift",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5808335581332589,
+        "right_hand_index_1_joint": 0.6261132503833047,
+        "right_hand_middle_0_joint": 0.5442565463297367,
+        "right_hand_middle_1_joint": 0.6844376568745661,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        0.9703855956842912
+      ],
+      "tick": 1170,
+      "time_s": 23.59999999999959,
+      "wrist_position_error_m": 0.0029545393641524894
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005346007657072626,
+        "left_hand_index_1_joint": -0.0008756087257115429,
+        "left_hand_middle_0_joint": -0.005353307889704162,
+        "left_hand_middle_1_joint": -0.0008759424999234774,
+        "left_hand_thumb_0_joint": 0.001515717904192769,
+        "left_hand_thumb_1_joint": 0.014138883221168174,
+        "left_hand_thumb_2_joint": 0.005684223858640816,
+        "right_hand_index_0_joint": 0.4979010106517071,
+        "right_hand_index_1_joint": 0.5501751858245423,
+        "right_hand_middle_0_joint": 0.3772770928729524,
+        "right_hand_middle_1_joint": 0.5801022277301287,
+        "right_hand_thumb_0_joint": 0.23442173325980353,
+        "right_hand_thumb_1_joint": -0.17004619555566697,
+        "right_hand_thumb_2_joint": -0.2741128956849659
+      },
+      "actual_object_in_wrist_m": [
+        0.1502169614381721,
+        0.0998925879052404,
+        -0.01568442495772667
+      ],
+      "actual_object_world_m": [
+        2.5411573421539524,
+        1.8831873415318858,
+        0.8318539183764118
+      ],
+      "actual_wrist_world_m": [
+        2.4675877621309628,
+        1.873308879328725,
+        0.9970192860783599
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.6604152907166465,
+        "middle": 4.2408089427132065,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.631083297626483
+      },
+      "phase": "lift",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5839118061750644,
+        "right_hand_index_1_joint": 0.6291914984251102,
+        "right_hand_middle_0_joint": 0.551521882250157,
+        "right_hand_middle_1_joint": 0.6917029927949864,
+        "right_hand_thumb_0_joint": 0.2794874382374551,
+        "right_hand_thumb_1_joint": -0.3264295379513965,
+        "right_hand_thumb_2_joint": -0.33888850734219045
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0028855956842913
+      ],
+      "tick": 1219,
+      "time_s": 24.579999999999394,
+      "wrist_position_error_m": 0.006541984158462159
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0053459894064330216,
+        "left_hand_index_1_joint": -0.0008755906660611113,
+        "left_hand_middle_0_joint": -0.005352693489488088,
+        "left_hand_middle_1_joint": -0.0008758378962186021,
+        "left_hand_thumb_0_joint": 0.0015156374733290869,
+        "left_hand_thumb_1_joint": 0.014139125756853858,
+        "left_hand_thumb_2_joint": 0.005684273608486446,
+        "right_hand_index_0_joint": 0.49790277493551127,
+        "right_hand_index_1_joint": 0.5501903249734924,
+        "right_hand_middle_0_joint": 0.37733255417893774,
+        "right_hand_middle_1_joint": 0.5801460966268235,
+        "right_hand_thumb_0_joint": 0.23441310835798493,
+        "right_hand_thumb_1_joint": -0.17003987158020165,
+        "right_hand_thumb_2_joint": -0.2741131130513104
+      },
+      "actual_object_in_wrist_m": [
+        0.15022669150495477,
+        0.10006980793349808,
+        -0.01533024110656138
+      ],
+      "actual_object_world_m": [
+        2.540893306291727,
+        1.8779165889615308,
+        0.8429717539591322
+      ],
+      "actual_wrist_world_m": [
+        2.4681491462660596,
+        1.867685204256011,
+        1.0085635639677348
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.8426818654723394,
+        "middle": 3.9989489190650063,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.47194373380915
+      },
+      "phase": "lift",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5910087997811874,
+        "right_hand_index_1_joint": 0.6362884920312332,
+        "right_hand_middle_0_joint": 0.5515319516488281,
+        "right_hand_middle_1_joint": 0.6917130621936575,
+        "right_hand_thumb_0_joint": 0.2815320794823249,
+        "right_hand_thumb_1_joint": -0.3284741791962663,
+        "right_hand_thumb_2_joint": -0.34093314858706025
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0161127878744995
+      ],
+      "tick": 1230,
+      "time_s": 24.79999999999935,
+      "wrist_position_error_m": 0.010583090188055958
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.00534534061522059,
+        "left_hand_index_1_joint": -0.0008754915395413718,
+        "left_hand_middle_0_joint": -0.00535283548106406,
+        "left_hand_middle_1_joint": -0.0008758575985832733,
+        "left_hand_thumb_0_joint": 0.001515672282477499,
+        "left_hand_thumb_1_joint": 0.014139541930394336,
+        "left_hand_thumb_2_joint": 0.005684339502961636,
+        "right_hand_index_0_joint": 0.49792009467943577,
+        "right_hand_index_1_joint": 0.5584062881176592,
+        "right_hand_middle_0_joint": 0.3809609079459607,
+        "right_hand_middle_1_joint": 0.5807627320741221,
+        "right_hand_thumb_0_joint": 0.23439379714976621,
+        "right_hand_thumb_1_joint": -0.1678860242405227,
+        "right_hand_thumb_2_joint": -0.27411475882326886
+      },
+      "actual_object_in_wrist_m": [
+        0.15017458413675772,
+        0.10064083079172491,
+        -0.014436968143399202
+      ],
+      "actual_object_world_m": [
+        2.534692025907366,
+        1.8841503672816493,
+        0.8602642444589982
+      ],
+      "actual_wrist_world_m": [
+        2.468057840177607,
+        1.8732203548441897,
+        1.0285789161680299
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.0735855801618213,
+        "middle": 4.173746627552955,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.66108509161802
+      },
+      "phase": "lift",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6007550013343541,
+        "right_hand_index_1_joint": 0.6460346935843999,
+        "right_hand_middle_0_joint": 0.5523959908251078,
+        "right_hand_middle_1_joint": 0.6925771013699372,
+        "right_hand_thumb_0_joint": 0.2834043376328102,
+        "right_hand_thumb_1_joint": -0.3303464373467516,
+        "right_hand_thumb_2_joint": -0.34280540673754556
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353849155981574
+      ],
+      "tick": 1267,
+      "time_s": 25.539999999999203,
+      "wrist_position_error_m": 0.0072738853085044025
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.00534520449971674,
+        "left_hand_index_1_joint": -0.0008754652085606586,
+        "left_hand_middle_0_joint": -0.005352681150440435,
+        "left_hand_middle_1_joint": -0.0008758290070002785,
+        "left_hand_thumb_0_joint": 0.0015156713201468484,
+        "left_hand_thumb_1_joint": 0.014139493824891861,
+        "left_hand_thumb_2_joint": 0.005684337175190517,
+        "right_hand_index_0_joint": 0.4979213075323693,
+        "right_hand_index_1_joint": 0.5584052275439237,
+        "right_hand_middle_0_joint": 0.38095913121131203,
+        "right_hand_middle_1_joint": 0.5807636303934771,
+        "right_hand_thumb_0_joint": 0.23439438591874645,
+        "right_hand_thumb_1_joint": -0.167885746517941,
+        "right_hand_thumb_2_joint": -0.2741147988457309
+      },
+      "actual_object_in_wrist_m": [
+        0.15016087543279696,
+        0.10063290402256089,
+        -0.01447169606805925
+      ],
+      "actual_object_world_m": [
+        2.534404882997262,
+        1.88380864038356,
+        0.8602273009758149
+      ],
+      "actual_wrist_world_m": [
+        2.4677652543395157,
+        1.8729485960975676,
+        1.0285303585841308
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.9944380117986251,
+        "middle": 4.160723568929097,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.7135952515410455
+      },
+      "phase": "loaded_hover",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6007550013343541,
+        "right_hand_index_1_joint": 0.6460346935843999,
+        "right_hand_middle_0_joint": 0.5523959908251078,
+        "right_hand_middle_1_joint": 0.6925771013699372,
+        "right_hand_thumb_0_joint": 0.2834043376328102,
+        "right_hand_thumb_1_joint": -0.3303464373467516,
+        "right_hand_thumb_2_joint": -0.34280540673754556
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353855956842912
+      ],
+      "tick": 1268,
+      "time_s": 25.5599999999992,
+      "wrist_position_error_m": 0.007469146078954362
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005344956291729307,
+        "left_hand_index_1_joint": -0.0008754410682722732,
+        "left_hand_middle_0_joint": -0.005352790551536751,
+        "left_hand_middle_1_joint": -0.000875856590619535,
+        "left_hand_thumb_0_joint": 0.0015157479121316248,
+        "left_hand_thumb_1_joint": 0.014139242301514334,
+        "left_hand_thumb_2_joint": 0.005684285872450199,
+        "right_hand_index_0_joint": 0.49792533939670025,
+        "right_hand_index_1_joint": 0.5584226378934316,
+        "right_hand_middle_0_joint": 0.3814926128595369,
+        "right_hand_middle_1_joint": 0.5807954890231299,
+        "right_hand_thumb_0_joint": 0.23438413256095816,
+        "right_hand_thumb_1_joint": -0.16785263033712783,
+        "right_hand_thumb_2_joint": -0.27411485471746505
+      },
+      "actual_object_in_wrist_m": [
+        0.15021665994908495,
+        0.10084521956240151,
+        -0.014075111612154596
+      ],
+      "actual_object_world_m": [
+        2.5225435555894973,
+        1.8929845960732992,
+        0.8541046077749792
+      ],
+      "actual_wrist_world_m": [
+        2.465597753111153,
+        1.8835476927791637,
+        1.0261541135518255
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.104356904610251,
+        "middle": 4.090203314028693,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.922840025058965
+      },
+      "phase": "loaded_hover",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6007550013343541,
+        "right_hand_index_1_joint": 0.6460346935843999,
+        "right_hand_middle_0_joint": 0.5541287525950828,
+        "right_hand_middle_1_joint": 0.6943098631399122,
+        "right_hand_thumb_0_joint": 0.2834043376328102,
+        "right_hand_thumb_1_joint": -0.3303464373467516,
+        "right_hand_thumb_2_joint": -0.34280540673754556
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353855956842912
+      ],
+      "tick": 1291,
+      "time_s": 26.019999999999108,
+      "wrist_position_error_m": 0.013431072703228197
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.00534508699319236,
+        "left_hand_index_1_joint": -0.0008754400265736773,
+        "left_hand_middle_0_joint": -0.00535297731187595,
+        "left_hand_middle_1_joint": -0.0008758666041514849,
+        "left_hand_thumb_0_joint": 0.0015156573292987913,
+        "left_hand_thumb_1_joint": 0.01414008325653654,
+        "left_hand_thumb_2_joint": 0.005684436911834533,
+        "right_hand_index_0_joint": 0.4979290579783241,
+        "right_hand_index_1_joint": 0.5584303388260462,
+        "right_hand_middle_0_joint": 0.38163793035426863,
+        "right_hand_middle_1_joint": 0.5811555740733072,
+        "right_hand_thumb_0_joint": 0.23437999269879942,
+        "right_hand_thumb_1_joint": -0.16778159224384737,
+        "right_hand_thumb_2_joint": -0.2741149897520145
+      },
+      "actual_object_in_wrist_m": [
+        0.15018726674394484,
+        0.10097356817221055,
+        -0.01391111234500877
+      ],
+      "actual_object_world_m": [
+        2.5255112003465907,
+        1.8918727920780702,
+        0.8609624245079673
+      ],
+      "actual_wrist_world_m": [
+        2.4645120830274876,
+        1.8820991111089183,
+        1.0316345618201948
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.9619409073172007,
+        "middle": 4.015000232316604,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.768728386339542
+      },
+      "phase": "loaded_hover",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6007550013343541,
+        "right_hand_index_1_joint": 0.6460346935843999,
+        "right_hand_middle_0_joint": 0.5545680851368946,
+        "right_hand_middle_1_joint": 0.694749195681724,
+        "right_hand_thumb_0_joint": 0.2834043376328102,
+        "right_hand_thumb_1_joint": -0.3303464373467516,
+        "right_hand_thumb_2_joint": -0.34280540673754556
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353855956842912
+      ],
+      "tick": 1303,
+      "time_s": 26.25999999999906,
+      "wrist_position_error_m": 0.009847798994328786
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345942310652472,
+        "left_hand_index_1_joint": -0.0008755891459582015,
+        "left_hand_middle_0_joint": -0.0053529833063777395,
+        "left_hand_middle_1_joint": -0.0008758871839825449,
+        "left_hand_thumb_0_joint": 0.0015156716703314474,
+        "left_hand_thumb_1_joint": 0.014139106961085175,
+        "left_hand_thumb_2_joint": 0.005684265678598043,
+        "right_hand_index_0_joint": 0.49793020906436564,
+        "right_hand_index_1_joint": 0.5588709551189127,
+        "right_hand_middle_0_joint": 0.38187725413751844,
+        "right_hand_middle_1_joint": 0.5834504884350147,
+        "right_hand_thumb_0_joint": 0.23436599760295582,
+        "right_hand_thumb_1_joint": -0.16738571702468252,
+        "right_hand_thumb_2_joint": -0.27411532235992014
+      },
+      "actual_object_in_wrist_m": [
+        0.15023104909592255,
+        0.1012281737179416,
+        -0.013361256648218732
+      ],
+      "actual_object_world_m": [
+        2.5334597842886377,
+        1.8991600546529483,
+        0.862063755028188
+      ],
+      "actual_wrist_world_m": [
+        2.470852046132185,
+        1.8861673982401639,
+        1.032082861155185
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.013944131302356,
+        "middle": 4.289111028871514,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.6378333825750175
+      },
+      "phase": "loaded_hover",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6021042547076271,
+        "right_hand_index_1_joint": 0.6473839469576729,
+        "right_hand_middle_0_joint": 0.5577280505373392,
+        "right_hand_middle_1_joint": 0.6979091610821686,
+        "right_hand_thumb_0_joint": 0.2834043376328102,
+        "right_hand_thumb_1_joint": -0.3303464373467516,
+        "right_hand_thumb_2_joint": -0.34280540673754556
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353855956842912
+      ],
+      "tick": 1338,
+      "time_s": 26.95999999999892,
+      "wrist_position_error_m": 0.01180944540730238
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005346016864124066,
+        "left_hand_index_1_joint": -0.0008755994550871393,
+        "left_hand_middle_0_joint": -0.005353069185663033,
+        "left_hand_middle_1_joint": -0.0008758991429123626,
+        "left_hand_thumb_0_joint": 0.001515682288493804,
+        "left_hand_thumb_1_joint": 0.014138938615072746,
+        "left_hand_thumb_2_joint": 0.005684240827478898,
+        "right_hand_index_0_joint": 0.4979308666953937,
+        "right_hand_index_1_joint": 0.5588707456364207,
+        "right_hand_middle_0_joint": 0.38187744023987297,
+        "right_hand_middle_1_joint": 0.5834508241921028,
+        "right_hand_thumb_0_joint": 0.23436609841045639,
+        "right_hand_thumb_1_joint": -0.16738556614589958,
+        "right_hand_thumb_2_joint": -0.27411533603063554
+      },
+      "actual_object_in_wrist_m": [
+        0.15023851033318736,
+        0.10123391190587021,
+        -0.013377961818684322
+      ],
+      "actual_object_world_m": [
+        2.5302637920665068,
+        1.8982772180031124,
+        0.8594208409596318
+      ],
+      "actual_wrist_world_m": [
+        2.4695867336089816,
+        1.8860970542718505,
+        1.0302096665828104
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.027991213489861,
+        "middle": 4.365213819302051,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.608401421837275
+      },
+      "phase": "tuck",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6021042547076271,
+        "right_hand_index_1_joint": 0.6473839469576729,
+        "right_hand_middle_0_joint": 0.5577280505373392,
+        "right_hand_middle_1_joint": 0.6979091610821686,
+        "right_hand_thumb_0_joint": 0.2834043376328102,
+        "right_hand_thumb_1_joint": -0.3303464373467516,
+        "right_hand_thumb_2_joint": -0.34280540673754556
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353855956842912
+      ],
+      "tick": 1339,
+      "time_s": 26.979999999998917,
+      "wrist_position_error_m": 0.012380986008335175
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0053446134186793896,
+        "left_hand_index_1_joint": -0.000875370174363433,
+        "left_hand_middle_0_joint": -0.005353302313991589,
+        "left_hand_middle_1_joint": -0.0008759124079680963,
+        "left_hand_thumb_0_joint": 0.001515775790990258,
+        "left_hand_thumb_1_joint": 0.014140031650102075,
+        "left_hand_thumb_2_joint": 0.0056844307262288625,
+        "right_hand_index_0_joint": 0.497932667409782,
+        "right_hand_index_1_joint": 0.5605095705686433,
+        "right_hand_middle_0_joint": 0.3818891932138107,
+        "right_hand_middle_1_joint": 0.5834499482229377,
+        "right_hand_thumb_0_joint": 0.23436357418029347,
+        "right_hand_thumb_1_joint": -0.1673144768807784,
+        "right_hand_thumb_2_joint": -0.2741161554908834
+      },
+      "actual_object_in_wrist_m": [
+        0.1502236492418205,
+        0.10129085893961089,
+        -0.013291932663094889
+      ],
+      "actual_object_world_m": [
+        2.5224565650349007,
+        1.8903898086067177,
+        0.8502107641758427
+      ],
+      "actual_wrist_world_m": [
+        2.4633242060065124,
+        1.8811294624794024,
+        1.0217370550921743
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.0715469439944743,
+        "middle": 4.007317991392086,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.743706845481071
+      },
+      "phase": "tuck",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.607429812499609,
+        "right_hand_index_1_joint": 0.650248202710363,
+        "right_hand_middle_0_joint": 0.5618250425804545,
+        "right_hand_middle_1_joint": 0.6942643707769368,
+        "right_hand_thumb_0_joint": 0.2849643177312031,
+        "right_hand_thumb_1_joint": -0.3223791081951219,
+        "right_hand_thumb_2_joint": -0.3387823456932299
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.035385595684291
+      ],
+      "tick": 1346,
+      "time_s": 27.11999999999889,
+      "wrist_position_error_m": 0.016450509463418823
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345639595641363,
+        "left_hand_index_1_joint": -0.0008755402458027823,
+        "left_hand_middle_0_joint": -0.005352706201415348,
+        "left_hand_middle_1_joint": -0.0008758431029746507,
+        "left_hand_thumb_0_joint": 0.0015156477074381493,
+        "left_hand_thumb_1_joint": 0.01413977789944312,
+        "left_hand_thumb_2_joint": 0.005684371612842901,
+        "right_hand_index_0_joint": 0.4979395324604622,
+        "right_hand_index_1_joint": 0.5631842274281568,
+        "right_hand_middle_0_joint": 0.3831234531647017,
+        "right_hand_middle_1_joint": 0.5834472819820224,
+        "right_hand_thumb_0_joint": 0.24064948338807354,
+        "right_hand_thumb_1_joint": -0.1661794035702835,
+        "right_hand_thumb_2_joint": -0.2741165623697421
+      },
+      "actual_object_in_wrist_m": [
+        0.1501907538255873,
+        0.10146289761984673,
+        -0.01311094811781132
+      ],
+      "actual_object_world_m": [
+        2.529858876088907,
+        1.8814925787074892,
+        0.8574026791193997
+      ],
+      "actual_wrist_world_m": [
+        2.465032645112957,
+        1.8710289205684656,
+        1.0268486903573866
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.5897831678309249,
+        "middle": 4.399646554857356,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.70952130383832
+      },
+      "phase": "tuck",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5852014235211944,
+        "right_hand_index_1_joint": 0.6515010349093958,
+        "right_hand_middle_0_joint": 0.5791805579165291,
+        "right_hand_middle_1_joint": 0.691110699642599,
+        "right_hand_thumb_0_joint": 0.2964103774573744,
+        "right_hand_thumb_1_joint": -0.3194602789930116,
+        "right_hand_thumb_2_joint": -0.33023538945847564
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353855956842912
+      ],
+      "tick": 1369,
+      "time_s": 27.579999999998797,
+      "wrist_position_error_m": 0.01060921339928091
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345784534020834,
+        "left_hand_index_1_joint": -0.0008755631360464351,
+        "left_hand_middle_0_joint": -0.0053531772789630954,
+        "left_hand_middle_1_joint": -0.0008759132628996036,
+        "left_hand_thumb_0_joint": 0.00151566499970789,
+        "left_hand_thumb_1_joint": 0.014140049881298522,
+        "left_hand_thumb_2_joint": 0.0056844153790046896,
+        "right_hand_index_0_joint": 0.49808165430986306,
+        "right_hand_index_1_joint": 0.5730204898126529,
+        "right_hand_middle_0_joint": 0.3850445397042497,
+        "right_hand_middle_1_joint": 0.5834425927094667,
+        "right_hand_thumb_0_joint": 0.25306511885213134,
+        "right_hand_thumb_1_joint": -0.16384900865094892,
+        "right_hand_thumb_2_joint": -0.2741170534818355
+      },
+      "actual_object_in_wrist_m": [
+        0.1501020789976027,
+        0.10164213707773584,
+        -0.012871276251989756
+      ],
+      "actual_object_world_m": [
+        2.526590569182584,
+        1.8879094220035488,
+        0.8597515637645122
+      ],
+      "actual_wrist_world_m": [
+        2.466894052831355,
+        1.8797524908399712,
+        1.031207733997627
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.7722412284686442,
+        "middle": 4.205263349304435,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.647726987259975
+      },
+      "phase": "tuck",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6048694933018801,
+        "right_hand_index_1_joint": 0.6619262081578129,
+        "right_hand_middle_0_joint": 0.5634974037407701,
+        "right_hand_middle_1_joint": 0.6831557986557873,
+        "right_hand_thumb_0_joint": 0.30960686837993634,
+        "right_hand_thumb_1_joint": -0.3175369040776149,
+        "right_hand_thumb_2_joint": -0.32222646665369065
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353855956842912
+      ],
+      "tick": 1398,
+      "time_s": 28.159999999998682,
+      "wrist_position_error_m": 0.007159561980248404
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0053456016518722655,
+        "left_hand_index_1_joint": -0.0008755335913864754,
+        "left_hand_middle_0_joint": -0.005353323766670523,
+        "left_hand_middle_1_joint": -0.0008759327237614433,
+        "left_hand_thumb_0_joint": 0.0015156969535373246,
+        "left_hand_thumb_1_joint": 0.014140077976478564,
+        "left_hand_thumb_2_joint": 0.005684422386479091,
+        "right_hand_index_0_joint": 0.4980806326585565,
+        "right_hand_index_1_joint": 0.573386431312229,
+        "right_hand_middle_0_joint": 0.3850472579324297,
+        "right_hand_middle_1_joint": 0.5834411939629703,
+        "right_hand_thumb_0_joint": 0.2534926746949706,
+        "right_hand_thumb_1_joint": -0.1638401662464623,
+        "right_hand_thumb_2_joint": -0.2741169963536269
+      },
+      "actual_object_in_wrist_m": [
+        0.15011987385009412,
+        0.10165288811315494,
+        -0.012817713891123328
+      ],
+      "actual_object_world_m": [
+        2.527146525656772,
+        1.887757329361361,
+        0.8592362694931248
+      ],
+      "actual_wrist_world_m": [
+        2.4672580460025677,
+        1.8793275569363321,
+        1.0306302277223418
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.037625314002677,
+        "middle": 4.111858959893069,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.6628508597994145
+      },
+      "phase": "carry",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6027792899246531,
+        "right_hand_index_1_joint": 0.6623494657048672,
+        "right_hand_middle_0_joint": 0.5660288897878155,
+        "right_hand_middle_1_joint": 0.6828999850994849,
+        "right_hand_thumb_0_joint": 0.3100095370137448,
+        "right_hand_thumb_1_joint": -0.3178036631957029,
+        "right_hand_thumb_2_joint": -0.32247080859281924
+      },
+      "requested_wrist_world_m": [
+        2.4700335329214256,
+        1.87485877402755,
+        1.0353855956842912
+      ],
+      "tick": 1399,
+      "time_s": 28.179999999998678,
+      "wrist_position_error_m": 0.007091323767542258
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345449610201147,
+        "left_hand_index_1_joint": -0.000875497540863212,
+        "left_hand_middle_0_joint": -0.0053521447678392215,
+        "left_hand_middle_1_joint": -0.0008757510347597333,
+        "left_hand_thumb_0_joint": 0.0015155272910243893,
+        "left_hand_thumb_1_joint": 0.014140276339543532,
+        "left_hand_thumb_2_joint": 0.005684457327296523,
+        "right_hand_index_0_joint": 0.5080006180565472,
+        "right_hand_index_1_joint": 0.5826840956096315,
+        "right_hand_middle_0_joint": 0.3865992675279497,
+        "right_hand_middle_1_joint": 0.5834346768030134,
+        "right_hand_thumb_0_joint": 0.2564938061927917,
+        "right_hand_thumb_1_joint": -0.16236416080279015,
+        "right_hand_thumb_2_joint": -0.2741191257003767
+      },
+      "actual_object_in_wrist_m": [
+        0.1499613323487669,
+        0.10231677107214304,
+        -0.013924381698878953
+      ],
+      "actual_object_world_m": [
+        2.638037049234433,
+        1.8787141632563389,
+        0.8840789267343044
+      ],
+      "actual_wrist_world_m": [
+        2.5659659972614755,
+        1.869965138957899,
+        1.0510526650570695
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.6567592301863043,
+        "middle": 4.201886295731781,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.559034857688817
+      },
+      "phase": "carry",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6293047785039927,
+        "right_hand_index_1_joint": 0.6649539159647784,
+        "right_hand_middle_0_joint": 0.5532035165194796,
+        "right_hand_middle_1_joint": 0.6802077388359149,
+        "right_hand_thumb_0_joint": 0.2989922674548274,
+        "right_hand_thumb_1_joint": -0.37105589259792215,
+        "right_hand_thumb_2_joint": -0.35174839023392
+      },
+      "requested_wrist_world_m": [
+        2.5399288217340388,
+        1.8626103892263843,
+        1.0353855956842912
+      ],
+      "tick": 1458,
+      "time_s": 29.359999999998443,
+      "wrist_position_error_m": 0.03126473917676606
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005344771917406305,
+        "left_hand_index_1_joint": -0.0008753993334217028,
+        "left_hand_middle_0_joint": -0.005352429206473957,
+        "left_hand_middle_1_joint": -0.000875795013230313,
+        "left_hand_thumb_0_joint": 0.0015156123750357854,
+        "left_hand_thumb_1_joint": 0.014140092553814968,
+        "left_hand_thumb_2_joint": 0.005684426567858296,
+        "right_hand_index_0_joint": 0.5086266703150086,
+        "right_hand_index_1_joint": 0.5826822773839029,
+        "right_hand_middle_0_joint": 0.38659660983675753,
+        "right_hand_middle_1_joint": 0.5834357851785748,
+        "right_hand_thumb_0_joint": 0.2564948311280295,
+        "right_hand_thumb_1_joint": -0.1623645512200816,
+        "right_hand_thumb_2_joint": -0.27411921732772326
+      },
+      "actual_object_in_wrist_m": [
+        0.14994764438008468,
+        0.10226184156770106,
+        -0.01400706734381662
+      ],
+      "actual_object_world_m": [
+        2.6416083000795134,
+        1.880087566716572,
+        0.8803010732723987
+      ],
+      "actual_wrist_world_m": [
+        2.5698615782686476,
+        1.8709817318076756,
+        1.0473563632560874
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.6607649233934192,
+        "middle": 4.604215706680599,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.458367573411203
+      },
+      "phase": "carry",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6315426105326806,
+        "right_hand_index_1_joint": 0.6647296899443967,
+        "right_hand_middle_0_joint": 0.5479405173827031,
+        "right_hand_middle_1_joint": 0.6805178394970475,
+        "right_hand_thumb_0_joint": 0.2990146029021509,
+        "right_hand_thumb_1_joint": -0.3731932682917107,
+        "right_hand_thumb_2_joint": -0.3523530879034083
+      },
+      "requested_wrist_world_m": [
+        2.5418927635334905,
+        1.8638862196340396,
+        1.0353855956842912
+      ],
+      "tick": 1459,
+      "time_s": 29.37999999999844,
+      "wrist_position_error_m": 0.03123940087379598
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005344630558414823,
+        "left_hand_index_1_joint": -0.0008753686079879743,
+        "left_hand_middle_0_joint": -0.005352110718241056,
+        "left_hand_middle_1_joint": -0.0008757340364201921,
+        "left_hand_thumb_0_joint": 0.001515638526013586,
+        "left_hand_thumb_1_joint": 0.014141452541664226,
+        "left_hand_thumb_2_joint": 0.005684648974630528,
+        "right_hand_index_0_joint": 0.5184193254401993,
+        "right_hand_index_1_joint": 0.5939451899967845,
+        "right_hand_middle_0_joint": 0.3875905401235816,
+        "right_hand_middle_1_joint": 0.5834385368124252,
+        "right_hand_thumb_0_joint": 0.2564875093605099,
+        "right_hand_thumb_1_joint": -0.16230827613773482,
+        "right_hand_thumb_2_joint": -0.27412157349263566
+      },
+      "actual_object_in_wrist_m": [
+        0.14966941473231085,
+        0.102988878916881,
+        -0.014892412652948281
+      ],
+      "actual_object_world_m": [
+        2.930244547325885,
+        1.8777450929403994,
+        0.8790248280902737
+      ],
+      "actual_wrist_world_m": [
+        2.8561601847535485,
+        1.866133534010285,
+        1.0451756805194956
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.5191121595359163,
+        "middle": 4.189172463201661,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.581269618465904
+      },
+      "phase": "carry",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6320461267540564,
+        "right_hand_index_1_joint": 0.6819986394647087,
+        "right_hand_middle_0_joint": 0.5214685451060409,
+        "right_hand_middle_1_joint": 0.6727489199638342,
+        "right_hand_thumb_0_joint": 0.2910955689471025,
+        "right_hand_thumb_1_joint": -0.33085461439359176,
+        "right_hand_thumb_2_joint": -0.3353782909134837
+      },
+      "requested_wrist_world_m": [
+        2.8328182479519315,
+        1.86038279470843,
+        1.0353855956842912
+      ],
+      "tick": 1519,
+      "time_s": 30.5799999999982,
+      "wrist_position_error_m": 0.025956940829941433
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005344649256757266,
+        "left_hand_index_1_joint": -0.0008753655441288851,
+        "left_hand_middle_0_joint": -0.0053518879894755705,
+        "left_hand_middle_1_joint": -0.000875694028460241,
+        "left_hand_thumb_0_joint": 0.0015156448651301386,
+        "left_hand_thumb_1_joint": 0.014141545000542927,
+        "left_hand_thumb_2_joint": 0.005684669258013699,
+        "right_hand_index_0_joint": 0.5184671179330576,
+        "right_hand_index_1_joint": 0.5939859889434064,
+        "right_hand_middle_0_joint": 0.38758847190968876,
+        "right_hand_middle_1_joint": 0.583439117466082,
+        "right_hand_thumb_0_joint": 0.2564883261300146,
+        "right_hand_thumb_1_joint": -0.16230868826966519,
+        "right_hand_thumb_2_joint": -0.27412141245419724
+      },
+      "actual_object_in_wrist_m": [
+        0.14968776376655557,
+        0.10297653590958762,
+        -0.014915034977892162
+      ],
+      "actual_object_world_m": [
+        2.9357838029157715,
+        1.8802659094077403,
+        0.8765882397972417
+      ],
+      "actual_wrist_world_m": [
+        2.863226539815793,
+        1.8690536289782862,
+        1.0434497997107643
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 1.59143070398834,
+        "middle": 4.483934807271034,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.563502808361351
+      },
+      "phase": "target_stop",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6338817188302155,
+        "right_hand_index_1_joint": 0.6824228035156439,
+        "right_hand_middle_0_joint": 0.5180945896135587,
+        "right_hand_middle_1_joint": 0.6728561021251788,
+        "right_hand_thumb_0_joint": 0.29023775070920566,
+        "right_hand_thumb_1_joint": -0.3340338062380249,
+        "right_hand_thumb_2_joint": -0.3369084948076625
+      },
+      "requested_wrist_world_m": [
+        2.83937819357057,
+        1.8618576547726586,
+        1.0353855956842912
+      ],
+      "tick": 1520,
+      "time_s": 30.599999999998197,
+      "wrist_position_error_m": 0.026183144386812584
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345832365610096,
+        "left_hand_index_1_joint": -0.0008755776333386157,
+        "left_hand_middle_0_joint": -0.005353369995485261,
+        "left_hand_middle_1_joint": -0.0008759518106749353,
+        "left_hand_thumb_0_joint": 0.0015157134380258848,
+        "left_hand_thumb_1_joint": 0.014140985541939117,
+        "left_hand_thumb_2_joint": 0.0056845520705588685,
+        "right_hand_index_0_joint": 0.5220928203257449,
+        "right_hand_index_1_joint": 0.5956968326623822,
+        "right_hand_middle_0_joint": 0.38757592033657917,
+        "right_hand_middle_1_joint": 0.5834453801147419,
+        "right_hand_thumb_0_joint": 0.25649305990838184,
+        "right_hand_thumb_1_joint": -0.1622725040047267,
+        "right_hand_thumb_2_joint": -0.27412157595967174
+      },
+      "actual_object_in_wrist_m": [
+        0.14992388749561103,
+        0.10318686781346545,
+        -0.015083282737731869
+      ],
+      "actual_object_world_m": [
+        2.9642055354743033,
+        1.9050575250138104,
+        0.8301865084361268
+      ],
+      "actual_wrist_world_m": [
+        2.9161716280261483,
+        1.8957216546803421,
+        1.0061347747233376
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 3.553655615842778,
+        "middle": 4.082012864227115,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.8205001013912865
+      },
+      "phase": "target_stop",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.635589056639805,
+        "right_hand_index_1_joint": 0.6861823290146218,
+        "right_hand_middle_0_joint": 0.5213632318581888,
+        "right_hand_middle_1_joint": 0.6703778000002761,
+        "right_hand_thumb_0_joint": 0.2877529199842476,
+        "right_hand_thumb_1_joint": -0.33264192982236124,
+        "right_hand_thumb_2_joint": -0.3363637737644642
+      },
+      "requested_wrist_world_m": [
+        2.907885496443535,
+        1.8995771499851946,
+        1.0353855956842912
+      ],
+      "tick": 1529,
+      "time_s": 30.77999999999816,
+      "wrist_position_error_m": 0.03064531526253052
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0053454587319658785,
+        "left_hand_index_1_joint": -0.0008755194991204533,
+        "left_hand_middle_0_joint": -0.005352683189437741,
+        "left_hand_middle_1_joint": -0.0008758483406758761,
+        "left_hand_thumb_0_joint": 0.0015155864744508406,
+        "left_hand_thumb_1_joint": 0.014141679281726187,
+        "left_hand_thumb_2_joint": 0.00568465826590061,
+        "right_hand_index_0_joint": 0.5221192334197405,
+        "right_hand_index_1_joint": 0.6055663470315465,
+        "right_hand_middle_0_joint": 0.38759458814532227,
+        "right_hand_middle_1_joint": 0.5834491402868771,
+        "right_hand_thumb_0_joint": 0.25648884606912975,
+        "right_hand_thumb_1_joint": -0.16226963291612106,
+        "right_hand_thumb_2_joint": -0.2741246766581315
+      },
+      "actual_object_in_wrist_m": [
+        0.1498779111300999,
+        0.1033810588210469,
+        -0.015191088781674812
+      ],
+      "actual_object_world_m": [
+        3.1366812554742243,
+        1.8945519755401496,
+        0.8577981437339888
+      ],
+      "actual_wrist_world_m": [
+        3.071143262786209,
+        1.8802619853651799,
+        1.0277462782965092
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.263665173556954,
+        "middle": 4.079757768607257,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.72163526270647
+      },
+      "phase": "target_stop",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5860940901779748,
+        "right_hand_index_1_joint": 0.690771467235857,
+        "right_hand_middle_0_joint": 0.528086103877072,
+        "right_hand_middle_1_joint": 0.6665348652008843,
+        "right_hand_thumb_0_joint": 0.28659642664386453,
+        "right_hand_thumb_1_joint": -0.3441380704302288,
+        "right_hand_thumb_2_joint": -0.33048087880979593
+      },
+      "requested_wrist_world_m": [
+        3.0707500117572435,
+        1.872381549754725,
+        1.0353855956842912
+      ],
+      "tick": 1567,
+      "time_s": 31.53999999999801,
+      "wrist_position_error_m": 0.010982489787547131
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005346627427870972,
+        "left_hand_index_1_joint": -0.0008757148062430255,
+        "left_hand_middle_0_joint": -0.005353063941798375,
+        "left_hand_middle_1_joint": -0.0008759321732421612,
+        "left_hand_thumb_0_joint": 0.0015154084202974045,
+        "left_hand_thumb_1_joint": 0.014144130798989329,
+        "left_hand_thumb_2_joint": 0.005685016474072439,
+        "right_hand_index_0_joint": 0.5221201674116177,
+        "right_hand_index_1_joint": 0.6094966529847866,
+        "right_hand_middle_0_joint": 0.3876329790637878,
+        "right_hand_middle_1_joint": 0.5834506506546616,
+        "right_hand_thumb_0_joint": 0.25648127142636473,
+        "right_hand_thumb_1_joint": -0.1622655377574171,
+        "right_hand_thumb_2_joint": -0.27412781379932727
+      },
+      "actual_object_in_wrist_m": [
+        0.1498730226031521,
+        0.10361011993983488,
+        -0.014969613540292182
+      ],
+      "actual_object_world_m": [
+        3.072933366435812,
+        1.9077917859298172,
+        0.8621794257402446
+      ],
+      "actual_wrist_world_m": [
+        3.0159311792424286,
+        1.9023213469007696,
+        1.0357936363904605
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.4732172719251344,
+        "middle": 4.196091276999502,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.574159153174172
+      },
+      "phase": "target_stop",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5240116023406004,
+        "right_hand_index_1_joint": 0.6980903970670344,
+        "right_hand_middle_0_joint": 0.5730858167753726,
+        "right_hand_middle_1_joint": 0.6828290125587879,
+        "right_hand_thumb_0_joint": 0.2875075713311641,
+        "right_hand_thumb_1_joint": -0.3466498726477501,
+        "right_hand_thumb_2_joint": -0.3194500064898086
+      },
+      "requested_wrist_world_m": [
+        3.016781858886529,
+        1.9015684698525297,
+        1.0353855956842912
+      ],
+      "tick": 1614,
+      "time_s": 32.479999999998164,
+      "wrist_position_error_m": 0.0012070529916056913
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005346549070300769,
+        "left_hand_index_1_joint": -0.0008757066442364247,
+        "left_hand_middle_0_joint": -0.0053531955339932115,
+        "left_hand_middle_1_joint": -0.0008759551861087359,
+        "left_hand_thumb_0_joint": 0.0015154193448610397,
+        "left_hand_thumb_1_joint": 0.014144220058570278,
+        "left_hand_thumb_2_joint": 0.005685027118543787,
+        "right_hand_index_0_joint": 0.5221021046802142,
+        "right_hand_index_1_joint": 0.6094971648027264,
+        "right_hand_middle_0_joint": 0.3876339505866864,
+        "right_hand_middle_1_joint": 0.5834505478250922,
+        "right_hand_thumb_0_joint": 0.25648099677900693,
+        "right_hand_thumb_1_joint": -0.16226531563452806,
+        "right_hand_thumb_2_joint": -0.274127822990363
+      },
+      "actual_object_in_wrist_m": [
+        0.14987515369470708,
+        0.1036151545710026,
+        -0.01496118875191986
+      ],
+      "actual_object_world_m": [
+        3.0723932132583434,
+        1.9069121961526905,
+        0.860898685394934
+      ],
+      "actual_wrist_world_m": [
+        3.016419539920819,
+        1.9017145841123526,
+        1.0348596920683768
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.425162117851649,
+        "middle": 4.184428680870004,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.602083420936293
+      },
+      "phase": "place",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5226712766717766,
+        "right_hand_index_1_joint": 0.6981571458270993,
+        "right_hand_middle_0_joint": 0.5748550420944527,
+        "right_hand_middle_1_joint": 0.6838417149123253,
+        "right_hand_thumb_0_joint": 0.2875457053800477,
+        "right_hand_thumb_1_joint": -0.34758914319828216,
+        "right_hand_thumb_2_joint": -0.3195394391536931
+      },
+      "requested_wrist_world_m": [
+        3.017083894949763,
+        1.901416164519777,
+        1.0353855956842912
+      ],
+      "tick": 1615,
+      "time_s": 32.499999999998174,
+      "wrist_position_error_m": 0.0008983298230316775
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345537704229558,
+        "left_hand_index_1_joint": -0.0008755531591812658,
+        "left_hand_middle_0_joint": -0.005352603270777878,
+        "left_hand_middle_1_joint": -0.0008758620979321974,
+        "left_hand_thumb_0_joint": 0.0015154893614196664,
+        "left_hand_thumb_1_joint": 0.014144646764721628,
+        "left_hand_thumb_2_joint": 0.0056850938887454475,
+        "right_hand_index_0_joint": 0.5183959957393989,
+        "right_hand_index_1_joint": 0.6218002909196868,
+        "right_hand_middle_0_joint": 0.388200592729669,
+        "right_hand_middle_1_joint": 0.583450849287703,
+        "right_hand_thumb_0_joint": 0.25686028814882145,
+        "right_hand_thumb_1_joint": -0.16219820200437252,
+        "right_hand_thumb_2_joint": -0.2741339422905039
+      },
+      "actual_object_in_wrist_m": [
+        0.1499360845825616,
+        0.10378744668851758,
+        -0.014473642679382257
+      ],
+      "actual_object_world_m": [
+        3.064351090361708,
+        1.8854736847007347,
+        0.8346016608574035
+      ],
+      "actual_wrist_world_m": [
+        2.992986748111688,
+        1.88799029618347,
+        1.0030146864948177
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.3180217490813155,
+        "middle": 4.782948858505594,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.396211073062942
+      },
+      "phase": "place",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5175484429741004,
+        "right_hand_index_1_joint": 0.7056346837079945,
+        "right_hand_middle_0_joint": 0.5563205103710273,
+        "right_hand_middle_1_joint": 0.6825508506659463,
+        "right_hand_thumb_0_joint": 0.306060291447624,
+        "right_hand_thumb_1_joint": -0.3451091953117369,
+        "right_hand_thumb_2_joint": -0.3151444695411575
+      },
+      "requested_wrist_world_m": [
+        2.979154992905222,
+        1.878698898586778,
+        0.9976956424735386
+      ],
+      "tick": 1671,
+      "time_s": 33.61999999999875,
+      "wrist_position_error_m": 0.017491133487905135
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345833069526024,
+        "left_hand_index_1_joint": -0.0008756022208934086,
+        "left_hand_middle_0_joint": -0.005353371228468877,
+        "left_hand_middle_1_joint": -0.0008759802762508677,
+        "left_hand_thumb_0_joint": 0.0015155310076543204,
+        "left_hand_thumb_1_joint": 0.014143440368929349,
+        "left_hand_thumb_2_joint": 0.0056849060123770265,
+        "right_hand_index_0_joint": 0.518482564699805,
+        "right_hand_index_1_joint": 0.6267841402696086,
+        "right_hand_middle_0_joint": 0.38833110928385994,
+        "right_hand_middle_1_joint": 0.5834419609057655,
+        "right_hand_thumb_0_joint": 0.28271538044596034,
+        "right_hand_thumb_1_joint": -0.16218357724797464,
+        "right_hand_thumb_2_joint": -0.27414075749867367
+      },
+      "actual_object_in_wrist_m": [
+        0.14996973710750208,
+        0.10441319452985524,
+        -0.013552958522582792
+      ],
+      "actual_object_world_m": [
+        3.049725631512015,
+        1.857412107178041,
+        0.8235145992988323
+      ],
+      "actual_wrist_world_m": [
+        2.963202889457416,
+        1.8737487115896316,
+        0.9842119869203806
+      ],
+      "desk_supported": false,
+      "measured_forces_n": {
+        "desk": 0.0,
+        "index": 2.2831983513351624,
+        "middle": 4.530466436026969,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.785960506907415
+      },
+      "phase": "place",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.5737462066425152,
+        "right_hand_index_1_joint": 0.6789373278693394,
+        "right_hand_middle_0_joint": 0.5054817665302309,
+        "right_hand_middle_1_joint": 0.6977283119443626,
+        "right_hand_thumb_0_joint": 0.33834850382865994,
+        "right_hand_thumb_1_joint": -0.40306789967459783,
+        "right_hand_thumb_2_joint": -0.3269570607179715
+      },
+      "requested_wrist_world_m": [
+        2.964419593343611,
+        1.8698732281237365,
+        0.9830518294314579
+      ],
+      "tick": 1746,
+      "time_s": 35.119999999999514,
+      "wrist_position_error_m": 0.0042244178108009536
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005346405963046216,
+        "left_hand_index_1_joint": -0.0008756806104537204,
+        "left_hand_middle_0_joint": -0.005353945048271417,
+        "left_hand_middle_1_joint": -0.000876054240829182,
+        "left_hand_thumb_0_joint": 0.001515612551677075,
+        "left_hand_thumb_1_joint": 0.014140551693732836,
+        "left_hand_thumb_2_joint": 0.005684470705224515,
+        "right_hand_index_0_joint": 0.520761846322835,
+        "right_hand_index_1_joint": 0.6269273221261249,
+        "right_hand_middle_0_joint": 0.36648457461445266,
+        "right_hand_middle_1_joint": 0.6225043203562797,
+        "right_hand_thumb_0_joint": 0.3207104912858646,
+        "right_hand_thumb_1_joint": -0.17580076665037792,
+        "right_hand_thumb_2_joint": -0.27417895497374933
+      },
+      "actual_object_in_wrist_m": [
+        0.14995791506153894,
+        0.10618949914060963,
+        -0.012111752586219772
+      ],
+      "actual_object_world_m": [
+        3.0508341778780275,
+        1.8511443355504344,
+        0.7871272350455871
+      ],
+      "actual_wrist_world_m": [
+        2.9644185550296687,
+        1.869154927448752,
+        0.9487386185408395
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.3239394414572296,
+        "index": 2.6822053810178184,
+        "middle": 3.7201350543938467,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.367644707461496
+      },
+      "phase": "place",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6303150739123521,
+        "right_hand_index_1_joint": 0.6494556930953267,
+        "right_hand_middle_0_joint": 0.4371807946665253,
+        "right_hand_middle_1_joint": 0.7199227932441962,
+        "right_hand_thumb_0_joint": 0.36343774376801563,
+        "right_hand_thumb_1_joint": -0.45864587000145834,
+        "right_hand_thumb_2_joint": -0.33933784913371523
+      },
+      "requested_wrist_world_m": [
+        2.964419593343611,
+        1.8698732281237365,
+        0.9470530746668918
+      ],
+      "tick": 1876,
+      "time_s": 37.720000000000844,
+      "wrist_position_error_m": 0.001832215895788924
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005346359542205615,
+        "left_hand_index_1_joint": -0.0008756681958302192,
+        "left_hand_middle_0_joint": -0.005353824240062449,
+        "left_hand_middle_1_joint": -0.000876030592408898,
+        "left_hand_thumb_0_joint": 0.0015156044911023975,
+        "left_hand_thumb_1_joint": 0.014140659099144165,
+        "left_hand_thumb_2_joint": 0.005684492678127615,
+        "right_hand_index_0_joint": 0.5207588583383682,
+        "right_hand_index_1_joint": 0.6269226383481343,
+        "right_hand_middle_0_joint": 0.3654252128185827,
+        "right_hand_middle_1_joint": 0.622506884518187,
+        "right_hand_thumb_0_joint": 0.32071983463858605,
+        "right_hand_thumb_1_joint": -0.17656410989603621,
+        "right_hand_thumb_2_joint": -0.27417894307371915
+      },
+      "actual_object_in_wrist_m": [
+        0.14997083030382646,
+        0.1061450154898788,
+        -0.012252874317939977
+      ],
+      "actual_object_world_m": [
+        3.050647536473573,
+        1.8512432171588618,
+        0.787118297365182
+      ],
+      "actual_wrist_world_m": [
+        2.964216877712558,
+        1.8693203208318927,
+        0.9487076123997732
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.8412718342301662,
+        "index": 2.7288245179666606,
+        "middle": 3.6464913864080053,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.353376004369029
+      },
+      "phase": "release",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.6303150739123521,
+        "right_hand_index_1_joint": 0.6494556930953267,
+        "right_hand_middle_0_joint": 0.4371807946665253,
+        "right_hand_middle_1_joint": 0.7199227932441962,
+        "right_hand_thumb_0_joint": 0.36343774376801563,
+        "right_hand_thumb_1_joint": -0.45864587000145834,
+        "right_hand_thumb_2_joint": -0.33933784913371523
+      },
+      "requested_wrist_world_m": [
+        2.964419593343611,
+        1.8698732281237365,
+        0.9470530746668918
+      ],
+      "tick": 1877,
+      "time_s": 37.740000000000855,
+      "wrist_position_error_m": 0.0017562161626563594
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005348192879028958,
+        "left_hand_index_1_joint": -0.0008759827981413299,
+        "left_hand_middle_0_joint": -0.005355141023756395,
+        "left_hand_middle_1_joint": -0.0008762693591793962,
+        "left_hand_thumb_0_joint": 0.0015155374273460136,
+        "left_hand_thumb_1_joint": 0.014140405103840799,
+        "left_hand_thumb_2_joint": 0.005684417684455516,
+        "right_hand_index_0_joint": 0.3771900790488001,
+        "right_hand_index_1_joint": 0.3735030706039731,
+        "right_hand_middle_0_joint": 0.28996213637720725,
+        "right_hand_middle_1_joint": 0.40784156054952764,
+        "right_hand_thumb_0_joint": 0.2106822561328646,
+        "right_hand_thumb_1_joint": -0.20816227857116312,
+        "right_hand_thumb_2_joint": -0.22488661101130333
+      },
+      "actual_object_in_wrist_m": [
+        0.14951215540742452,
+        0.09971333907447273,
+        -0.009986782426758224
+      ],
+      "actual_object_world_m": [
+        3.0488253859554098,
+        1.8538239185679792,
+        0.78631184046868
+      ],
+      "actual_wrist_world_m": [
+        2.9613931263056763,
+        1.8710663944690422,
+        0.9426917222455149
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4656267443569133,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.08299955316924845
+      },
+      "phase": "release",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.2335033176336711,
+        "right_hand_index_1_joint": 0.24059405410145981,
+        "right_hand_middle_0_joint": 0.16195577447756468,
+        "right_hand_middle_1_joint": 0.26669893775377945,
+        "right_hand_thumb_0_joint": 0.13463729876612215,
+        "right_hand_thumb_1_joint": -0.16990761715340794,
+        "right_hand_thumb_2_joint": -0.12570937432858353
+      },
+      "requested_wrist_world_m": [
+        2.964419593343611,
+        1.8698732281237365,
+        0.9470530746668918
+      ],
+      "tick": 1934,
+      "time_s": 38.88000000000144,
+      "wrist_position_error_m": 0.005441005752866476
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005347424016328389,
+        "left_hand_index_1_joint": -0.0008758483385589027,
+        "left_hand_middle_0_joint": -0.00535456947855131,
+        "left_hand_middle_1_joint": -0.0008761643069777014,
+        "left_hand_thumb_0_joint": 0.0015155293980599017,
+        "left_hand_thumb_1_joint": 0.014140846835712009,
+        "left_hand_thumb_2_joint": 0.005684502843380371,
+        "right_hand_index_0_joint": 0.1259756063935649,
+        "right_hand_index_1_joint": 0.11258057693535488,
+        "right_hand_middle_0_joint": 0.11310834202553893,
+        "right_hand_middle_1_joint": 0.11731411424728073,
+        "right_hand_thumb_0_joint": 0.07025959684763375,
+        "right_hand_thumb_1_joint": -0.10710513388877828,
+        "right_hand_thumb_2_joint": -0.09083442955712623
+      },
+      "actual_object_in_wrist_m": [
+        0.1486178677111774,
+        0.10466633334659635,
+        -0.00011002959416825373
+      ],
+      "actual_object_world_m": [
+        3.048347289024971,
+        1.8555783394920173,
+        0.7861838018192279
+      ],
+      "actual_wrist_world_m": [
+        2.9678506501031956,
+        1.8640201141005344,
+        0.9489454422923622
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714992428382223,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "release",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.020018016080227883,
+        "right_hand_index_1_joint": 0.020625898135486462,
+        "right_hand_middle_0_joint": 0.013884313639020221,
+        "right_hand_middle_1_joint": 0.022863844842284164,
+        "right_hand_thumb_0_joint": 0.011542326845766565,
+        "right_hand_thumb_1_joint": -0.014566017505867203,
+        "right_hand_thumb_2_joint": -0.010776944423089001
+      },
+      "requested_wrist_world_m": [
+        2.964419593343611,
+        1.8698732281237365,
+        0.9470530746668918
+      ],
+      "tick": 1961,
+      "time_s": 39.420000000001714,
+      "wrist_position_error_m": 0.007043589247395421
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005347780744896381,
+        "left_hand_index_1_joint": -0.0008759067928529786,
+        "left_hand_middle_0_joint": -0.005354709218090978,
+        "left_hand_middle_1_joint": -0.000876191215931076,
+        "left_hand_thumb_0_joint": 0.0015154898804039462,
+        "left_hand_thumb_1_joint": 0.01414124350844706,
+        "left_hand_thumb_2_joint": 0.005684559794229779,
+        "right_hand_index_0_joint": 0.08290485974671442,
+        "right_hand_index_1_joint": 0.06793193156201921,
+        "right_hand_middle_0_joint": 0.08330384085457704,
+        "right_hand_middle_1_joint": 0.06780320822781262,
+        "right_hand_thumb_0_joint": 0.04951574333184221,
+        "right_hand_thumb_1_joint": -0.075496030269296,
+        "right_hand_thumb_2_joint": -0.06737392767990627
+      },
+      "actual_object_in_wrist_m": [
+        0.14798522384421856,
+        0.1018104805969249,
+        -0.014620824035235295
+      ],
+      "actual_object_world_m": [
+        3.048347310549516,
+        1.8555783619647903,
+        0.7861838070521967
+      ],
+      "actual_wrist_world_m": [
+        2.968551804772616,
+        1.8706122854738922,
+        0.947073295002158
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714999307304073,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "release",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.964419593343611,
+        1.8698732281237365,
+        0.9470530746668918
+      ],
+      "tick": 1991,
+      "time_s": 40.02000000000202,
+      "wrist_position_error_m": 0.004197831097456784
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.00534795374532148,
+        "left_hand_index_1_joint": -0.0008759374703194934,
+        "left_hand_middle_0_joint": -0.005354850444106092,
+        "left_hand_middle_1_joint": -0.0008762169037929605,
+        "left_hand_thumb_0_joint": 0.001515489478326328,
+        "left_hand_thumb_1_joint": 0.01414107731585412,
+        "left_hand_thumb_2_joint": 0.0056845298657336105,
+        "right_hand_index_0_joint": 0.08289816452181574,
+        "right_hand_index_1_joint": 0.0679319909325351,
+        "right_hand_middle_0_joint": 0.08330370323625162,
+        "right_hand_middle_1_joint": 0.06780318630081691,
+        "right_hand_thumb_0_joint": 0.04951577164703454,
+        "right_hand_thumb_1_joint": -0.07549623953053532,
+        "right_hand_thumb_2_joint": -0.06737396096010288
+      },
+      "actual_object_in_wrist_m": [
+        0.1474442499349171,
+        0.10317371800173071,
+        -0.012292400530450678
+      ],
+      "actual_object_world_m": [
+        3.0483473110244326,
+        1.8555783626217273,
+        0.7861838070524494
+      ],
+      "actual_wrist_world_m": [
+        2.969287191358742,
+        1.8695596665094525,
+        0.9477070148463071
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714999307295638,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "retract",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": -0.0,
+        "right_hand_thumb_2_joint": -0.0
+      },
+      "requested_wrist_world_m": [
+        2.964419593343611,
+        1.8698732281237365,
+        0.9470530746668918
+      ],
+      "tick": 1992,
+      "time_s": 40.04000000000203,
+      "wrist_position_error_m": 0.004921327979429416
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005345179795414533,
+        "left_hand_index_1_joint": -0.0008754796805472482,
+        "left_hand_middle_0_joint": -0.005353065341995762,
+        "left_hand_middle_1_joint": -0.0008759094556740834,
+        "left_hand_thumb_0_joint": 0.0015155011038762386,
+        "left_hand_thumb_1_joint": 0.014140993654058276,
+        "left_hand_thumb_2_joint": 0.005684549322354157,
+        "right_hand_index_0_joint": 0.07957848673225702,
+        "right_hand_index_1_joint": 0.0679320118593982,
+        "right_hand_middle_0_joint": 0.0813584587323726,
+        "right_hand_middle_1_joint": 0.06780333820488002,
+        "right_hand_thumb_0_joint": 0.04951557151164555,
+        "right_hand_thumb_1_joint": -0.07540038475557637,
+        "right_hand_thumb_2_joint": -0.06737304907654712
+      },
+      "actual_object_in_wrist_m": [
+        0.22406484490969844,
+        0.11197684721248445,
+        -0.06037812443709786
+      ],
+      "actual_object_world_m": [
+        3.048273700883561,
+        1.8556651524672798,
+        0.7861837846164096
+      ],
+      "actual_wrist_world_m": [
+        2.8916921330022616,
+        1.8832486353284066,
+        0.988941647644409
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.471499912671625,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "retract",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": [
+        2.845901074825093,
+        1.8698732281237365,
+        1.0102629512101018
+      ],
+      "tick": 2032,
+      "time_s": 40.84000000000244,
+      "wrist_position_error_m": 0.052252468961916265
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.00534831599787976,
+        "left_hand_index_1_joint": -0.0008760074212057221,
+        "left_hand_middle_0_joint": -0.005355683078112453,
+        "left_hand_middle_1_joint": -0.0008763594229997797,
+        "left_hand_thumb_0_joint": 0.001515474258520775,
+        "left_hand_thumb_1_joint": 0.014879197101532946,
+        "left_hand_thumb_2_joint": 0.005684534101986162,
+        "right_hand_index_0_joint": 0.07957895617675625,
+        "right_hand_index_1_joint": 0.06793209456977292,
+        "right_hand_middle_0_joint": 0.08132329980813477,
+        "right_hand_middle_1_joint": 0.06780332366242661,
+        "right_hand_thumb_0_joint": 0.04951563615339448,
+        "right_hand_thumb_1_joint": -0.07416378013157454,
+        "right_hand_thumb_2_joint": -0.06737225828917894
+      },
+      "actual_object_in_wrist_m": [
+        0.2546477001068329,
+        0.14750799030193568,
+        -0.03158959754077215
+      ],
+      "actual_object_world_m": [
+        3.0482737057313902,
+        1.8556651595154565,
+        0.7861837847353638
+      ],
+      "actual_wrist_world_m": [
+        2.87432836676197,
+        1.8809428416673766,
+        1.024314040858443
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.471499929425183,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "retract",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": [
+        2.819743667417685,
+        1.8698732281237365,
+        1.0242135684940523
+      ],
+      "tick": 2042,
+      "time_s": 41.04000000000254,
+      "wrist_position_error_m": 0.05569592302141623
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005348823433275131,
+        "left_hand_index_1_joint": -0.000876068953051385,
+        "left_hand_middle_0_joint": -0.005356657229541481,
+        "left_hand_middle_1_joint": -0.000876487221025565,
+        "left_hand_thumb_0_joint": 0.0015189505277047053,
+        "left_hand_thumb_1_joint": 0.01496178368704989,
+        "left_hand_thumb_2_joint": 0.0056647234991339095,
+        "right_hand_index_0_joint": 0.07955314200817212,
+        "right_hand_index_1_joint": 0.06793183891678313,
+        "right_hand_middle_0_joint": 0.08120156701447358,
+        "right_hand_middle_1_joint": 0.06780314330199086,
+        "right_hand_thumb_0_joint": 0.04951573732403582,
+        "right_hand_thumb_1_joint": -0.07379678886752956,
+        "right_hand_thumb_2_joint": -0.06737097428596328
+      },
+      "actual_object_in_wrist_m": [
+        0.30545641032726545,
+        0.10982906691635473,
+        -0.010883168972360021
+      ],
+      "actual_object_world_m": [
+        3.0482737201509686,
+        1.855665179600805,
+        0.7861837847267037
+      ],
+      "actual_wrist_world_m": [
+        2.8300357428763223,
+        1.867982260598847,
+        1.0264023533415707
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714999294651179,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "retract",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": [
+        2.814419593343611,
+        1.8698732281237365,
+        1.0270530746668918
+      ],
+      "tick": 2071,
+      "time_s": 41.62000000000284,
+      "wrist_position_error_m": 0.015743675639805648
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0053485870028812535,
+        "left_hand_index_1_joint": -0.0008760301448060285,
+        "left_hand_middle_0_joint": -0.005356462913941368,
+        "left_hand_middle_1_joint": -0.0008764550988094565,
+        "left_hand_thumb_0_joint": 0.0015189339134831766,
+        "left_hand_thumb_1_joint": 0.014962071236172476,
+        "left_hand_thumb_2_joint": 0.005664767286899695,
+        "right_hand_index_0_joint": 0.07955301640160907,
+        "right_hand_index_1_joint": 0.06793181782107867,
+        "right_hand_middle_0_joint": 0.08120153859457863,
+        "right_hand_middle_1_joint": 0.06780313662404215,
+        "right_hand_thumb_0_joint": 0.04951573018612894,
+        "right_hand_thumb_1_joint": -0.07379673340877418,
+        "right_hand_thumb_2_joint": -0.06737096852897814
+      },
+      "actual_object_in_wrist_m": [
+        0.3063264772623034,
+        0.10992434541624778,
+        -0.010625119246962347
+      ],
+      "actual_object_world_m": [
+        3.048273720648203,
+        1.8556651802933968,
+        0.786183784726395
+      ],
+      "actual_wrist_world_m": [
+        2.8292469205728845,
+        1.868316043723216,
+        1.0268066889757241
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.471499929465106,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "settle",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 2072,
+      "time_s": 41.64000000000285,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005347814189130292,
+        "left_hand_index_1_joint": -0.0008758968217027223,
+        "left_hand_middle_0_joint": -0.005355799773424414,
+        "left_hand_middle_1_joint": -0.000876337462727045,
+        "left_hand_thumb_0_joint": 0.0015189676271364896,
+        "left_hand_thumb_1_joint": 0.018935105633883176,
+        "left_hand_thumb_2_joint": 0.00632394472783047,
+        "right_hand_index_0_joint": 0.0791397449558004,
+        "right_hand_index_1_joint": 0.06793065733490668,
+        "right_hand_middle_0_joint": 0.08035204786088025,
+        "right_hand_middle_1_joint": 0.06780250285454995,
+        "right_hand_thumb_0_joint": 0.04951573858001842,
+        "right_hand_thumb_1_joint": -0.07379435798349145,
+        "right_hand_thumb_2_joint": -0.06737100596866445
+      },
+      "actual_object_in_wrist_m": [
+        0.3061796397112482,
+        0.12291026224096152,
+        -0.009199528100616817
+      ],
+      "actual_object_world_m": [
+        3.0482737335762935,
+        1.8556651983007826,
+        0.7861837847183712
+      ],
+      "actual_wrist_world_m": [
+        2.8489434663634023,
+        1.868488837198499,
+        1.048939440249102
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714999294644662,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "settle",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 2098,
+      "time_s": 42.160000000003116,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005347158810220314,
+        "left_hand_index_1_joint": -0.0008757883868767315,
+        "left_hand_middle_0_joint": -0.005355337063484728,
+        "left_hand_middle_1_joint": -0.0008762558006904667,
+        "left_hand_thumb_0_joint": 0.0015190449190707256,
+        "left_hand_thumb_1_joint": 0.01893441132029386,
+        "left_hand_thumb_2_joint": 0.006323846322544694,
+        "right_hand_index_0_joint": 0.07914008082736283,
+        "right_hand_index_1_joint": 0.06793070775256091,
+        "right_hand_middle_0_joint": 0.08035224460756554,
+        "right_hand_middle_1_joint": 0.06780253307444908,
+        "right_hand_thumb_0_joint": 0.04951577983221106,
+        "right_hand_thumb_1_joint": -0.073795029778312,
+        "right_hand_thumb_2_joint": -0.06737110362691245
+      },
+      "actual_object_in_wrist_m": [
+        0.30040304131271156,
+        0.12252466993169044,
+        -0.004245710097507674
+      ],
+      "actual_object_world_m": [
+        3.048273744018213,
+        1.8556652128452096,
+        0.7861837847118904
+      ],
+      "actual_wrist_world_m": [
+        2.8581585125164164,
+        1.8647963189263392,
+        1.0489481842769415
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.471499929465407,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "settle",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 2119,
+      "time_s": 42.58000000000333,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005347058274387219,
+        "left_hand_index_1_joint": -0.0008757726211201034,
+        "left_hand_middle_0_joint": -0.005355332922584514,
+        "left_hand_middle_1_joint": -0.0008762543709755679,
+        "left_hand_thumb_0_joint": 0.001519050880022213,
+        "left_hand_thumb_1_joint": 0.01893443756966957,
+        "left_hand_thumb_2_joint": 0.006323850988588134,
+        "right_hand_index_0_joint": 0.07914014132297983,
+        "right_hand_index_1_joint": 0.0679307190838703,
+        "right_hand_middle_0_joint": 0.08035227246978482,
+        "right_hand_middle_1_joint": 0.06780253945720045,
+        "right_hand_thumb_0_joint": 0.04951577699949227,
+        "right_hand_thumb_1_joint": -0.07379498802555876,
+        "right_hand_thumb_2_joint": -0.06737109518963508
+      },
+      "actual_object_in_wrist_m": [
+        0.30034448732062907,
+        0.12241342788451712,
+        -0.004155964211642361
+      ],
+      "actual_object_world_m": [
+        3.0482737445154466,
+        1.8556652135378013,
+        0.7861837847115819
+      ],
+      "actual_wrist_world_m": [
+        2.8583404751383226,
+        1.864737392074182,
+        1.0489615980619071
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714999294654056,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "settle",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 2120,
+      "time_s": 42.60000000000334,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005347121288822392,
+        "left_hand_index_1_joint": -0.0008757826794359593,
+        "left_hand_middle_0_joint": -0.00535531951680932,
+        "left_hand_middle_1_joint": -0.0008762532281119379,
+        "left_hand_thumb_0_joint": 0.0015190409059356053,
+        "left_hand_thumb_1_joint": 0.01893447392079022,
+        "left_hand_thumb_2_joint": 0.006323855877148949,
+        "right_hand_index_0_joint": 0.07914007519673079,
+        "right_hand_index_1_joint": 0.06793070805988399,
+        "right_hand_middle_0_joint": 0.08035221076218363,
+        "right_hand_middle_1_joint": 0.06780252896471414,
+        "right_hand_thumb_0_joint": 0.04951577081654911,
+        "right_hand_thumb_1_joint": -0.07379498503926928,
+        "right_hand_thumb_2_joint": -0.06737109600731618
+      },
+      "actual_object_in_wrist_m": [
+        0.3001727098315274,
+        0.12260849782175308,
+        -0.0040520596465869994
+      ],
+      "actual_object_world_m": [
+        3.048273745012681,
+        1.855665214230393,
+        0.7861837847112733
+      ],
+      "actual_wrist_world_m": [
+        2.858677258103721,
+        1.8647092621908263,
+        1.0490987823842066
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714999294656859,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "settle",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 2121,
+      "time_s": 42.62000000000335,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.005347270326509738,
+        "left_hand_index_1_joint": -0.0008758056064832149,
+        "left_hand_middle_0_joint": -0.005355305743103684,
+        "left_hand_middle_1_joint": -0.000876251763700106,
+        "left_hand_thumb_0_joint": 0.0015190333943400625,
+        "left_hand_thumb_1_joint": 0.01893438264472441,
+        "left_hand_thumb_2_joint": 0.006323841275637694,
+        "right_hand_index_0_joint": 0.07913992226098457,
+        "right_hand_index_1_joint": 0.06793067953114204,
+        "right_hand_middle_0_joint": 0.08035207688097311,
+        "right_hand_middle_1_joint": 0.06780250335845589,
+        "right_hand_thumb_0_joint": 0.04951577500980237,
+        "right_hand_thumb_1_joint": -0.07379517845405062,
+        "right_hand_thumb_2_joint": -0.0673711302234919
+      },
+      "actual_object_in_wrist_m": [
+        0.2999713211467213,
+        0.12296670370391344,
+        -0.003893839076980055
+      ],
+      "actual_object_world_m": [
+        3.0482737455099143,
+        1.8556652149229849,
+        0.7861837847109646
+      ],
+      "actual_wrist_world_m": [
+        2.8589503260834026,
+        1.8646667886063142,
+        1.0492320316941928
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714999294662967,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "settle",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 2122,
+      "time_s": 42.64000000000336,
+      "wrist_position_error_m": null
+    },
+    {
+      "actual_hand_qpos_rad": {
+        "left_hand_index_0_joint": -0.0053473303107327,
+        "left_hand_index_1_joint": -0.0008758144643567632,
+        "left_hand_middle_0_joint": -0.005355345174174918,
+        "left_hand_middle_1_joint": -0.0008762571140411966,
+        "left_hand_thumb_0_joint": 0.001519041483233744,
+        "left_hand_thumb_1_joint": 0.018934262894726224,
+        "left_hand_thumb_2_joint": 0.006323823319491957,
+        "right_hand_index_0_joint": 0.07913995743680961,
+        "right_hand_index_1_joint": 0.06793068395551474,
+        "right_hand_middle_0_joint": 0.08035211399877579,
+        "right_hand_middle_1_joint": 0.06780250816845838,
+        "right_hand_thumb_0_joint": 0.04951577963371978,
+        "right_hand_thumb_1_joint": -0.07379525793174185,
+        "right_hand_thumb_2_joint": -0.06737114253973155
+      },
+      "actual_object_in_wrist_m": [
+        0.29993179208670356,
+        0.12304314921529363,
+        -0.003713951517707042
+      ],
+      "actual_object_world_m": [
+        3.0482737460071485,
+        1.8556652156155766,
+        0.786183784710656
+      ],
+      "actual_wrist_world_m": [
+        2.859023849737404,
+        1.8645758473901903,
+        1.0492761018016394
+      ],
+      "desk_supported": true,
+      "measured_forces_n": {
+        "desk": 1.4714999294658504,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "phase": "settle",
+      "requested_hand_qpos_rad": {
+        "left_hand_index_0_joint": 0.0,
+        "left_hand_index_1_joint": 0.0,
+        "left_hand_middle_0_joint": 0.0,
+        "left_hand_middle_1_joint": 0.0,
+        "left_hand_thumb_0_joint": 0.0,
+        "left_hand_thumb_1_joint": 0.0,
+        "left_hand_thumb_2_joint": 0.0,
+        "right_hand_index_0_joint": 0.0,
+        "right_hand_index_1_joint": 0.0,
+        "right_hand_middle_0_joint": 0.0,
+        "right_hand_middle_1_joint": 0.0,
+        "right_hand_thumb_0_joint": 0.0,
+        "right_hand_thumb_1_joint": 0.0,
+        "right_hand_thumb_2_joint": 0.0
+      },
+      "requested_wrist_world_m": null,
+      "tick": 2123,
+      "time_s": 42.66000000000337,
+      "wrist_position_error_m": null
+    }
+  ],
+  "schema": "time-aligned-spatial-expert-feedback/v1"
+}

@@ -1,0 +1,23 @@
+{
+  "actual_trials": 0,
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v002.py",
+    "sha256": "ec29f8897f5864f893ce47683db4eaec9f6d729161cb83f129d8da560f294ed2",
+    "size_bytes": 63563
+  },
+  "changed_methods": [
+    "__init__",
+    "change",
+    "observe_target_handoff",
+    "target_support_sample",
+    "update"
+  ],
+  "content_sha256_excluding_this_field": "2643adfc245b25801dffed6474c5028e84b810d0709b7805f52c243b98d9eca5",
+  "proposal": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V002.json",
+    "sha256": "fa64c6bca0387c3c732b5e0028a06e00eaf5bdce2f03ba525973c7433e15b5f1",
+    "size_bytes": 47464
+  },
+  "reference_and_geometry_and_release_law_ast_unchanged": true,
+  "untested": true
+}

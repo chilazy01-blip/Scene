@@ -1,0 +1,21 @@
+{
+  "authoritative_v004": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V004.json",
+    "sha256": "560a1ec1e7c759d85181312e83921d9fc6aa1bdc85cd7452c3fde80a1813ce09",
+    "size_bytes": 42726
+  },
+  "content_sha256_excluding_this_field": "d3f7bfb8538c18e0727fe40bdbbccd44b81645d47d6426476ab76001b5d21fee",
+  "new_physics_steps": 0,
+  "observed_alias_sha_before_restore": "560a1ec1e7c759d85181312e83921d9fc6aa1bdc85cd7452c3fde80a1813ce09",
+  "original_backup": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/outbox/PROPOSAL_V001_ORIGINAL.json",
+    "sha256": "a081bc9ba7cbccdc1144616f035c7218bd41649a8a6135b4041b7cbfeead1d25",
+    "size_bytes": 19168
+  },
+  "reason": "V004 replaced and chmodded the historical canonical proposal as a floating pointer. Restore exact SHA-bound original bytes; V004 versioned proposal remains authoritative.",
+  "restored_original": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL.json",
+    "sha256": "a081bc9ba7cbccdc1144616f035c7218bd41649a8a6135b4041b7cbfeead1d25",
+    "size_bytes": 19168
+  }
+}

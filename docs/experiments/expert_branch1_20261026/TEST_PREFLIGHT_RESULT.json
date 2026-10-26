@@ -1,0 +1,17 @@
+{
+  "content_sha256_excluding_this_field": "eb7ca4b0dbbb46061cb103890568ca70670eb1fe2a1104c09ed3690d3fd9e4a1",
+  "environment_correction": "Disable unrelated ROS launch_testing pytest auto-plugin; no dependencies changed",
+  "initial_environment_failure": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/TEST_PREFLIGHT.log",
+    "sha256": "269e0c7b0f30ea279070e006c6c28f93974df1cc2b6356eaead6a37be1ba0e70",
+    "size_bytes": 4266
+  },
+  "log": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/TEST_PREFLIGHT_V2.log",
+    "sha256": "ea1ce9a68348a0a0d3ffe88c0e035ba24ac8666e7b9a7cb809029e57c0b240fa",
+    "size_bytes": 99
+  },
+  "new_physics_steps": 0,
+  "passed": true,
+  "tests_passed": 17
+}

@@ -1,0 +1,66 @@
+{
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/strategy.py",
+    "sha256": "2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363",
+    "size_bytes": 58784
+  },
+  "content_sha256_excluding_this_field": "bc762be7efda1fd61b94a20f4ff780a48af0976450281988409dd99b8fae8c64",
+  "corrected_feedback": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/PHASE_FEEDBACK_V3.json",
+    "sha256": "2322e4a875188bb8cedc98cbfad98474ee2ed6a25bf35d1c28ec8bd597a99140",
+    "size_bytes": 166094
+  },
+  "facts": {
+    "all_original_physical_samples_safe": true,
+    "base_inside_table": true,
+    "desk_normal_n": 3.58349286104238,
+    "desk_supported": true,
+    "entry_angular_speed_threshold_rad_s": 0.25,
+    "hand_contact": true,
+    "measured_object_angular_speed_rad_s": 0.25178472543736274,
+    "object_axis_cosine": 0.9998408878963002,
+    "object_bottom_above_table_m": 0.0019193621363122748,
+    "object_speed_m_s": 0.03237579818990462,
+    "original_max_held_slip_m": 0.015899739730012127,
+    "root_speed_m_s": 0.030237773597990753,
+    "target_error_m": 0.0083072323201788,
+    "weight_n": 1.9620000000000002
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/diagnose_s02_release_v001.py",
+    "sha256": "0696bdf515ff36f476c031ca2b0387417894c0c7017a454b2ae751a21576d6d6",
+    "size_bytes": 2771
+  },
+  "interpretation": "At least the angular quietness predicate fails while measured load-bearing table support and base geometry remain valid. V001 conflates the entry-readiness conjunction with persistent support and labels its failure support_lost. This event is not evidence that the bottle left the table.",
+  "last_executed_tick": 2061,
+  "limits": "Not a unique physical cause claim. Reached/other quietness predicates may also matter; the next candidate must report each predicate separately. No threshold increase or independent acceptance relaxation is justified.",
+  "new_physics_steps": 0,
+  "proposed_intervention": "Preserve entry quietness/dwell, reference floor and original judge. Separate persistent measured support/geometry during intentional supported release from entry-only quietness; verify from original initialization.",
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/REPORT.json",
+    "sha256": "7f56e82296b82c9cbea09dcfcb98867a14d364828162fec4010b7fc67e783291",
+    "size_bytes": 6798006
+  },
+  "schema": "actual-release-contract-diagnosis/v1",
+  "stopping_request_tick": 2062,
+  "terminal_event": {
+    "action": "hold_reference_and_stop",
+    "evidence": {
+      "base_inside_target_table": true,
+      "object_axis_cosine": 0.9998408878963002,
+      "object_bottom_above_table_m": 0.0019193621363122748,
+      "planned_error_xy_m": 0.0083072323201788,
+      "ready": false,
+      "target_contact_normal_n": 3.58349286104238,
+      "target_error_xy_m": 0.0083072323201788,
+      "weight_n": 1.9620000000000002
+    },
+    "kind": "branch1_release_contract_lost",
+    "tick": 2062
+  },
+  "trace": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/TRACE.json",
+    "sha256": "c263383d53adba4f4c9a0b8bb95cc8bf2e490c29ce649f21c060b34e7287245f",
+    "size_bytes": 616763294
+  }
+}

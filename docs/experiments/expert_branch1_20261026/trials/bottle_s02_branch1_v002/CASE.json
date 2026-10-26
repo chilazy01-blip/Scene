@@ -1,0 +1,315 @@
+{
+  "asset_lineage_group_id": "/data/wsj/main/scene_runs/codex_trellis_v2/living_room_reconstruction_20260914_v1/generation/glass_bottle/asset.glb",
+  "body_control": "SONIC29; right-arm IK creates reference only; no independent arm actuation",
+  "case_id": "S02_bottle",
+  "clearance_lift_policy": "75mm wrist lift relative to probe origin,98ticks, prior desired reference as path origin. Peak quintic reference speed no greater than previous40mm/60tick segment. Original measured25mm clearance,1s continuous hover and all force/slip/carry/release gates unchanged.",
+  "content_sha256_excluding_this_field": "7313cd32766ac06073455cbf84917b4c79f72481261ff9fbbaa1f7df9201e3df",
+  "control_regime": "Explicit numerical calibration condition: original grasp and native motor PD/effort/friction; NoSlip3 activates before manipulation at already charged physics step3960. Not a pass of the original numerical solver condition.",
+  "dataset_split": "unassigned",
+  "diagnostic_load_trigger": "At or after tick1194,15ticks measured capacity/slip/reached; known downward preload resultant is not a grasp acceptance; strict actual load/hover/task gates unchanged.",
+  "equilibrium_grasp_plan": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_native_sonic_grasp_feedback_20261023_v1/EQUILIBRIUM_GRASP_PLAN_R3.json",
+    "sha256": "d8f48bedbb5ac8b88f09692b7b4e6325610fdb5dc9ee22f878cac520f3a8b50e",
+    "size_bytes": 25650
+  },
+  "equilibrium_motor_reference_rad": {
+    "right_hand_index_0_joint": 0.5808335581332589,
+    "right_hand_index_1_joint": 0.6261132503833047,
+    "right_hand_middle_0_joint": 0.5442565463297367,
+    "right_hand_middle_1_joint": 0.6844376568745661,
+    "right_hand_thumb_0_joint": 0.2794874382374551,
+    "right_hand_thumb_1_joint": -0.3264295379513965,
+    "right_hand_thumb_2_joint": -0.33888850734219045
+  },
+  "equilibrium_physical_touch_rad": {
+    "right_hand_index_0_joint": 0.4974830799756109,
+    "right_hand_index_1_joint": 0.5506507874966515,
+    "right_hand_middle_0_joint": 0.41354297982403637,
+    "right_hand_middle_1_joint": 0.5916702695115599,
+    "right_hand_thumb_0_joint": 0.22660065248230676,
+    "right_hand_thumb_1_joint": -0.1545953431203946,
+    "right_hand_thumb_2_joint": -0.2335595568418057
+  },
+  "feedback_control": "From firstclose980 ramp each native motor PD reference to the independently computed equilibrium reference at<=0.006rad/20ms and hold. This supersedes scalar shape/wrench/index-reserve updates; physical touch pose differs from motor target. Preserve existing actual load/hover/slip/carry/place/release gates and original native model/PD/friction/effort/halfclosed bounds. Keep world-steady SONIC wrist and original ordered lower12 walking inputs.",
+  "first_static_opposing_closure": 0.125,
+  "fresh_original_initialization": true,
+  "geometry_basis": "Actual native mesh vertices and native signed contact queries. No capsule approximation. Physical engine uses original model unchanged; query-margin copy is never integrated or used for control.",
+  "grasp_local_xyz_m": [
+    0.07088517751955958,
+    0.004767547139930439,
+    -0.167410790589668
+  ],
+  "grasp_repair": "fixed pre-close wrist target plus independent thumb/index/middle contact-informed position references, same original finger PD",
+  "grip_closure": 0.3,
+  "grip_max_closure": 0.5,
+  "index_reserve_policy": "From tick1362 after original strict1s hover, if index scalar template saturates, measured normal force feedback may consume remaining index0 joint reference up to original RIGHT_CLOSED*0.5=0.7rad, rate<=0.006rad/20ms. No range/PD/effort/task-gate changes.",
+  "initial_robot_qpos": [
+    1.5989999999999998,
+    2.2199999999999998,
+    0.756897397796305,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.312,
+    0.0,
+    0.0,
+    0.669,
+    -0.363,
+    0.0,
+    -0.312,
+    0.0,
+    0.0,
+    0.669,
+    -0.363,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    0.2,
+    0.0,
+    0.6,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    -0.2,
+    0.0,
+    0.6,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "insertion_retreat_m": 0.1,
+  "layout_source_group_id": "sage_v2_locomotion_20261020_S02",
+  "loaded_balance_policy": "After original strict load pass directly start original lift60ticks, adjust actual loaded normal targets as verified, origin=previous desired wrist pose; no extra per-group readiness stage. Original load/slip/height/hover/full task and native limits unchanged.",
+  "loaded_grasp_plan": "Retain actual baseline geometry after18 alternatives failed finite screen; fixed preclose wrist reference, wrench-derived per-group finger preload, actual6D capacity1.25 plus low slip,10mm1.2s load probe,50mm lift and1s real off-table hover; all29bodySONIC",
+  "loaded_grasp_rotation": [
+    [
+      0.7793417115400819,
+      -0.5446396168991416,
+      -0.30982928260210063
+    ],
+    [
+      0.26358573760201537,
+      -0.16362746001798545,
+      0.950656937733515
+    ],
+    [
+      -0.568462008921069,
+      -0.8225531849260685,
+      0.0160375304022662
+    ]
+  ],
+  "loaded_native_reference_ratio": 0.65,
+  "loaded_preload_targets_n": {
+    "index": 1.5,
+    "middle": 2.507318468210657,
+    "thumb": 2.628290210095778
+  },
+  "loaded_reference_extension_after_carry_ticks": 40,
+  "loaded_reference_floor": "Capture current persistent group targets upon actual capacity qualification; monotonic reference floor until explicit release, with original native halfclosed/rate/gain/effort limits.",
+  "loaded_walk_reference_policy": "Official ordered lower12 plus persistent wrist/head mode, previous desired wrist capture, base XY/yaw following, world heights fixed; native SONIC29 outputs and original strict load/hover/carry/place/release acceptance unchanged.",
+  "mesh_finger_template": {
+    "right_hand_index_0_joint": 1.3534214031973884,
+    "right_hand_index_1_joint": 1.5,
+    "right_hand_middle_0_joint": 1.048265364057171,
+    "right_hand_middle_1_joint": 1.5,
+    "right_hand_thumb_0_joint": 0.8,
+    "right_hand_thumb_1_joint": -0.5544084027759874,
+    "right_hand_thumb_2_joint": -0.7942130110316005
+  },
+  "mesh_grasp_plan": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_native_sonic_grasp_feedback_20261023_v1/NATIVE_MESH_GRASP_PLAN.json",
+    "sha256": "b172d51c4eef7ce82caf08586e4b18ec15c1440c4761367d14a12669c5948b4e",
+    "size_bytes": 57405
+  },
+  "mesh_planned_finger_angles_rad": {
+    "right_hand_index_0_joint": 0.49751081527025764,
+    "right_hand_index_1_joint": 0.5513923609766854,
+    "right_hand_middle_0_joint": 0.4136340542451673,
+    "right_hand_middle_1_joint": 0.5918836037531354,
+    "right_hand_thumb_0_joint": 0.22672253126876166,
+    "right_hand_thumb_1_joint": -0.15712109554255374,
+    "right_hand_thumb_2_joint": -0.22508248028458672
+  },
+  "mesh_touch_closures": {
+    "index": 0.36759490731779026,
+    "middle": 0.39458906916875697,
+    "thumb": 0.28340316408595206
+  },
+  "mug_local_bounds_corners": [
+    [
+      -0.03748398215,
+      -0.037477841275,
+      -0.125
+    ],
+    [
+      -0.03748398215,
+      -0.037477841275,
+      0.125
+    ],
+    [
+      -0.03748398215,
+      0.037477841275,
+      -0.125
+    ],
+    [
+      -0.03748398215,
+      0.037477841275,
+      0.125
+    ],
+    [
+      0.03748398215,
+      -0.037477841275,
+      -0.125
+    ],
+    [
+      0.03748398215,
+      -0.037477841275,
+      0.125
+    ],
+    [
+      0.03748398215,
+      0.037477841275,
+      -0.125
+    ],
+    [
+      0.03748398215,
+      0.037477841275,
+      0.125
+    ]
+  ],
+  "normal_control_design": "Retain each screened group finger shape; lowpass measured FN tau.08s; persistent group closure integrates normal error gain.35 closure/(N s), deadband.05N, angular rate <=.006rad/20ms,0..halfclosed. Static current contact LP1.5mg proposes group normals within original6N cap, filtered tau.15s; no per-joint torque/current-q target substitution. Actual preload >=.8 group request5ticks then same capacity/wrench/10mm load/hover gates; original PD/native model unchanged.",
+  "not_visual_perception_autonomy": true,
+  "object_assumptions": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models/S02_bottle/OBJECT_ASSUMPTIONS.json",
+    "sha256": "7b802cf2755a8c4eb28011013446467e8f0b1df4799a19dbcb03280aea0e782b",
+    "size_bytes": 1045
+  },
+  "object_id": "bottle",
+  "orientation_axis": [
+    0,
+    0,
+    1
+  ],
+  "orientation_definition": "local Z dot world Z",
+  "parent_case": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_native_object_transport_20261021_v1/CASE_R5.json",
+    "sha256": "614dd8a6a3351e05bfbf947db12dd4a57e0ec1554a0ad9d7e25b730b89700bb3",
+    "size_bytes": 2553
+  },
+  "preserved_wrench_policy": "Replace1362+ LP normal minima with max1.5N/actual loaded measured group norms captured once, keeping original validated preload. Same native per-joint force-error feedback and original halfclosed/PD/effort/physics/task/replay acceptance. Successful candidate audit and original-init43ctrl replay may verify independently in parallel; final export requires both.",
+  "raise_relative_xy_z": null,
+  "ready_arm_relative_m": [
+    0.12,
+    -0.36,
+    0.18
+  ],
+  "ready_arm_target_rad": [
+    0.5175451124898094,
+    -1.3522571567600594,
+    0.10462772599030294,
+    0.05001000000421494,
+    1.4137123730140808,
+    -0.6073472806528303,
+    0.19263081118127637
+  ],
+  "reference_revision": "mode0 joint references for walk/raise; official mode1 lowerbody+left/right/head targets for Cartesian manipulation, no fixed-torso IK gate for hand targets",
+  "relative_contact_wrench_policy": "From1362, supersede scalar normal/template/index-reserve updates with persistent per-joint force-error feedback to native actual-contact6Dwrench allocation; minimum normals thumb1.5/index0.75/middle1.5N; each joint stays original RIGHT_CLOSED*0.5 envelope, change<=0.006rad/20ms/opening<=0.001. Keep world-steady wrist carry and original load/hover/slip/carry/place/release/replay acceptance. No physical force injection.",
+  "repair_grasp_local_xyz_m": [
+    0.07088517751955958,
+    0.004767547139930439,
+    -0.167410790589668
+  ],
+  "reused_physical_prefix_steps": 0,
+  "scene_id": "S02",
+  "scene_translation_from_S01_m": [
+    0.44899999999999984,
+    -0.30000000000000004,
+    0.0
+  ],
+  "schema": "native-mug-transport-case/v1",
+  "source_admission_revision": "Cup full bottom at old source extended 3.74mm beyond tabletop bound; workcell shifted inward20mm before dynamics, failed admission preserved.",
+  "source_object_quat": [
+    0.7071067811865477,
+    0.0,
+    0.0,
+    0.7071067811865475
+  ],
+  "source_object_xyz_m": [
+    2.549,
+    1.9000000000000001,
+    0.857200009
+  ],
+  "source_role": "development_validation",
+  "source_root_goal_xy_m": [
+    2.3489999999999998,
+    2.2199999999999998
+  ],
+  "stage_timeouts_ticks": {
+    "approach": 400,
+    "carry": 400,
+    "close": 350,
+    "initial_stand": 250,
+    "insert": 250,
+    "lift": 250,
+    "lower": 200,
+    "orient": 200,
+    "place": 300,
+    "preinsert": 200,
+    "raise": 200,
+    "ready_arm": 700,
+    "release": 200,
+    "retract": 200,
+    "settle": 250,
+    "source_stop": 250,
+    "target_stop": 250,
+    "tuck": 250,
+    "withdraw": 200
+  },
+  "start_xy_m": [
+    1.5989999999999998,
+    2.2199999999999998
+  ],
+  "start_yaw_deg": 0.0,
+  "steady_carry_policy": "Preserve validated grasp desired wrist pose through60tick carry preparation; straight-walk wrist reference follows baseXY translation only with fixed world orientation and height. Original fingers/native motor and all original physical/hover/carry/place/release/continuous replay gates unchanged.",
+  "support_top_m": 0.7300000090000001,
+  "target_object_xyz_m": [
+    3.049,
+    1.8699999999999999,
+    0.857200009
+  ],
+  "target_root_goal_xy_m": [
+    2.8489999999999998,
+    2.2199999999999998
+  ],
+  "top_nominal_closure": 0.30273926658930395,
+  "top_reference_note": "Open native-mesh approach10cm, descend5cm then to goal; no capsule-plane/radius assumptions.",
+  "top_reference_screen": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_native_sonic_grasp_feedback_20261023_v1/AXIS_TOP_REFERENCE_CHECK_R2.json",
+    "sha256": "5c77a4ee5410ad058a425ab0238f8c424aca0ce8e0aba0edc1cdd68120391485",
+    "size_bytes": 634319
+  },
+  "world_translation_from_S01_m": [
+    0.44899999999999984,
+    -0.30000000000000004,
+    0.0
+  ],
+  "wrist_reference_feedback": "P.5/I.5 persecond/linear velocity damping.15s/angular.10s; original bias and perupdate step bounds retained"
+}

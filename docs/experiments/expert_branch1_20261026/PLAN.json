@@ -1,0 +1,56 @@
+{
+  "bottleneck": "Failures and partial fixes are not yet reusable phase-specific evidence; bottle carry-to-place loses acquired grasp.",
+  "cases": {
+    "S02_bottle": {
+      "object": "bottle",
+      "scene": "S02"
+    },
+    "S02_cup": {
+      "object": "cup",
+      "scene": "S02"
+    },
+    "S03_bottle": {
+      "object": "bottle",
+      "scene": "S03"
+    }
+  },
+  "checkpoint_commit": "2f2791348af1f80adf6dad17876b46e79641b28a",
+  "content_sha256_excluding_this_field": "bece55227707520cc577a316536c18cd761c8a0cdce50ede02beae230ca92f7f",
+  "cumulative_native_cap": 359138,
+  "dataset_split": "unassigned",
+  "deadline_epoch_utc": 1793043631.3818104,
+  "exit": "Finish cup regression and same frozen bottle candidate on S02/S03 with independent QA, or actual bounded deadline/physics headroom. Diagnose before revising; no blind sweeps. No causal learning/generalization claim from historical baselines.",
+  "fixed": [
+    "official G1+14 native hands",
+    "SONIC29+native handPD",
+    "plant/effort/PD/geometry frozen per admitted model",
+    "NoSlip0->3 at3960",
+    "original eight task gates",
+    "upright bottle/cup >=.98; book cover normal abs dot up >=.98"
+  ],
+  "full_ticks": 3200,
+  "max_new_physics_steps": 120000,
+  "objective": "Branch idea one: phase contracts + first-breach feedback + scoped experience retrieval, cup regression and bottle handoff pilot",
+  "old_round_not_resumed": true,
+  "prefix_active_ticks": 0,
+  "prefix_physics_steps": 0,
+  "prior_native_steps": 239138,
+  "qa_headroom_seconds": 2400,
+  "resource_limits": {
+    "blas_threads": 1,
+    "cpus": 8,
+    "memory_gib": 16
+  },
+  "schema": "expert-branch-one-authorization/v1",
+  "source_role": "development_validation",
+  "started_epoch_utc": 1793029231.3818104,
+  "success_requires": [
+    "original-init all43ctrl continuous replay",
+    "independent NN/PD/contact/geometry audit",
+    "force reconstruction",
+    "full real video decode and main-agent keyframe review",
+    "dataset lineage and content deduplication"
+  ],
+  "user_authorized_expert_code_and_tools": true,
+  "user_authorized_github_checkpoint": true
+}

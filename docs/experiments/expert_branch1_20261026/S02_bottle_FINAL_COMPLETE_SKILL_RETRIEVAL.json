@@ -1,0 +1,89 @@
+{
+  "automatic_deployment_approved": false,
+  "content_sha256_excluding_this_field": "a5c292dc5d64c0ca28e55509f4f5c9cac372d84a504b19e7eb7ce30e5f9499d3",
+  "matches": [],
+  "new_physics_steps": 0,
+  "purpose": "complete_skill",
+  "query": {
+    "body_control": "SONIC29",
+    "case_id": "S02_bottle",
+    "case_sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+    "controller_fingerprint": "42548bce53684e4896b1308be56bbdeca8ae624331baa821c9473adf005821eb",
+    "grasp_region": "upper neck/cap",
+    "hand_control": "original native14handPD",
+    "loaded_reference_ratio": 0.65,
+    "mass_assumption_kg": 0.2,
+    "model_sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+    "object_asset": "living_20260914_glass_bottle",
+    "robot": "G1",
+    "solver_schedule": {
+      "activation_step": 3960,
+      "noslip_iterations": 3
+    }
+  },
+  "rejected": [
+    {
+      "id": "cup_airborne_support_and_settle_window",
+      "reasons": [
+        "scope:object_asset",
+        "exact_model_and_case_not_in_evidence",
+        "not_independently_complete_skill"
+      ]
+    },
+    {
+      "id": "bottle_acquired_preload_during_probe_and_hover",
+      "reasons": [
+        "not_independently_complete_skill"
+      ]
+    },
+    {
+      "id": "bottle_all_airborne_preload_handoff",
+      "reasons": [
+        "not_independently_complete_skill"
+      ]
+    },
+    {
+      "id": "flat_book_bounded_direct_grasp_failures",
+      "reasons": [
+        "scope:object_asset",
+        "scope:mass_assumption_kg",
+        "scope:initial_pose",
+        "scope:left_hand_object_contact_allowed",
+        "exact_model_and_case_not_in_evidence",
+        "not_independently_complete_skill"
+      ]
+    },
+    {
+      "id": "branch1_bottle_s02_branch1_v001",
+      "reasons": [
+        "not_independently_complete_skill"
+      ]
+    },
+    {
+      "id": "branch1_bottle_s02_branch1_v002",
+      "reasons": [
+        "not_independently_complete_skill"
+      ]
+    },
+    {
+      "id": "branch1_bottle_s02_branch1_v003",
+      "reasons": [
+        "not_independently_complete_skill"
+      ]
+    },
+    {
+      "id": "branch1_bottle_s02_branch1_v004",
+      "reasons": [
+        "not_independently_complete_skill"
+      ]
+    },
+    {
+      "id": "branch1_bottle_s03_branch1_v001",
+      "reasons": [
+        "exact_model_and_case_not_in_evidence",
+        "not_independently_complete_skill"
+      ]
+    }
+  ],
+  "schema": "scoped-retrieval/v2"
+}

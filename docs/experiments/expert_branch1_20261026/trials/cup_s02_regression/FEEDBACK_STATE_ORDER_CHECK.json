@@ -1,0 +1,58 @@
+{
+  "content_sha256_excluding_this_field": "a665332b5534649e06632437b392c59dfa7f7490bd20bc2d35d5d0df8078b73e",
+  "feedback": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/PHASE_FEEDBACK_V3.json",
+    "sha256": "bdde64bc0598d8088e336f5e347bfd11037c6c73f3a089290fe8e156c0d23b14",
+    "size_bytes": 166902
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/check_feedback_state_order.py",
+    "sha256": "8835796af9f4c36dc385e27eb392ee5174cf8ad2896420d34fcdd9f0bf4d4118",
+    "size_bytes": 1567
+  },
+  "names": [
+    "left_hand_thumb_0_joint",
+    "left_hand_thumb_1_joint",
+    "left_hand_thumb_2_joint",
+    "left_hand_middle_0_joint",
+    "left_hand_middle_1_joint",
+    "left_hand_index_0_joint",
+    "left_hand_index_1_joint",
+    "right_hand_thumb_0_joint",
+    "right_hand_thumb_1_joint",
+    "right_hand_thumb_2_joint",
+    "right_hand_middle_0_joint",
+    "right_hand_middle_1_joint",
+    "right_hand_index_0_joint",
+    "right_hand_index_1_joint"
+  ],
+  "native_qpos_indices": [
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "new_physics_steps": 0,
+  "passed": true,
+  "schema": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/ROBOT_DATA_SCHEMA_BASELINE.json",
+    "sha256": "d51c585c34a82a9ea2525f6bccc11ab48f2992b509d62f03fd3334398e0a9e7d",
+    "size_bytes": 23456
+  },
+  "timeline_samples": 51,
+  "trace": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/TRACE.json",
+    "sha256": "851fb80ce3f17c73a00f7e32dce363996ba1ffbb33c05f6043aba20a62f1183c",
+    "size_bytes": 492724856
+  }
+}

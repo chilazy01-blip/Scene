@@ -1,0 +1,9 @@
+{
+  "content_sha256_excluding_this_field": "a963d216425e987001b5eca4b6c6d2acc40773598fc04a7bfe042a5c6dbafeab",
+  "implementation": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/job_v7.py",
+    "sha256": "8ec0a20b4aab2a3befead5e39fc9fecc8c79d9745606c34282822f71c45c6cb0",
+    "size_bytes": 2550
+  },
+  "native_integrator_calls": 8340
+}

@@ -1,0 +1,67 @@
+{
+  "automatic_deployment_approved": false,
+  "content_sha256_excluding_this_field": "e3d04c33d9608d0d05aba0552d0d187cd8145936ffbee69bc999e99de6e94219",
+  "dataset_split": "unassigned",
+  "eligible": true,
+  "interpretation": "Eligibility for a scoped complete-skill experience; no automatic deployment, generalization or training claim.",
+  "new_physics_steps": 0,
+  "qualified_scope": [
+    "S02_cup",
+    "S03_cup"
+  ],
+  "reasons": [],
+  "receipts": [
+    {
+      "case_id": "S02_cup",
+      "case_sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+      "controller_fingerprint": "42548bce53684e4896b1308be56bbdeca8ae624331baa821c9473adf005821eb",
+      "gates": {
+        "continuous_replay": true,
+        "control": true,
+        "development_scope": true,
+        "exported": true,
+        "force": true,
+        "independent_final": true,
+        "orientation": true,
+        "original_init": true,
+        "original_task": true,
+        "video": true,
+        "visual": true
+      },
+      "model_sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+      "strategy_sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/FINAL_VERIFICATION.json",
+        "sha256": "640826ac7c7a53ba7403294e5e210b1257b76913b96d0f675ef8c630b4ca4db3",
+        "size_bytes": 4663
+      }
+    },
+    {
+      "case_id": "S03_cup",
+      "case_sha256": "a3201f433f10b0254d5933a964daa531b8a07167c3d461c899eefedd214f5aab",
+      "controller_fingerprint": "42548bce53684e4896b1308be56bbdeca8ae624331baa821c9473adf005821eb",
+      "gates": {
+        "continuous_replay": true,
+        "control": true,
+        "development_scope": true,
+        "exported": true,
+        "force": true,
+        "independent_final": true,
+        "orientation": true,
+        "original_init": true,
+        "original_task": true,
+        "video": true,
+        "visual": true
+      },
+      "model_sha256": "e16e06067b5e7de49eb1d035c56f88f1eac3f7dd417f210bf96717faee7c2d4a",
+      "strategy_sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/FINAL_VERIFICATION.json",
+        "sha256": "26dd1bb1eb62b6d88e360141649ff64d14bbf0833e6b8caf47dc7dd8fdd0aa00",
+        "size_bytes": 4849
+      }
+    }
+  ],
+  "schema": "independent-experience-promotion/v1",
+  "source_role": "development_validation"
+}

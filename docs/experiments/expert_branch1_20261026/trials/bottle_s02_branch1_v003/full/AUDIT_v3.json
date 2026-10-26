@@ -1,0 +1,57 @@
+{
+  "base_full_independent_audit": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/AUDIT_OBSERVATIONS_v3.json",
+    "sha256": "a476fdb424a1d9ebe553c59a77fb79754c431e143ab275cdb10eec2a8c76715c",
+    "size_bytes": 1772
+  },
+  "base_gate_replaced": "actual_mixed_and_projected_targets",
+  "content_sha256_excluding_this_field": "681fa1e650c71e2a56baac8d32f641ddc89959aa16e5ebcea29c955b4fef2a31",
+  "control_passed": false,
+  "executed_control_reconstruction_passed": false,
+  "gates": {
+    "actual_applied_action_history": true,
+    "actual_mixed_and_projected_targets": true,
+    "actual_state_policy_observation": true,
+    "all_recorded_physics_safe": true,
+    "atomic_body_and_hand_frame": true,
+    "bounded_complete_episode": false,
+    "causal_observation_metadata": false,
+    "causal_reference": true,
+    "contact_reconstruction": true,
+    "encoder_decoder_bitwise": true,
+    "fresh_original_initialization_no_restored_prefix": true,
+    "no_external_forces": true,
+    "original43motor_pd": true,
+    "original_raw_action_transform": true,
+    "policy_input_archive": true,
+    "projection_adapter_condition_verified_from_frozen_execution_source": true,
+    "sonic_controls_all29_body_joints": true,
+    "state_chain": true,
+    "terminal_expert_stop_reconstructed": true,
+    "time_chain": true
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/audit_projection_v3.py",
+    "sha256": "818e81fa919c0820b4855d2b0e0dcea0dd55d52510125e538bab59a4de8983dc",
+    "size_bytes": 4842
+  },
+  "max_contact_error": 0.0,
+  "max_geometry_error_m": 0.0,
+  "max_pd_error_nm": 1.7763568394002505e-15,
+  "new_physics_steps": 0,
+  "nn_ticks": 2068,
+  "not_continuous_dynamics_reintegration": true,
+  "projection_history_mismatch_ticks": [],
+  "projection_mismatch_ticks": [],
+  "projection_target_maximum_error_rad": 0.0,
+  "projection_ticks": 2068,
+  "reconstruction_basis": "Base audit independently recomputed NN/encoder/decoder, raw transforms, hand/body PD, contact, geometry, state/time chains and policy archive. This supplement independently recomputes all target/projection/history fields using the exact bound always-on adapter. Original base report remains unchanged.",
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/REPORT.json",
+    "sha256": "c550f91994f7c1b3da549d0f191ad88f886be0366c28e08d6d4bc7953f0869e7",
+    "size_bytes": 7917635
+  },
+  "schema": "native-independent-audit-with-observations-and-projection/v3",
+  "state_samples": 8312,
+  "task_passed": false
+}

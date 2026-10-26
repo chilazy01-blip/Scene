@@ -1,0 +1,224 @@
+{
+  "all_qualified_archive": [
+    {
+      "asset_lineage_group_id": "/data/wsj/main/scene_runs/codex_trellis_v2/assets_curated_v1/optimized/mug_white_001.glb",
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/CASE.json",
+        "sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+        "size_bytes": 12416
+      },
+      "case_id": "S02_cup",
+      "content_sha256": "dc32052c9659211dcabeac128a6a4aa9ee180ddfe6a3bcffcc5a937c1377d42b",
+      "dataset_split": "unassigned",
+      "episode": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/episode.npz",
+        "sha256": "3bbd02e3fbe22578da8a0384601485475e760b49e94767f0913a95f004aff6e4",
+        "size_bytes": 25084443
+      },
+      "generated_scene_sources": {
+        "GENERATION.json": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_locomotion_pipeline_20261020_v1/scenes/S02/GENERATION.json",
+          "sha256": "aee7cbb6fd3203603865ce6a104146536c549d87e6e40878896367ceb166f5fa",
+          "size_bytes": 15055
+        },
+        "compile_implementation": {
+          "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/build_models.py",
+          "sha256": "3209804690fdf48e266ad5b1c511f3899cfa30acee7c7f4883053f51cc7f6f4e",
+          "size_bytes": 8800
+        },
+        "layout_plan_final.json": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_locomotion_pipeline_20261020_v1/scenes/S02/generator/layout_plan_final.json",
+          "sha256": "93d2bcaaac39652572a59ff76d7c76aadeeb9556c191f28e7c9061c7ff5ae53d",
+          "size_bytes": 73510
+        },
+        "object_assumptions": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models/S02_cup/OBJECT_ASSUMPTIONS.json",
+          "sha256": "559e70e9395ebde353337d774f4f5df4fe168488e15e8f26d93f5728b0c6fdab",
+          "size_bytes": 999
+        },
+        "scene_codex_trellis_v2.glb": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_locomotion_pipeline_20261020_v1/scenes/S02/generator/scene_codex_trellis_v2.glb",
+          "sha256": "40865d6dcc83c66698c7912bb7dcdea63404d6802029425bd9f2ada8bcd366ae",
+          "size_bytes": 56254472
+        },
+        "validation_final.json": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_locomotion_pipeline_20261020_v1/scenes/S02/generator/validation_final.json",
+          "sha256": "c5ccea6e6ba63742a7e482d2cbf298cd76366dcb55ee5f62dd3ee519d5692c8e",
+          "size_bytes": 5967
+        }
+      },
+      "goal_error_m": 0.005711577711826629,
+      "layout_source_group_id": "sage_v2_locomotion_20261020_S02",
+      "leakage_group_id": "generated_grasp_development_shared_assets_and_reference_templates",
+      "max_held_slip_m": 0.012666753604509539,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+        "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+        "size_bytes": 45935557
+      },
+      "object_id": "cup",
+      "object_orientation_cosine": 0.9997742342128324,
+      "phase_feedback": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/PHASE_FEEDBACK_V3.json",
+        "sha256": "bdde64bc0598d8088e336f5e347bfd11037c6c73f3a089290fe8e156c0d23b14",
+        "size_bytes": 166902
+      },
+      "physics_steps": 8536,
+      "qualified": true,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/REPORT.json",
+        "sha256": "95418e0fd080dd6f09f208dab173960f91a489887f7030f520762e4d8cd1496a",
+        "size_bytes": 5510472
+      },
+      "scene": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/SCENE.json",
+        "sha256": "dec097567e98cac9cfaeeff2f7eac165465a4da16514188a2757828bb6367d1b",
+        "size_bytes": 94670
+      },
+      "source_role": "development_validation",
+      "spatial_feedback": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/SPATIAL_FEEDBACK.json",
+        "sha256": "3ed75e0e111ed1858a45fb0317a57aeea63ae56c1193811681f1546ad747b396",
+        "size_bytes": 180925
+      },
+      "stop_reason": null,
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/strategy.py",
+        "sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+        "size_bytes": 13082
+      },
+      "trial": "cup_s02_regression",
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/FINAL_VERIFICATION.json",
+        "sha256": "4967c22b65d8f3da67f7a9582f41317d3c583f9ffdcb41b3c2bff67f21bc3ce7",
+        "size_bytes": 4836
+      },
+      "video": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/actual_video_v3/motion.mp4",
+        "sha256": "1c985a7c9c9c48d7117485b04e67c3cad432e6149188dd8e2be8d0e77e3ea7a4",
+        "size_bytes": 6443499
+      }
+    }
+  ],
+  "content_sha256_excluding_this_field": "decbdabe52ee46baa43ab97db54a95acc309bcb6ea1e6aa87f65735a0f5848dc",
+  "data_schema": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/ROBOT_DATA_SCHEMA.json",
+    "sha256": "cdbff6a21fe64cb644b21e2f584be45b1e991b5d56f12e6560084eed98c7bbcb",
+    "size_bytes": 23616
+  },
+  "dataset_split": "unassigned",
+  "diversity_limit": "Reused S02/S03 generated layouts and frozen assets/workcell templates; new bottle success is scoped to its verified case, not broad generalization.",
+  "episodes": [],
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/finalize_branch1_v2.py",
+    "sha256": "ca9463cb427e7a4d8cb553f892d88e8b47d32a2b89f99fdac0b1918b6644e786",
+    "size_bytes": 6849
+  },
+  "leakage_policy": "Keep shared assets/reference groups together; none are heldout evaluation or assigned training/test splits.",
+  "new_physics_steps": 55548,
+  "new_unique_physical_trajectories": 0,
+  "qualified_regression_archive": [
+    {
+      "asset_lineage_group_id": "/data/wsj/main/scene_runs/codex_trellis_v2/assets_curated_v1/optimized/mug_white_001.glb",
+      "case": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/CASE.json",
+        "sha256": "9229dfded30f385779188536cd2b44a3d7ce411be43bc44cf0a8bad12b5360db",
+        "size_bytes": 12416
+      },
+      "case_id": "S02_cup",
+      "content_sha256": "dc32052c9659211dcabeac128a6a4aa9ee180ddfe6a3bcffcc5a937c1377d42b",
+      "dataset_split": "unassigned",
+      "episode": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/episode.npz",
+        "sha256": "3bbd02e3fbe22578da8a0384601485475e760b49e94767f0913a95f004aff6e4",
+        "size_bytes": 25084443
+      },
+      "generated_scene_sources": {
+        "GENERATION.json": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_locomotion_pipeline_20261020_v1/scenes/S02/GENERATION.json",
+          "sha256": "aee7cbb6fd3203603865ce6a104146536c549d87e6e40878896367ceb166f5fa",
+          "size_bytes": 15055
+        },
+        "compile_implementation": {
+          "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/build_models.py",
+          "sha256": "3209804690fdf48e266ad5b1c511f3899cfa30acee7c7f4883053f51cc7f6f4e",
+          "size_bytes": 8800
+        },
+        "layout_plan_final.json": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_locomotion_pipeline_20261020_v1/scenes/S02/generator/layout_plan_final.json",
+          "sha256": "93d2bcaaac39652572a59ff76d7c76aadeeb9556c191f28e7c9061c7ff5ae53d",
+          "size_bytes": 73510
+        },
+        "object_assumptions": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models/S02_cup/OBJECT_ASSUMPTIONS.json",
+          "sha256": "559e70e9395ebde353337d774f4f5df4fe168488e15e8f26d93f5728b0c6fdab",
+          "size_bytes": 999
+        },
+        "scene_codex_trellis_v2.glb": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_locomotion_pipeline_20261020_v1/scenes/S02/generator/scene_codex_trellis_v2.glb",
+          "sha256": "40865d6dcc83c66698c7912bb7dcdea63404d6802029425bd9f2ada8bcd366ae",
+          "size_bytes": 56254472
+        },
+        "validation_final.json": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_locomotion_pipeline_20261020_v1/scenes/S02/generator/validation_final.json",
+          "sha256": "c5ccea6e6ba63742a7e482d2cbf298cd76366dcb55ee5f62dd3ee519d5692c8e",
+          "size_bytes": 5967
+        }
+      },
+      "goal_error_m": 0.005711577711826629,
+      "layout_source_group_id": "sage_v2_locomotion_20261020_S02",
+      "leakage_group_id": "generated_grasp_development_shared_assets_and_reference_templates",
+      "max_held_slip_m": 0.012666753604509539,
+      "model": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/model.xml",
+        "sha256": "2feb4e28babf4d9097a203dbbf4b5405d7b7173ab8f3db8340caefb718ed2788",
+        "size_bytes": 45935557
+      },
+      "object_id": "cup",
+      "object_orientation_cosine": 0.9997742342128324,
+      "phase_feedback": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/PHASE_FEEDBACK_V3.json",
+        "sha256": "bdde64bc0598d8088e336f5e347bfd11037c6c73f3a089290fe8e156c0d23b14",
+        "size_bytes": 166902
+      },
+      "physics_steps": 8536,
+      "qualified": true,
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/REPORT.json",
+        "sha256": "95418e0fd080dd6f09f208dab173960f91a489887f7030f520762e4d8cd1496a",
+        "size_bytes": 5510472
+      },
+      "scene": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_cup/SCENE.json",
+        "sha256": "dec097567e98cac9cfaeeff2f7eac165465a4da16514188a2757828bb6367d1b",
+        "size_bytes": 94670
+      },
+      "source_role": "development_validation",
+      "spatial_feedback": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/SPATIAL_FEEDBACK.json",
+        "sha256": "3ed75e0e111ed1858a45fb0317a57aeea63ae56c1193811681f1546ad747b396",
+        "size_bytes": 180925
+      },
+      "stop_reason": null,
+      "strategy": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/strategy.py",
+        "sha256": "96c1d657852cc95f0da2469fa6288f123ad511a4534e55b56018db225e3d1842",
+        "size_bytes": 13082
+      },
+      "trial": "cup_s02_regression",
+      "verification": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/FINAL_VERIFICATION.json",
+        "sha256": "4967c22b65d8f3da67f7a9582f41317d3c583f9ffdcb41b3c2bff67f21bc3ce7",
+        "size_bytes": 4836
+      },
+      "video": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/actual_video_v3/motion.mp4",
+        "sha256": "1c985a7c9c9c48d7117485b04e67c3cad432e6149188dd8e2be8d0e77e3ea7a4",
+        "size_bytes": 6443499
+      }
+    }
+  ],
+  "schema": "branch1-development-dataset/v1",
+  "source_role": "development_validation",
+  "total_qualified_this_round": 1
+}

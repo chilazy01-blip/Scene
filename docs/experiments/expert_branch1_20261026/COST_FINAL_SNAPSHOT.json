@@ -1,0 +1,49 @@
+{
+  "content_sha256_excluding_this_field": "b3772b70b33b7ed0c4c1d3cb7d2e76ec0413cdddd81768ab26e83dde36c6dc1b",
+  "max_new_physics_steps": 120000,
+  "prior_native_steps": 239138,
+  "reservations": [
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay",
+      "maximum_steps": 8536,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay",
+      "success_replay_headroom": 0
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/cost",
+      "success_replay_headroom": 12840
+    },
+    {
+      "episode_output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full",
+      "maximum_steps": 12840,
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/cost",
+      "success_replay_headroom": 12840
+    }
+  ]
+}

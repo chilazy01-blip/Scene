@@ -1,0 +1,240 @@
+{
+  "actual_seconds": 42.68,
+  "added_task_object": {
+    "acceptance": "axis dot world up >=.98",
+    "asset": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/assets_curated_v1/optimized/mug_white_001.glb",
+      "sha256": "33433470b034caf9bf3b6590ddd650e9c8fa2da525c0503593415cd97be931c5",
+      "size_bytes": 5293476
+    },
+    "book_cover_basis": "thin local X dimension .03m; cover spans local YZ",
+    "bottle_basis": "empty rigid bottle, no fluid",
+    "content_sha256_excluding_this_field": "8fecb2c9ea5b41e7e9e57543b57ec72d4ba8e2945f31f3705a5cc496532ddc2c",
+    "dimensions_m": [
+      0.12,
+      0.09,
+      0.11
+    ],
+    "friction": "payload native contact unchanged from cup template",
+    "geometry": "full original triangles, fixed manifest dimensions; no grasp-dependent scaling",
+    "inertia_basis": "unchanged original cup; manifest bounding-box rigid-body inertia for new objects",
+    "mass_inertia_are_assumptions": false,
+    "mass_kg": 0.15,
+    "object_id": "cup",
+    "physics_steps": 0,
+    "semantic_local_up_or_cover_axis": [
+      0,
+      0,
+      1
+    ]
+  },
+  "all_decoded_frames": 2134,
+  "audit": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/AUDIT_v2.json",
+    "sha256": "66c444ff6e488e5276c8aa9a1471bf20b9081652db6fe0610ed55815b0c509e6",
+    "size_bytes": 2581
+  },
+  "audit_passed": true,
+  "carry_distance_m": 0.5981142092805007,
+  "carry_foot_cycles": {
+    "left": 1,
+    "right": 1
+  },
+  "content_sha256_excluding_this_field": "d654154e375e3228b426e341b6c44589fde9700b4239a9b52642d1df582f3fe9",
+  "continuous_dynamics_passed": true,
+  "cost_items": [
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/cost/REPORT.json",
+        "sha256": "f4fad360f9dd986e5ff5c6016fce6eb650edae2677d568606489d65acf7ac8ec",
+        "size_bytes": 735
+      },
+      "steps": 8536,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/cost",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/cost/REPORT.json",
+        "sha256": "2f5fdf4dbceeb8ecf7aaebc5f859d4ece711b1508beb2b0041348ead9a4f175c",
+        "size_bytes": 740
+      },
+      "steps": 8288,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay",
+      "report": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay/REPORT.json",
+        "sha256": "1e3ef8789a341cfa9f88075e80ce8491ab0811eb5b67177e0f0b6147583f80bc",
+        "size_bytes": 1652
+      },
+      "steps": 8536,
+      "unknown_full_reservation_charged": false
+    },
+    {
+      "output": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/cost",
+      "report": null,
+      "steps": 12840,
+      "unknown_full_reservation_charged": true
+    }
+  ],
+  "dataset_split": "unassigned",
+  "dynamics": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/continuous_replay/REPORT.json",
+    "sha256": "1e3ef8789a341cfa9f88075e80ce8491ab0811eb5b67177e0f0b6147583f80bc",
+    "size_bytes": 1652
+  },
+  "export_schema": {
+    "contacts_and_exact_policy_io": "retained in bound original TRACE and POLICY_IO archives",
+    "nq": 57,
+    "nu": 43,
+    "nv": 55,
+    "state_order": "original frozen native MuJoCo model, named29 body +14hand joints + free task object; no slicing all body joints fromqpos[7:]",
+    "units": "seconds/meters/radians/Newton-meters"
+  },
+  "failures_preserved": [],
+  "files": {
+    "decoded_0000.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_0000.jpg",
+      "sha256": "78b5624af9ac6cc9ca2359b6619994acf9d5e943fec32dccbcf80397987cc2a9",
+      "size_bytes": 114729
+    },
+    "decoded_0235.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_0235.jpg",
+      "sha256": "55c51b85a6ed3454ebd7ad75d2a25bfa0e810f162f0a73eb7e458ced17d5546c",
+      "size_bytes": 121934
+    },
+    "decoded_0300.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_0300.jpg",
+      "sha256": "17795bfb1fa061b3f9ac2a14145cfb87b24fcfd5cb9e18450ce06b474f50cebc",
+      "size_bytes": 121554
+    },
+    "decoded_0940.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_0940.jpg",
+      "sha256": "ab0b3545f3c5703b2aa9a8cf9fa59bd8ff8c59ddf133e6f799c2b711ef671de1",
+      "size_bytes": 136134
+    },
+    "decoded_0965.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_0965.jpg",
+      "sha256": "f2cae10e617b871aa34ac0e7a8eaef89cbea0bb9afaea89cf748e016358fe0a1",
+      "size_bytes": 135754
+    },
+    "decoded_0990.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_0990.jpg",
+      "sha256": "a7d8b59706319c5def2d1bc53ebef20283c2a4ed61879bf977790b2545432411",
+      "size_bytes": 132568
+    },
+    "decoded_1042.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1042.jpg",
+      "sha256": "860a404acf280e6a2428039be74ca52bf993c3edf779b42f61055672f44c3996",
+      "size_bytes": 133589
+    },
+    "decoded_1180.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1180.jpg",
+      "sha256": "d0ea9b999651c8615ebe2386a81c370ced3c182ebe9c22a48cb6127aed15b6e7",
+      "size_bytes": 136679
+    },
+    "decoded_1229.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1229.jpg",
+      "sha256": "75c55b389227e2e2d51ee105fe471cc0fb8d8e3549e9f3eaa374e9498b195399",
+      "size_bytes": 137507
+    },
+    "decoded_1409.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1409.jpg",
+      "sha256": "7f880c83448e54202a946a0fc1e161003887b337173903fd483f934c1a339f22",
+      "size_bytes": 131141
+    },
+    "decoded_1469.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1469.jpg",
+      "sha256": "6d77260541356c02c3e3f7bd84a10910acd84e14cb2c7b0105938baecf974ba9",
+      "size_bytes": 132427
+    },
+    "decoded_1625.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1625.jpg",
+      "sha256": "71580b50554f0e24d544139a6f6f5d515750cce09f6315ea5ff499ce43d0fac9",
+      "size_bytes": 143096
+    },
+    "decoded_1756.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1756.jpg",
+      "sha256": "62f7f9376e756483437b71ba2ebba5562e416ad55e1baecf63ea7cc06e05ba27",
+      "size_bytes": 143714
+    },
+    "decoded_1887.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1887.jpg",
+      "sha256": "06f075db5b539b7ff800e5306dd3da6709d8d0945ac5f7fd142207789b9c6ff2",
+      "size_bytes": 145334
+    },
+    "decoded_1944.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_1944.jpg",
+      "sha256": "802f23dba36d9d49f317989b1dd9202c13a0ccd59a44ec00782f2c654e624813",
+      "size_bytes": 142793
+    },
+    "decoded_2082.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_2082.jpg",
+      "sha256": "753d733ca7091b6a5655bf7a528330b54e20054bca64c906d5a017b4f2e35975",
+      "size_bytes": 142557
+    },
+    "decoded_2108.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_2108.jpg",
+      "sha256": "208d6f3525505104a7f52db63853b92776720f83e7fe5c0bb086a6c323ff48fd",
+      "size_bytes": 146836
+    },
+    "decoded_2133.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_2133.jpg",
+      "sha256": "5806986cadafcddcf515f38f0a77ac66759e400d9ced5b803db150b77fa5fd7a",
+      "size_bytes": 143461
+    },
+    "decoded_review.jpg": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/decoded_review.jpg",
+      "sha256": "009d6749801a3ed5dac1d04f2bff8e9e664be2c875908cc905e763330e3c91db",
+      "size_bytes": 1289488
+    },
+    "episode.npz": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/episode.npz",
+      "sha256": "3bbd02e3fbe22578da8a0384601485475e760b49e94767f0913a95f004aff6e4",
+      "size_bytes": 25084443
+    }
+  },
+  "goal_error_m": 0.005711577711826629,
+  "implementation": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/delivery_v4.py",
+    "sha256": "8f28ba36f9fde5cd1f91943afe4106f96fc8525805b0835831e6162b27e33ee7",
+    "size_bytes": 9769
+  },
+  "manual_video_review_pending": true,
+  "max_held_slip_m": 0.012666753604509539,
+  "maximum_contact_force_n": 154.10065428565105,
+  "maximum_joint_acceleration_rad_s2": 705.4739339996522,
+  "maximum_joint_speed_rad_s": 4.7214624810185635,
+  "maximum_penetration_m": 0.0037289308561264845,
+  "maximum_root_acceleration_m_s2": 13.79820423122965,
+  "maximum_target_projection_rad": 0.0,
+  "mechanically_qualified": true,
+  "native_cumulative_physics_cost": 277338,
+  "new_physics_cost": 38200,
+  "no_layout_or_native_collision_changes": true,
+  "object_displacement_xy_m": 0.4998664378069916,
+  "positive_episode_count": 1,
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/full/REPORT.json",
+    "sha256": "95418e0fd080dd6f09f208dab173960f91a489887f7030f520762e4d8cd1496a",
+    "size_bytes": 5510472
+  },
+  "schema": "native-mug-task-delivery/v1",
+  "scope": "one task-level native-room development demo, no training/heldout/generalization/production qualification",
+  "source_role": "development_validation",
+  "target_projection_count": 0,
+  "task_passed": true,
+  "video": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/actual_video_v3/MANIFEST.json",
+    "sha256": "4cce59769c8efb31afd0c6c52a63422fdf8f03b015296315a2f492cb0ae7f7b5",
+    "size_bytes": 6399
+  },
+  "video_mp4": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/actual_video_v3/motion.mp4",
+    "sha256": "1c985a7c9c9c48d7117485b04e67c3cad432e6149188dd8e2be8d0e77e3ea7a4",
+    "size_bytes": 6443499
+  }
+}

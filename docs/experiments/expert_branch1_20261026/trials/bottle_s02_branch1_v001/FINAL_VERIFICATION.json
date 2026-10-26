@@ -1,0 +1,72 @@
+{
+  "all_video_frames_automatically_decoded": 2072,
+  "complete": true,
+  "content_sha256_excluding_this_field": "a9deb9c994e2dd9035f453b279435befe3e18321b5e1d1804f616fd10d08e914",
+  "dataset_split": "unassigned",
+  "evidence": {
+    "audit": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/AUDIT_v2.json",
+      "sha256": "2f8836cad562e3a1141c7095d15be745e14e561e503fa74d12ca8ecb650800cf",
+      "size_bytes": 2594
+    },
+    "delivery": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/partial_delivery_v4/REVIEW.json",
+      "sha256": "9ea6d6601d38832248e76a1cdc11580b020a32abffc8ed08b11479255c1a3978",
+      "size_bytes": 11691
+    },
+    "force": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/FORCE_CHECK.json",
+      "sha256": "d37adf144686c81a829e9845ec5841f6469c0789a37d62fddf1eedec51800797",
+      "size_bytes": 15629408
+    },
+    "measurements": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/MEASUREMENTS.json",
+      "sha256": "59e462aac2aaafde97a5ca593908becc25d4bd8337520cc658bc0aaec853a0bb",
+      "size_bytes": 45219
+    },
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/REPORT.json",
+      "sha256": "7f56e82296b82c9cbea09dcfcb98867a14d364828162fec4010b7fc67e783291",
+      "size_bytes": 6798006
+    },
+    "video": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/actual_video_v3/MANIFEST.json",
+      "sha256": "41df51a57e65166c6f457163a5b864f5e4f16c10e164e526c96c6666e476a3b5",
+      "size_bytes": 6184
+    }
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/verify_completed_v1.py",
+    "sha256": "3cce78cd219fe0359a4885708e8ce6395db753d39727cbaaa0211dc2c52bcbb7",
+    "size_bytes": 4596
+  },
+  "new_physics_steps": 0,
+  "npz_shapes": {},
+  "numerically_quarantined": false,
+  "positive": false,
+  "primary_visual_observations": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 16,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 15,
+    "observations": "Actual overview and closeups show neck/cap acquisition, held walking and upright target table placement. Last release-labelled samples still have hand contact; no full release, retract or settled terminal interval. This is a negative trial despite supported appearance. Native force/predicate diagnosis separately determines the semantic premature abort.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "reviewed_images": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "ed144be91e3ba61b41661c0565036a76b981952a573efe6e272f42117a8ed94c",
+      "size_bytes": 1146060
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/placement_detail/review.jpg",
+      "sha256": "853813195d72fb92807a6967708979ce05f6914481818874464fe4e19b3f8033",
+      "size_bytes": 822875
+    }
+  ],
+  "source_role": "development_validation",
+  "verified_epoch_utc": 1793033274.9635973
+}

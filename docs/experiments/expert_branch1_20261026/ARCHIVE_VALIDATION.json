@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "archived_source_copies_checked": 164,
+  "archived_bytes": 129307339,
+  "all_archival_tools_parse": true,
+  "prior_source_binding_check_passed": true,
+  "prior_unique_bindings": 612,
+  "credential_pattern_scan_hits": 0,
+  "new_physics_steps": 0,
+  "checked_epoch_utc": 1793041481.4741886,
+  "staged_whitespace_check": {
+    "returncode": 2,
+    "findings": [
+      "sage/experiments/embodied_expert_branch1_v1/audit.py:366: new blank line at EOF.",
+      "sage/experiments/embodied_expert_branch1_v1/audit_observations_v3.py:385: new blank line at EOF.",
+      "sage/experiments/embodied_expert_branch1_v1/engine.py:525: new blank line at EOF.",
+      "sage/experiments/embodied_expert_branch1_v1/review.py:73: new blank line at EOF.",
+      "sage/experiments/embodied_expert_branch1_v1/visualize_v3.py:245: new blank line at EOF."
+    ],
+    "disposition": "Retain exact physics/audit SHA-bound source bytes; only five extra blank EOF lines. No other whitespace findings. Do not claim an unqualified diff --check pass."
+  }
+}

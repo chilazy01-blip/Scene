@@ -1,0 +1,74 @@
+{
+  "schema": "branch1-managed-job-closeout/v1",
+  "all_known_managed_jobs_exited": true,
+  "known_collected_exit_zero_sessions": [
+    51945,
+    31717,
+    74327,
+    67158,
+    42751,
+    2098,
+    29977,
+    99733,
+    61135,
+    69906,
+    26380,
+    77536,
+    70264,
+    18649,
+    93749,
+    32842,
+    40454,
+    35510,
+    47434,
+    52285,
+    24497
+  ],
+  "native_matrix_complete": true,
+  "independent_qa_complete": true,
+  "actual_expert_calls": 4,
+  "expert_calls_all_returned_zero": true,
+  "trials": [
+    {
+      "trial": "bottle_s02_branch1_v001",
+      "job_status": "complete",
+      "final_verification_complete": true,
+      "positive": false
+    },
+    {
+      "trial": "bottle_s02_branch1_v002",
+      "job_status": "complete",
+      "final_verification_complete": true,
+      "positive": false
+    },
+    {
+      "trial": "bottle_s02_branch1_v003",
+      "job_status": "complete",
+      "final_verification_complete": true,
+      "positive": false
+    },
+    {
+      "trial": "bottle_s02_branch1_v004",
+      "job_status": "complete",
+      "final_verification_complete": true,
+      "positive": false
+    },
+    {
+      "trial": "bottle_s03_branch1_v001",
+      "job_status": "complete",
+      "final_verification_complete": true,
+      "positive": false
+    },
+    {
+      "trial": "cup_s02_regression",
+      "job_status": "complete",
+      "final_verification_complete": true,
+      "positive": true
+    }
+  ],
+  "background_broker_or_watcher_started": false,
+  "no_new_native_rollouts_after_declared_latest_start": true,
+  "new_physics_steps": 0,
+  "closed_epoch_utc": 1793041367.7343822,
+  "scope": "Known jobs created for this round, checked via managed session exit receipts and per-trial final evidence; no host-wide unrelated process claim. Documentation/Git archival work follows without physics."
+}

@@ -1,0 +1,74 @@
+{
+  "__init__.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/__init__.py",
+    "sha256": "2d25d5b3c01192b5f5f7899bd8ef8f47f710fba820daf384e3c20aabae7faadb"
+  },
+  "common.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/common.py",
+    "sha256": "f56b926a438a7e52333cc1fcf9d90c5007d4cfb7b1fa3f11883d8e6dac143560"
+  },
+  "engine.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/engine.py",
+    "sha256": "e2b15081e412e77e6beb2fb967ef3d745c9592dd20e27aaae214ce7599e024b8"
+  },
+  "protocol.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/protocol.py",
+    "sha256": "52bfed9b76305626cbf3dc9522c4da1f0833acd4acfa66b9efe1de9a8c7e3883"
+  },
+  "prepare_v3.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/prepare_v3.py",
+    "sha256": "a37e34d4df31e146ea52928e401ede0621d8e7128e96ce951004da6e99965a15"
+  },
+  "guard.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/guard.py",
+    "sha256": "7b1eaf2ac80494b9d67e9892952d9ba1d56d6a1add6539e36f60ab7208af5f6c"
+  },
+  "preview.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/preview.py",
+    "sha256": "42faa2e1d8a9a7a84f3d967059e3630a9ddad9e52b9fc41f02f92cbed5f16050"
+  },
+  "review.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/review.py",
+    "sha256": "af9a23c6ca59c560b93492b475de21a696ba55fd035f67e9ff6ec9d80127b86d"
+  },
+  "audit.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/audit.py",
+    "sha256": "04e1f4c7f12e3e0ecf43ddb8043cd8bdc96b10535b88699fdaa05964325209a3"
+  },
+  "audit_projection_v2.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/audit_projection_v2.py",
+    "sha256": "a06a521341f45b4844edd29a77f58ba7bf1cc83fc1f51bd50950afbd192818c7"
+  },
+  "force.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/force.py",
+    "sha256": "2d197e9c0e927a95ae5843deac3aa4b51ab2a3f287dd78fd0f07abb13931d851"
+  },
+  "replay_numerical_v2.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/replay_numerical_v2.py",
+    "sha256": "43c5b043001658345a0cce95df3f39a06bbbad29d4e29cf437ac310f95068c78"
+  },
+  "visualize_v3.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/visualize_v3.py",
+    "sha256": "511c6e9d1948acd9b468d38bbd52afba00cf36f4c9ec7aac842fe87b3aa3f524"
+  },
+  "delivery_v4.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/delivery_v4.py",
+    "sha256": "9cd80a679b6bdaebf657aad9369a5b0aac5a6241aa2a0866c0fe74615e407d77"
+  },
+  "job_v5.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/job_v5.py",
+    "sha256": "2ca3c4017141355f2abe35e492492d0bceee0cdc0a72aa826c67cf748d28f18c"
+  },
+  "trial.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/trial.py",
+    "sha256": "f88b72daf283439fd8fd6b7e71bbc9894e8ede3740d57e549a8b417c07bf43ba"
+  },
+  "broker_v4.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/broker_v4.py",
+    "sha256": "b1846276939fc5fe58b3e6c3daad4609f1a5ee78c2fea4c5d223563860270256"
+  },
+  "inspect_state.py": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_generated_grasp_v1/inspect_state.py",
+    "sha256": "3a07f99535e38416748e45e7edb4cb176cb984568069f4f73d2e4b6af8f300f8"
+  }
+}

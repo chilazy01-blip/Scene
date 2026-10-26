@@ -1,0 +1,6673 @@
+{
+  "bindings": {
+    "case": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/CASE.json",
+      "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+      "size_bytes": 12643
+    },
+    "contracts": {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/contracts_v2.py",
+      "sha256": "6e6f731ea0ed7d86e968f3a631db02f9455bd9bf0999d175c7692bdb3004edfd",
+      "size_bytes": 3170
+    },
+    "implementation": {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/feedback_v3.py",
+      "sha256": "19bd2e27e8f8d74c66a5b88687ed02b953df441fe16bdd35f8178e926b798efa",
+      "size_bytes": 4627
+    },
+    "model": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+      "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+      "size_bytes": 47744485
+    },
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/REPORT.json",
+      "sha256": "c550f91994f7c1b3da549d0f191ad88f886be0366c28e08d6d4bc7953f0869e7",
+      "size_bytes": 7917635
+    },
+    "strategy": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/strategy.py",
+      "sha256": "2dbdaf1ec66f26edfa690dc1489753eefbeccb16343248eb2056704c447a5933",
+      "size_bytes": 73646
+    },
+    "trace": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/TRACE.json",
+      "sha256": "56a1e2ff727dd3eeefaa4fc57d005ffc295844eb0908cae226ba42a464379b87",
+      "size_bytes": 620141064
+    }
+  },
+  "case_id": "S02_bottle",
+  "causal_limit": "Temporal evidence only. Finger reference changes, wrist trajectory and disturbances require intervention to distinguish causes.",
+  "content_sha256_excluding_this_field": "3d6bf21548e084c7be01dab477b8debb3ec83d9a93023aa9f1e0078bb0581f98",
+  "dataset_split": "unassigned",
+  "first_observed_breach": {
+    "desk_supported": false,
+    "diagnostic_breaches": [
+      "release_without_measured_table_support"
+    ],
+    "forces_n": {
+      "desk": 0.0,
+      "index": 4.217520170223412,
+      "middle": 1.2181731383567123,
+      "other": 0.0,
+      "palm": 0.0,
+      "thumb": 3.2933341398953435
+    },
+    "hand_contact": true,
+    "object_in_wrist_m": [
+      0.20368110059944425,
+      0.17435458108804588,
+      0.0013750237250934392
+    ],
+    "object_orientation_cosine": 0.9998110391416098,
+    "object_orientation_margin": 0.019811039141609865,
+    "object_world_m": [
+      3.057891816898444,
+      1.8634396133439288,
+      0.8574799613113363
+    ],
+    "phase": "release",
+    "physics_index": 8308,
+    "robot_root_up_cosine": 0.9995007483762502,
+    "tick": 2067,
+    "time_s": 41.5450000000028
+  },
+  "frame_contract": {
+    "finger_order": "native hand_ids order; exact names in model/PolicyIO schema",
+    "object_local_m": "object in right wrist frame",
+    "object_rotation": "object-local to world matrix",
+    "physics_hz": 200,
+    "policy_hz": 50,
+    "up": "robot root cosine"
+  },
+  "interpretation": "First observable diagnostic breach, not necessarily the unique cause or the native stop time.",
+  "minimum_object_orientation_margin": 0.007012110270284366,
+  "new_physics_steps": 0,
+  "object_id": "bottle",
+  "phases": [
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": false,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 0.0,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          0.5237661717216068,
+          -0.1149935128724519,
+          0.6827320027988002
+        ],
+        "object_orientation_cosine": 1.0,
+        "object_orientation_margin": 0.020000000000000018,
+        "object_world_m": [
+          2.549,
+          1.9000000000000001,
+          0.8569547590000001
+        ],
+        "phase": "warmup",
+        "robot_root_up_cosine": 0.999997531217993,
+        "tick": -10,
+        "time_s": 0.005
+      },
+      "entry_physics_index": 0,
+      "phase": "warmup"
+    },
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 2.28871205184037,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          0.516381079371348,
+          -0.1077549569137411,
+          0.6843228241927382
+        ],
+        "object_orientation_cosine": 0.9999999805114858,
+        "object_orientation_margin": 0.01999998051148577,
+        "object_world_m": [
+          2.5489721617945524,
+          1.9000066916048266,
+          0.8568934910912026
+        ],
+        "phase": "initial_stand",
+        "robot_root_up_cosine": 0.9995436637889038,
+        "tick": 0,
+        "time_s": 0.2050000000000001
+      },
+      "entry_physics_index": 40,
+      "phase": "initial_stand"
+    },
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 2.0064644850538795,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          -0.4883884349601422,
+          -0.16222995415308064,
+          1.0147928933432782
+        ],
+        "object_orientation_cosine": 0.9999999421951264,
+        "object_orientation_margin": 0.019999942195126463,
+        "object_world_m": [
+          2.548953743389165,
+          1.900031536139248,
+          0.8569072483532897
+        ],
+        "phase": "approach",
+        "robot_root_up_cosine": 0.999960395194203,
+        "tick": 225,
+        "time_s": 4.704999999999922
+      },
+      "entry_physics_index": 940,
+      "phase": "approach"
+    },
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 1.9995403902909556,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          -0.33368444355405497,
+          -0.19822383153166592,
+          0.4522181748234633
+        ],
+        "object_orientation_cosine": 0.9999999421886256,
+        "object_orientation_margin": 0.019999942188625663,
+        "object_world_m": [
+          2.548949275748964,
+          1.9000341992575724,
+          0.8569071575800963
+        ],
+        "phase": "source_stop",
+        "robot_root_up_cosine": 0.99929204781958,
+        "tick": 355,
+        "time_s": 7.3049999999998665
+      },
+      "entry_physics_index": 1460,
+      "phase": "source_stop"
+    },
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 2.0058517383339316,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          -0.2098944924488282,
+          -0.1504142519180273,
+          0.38379551682230445
+        ],
+        "object_orientation_cosine": 0.9999999387215592,
+        "object_orientation_margin": 0.01999993872155925,
+        "object_world_m": [
+          2.54894529993577,
+          1.9000376500224527,
+          0.8569075148417564
+        ],
+        "phase": "ready_arm",
+        "robot_root_up_cosine": 0.9995099969905724,
+        "tick": 446,
+        "time_s": 9.125000000000027
+      },
+      "entry_physics_index": 1824,
+      "phase": "ready_arm"
+    },
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 1.9861475361646872,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          0.2510663500662122,
+          0.2722023176341372,
+          -0.022223970016109235
+        ],
+        "object_orientation_cosine": 0.9999999310649392,
+        "object_orientation_margin": 0.019999931064939247,
+        "object_world_m": [
+          2.5489205097470875,
+          1.9000494305489177,
+          0.856908174958587
+        ],
+        "phase": "preinsert",
+        "robot_root_up_cosine": 0.9973891447531809,
+        "tick": 886,
+        "time_s": 17.92500000000072
+      },
+      "entry_physics_index": 3584,
+      "phase": "preinsert"
+    },
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 2.0013733416895527,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          0.2323166482471195,
+          0.26993042829455766,
+          -0.015901233486384628
+        ],
+        "object_orientation_cosine": 0.9999999198141529,
+        "object_orientation_margin": 0.019999919814152944,
+        "object_world_m": [
+          2.548914170670877,
+          1.9000551757656552,
+          0.8569093012281556
+        ],
+        "phase": "lower",
+        "robot_root_up_cosine": 0.999446180374632,
+        "tick": 978,
+        "time_s": 19.765000000000352
+      },
+      "entry_physics_index": 3952,
+      "phase": "lower"
+    },
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 1.9626015061222557,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          0.23050728216203406,
+          0.19440400050896722,
+          -0.003916663761349706
+        ],
+        "object_orientation_cosine": 0.9999999180022379,
+        "object_orientation_margin": 0.019999918002237882,
+        "object_world_m": [
+          2.5489128169386643,
+          1.9000546246078591,
+          0.8569092278394472
+        ],
+        "phase": "insert",
+        "robot_root_up_cosine": 0.998230324461812,
+        "tick": 1028,
+        "time_s": 20.765000000000153
+      },
+      "entry_physics_index": 4152,
+      "phase": "insert"
+    },
+    {
+      "contract": {
+        "invariant": "Native plant and reference envelope remain fixed",
+        "post": "Measured opposing contacts before load probe",
+        "pre": "Admitted mesh approach completed"
+      },
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 1.962379579864578,
+          "index": 0.0,
+          "middle": 0.0,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 0.0
+        },
+        "hand_contact": false,
+        "object_in_wrist_m": [
+          0.20777101206186355,
+          0.16516686870823433,
+          0.013026558141680515
+        ],
+        "object_orientation_cosine": 0.9999999196615865,
+        "object_orientation_margin": 0.01999991966158654,
+        "object_world_m": [
+          2.548912928176466,
+          1.9000539397002816,
+          0.8569090098734737
+        ],
+        "phase": "close",
+        "robot_root_up_cosine": 0.9991735764772368,
+        "tick": 1078,
+        "time_s": 21.764999999999954
+      },
+      "entry_physics_index": 4352,
+      "phase": "close"
+    },
+    {
+      "contract": null,
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 6.529373910901491,
+          "index": 4.114483456310856,
+          "middle": 1.996302483228049,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 3.7621653964218815
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.20114526129039006,
+          0.16723069713055283,
+          0.01141846459893654
+        ],
+        "object_orientation_cosine": 0.9988217719985953,
+        "object_orientation_margin": 0.01882177199859536,
+        "object_world_m": [
+          2.5485586801179037,
+          1.9036707852156511,
+          0.8582013132808415
+        ],
+        "phase": "force_balance",
+        "robot_root_up_cosine": 0.9959739230031442,
+        "tick": 1215,
+        "time_s": 24.50499999999941
+      },
+      "entry_physics_index": 4900,
+      "phase": "force_balance"
+    },
+    {
+      "contract": {
+        "invariant": "Original anchor/slip and safety gates",
+        "post": "Measured load probe passes; save acquired reference",
+        "pre": "Opposing contacts acquired"
+      },
+      "entry": {
+        "desk_supported": false,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 0.0,
+          "index": 3.082503845516075,
+          "middle": 2.0079017998652504,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 3.120908408202647
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.2035215932433931,
+          0.16252902630165303,
+          0.006224033248350149
+        ],
+        "object_orientation_cosine": 0.9999063862914208,
+        "object_orientation_margin": 0.01990638629142083,
+        "object_world_m": [
+          2.545803909080073,
+          1.9019496328917203,
+          0.8578728195105623
+        ],
+        "phase": "load_probe",
+        "robot_root_up_cosine": 0.9996066537687929,
+        "tick": 1264,
+        "time_s": 25.484999999999214
+      },
+      "entry_physics_index": 5096,
+      "phase": "load_probe"
+    },
+    {
+      "contract": {
+        "invariant": "Retain grasp while table support disappears",
+        "post": "Clearance and continuous hover",
+        "pre": "Load probe passed"
+      },
+      "entry": {
+        "desk_supported": false,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 0.0,
+          "index": 3.674120424360324,
+          "middle": 1.3503071994389297,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 3.1447396089447417
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.20654426317371272,
+          0.16328370704739503,
+          0.0025860155913435597
+        ],
+        "object_orientation_cosine": 0.9987579781627446,
+        "object_orientation_margin": 0.018757978162744604,
+        "object_world_m": [
+          2.5530203385078543,
+          1.9143835463634908,
+          0.8655567913761802
+        ],
+        "phase": "lift",
+        "robot_root_up_cosine": 0.9997049363830594,
+        "tick": 1355,
+        "time_s": 27.304999999998852
+      },
+      "entry_physics_index": 5460,
+      "phase": "lift"
+    },
+    {
+      "contract": {
+        "invariant": "Retain acquired grasp",
+        "post": "Measured hover interval passes",
+        "pre": "Object clear of table"
+      },
+      "entry": {
+        "desk_supported": false,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 0.0,
+          "index": 3.93289239247838,
+          "middle": 1.937916804650914,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 3.9119347440471377
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.20207474150589394,
+          0.17107832582889113,
+          0.006700931507340028
+        ],
+        "object_orientation_cosine": 0.9992279024540567,
+        "object_orientation_margin": 0.0192279024540567,
+        "object_world_m": [
+          2.5403092591414342,
+          1.8962086323698515,
+          0.9256465169249155
+        ],
+        "phase": "loaded_hover",
+        "robot_root_up_cosine": 0.9983225185507223,
+        "tick": 1453,
+        "time_s": 29.264999999998462
+      },
+      "entry_physics_index": 5852,
+      "phase": "loaded_hover"
+    },
+    {
+      "contract": {
+        "invariant": "Continue acquired grasp across callback transition",
+        "post": "Carry reference ready",
+        "pre": "Hover passed"
+      },
+      "entry": {
+        "desk_supported": false,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 0.0,
+          "index": 3.936980520463124,
+          "middle": 3.5875081238901574,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 3.7809684805017145
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.203239926744297,
+          0.17076075379657554,
+          0.005457159051153804
+        ],
+        "object_orientation_cosine": 0.9977980388013512,
+        "object_orientation_margin": 0.017798038801351224,
+        "object_world_m": [
+          2.532037557454893,
+          1.8882105355490992,
+          0.9252306575105136
+        ],
+        "phase": "tuck",
+        "robot_root_up_cosine": 0.9975675499136138,
+        "tick": 1503,
+        "time_s": 30.264999999998263
+      },
+      "entry_physics_index": 6052,
+      "phase": "tuck"
+    },
+    {
+      "contract": {
+        "invariant": "Measured grasp retained; no hand support on furniture",
+        "post": "Original distance and both-foot cycles",
+        "pre": "Object held off table"
+      },
+      "entry": {
+        "desk_supported": false,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 0.0,
+          "index": 4.510568235751754,
+          "middle": 4.95844529826711,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 3.4317330488522217
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.20410637571601398,
+          0.17047270505200604,
+          0.0037510769146438445
+        ],
+        "object_orientation_cosine": 0.9993026401397176,
+        "object_orientation_margin": 0.01930264013971761,
+        "object_world_m": [
+          2.54876530555256,
+          1.8915911887982608,
+          0.9350211341691318
+        ],
+        "phase": "carry",
+        "robot_root_up_cosine": 0.9980842586829509,
+        "tick": 1563,
+        "time_s": 31.464999999998025
+      },
+      "entry_physics_index": 6292,
+      "phase": "carry"
+    },
+    {
+      "contract": {
+        "invariant": "Retain grasp while root stops",
+        "post": "Target stop reached",
+        "pre": "Carry completed"
+      },
+      "entry": {
+        "desk_supported": false,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 0.0,
+          "index": 5.2766623228398695,
+          "middle": 5.132772287740756,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 2.500321007682815
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.2071910226103349,
+          0.17065049454704298,
+          0.0010296404835641608
+        ],
+        "object_orientation_cosine": 0.9968452748347549,
+        "object_orientation_margin": 0.016845274834754953,
+        "object_world_m": [
+          2.927974789061996,
+          1.8960103414277554,
+          0.921684183702264
+        ],
+        "phase": "target_stop",
+        "robot_root_up_cosine": 0.9980750386739435,
+        "tick": 1687,
+        "time_s": 33.94499999999891
+      },
+      "entry_physics_index": 6788,
+      "phase": "target_stop"
+    },
+    {
+      "contract": {
+        "invariant": "Retain grasp until measured target table handoff",
+        "post": "Measured support transfer before release",
+        "pre": "Carry/stop completed with held object"
+      },
+      "entry": {
+        "desk_supported": false,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 0.0,
+          "index": 7.323647384851644,
+          "middle": 5.947133786584089,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 3.6827524752646634
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.20933122193398862,
+          0.17128981084064807,
+          0.0024208520409998513
+        ],
+        "object_orientation_cosine": 0.9968734661610832,
+        "object_orientation_margin": 0.016873466161083206,
+        "object_world_m": [
+          3.082794587940663,
+          1.930672763586841,
+          0.9253800037892539
+        ],
+        "phase": "place",
+        "robot_root_up_cosine": 0.9977051839241136,
+        "tick": 1792,
+        "time_s": 36.04499999999999
+      },
+      "entry_physics_index": 7208,
+      "phase": "place"
+    },
+    {
+      "contract": {
+        "invariant": "Object supported as fingers open",
+        "post": "Hand contact clears",
+        "pre": "Measured target table support"
+      },
+      "entry": {
+        "desk_supported": true,
+        "diagnostic_breaches": [],
+        "forces_n": {
+          "desk": 3.1569536536340514,
+          "index": 3.8099359371661192,
+          "middle": 1.0506772676906564,
+          "other": 0.0,
+          "palm": 0.0,
+          "thumb": 4.2611341794778035
+        },
+        "hand_contact": true,
+        "object_in_wrist_m": [
+          0.20717932321998964,
+          0.17235614510647587,
+          -0.0021380006056379943
+        ],
+        "object_orientation_cosine": 0.9996558855404268,
+        "object_orientation_margin": 0.019655885540426854,
+        "object_world_m": [
+          3.0546052659318055,
+          1.8662036863133113,
+          0.8575873581974018
+        ],
+        "phase": "release",
+        "robot_root_up_cosine": 0.9985619184231515,
+        "tick": 2059,
+        "time_s": 41.38500000000272
+      },
+      "entry_physics_index": 8276,
+      "phase": "release"
+    }
+  ],
+  "schema": "phase-contract-feedback/v3",
+  "source_role": "development_validation",
+  "state_order": {
+    "hand_names": [
+      "left_hand_thumb_0_joint",
+      "left_hand_thumb_1_joint",
+      "left_hand_thumb_2_joint",
+      "left_hand_middle_0_joint",
+      "left_hand_middle_1_joint",
+      "left_hand_index_0_joint",
+      "left_hand_index_1_joint",
+      "right_hand_thumb_0_joint",
+      "right_hand_thumb_1_joint",
+      "right_hand_thumb_2_joint",
+      "right_hand_middle_0_joint",
+      "right_hand_middle_1_joint",
+      "right_hand_index_0_joint",
+      "right_hand_index_1_joint"
+    ],
+    "hand_qpos_indices": [
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ]
+  },
+  "table_support_transitions": [
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 4.275804526144718,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "object_in_wrist_m": [
+        0.5245507332147886,
+        -0.11490678977904933,
+        0.6819916089714244
+      ],
+      "object_orientation_cosine": 1.0,
+      "object_orientation_margin": 0.020000000000000018,
+      "object_world_m": [
+        2.549,
+        1.9000000000000001,
+        0.8564642590000001
+      ],
+      "phase": "warmup",
+      "physics_index": 1,
+      "robot_root_up_cosine": 0.9999928024813163,
+      "tick": -10,
+      "time_s": 0.01
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.8177812883122484,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20422912222817238,
+        0.16497874056079195,
+        0.0031686771433062986
+      ],
+      "object_orientation_cosine": 0.9987337556787276,
+      "object_orientation_margin": 0.018733755678727593,
+      "object_world_m": [
+        2.5542040853420525,
+        1.9034133207201487,
+        0.8582787484868611
+      ],
+      "phase": "close",
+      "physics_index": 4797,
+      "robot_root_up_cosine": 0.9999482551329075,
+      "tick": 1189,
+      "time_s": 23.98999999999951
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 8.908928232178933,
+        "index": 3.468894557224891,
+        "middle": 0.6741378763743348,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.354657781439657
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20625049595482162,
+        0.16536509831886803,
+        0.007071926879653716
+      ],
+      "object_orientation_cosine": 0.9998400883057397,
+      "object_orientation_margin": 0.01984008830573969,
+      "object_world_m": [
+        2.546110860767649,
+        1.9066521942044647,
+        0.8573499108541346
+      ],
+      "phase": "close",
+      "physics_index": 4850,
+      "robot_root_up_cosine": 0.9990261561135563,
+      "tick": 1202,
+      "time_s": 24.25499999999946
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 2.0761096180318357,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.162558199362276
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.19959863947882453,
+        0.16409202922449764,
+        0.011158789369159818
+      ],
+      "object_orientation_cosine": 0.9987383447485402,
+      "object_orientation_margin": 0.018738344748540192,
+      "object_world_m": [
+        2.5496781522753524,
+        1.9047436188060918,
+        0.8583025203141117
+      ],
+      "phase": "force_balance",
+      "physics_index": 5015,
+      "robot_root_up_cosine": 0.9998237782447741,
+      "tick": 1243,
+      "time_s": 25.079999999999295
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 2.5615395843178645,
+        "index": 2.046033777217093,
+        "middle": 1.5081512398177384,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.339556947921812
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.19971641071939464,
+        0.1640812625425077,
+        0.010665115119440488
+      ],
+      "object_orientation_cosine": 0.9988296367661718,
+      "object_orientation_margin": 0.018829636766171776,
+      "object_world_m": [
+        2.5496784933179275,
+        1.9050860709083877,
+        0.8582417103916241
+      ],
+      "phase": "force_balance",
+      "physics_index": 5017,
+      "robot_root_up_cosine": 0.9998601740423346,
+      "tick": 1244,
+      "time_s": 25.089999999999293
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 2.691273835192909,
+        "middle": 1.0716242057041403,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.7946488657587287
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20148760965702775,
+        0.1632927987407731,
+        0.008110008663366084
+      ],
+      "object_orientation_cosine": 0.9997039617941926,
+      "object_orientation_margin": 0.019703961794192648,
+      "object_world_m": [
+        2.5471328109280007,
+        1.9070526518014643,
+        0.8576404003965379
+      ],
+      "phase": "force_balance",
+      "physics_index": 5054,
+      "robot_root_up_cosine": 0.999963294298022,
+      "tick": 1253,
+      "time_s": 25.274999999999256
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 1.0320697847490887,
+        "index": 2.680676343662787,
+        "middle": 1.189101747740026,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.934440554252572
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.201747121310044,
+        0.16317551323863255,
+        0.00784707760511771
+      ],
+      "object_orientation_cosine": 0.9997227027913591,
+      "object_orientation_margin": 0.019722702791359126,
+      "object_world_m": [
+        2.5464890047726576,
+        1.9064502309594746,
+        0.8575785626820346
+      ],
+      "phase": "force_balance",
+      "physics_index": 5059,
+      "robot_root_up_cosine": 0.9999809661334137,
+      "tick": 1254,
+      "time_s": 25.29999999999925
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 2.8730210338875204,
+        "middle": 1.0348179315779973,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.872618784607896
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20198762508672471,
+        0.16308772099623017,
+        0.007829475673709884
+      ],
+      "object_orientation_cosine": 0.999746137680118,
+      "object_orientation_margin": 0.019746137680118014,
+      "object_world_m": [
+        2.5460036835545665,
+        1.9061947056593578,
+        0.8575855456465409
+      ],
+      "phase": "force_balance",
+      "physics_index": 5063,
+      "robot_root_up_cosine": 0.9999826959917391,
+      "tick": 1255,
+      "time_s": 25.319999999999247
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 17.919965121632693,
+        "index": 5.774837196831026,
+        "middle": 4.832238897613994,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 5.451843060750555
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20369142706521862,
+        0.1624433540803788,
+        0.006011156904762757
+      ],
+      "object_orientation_cosine": 0.9999127431346619,
+      "object_orientation_margin": 0.01991274313466196,
+      "object_world_m": [
+        2.545237437592,
+        1.901602432304019,
+        0.8571496545119646
+      ],
+      "phase": "load_probe",
+      "physics_index": 5097,
+      "robot_root_up_cosine": 0.9995759814953247,
+      "tick": 1264,
+      "time_s": 25.489999999999213
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.011050063564435966,
+        "index": 2.3692655806802976,
+        "middle": 1.321777332807558,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.865608093764779
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20399056758798292,
+        0.16216765734955246,
+        0.004924045110670248
+      ],
+      "object_orientation_cosine": 0.9997553752361601,
+      "object_orientation_margin": 0.01975537523616011,
+      "object_world_m": [
+        2.5434909321862267,
+        1.9016516699200758,
+        0.8572824327932671
+      ],
+      "phase": "load_probe",
+      "physics_index": 5106,
+      "robot_root_up_cosine": 0.9994562352451897,
+      "tick": 1266,
+      "time_s": 25.534999999999204
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 11.830568827506037,
+        "index": 3.3614388386334584,
+        "middle": 4.902645837297036,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.722559974369246
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20458953002500913,
+        0.1620374416550579,
+        0.0032608651960105927
+      ],
+      "object_orientation_cosine": 0.9980667598584835,
+      "object_orientation_margin": 0.018066759858483494,
+      "object_world_m": [
+        2.538219992309919,
+        1.8938606548796235,
+        0.8582049357074688
+      ],
+      "phase": "load_probe",
+      "physics_index": 5172,
+      "robot_root_up_cosine": 0.9982251201995956,
+      "tick": 1283,
+      "time_s": 25.86499999999914
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 2.341575780717919,
+        "middle": 0.9473880016491898,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.967232057190902
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.2033739983159249,
+        0.16295971912054358,
+        0.0038676426239143626
+      ],
+      "object_orientation_cosine": 0.9976319957545208,
+      "object_orientation_margin": 0.01763199575452079,
+      "object_world_m": [
+        2.5406913619763336,
+        1.8945638573127066,
+        0.8587364590067131
+      ],
+      "phase": "load_probe",
+      "physics_index": 5201,
+      "robot_root_up_cosine": 0.9991145119034135,
+      "tick": 1290,
+      "time_s": 26.00999999999911
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 11.091121675763304,
+        "index": 3.3637034367451704,
+        "middle": 3.398042788538196,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.5878319175854347
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.2065013763784968,
+        0.16220507891693853,
+        0.0011763448747924312
+      ],
+      "object_orientation_cosine": 0.9986623649315318,
+      "object_orientation_margin": 0.01866236493153184,
+      "object_world_m": [
+        2.553777356499942,
+        1.9169259138891006,
+        0.8583026311045763
+      ],
+      "phase": "load_probe",
+      "physics_index": 5264,
+      "robot_root_up_cosine": 0.9999436746712772,
+      "tick": 1306,
+      "time_s": 26.324999999999047
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 2.2985660197302065,
+        "middle": 1.5305206095220192,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.6668619455708384
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.2067051923024213,
+        0.16205746835996812,
+        0.0009729861270941175
+      ],
+      "object_orientation_cosine": 0.998593843403849,
+      "object_orientation_margin": 0.018593843403849064,
+      "object_world_m": [
+        2.5528100154697975,
+        1.9170476263339113,
+        0.8579903794079606
+      ],
+      "phase": "load_probe",
+      "physics_index": 5269,
+      "robot_root_up_cosine": 0.9999586348690791,
+      "tick": 1307,
+      "time_s": 26.349999999999042
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 28.879257052062652,
+        "index": 11.351664153380378,
+        "middle": 9.388088090079698,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 8.18769390211315
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.206624329625606,
+        0.1626547104690496,
+        0.002701598717514472
+      ],
+      "object_orientation_cosine": 0.9986894061685481,
+      "object_orientation_margin": 0.018689406168548084,
+      "object_world_m": [
+        2.5373675844846266,
+        1.8994401044756197,
+        0.8576592130601779
+      ],
+      "phase": "load_probe",
+      "physics_index": 5340,
+      "robot_root_up_cosine": 0.9990666098666383,
+      "tick": 1325,
+      "time_s": 26.70499999999897
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.167745402413216,
+        "middle": 3.0954934812228614,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.245442256625162
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.2083936104802054,
+        0.15975664219116886,
+        0.0041961209451329695
+      ],
+      "object_orientation_cosine": 0.9986997211501436,
+      "object_orientation_margin": 0.018699721150143622,
+      "object_world_m": [
+        2.533861163796542,
+        1.8982440642994562,
+        0.8583642368754945
+      ],
+      "phase": "load_probe",
+      "physics_index": 5353,
+      "robot_root_up_cosine": 0.998146248197696,
+      "tick": 1328,
+      "time_s": 26.76999999999896
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 9.180515640884927,
+        "index": 4.481863382230593,
+        "middle": 2.5308177624182626,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.674067673300441
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20796541167772442,
+        0.160028144828673,
+        0.0041475144543687715
+      ],
+      "object_orientation_cosine": 0.9997064801896822,
+      "object_orientation_margin": 0.01970648018968224,
+      "object_world_m": [
+        2.534567577081028,
+        1.8949437025615876,
+        0.8573598108935493
+      ],
+      "phase": "load_probe",
+      "physics_index": 5394,
+      "robot_root_up_cosine": 0.9974213929011563,
+      "tick": 1338,
+      "time_s": 26.974999999998918
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 2.834665519834432,
+        "middle": 1.9044478603565895,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.2395876758363715
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20719052908700647,
+        0.16051208431653083,
+        0.004947341441627437
+      ],
+      "object_orientation_cosine": 0.999767273197834,
+      "object_orientation_margin": 0.019767273197834,
+      "object_world_m": [
+        2.5356561168533687,
+        1.8950768580930706,
+        0.8573417397192533
+      ],
+      "phase": "load_probe",
+      "physics_index": 5401,
+      "robot_root_up_cosine": 0.9978806335251605,
+      "tick": 1340,
+      "time_s": 27.00999999999891
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 6.637510447425045,
+        "index": 6.665414127825339,
+        "middle": 6.0011798902681655,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.807318973075598
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21178568855359148,
+        0.16967570781071897,
+        -0.0004367569690327732
+      ],
+      "object_orientation_cosine": 0.9990703392946473,
+      "object_orientation_margin": 0.0190703392946473,
+      "object_world_m": [
+        3.0432790874960656,
+        1.8624219050531412,
+        0.8579414232844945
+      ],
+      "phase": "place",
+      "physics_index": 7915,
+      "robot_root_up_cosine": 0.9999535620214699,
+      "tick": 1968,
+      "time_s": 39.580000000001796
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 6.402474718042043,
+        "middle": 5.454734564913965,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.6723933672517344
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21190687972536817,
+        0.16957404147627425,
+        -0.0007406943233465187
+      ],
+      "object_orientation_cosine": 0.9988484785979344,
+      "object_orientation_margin": 0.01884847859793437,
+      "object_world_m": [
+        3.041779082731919,
+        1.8625912012149317,
+        0.858230057716894
+      ],
+      "phase": "place",
+      "physics_index": 7932,
+      "robot_root_up_cosine": 0.9999432795049138,
+      "tick": 1973,
+      "time_s": 39.66500000000184
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.630274051190276,
+        "index": 6.488398904887337,
+        "middle": 5.342950470898769,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.736603408303598
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21192172419811314,
+        0.16956524241078152,
+        -0.0007506073621960242
+      ],
+      "object_orientation_cosine": 0.9988395985736904,
+      "object_orientation_margin": 0.01883959857369044,
+      "object_world_m": [
+        3.0416916422607305,
+        1.8625856151115208,
+        0.8582325704257171
+      ],
+      "phase": "place",
+      "physics_index": 7933,
+      "robot_root_up_cosine": 0.9999378119758378,
+      "tick": 1973,
+      "time_s": 39.67000000000184
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 6.35391271248407,
+        "middle": 5.344148927534144,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.546944409877534
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.2119625773256702,
+        0.16954395477386586,
+        -0.0007560214678617799
+      ],
+      "object_orientation_cosine": 0.998824703338375,
+      "object_orientation_margin": 0.01882470333837505,
+      "object_world_m": [
+        3.041535139847348,
+        1.862549111966059,
+        0.8582413616032946
+      ],
+      "phase": "place",
+      "physics_index": 7935,
+      "robot_root_up_cosine": 0.9999260390490593,
+      "tick": 1973,
+      "time_s": 39.68000000000185
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 1.3107880450485991,
+        "index": 6.315522438637071,
+        "middle": 5.329217222812443,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.6047872948142343
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21198061657948125,
+        0.16953427550065422,
+        -0.0007603389537848464
+      ],
+      "object_orientation_cosine": 0.9988213039785547,
+      "object_orientation_margin": 0.01882130397855475,
+      "object_world_m": [
+        3.041432800152736,
+        1.8625262814162271,
+        0.8582310340932001
+      ],
+      "phase": "place",
+      "physics_index": 7936,
+      "robot_root_up_cosine": 0.9999153878038306,
+      "tick": 1974,
+      "time_s": 39.68500000000185
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 6.106938275501866,
+        "middle": 5.267096116335743,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.629365748828205
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21212555787383097,
+        0.16944948477445845,
+        -0.0008384896358694219
+      ],
+      "object_orientation_cosine": 0.998758502078051,
+      "object_orientation_margin": 0.018758502078050965,
+      "object_world_m": [
+        3.0410632338206356,
+        1.8624951231712032,
+        0.8582774920733588
+      ],
+      "phase": "place",
+      "physics_index": 7942,
+      "robot_root_up_cosine": 0.9998404729829963,
+      "tick": 1975,
+      "time_s": 39.715000000001865
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.5757640502888238,
+        "index": 6.303222891295912,
+        "middle": 4.84551178200124,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.816926613049266
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.2121676505644015,
+        0.16942265815560104,
+        -0.0008791698054269013
+      ],
+      "object_orientation_cosine": 0.9987411540855816,
+      "object_orientation_margin": 0.018741154085581635,
+      "object_world_m": [
+        3.040901247789205,
+        1.862563470534574,
+        0.858279073764676
+      ],
+      "phase": "place",
+      "physics_index": 7944,
+      "robot_root_up_cosine": 0.999816470517832,
+      "tick": 1976,
+      "time_s": 39.72500000000187
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 6.025169802642787,
+        "middle": 5.128688088002789,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.525856306462629
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21220113752426858,
+        0.16940370367190463,
+        -0.0008936392797071397
+      ],
+      "object_orientation_cosine": 0.9987293836432253,
+      "object_orientation_margin": 0.018729383643225295,
+      "object_world_m": [
+        3.0408462750211553,
+        1.8626041598278755,
+        0.858287539846294
+      ],
+      "phase": "place",
+      "physics_index": 7945,
+      "robot_root_up_cosine": 0.9998033067230798,
+      "tick": 1976,
+      "time_s": 39.73000000000187
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 13.159487468536614,
+        "index": 7.015555499527331,
+        "middle": 5.554684385366646,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 6.223009994871976
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21182031615875058,
+        0.16966218909255698,
+        -0.0005247524064214849
+      ],
+      "object_orientation_cosine": 0.9993890185739713,
+      "object_orientation_margin": 0.01938901857397135,
+      "object_world_m": [
+        3.0440173010703426,
+        1.8617828599009971,
+        0.8575830273892944
+      ],
+      "phase": "place",
+      "physics_index": 8005,
+      "robot_root_up_cosine": 0.9989765308704178,
+      "tick": 1991,
+      "time_s": 40.030000000002026
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 6.471446947998127,
+        "middle": 4.606476696016159,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.401918490786971
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21092436518658264,
+        0.17017375915550373,
+        -2.9015832506309867e-05
+      ],
+      "object_orientation_cosine": 0.9996145773470386,
+      "object_orientation_margin": 0.019614577347038642,
+      "object_world_m": [
+        3.0452401233576083,
+        1.8616677168640638,
+        0.85779259121464
+      ],
+      "phase": "place",
+      "physics_index": 8017,
+      "robot_root_up_cosine": 0.9990938230315773,
+      "tick": 1994,
+      "time_s": 40.09000000000206
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 6.675521831705309,
+        "index": 6.688924917943135,
+        "middle": 5.3807604202555535,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 6.332620167388829
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21081781323954926,
+        0.17020800014691964,
+        -0.00011131045497786818
+      ],
+      "object_orientation_cosine": 0.999719088879767,
+      "object_orientation_margin": 0.019719088879767033,
+      "object_world_m": [
+        3.053876692081478,
+        1.864066534205784,
+        0.8575531045606899
+      ],
+      "phase": "place",
+      "physics_index": 8053,
+      "robot_root_up_cosine": 0.9992018123371141,
+      "tick": 2003,
+      "time_s": 40.27000000000215
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 5.463856958049355,
+        "middle": 4.754130144617717,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.4775475758126593
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.2109315782469151,
+        0.17008912354708827,
+        -0.0012058458124429275
+      ],
+      "object_orientation_cosine": 0.999391593165801,
+      "object_orientation_margin": 0.01939159316580097,
+      "object_world_m": [
+        3.05387290609895,
+        1.8660927547342663,
+        0.8578893966713936
+      ],
+      "phase": "place",
+      "physics_index": 8096,
+      "robot_root_up_cosine": 0.9996029539868732,
+      "tick": 2014,
+      "time_s": 40.48500000000226
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 1.6982573880019995,
+        "index": 5.1422180903503145,
+        "middle": 5.436123850526284,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.223323230562751
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21108135623169827,
+        0.16999616688518,
+        -0.0013335315471735855
+      ],
+      "object_orientation_cosine": 0.9993790680107462,
+      "object_orientation_margin": 0.01937906801074618,
+      "object_world_m": [
+        3.053564352647243,
+        1.8664499433523556,
+        0.8578942223730803
+      ],
+      "phase": "place",
+      "physics_index": 8099,
+      "robot_root_up_cosine": 0.999613910126566,
+      "tick": 2014,
+      "time_s": 40.50000000000227
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.8485986778333023,
+        "middle": 3.49087888801099,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.1822492134824647
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21160402755988666,
+        0.16970445211626234,
+        -0.0021828224686242996
+      ],
+      "object_orientation_cosine": 0.9991839696326109,
+      "object_orientation_margin": 0.01918396963261093,
+      "object_world_m": [
+        3.052806598468163,
+        1.8669802722329651,
+        0.858038302044645
+      ],
+      "phase": "place",
+      "physics_index": 8109,
+      "robot_root_up_cosine": 0.9996159554938832,
+      "tick": 2017,
+      "time_s": 40.55000000000229
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 1.8231215920147752,
+        "index": 3.752966566093839,
+        "middle": 3.8539948203728236,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.132664403450838
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21165387372634537,
+        0.16967361833595523,
+        -0.002231801115970174
+      ],
+      "object_orientation_cosine": 0.9991748043145032,
+      "object_orientation_margin": 0.019174804314503247,
+      "object_world_m": [
+        3.0527047669457756,
+        1.8669892085884192,
+        0.8580317631578553
+      ],
+      "phase": "place",
+      "physics_index": 8110,
+      "robot_root_up_cosine": 0.9996117927914523,
+      "tick": 2017,
+      "time_s": 40.555000000002295
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.856929125353902,
+        "middle": 4.806096159704795,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.9945378216562952
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.2123961426269658,
+        0.1690580382210738,
+        -0.003574525424395577
+      ],
+      "object_orientation_cosine": 0.9982727692557274,
+      "object_orientation_margin": 0.018272769255727406,
+      "object_world_m": [
+        3.0507230317861826,
+        1.868387456054635,
+        0.8584962966883938
+      ],
+      "phase": "place",
+      "physics_index": 8191,
+      "robot_root_up_cosine": 0.998253072566461,
+      "tick": 2037,
+      "time_s": 40.9600000000025
+    },
+    {
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "forces_n": {
+        "desk": 4.814776118181511,
+        "index": 4.890311377499646,
+        "middle": 5.644254564952248,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.6156201383250317
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.21240073668811302,
+        0.16905276986076906,
+        -0.0035844978612122463
+      ],
+      "object_orientation_cosine": 0.998289802937522,
+      "object_orientation_margin": 0.018289802937522026,
+      "object_world_m": [
+        3.0507375933593077,
+        1.8684175212256147,
+        0.8584366607547682
+      ],
+      "phase": "place",
+      "physics_index": 8192,
+      "robot_root_up_cosine": 0.9982487855284354,
+      "tick": 2038,
+      "time_s": 40.965000000002505
+    },
+    {
+      "desk_supported": false,
+      "diagnostic_breaches": [
+        "release_without_measured_table_support"
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.217520170223412,
+        "middle": 1.2181731383567123,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.2933341398953435
+      },
+      "hand_contact": true,
+      "object_in_wrist_m": [
+        0.20368110059944425,
+        0.17435458108804588,
+        0.0013750237250934392
+      ],
+      "object_orientation_cosine": 0.9998110391416098,
+      "object_orientation_margin": 0.019811039141609865,
+      "object_world_m": [
+        3.057891816898444,
+        1.8634396133439288,
+        0.8574799613113363
+      ],
+      "phase": "release",
+      "physics_index": 8308,
+      "robot_root_up_cosine": 0.9995007483762502,
+      "tick": 2067,
+      "time_s": 41.5450000000028
+    }
+  ],
+  "terminal": {
+    "engineering_error": null,
+    "failed_original_gates": [
+      "complete_continuous_task",
+      "no_rejection",
+      "released_and_settled"
+    ],
+    "original_max_held_slip_m": 0.015899739730012127,
+    "original_task_passed": false,
+    "stage": "release",
+    "stop_reason": "branch1_release_target_contact_lost"
+  },
+  "timeline": [
+    {
+      "actual_finger_actuator_force_nm": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_finger_qpos_rad": [
+        -2.8018650988489226e-07,
+        1.4438384708016507e-06,
+        2.6813455551413234e-07,
+        -8.597138022455236e-07,
+        -9.67242397304481e-08,
+        -7.606438879504185e-07,
+        -8.883180749889273e-08,
+        -3.200043711476024e-07,
+        -7.550164425975947e-07,
+        -1.2478301962962762e-07,
+        2.1943614800807804e-06,
+        3.4066899919072446e-07,
+        2.332477936383831e-06,
+        3.691168069571689e-07
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.5237661717216068,
+        -0.1149935128724519,
+        0.6827320027988002
+      ],
+      "object_orientation_cosine": 1.0,
+      "object_orientation_margin": 0.020000000000000018,
+      "object_world_m": [
+        2.549,
+        1.9000000000000001,
+        0.8569547590000001
+      ],
+      "phase": "warmup",
+      "physics_index": 0,
+      "robot_root_up_cosine": 0.999997531217993,
+      "tick": -10,
+      "time_s": 0.005
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        0.00010239035870767671,
+        -0.0009001800668624937,
+        -0.00013910521741062118,
+        0.00029002660037099205,
+        5.003894779394104e-05,
+        0.0002910473918178542,
+        5.019575916732845e-05,
+        0.0001033792975853054,
+        0.0008949050124504466,
+        0.00013836957834802936,
+        -0.00029744999634457757,
+        -5.111606634751983e-05,
+        -0.00029900763522835625,
+        -5.136340168980498e-05
+      ],
+      "actual_finger_qpos_rad": [
+        -4.0751348034269214e-05,
+        0.00044970301182593246,
+        6.94917363699122e-05,
+        -0.00014341834239194395,
+        -2.4769512882320086e-05,
+        -0.0001447081064170998,
+        -2.4963468650771437e-05,
+        -4.120300279559743e-05,
+        -0.00044659403545194333,
+        -6.903184511705977e-05,
+        0.00014907991848150408,
+        2.5633468356064415e-05,
+        0.00015064159511972054,
+        2.5872780605341992e-05
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        0.00010239035870767671,
+        -0.0009001800668624937,
+        -0.00013910521741062118,
+        0.00029002660037099205,
+        5.003894779394104e-05,
+        0.0002910473918178542,
+        5.019575916732845e-05,
+        0.0001033792975853054,
+        0.0008949050124504466,
+        0.00013836957834802936,
+        -0.00029744999634457757,
+        -5.111606634751983e-05,
+        -0.00029900763522835625,
+        -5.136340168980498e-05
+      ],
+      "forces_n": {
+        "desk": 1.9617334035620602,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.5171743917442356,
+        -0.10777957442887323,
+        0.6840550746280145
+      ],
+      "object_orientation_cosine": 0.9999999821681549,
+      "object_orientation_margin": 0.019999982168154906,
+      "object_world_m": [
+        2.548973110205241,
+        1.900005575423074,
+        0.8568923432022201
+      ],
+      "phase": "warmup",
+      "physics_index": 39,
+      "robot_root_up_cosine": 0.999686819418851,
+      "tick": -1,
+      "time_s": 0.2000000000000001
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        0.00010466736786397875,
+        -0.0009171975499121436,
+        -0.00014174107718279593,
+        0.00029588881230134783,
+        5.103736837431317e-05,
+        0.0002966555229662708,
+        5.1156496940277424e-05,
+        0.00010567978801020954,
+        0.0009119153167901188,
+        0.00014100449583665547,
+        -0.00030215255456992663,
+        -5.1931054196874556e-05,
+        -0.0003036462959939416,
+        -5.216986923477766e-05
+      ],
+      "actual_finger_qpos_rad": [
+        -4.2093152832997145e-05,
+        0.000466484150682013,
+        7.20801652088116e-05,
+        -0.000146032582791068,
+        -2.5270749149502758e-05,
+        -0.0001491958751171177,
+        -2.5739072443001934e-05,
+        -4.2263554747445936e-05,
+        -0.00046235370887965326,
+        -7.14804090766991e-05,
+        0.0001501825130516624,
+        2.5868936400163664e-05,
+        0.00015122252076460945,
+        2.6018305976572754e-05
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        0.00010466736786397875,
+        -0.0009171975499121436,
+        -0.00014174107718279593,
+        0.00029588881230134783,
+        5.103736837431317e-05,
+        0.0002966555229662708,
+        5.1156496940277424e-05,
+        0.00010567978801020954,
+        0.0009119153167901188,
+        0.00014100449583665547,
+        -0.00030215255456992663,
+        -5.1931054196874556e-05,
+        -0.0003036462959939416,
+        -5.216986923477766e-05
+      ],
+      "forces_n": {
+        "desk": 2.28871205184037,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.516381079371348,
+        -0.1077549569137411,
+        0.6843228241927382
+      ],
+      "object_orientation_cosine": 0.9999999805114858,
+      "object_orientation_margin": 0.01999998051148577,
+      "object_world_m": [
+        2.5489721617945524,
+        1.9000066916048266,
+        0.8568934910912026
+      ],
+      "phase": "initial_stand",
+      "physics_index": 40,
+      "robot_root_up_cosine": 0.9995436637889038,
+      "tick": 0,
+      "time_s": 0.2050000000000001
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        0.001259709816314483,
+        -0.012012327624525478,
+        -0.001847137399982755,
+        0.0036540447334045393,
+        0.000630522153008371,
+        0.003654269613279573,
+        0.0006304999161240611,
+        0.00044763653137670014,
+        0.01376097293177463,
+        0.002125736273912083,
+        -0.005620483836508996,
+        -0.0009405089462321772,
+        -0.0056050452041448194,
+        -0.0009380832187707766
+      ],
+      "actual_finger_qpos_rad": [
+        -0.0006263367135184732,
+        0.007940870496550982,
+        0.0012211452731571198,
+        -0.002415667611165401,
+        -0.0004168574325813281,
+        -0.0024157310355979204,
+        -0.0004168291674054402,
+        -0.00023410227296232118,
+        -0.009064697410314878,
+        -0.0014004368534288724,
+        0.003717033351134802,
+        0.0006218147439772121,
+        0.0037066218015106055,
+        0.0006201787560103295
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        0.001259709816314483,
+        -0.012012327624525478,
+        -0.001847137399982755,
+        0.0036540447334045393,
+        0.000630522153008371,
+        0.003654269613279573,
+        0.0006304999161240611,
+        0.00044763653137670014,
+        0.01376097293177463,
+        0.002125736273912083,
+        -0.005620483836508996,
+        -0.0009405089462321772,
+        -0.0056050452041448194,
+        -0.0009380832187707766
+      ],
+      "forces_n": {
+        "desk": 2.0064647245926315,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        -0.4883416302326436,
+        -0.16157832809467298,
+        1.015013118712577
+      ],
+      "object_orientation_cosine": 0.9999999421945457,
+      "object_orientation_margin": 0.019999942194545706,
+      "object_world_m": [
+        2.548953748912844,
+        1.9000315308834743,
+        0.856907248394148
+      ],
+      "phase": "initial_stand",
+      "physics_index": 939,
+      "robot_root_up_cosine": 0.9999506277025852,
+      "tick": 224,
+      "time_s": 4.699999999999922
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        0.0012604768578513307,
+        -0.012020458224334667,
+        -0.0018483782677661178,
+        0.0036565449345828845,
+        0.0006309501003070267,
+        0.0036567863804683634,
+        0.0006309304433494431,
+        0.0004453748967277901,
+        0.013774095151160787,
+        0.0021277438300063753,
+        -0.00562409210975637,
+        -0.0009411336619333672,
+        -0.005608650106298895,
+        -0.0009387075379471052
+      ],
+      "actual_finger_qpos_rad": [
+        -0.0006266959704315424,
+        0.007947619733102507,
+        0.0012221815414818736,
+        -0.002416606567778235,
+        -0.00041703072694305397,
+        -0.002416568974793691,
+        -0.0004169834480869764,
+        -0.00023292386970157186,
+        -0.009075457460994652,
+        -0.0014021048113843251,
+        0.003720172892096359,
+        0.0006223361895236083,
+        0.0037085170262799528,
+        0.0006205104758924965
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        0.0012604768578513307,
+        -0.012020458224334667,
+        -0.0018483782677661178,
+        0.0036565449345828845,
+        0.0006309501003070267,
+        0.0036567863804683634,
+        0.0006309304433494431,
+        0.0004453748967277901,
+        0.013774095151160787,
+        0.0021277438300063753,
+        -0.00562409210975637,
+        -0.0009411336619333672,
+        -0.005608650106298895,
+        -0.0009387075379471052
+      ],
+      "forces_n": {
+        "desk": 2.0064644850538795,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        -0.4883884349601422,
+        -0.16222995415308064,
+        1.0147928933432782
+      ],
+      "object_orientation_cosine": 0.9999999421951264,
+      "object_orientation_margin": 0.019999942195126463,
+      "object_world_m": [
+        2.548953743389165,
+        1.900031536139248,
+        0.8569072483532897
+      ],
+      "phase": "approach",
+      "physics_index": 940,
+      "robot_root_up_cosine": 0.999960395194203,
+      "tick": 225,
+      "time_s": 4.704999999999922
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.05968352615609404,
+        -0.2532333704760266,
+        -0.06547184898795826,
+        0.007803259874440748,
+        0.0010509398585305221,
+        0.007731698609874139,
+        0.001047759173000432,
+        -0.0006167977935253511,
+        0.01879495442373356,
+        0.0028857394023502217,
+        -0.006076540191789882,
+        -0.0010392224040734446,
+        -0.006071043172103816,
+        -0.001038171211613238
+      ],
+      "actual_finger_qpos_rad": [
+        0.02985934651862955,
+        0.16687297772146126,
+        0.04325485191440983,
+        -0.005104100935282574,
+        -0.0006826980157908578,
+        -0.005071937333031667,
+        -0.0006830164182179536,
+        0.00030197951439650566,
+        -0.01252852704416517,
+        -0.001924208245500769,
+        0.004015317207984023,
+        0.0006867849255433093,
+        0.00401250923732504,
+        0.0006862475351060947
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.05968352615609404,
+        -0.2532333704760266,
+        -0.06547184898795826,
+        0.007803259874440748,
+        0.0010509398585305221,
+        0.007731698609874139,
+        0.001047759173000432,
+        -0.0006167977935253511,
+        0.01879495442373356,
+        0.0028857394023502217,
+        -0.006076540191789882,
+        -0.0010392224040734446,
+        -0.006071043172103816,
+        -0.001038171211613238
+      ],
+      "forces_n": {
+        "desk": 2.0072462364293675,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        -0.33406318360573306,
+        -0.19833577677758032,
+        0.4538843657765058
+      ],
+      "object_orientation_cosine": 0.9999999420169318,
+      "object_orientation_margin": 0.019999942016931782,
+      "object_world_m": [
+        2.5489492159632565,
+        1.9000341994151329,
+        0.8569071580652089
+      ],
+      "phase": "approach",
+      "physics_index": 1459,
+      "robot_root_up_cosine": 0.9993088810823944,
+      "tick": 354,
+      "time_s": 7.299999999999867
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.05973434772185104,
+        -0.25572540848174025,
+        -0.06559768978218893,
+        0.007819477917562934,
+        0.0010539384411881252,
+        0.007750648940121278,
+        0.001051139925948102,
+        -0.0006173837399718847,
+        0.018855573983239744,
+        0.002895028463357108,
+        -0.0060675126497420325,
+        -0.001038108086269589,
+        -0.0060749507843098835,
+        -0.0010390541723973971
+      ],
+      "actual_finger_qpos_rad": [
+        0.029845758320603547,
+        0.16687759813290048,
+        0.043259904855611896,
+        -0.005102644323282618,
+        -0.000682615664243779,
+        -0.005070969489698722,
+        -0.0006830062818490961,
+        0.0003025711737510416,
+        -0.012533348077707611,
+        -0.0019248833499167337,
+        0.004016980885617634,
+        0.0006871199532837819,
+        0.004015882729270512,
+        0.000686847470721073
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.05973434772185104,
+        -0.25572540848174025,
+        -0.06559768978218893,
+        0.007819477917562934,
+        0.0010539384411881252,
+        0.007750648940121278,
+        0.001051139925948102,
+        -0.0006173837399718847,
+        0.018855573983239744,
+        0.002895028463357108,
+        -0.0060675126497420325,
+        -0.001038108086269589,
+        -0.0060749507843098835,
+        -0.0010390541723973971
+      ],
+      "forces_n": {
+        "desk": 1.9995403902909556,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        -0.33368444355405497,
+        -0.19822383153166592,
+        0.4522181748234633
+      ],
+      "object_orientation_cosine": 0.9999999421886256,
+      "object_orientation_margin": 0.019999942188625663,
+      "object_world_m": [
+        2.548949275748964,
+        1.9000341992575724,
+        0.8569071575800963
+      ],
+      "phase": "source_stop",
+      "physics_index": 1460,
+      "robot_root_up_cosine": 0.99929204781958,
+      "tick": 355,
+      "time_s": 7.3049999999998665
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.04179288090210245,
+        -0.012524148285830636,
+        -0.02959681229534176,
+        0.007816623600822734,
+        0.0011263453065840936,
+        0.007771581345938684,
+        0.0011253603817281115,
+        -0.0010073312391255076,
+        0.021517036348663005,
+        0.003299621576061522,
+        -0.006706435587599558,
+        -0.0011487299179035095,
+        -0.006697977456777699,
+        -0.0011474082565079641
+      ],
+      "actual_finger_qpos_rad": [
+        0.021103715311369724,
+        0.00829530460908732,
+        0.019902253648618636,
+        -0.005225442778555149,
+        -0.0007519456910230098,
+        -0.005195679180271374,
+        -0.0007513688401451637,
+        0.0005015250210366031,
+        -0.014277189419850251,
+        -0.002189499108028355,
+        0.004456911889597499,
+        0.0007633196925169619,
+        0.004451216411860387,
+        0.0007624320378700291
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.04179288090210245,
+        -0.012524148285830636,
+        -0.02959681229534176,
+        0.007816623600822734,
+        0.0011263453065840936,
+        0.007771581345938684,
+        0.0011253603817281115,
+        -0.0010073312391255076,
+        0.021517036348663005,
+        0.003299621576061522,
+        -0.006706435587599558,
+        -0.0011487299179035095,
+        -0.006697977456777699,
+        -0.0011474082565079641
+      ],
+      "forces_n": {
+        "desk": 2.0058489452326427,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        -0.20990761871970035,
+        -0.14984294477615204,
+        0.38419206388071925
+      ],
+      "object_orientation_cosine": 0.9999999387537086,
+      "object_orientation_margin": 0.019999938753708646,
+      "object_world_m": [
+        2.548945321397485,
+        1.9000376327475819,
+        0.8569075106773814
+      ],
+      "phase": "source_stop",
+      "physics_index": 1823,
+      "robot_root_up_cosine": 0.9995079174916607,
+      "tick": 445,
+      "time_s": 9.120000000000026
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.04174733590088433,
+        -0.012530541286113547,
+        -0.029576221330386034,
+        0.007814795156605816,
+        0.0011262068133043607,
+        0.007769727111117708,
+        0.001125212041842282,
+        -0.0010077742921077361,
+        0.021525098930846805,
+        0.003300844011599871,
+        -0.0067081107182378145,
+        -0.0011490296650337993,
+        -0.006699578899749439,
+        -0.0011476951812497832
+      ],
+      "actual_finger_qpos_rad": [
+        0.021080964314960118,
+        0.00829939966379014,
+        0.019888356720760673,
+        -0.005225562998267944,
+        -0.0007520641536875241,
+        -0.005194484933313947,
+        -0.0007512831617393783,
+        0.0005017254823265431,
+        -0.014281837819488769,
+        -0.0021901949291700065,
+        0.004459753031796115,
+        0.0007637919572610024,
+        0.0044514569387899775,
+        0.0007625053621315766
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.04174733590088433,
+        -0.012530541286113547,
+        -0.029576221330386034,
+        0.007814795156605816,
+        0.0011262068133043607,
+        0.007769727111117708,
+        0.001125212041842282,
+        -0.0010077742921077361,
+        0.021525098930846805,
+        0.003300844011599871,
+        -0.0067081107182378145,
+        -0.0011490296650337993,
+        -0.006699578899749439,
+        -0.0011476951812497832
+      ],
+      "forces_n": {
+        "desk": 2.0058517383339316,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        -0.2098944924488282,
+        -0.1504142519180273,
+        0.38379551682230445
+      ],
+      "object_orientation_cosine": 0.9999999387215592,
+      "object_orientation_margin": 0.01999993872155925,
+      "object_world_m": [
+        2.54894529993577,
+        1.9000376500224527,
+        0.8569075148417564
+      ],
+      "phase": "ready_arm",
+      "physics_index": 1824,
+      "robot_root_up_cosine": 0.9995099969905724,
+      "tick": 446,
+      "time_s": 9.125000000000027
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.005254166374585577,
+        -0.020606446211335117,
+        -0.010171770486082232,
+        0.007855668365717538,
+        0.0012754040661181036,
+        0.007843871498151377,
+        0.0012751354703682276,
+        -0.0012852169108648719,
+        0.022993061491459202,
+        0.0035272957766490517,
+        -0.010917197416696146,
+        -0.0017962746125692408,
+        -0.010900440844372094,
+        -0.0017936204880370484
+      ],
+      "actual_finger_qpos_rad": [
+        0.0026600198416666106,
+        0.013719609525172916,
+        0.006823961789417159,
+        -0.005236764545388632,
+        -0.000849892101039126,
+        -0.0052286719426476135,
+        -0.0008496880543459313,
+        0.0006474035922215133,
+        -0.015370653602390425,
+        -0.0023572066791304118,
+        0.007148998354004429,
+        0.0011781632243652138,
+        0.007138111129242937,
+        0.0011764383487239023
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.005254166374585577,
+        -0.020606446211335117,
+        -0.010171770486082232,
+        0.007855668365717538,
+        0.0012754040661181036,
+        0.007843871498151377,
+        0.0012751354703682276,
+        -0.0012852169108648719,
+        0.022993061491459202,
+        0.0035272957766490517,
+        -0.010917197416696146,
+        -0.0017962746125692408,
+        -0.010900440844372094,
+        -0.0017936204880370484
+      ],
+      "forces_n": {
+        "desk": 1.9995178144245256,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.25112574749261274,
+        0.27224247044820854,
+        -0.021509182607803205
+      ],
+      "object_orientation_cosine": 0.999999931103537,
+      "object_orientation_margin": 0.01999993110353704,
+      "object_world_m": [
+        2.5489203989621796,
+        1.9000492512743723,
+        0.8569081618940358
+      ],
+      "phase": "ready_arm",
+      "physics_index": 3583,
+      "robot_root_up_cosine": 0.9973874555175203,
+      "tick": 885,
+      "time_s": 17.92000000000072
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.005246941347270336,
+        -0.02060860124374134,
+        -0.010166625714908208,
+        0.00785572218466525,
+        0.0012754494909109476,
+        0.007843906064784122,
+        0.0012751765109323254,
+        -0.0012841751026590512,
+        0.022987372716149958,
+        0.0035264816366391686,
+        -0.010933829954767901,
+        -0.0017988049266739648,
+        -0.010917494222382319,
+        -0.0017962147298994477
+      ],
+      "actual_finger_qpos_rad": [
+        0.0026563029106905856,
+        0.01372307248417828,
+        0.00682086424186688,
+        -0.005232224074870442,
+        -0.0008491591305582578,
+        -0.005226520937874451,
+        -0.0008493212537744917,
+        0.000646933631316221,
+        -0.01536666136156062,
+        -0.0023566140049950768,
+        0.007160058442689263,
+        0.0011798543822474686,
+        0.007150132178658641,
+        0.0011783033801402738
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.005246941347270336,
+        -0.02060860124374134,
+        -0.010166625714908208,
+        0.00785572218466525,
+        0.0012754494909109476,
+        0.007843906064784122,
+        0.0012751765109323254,
+        -0.0012841751026590512,
+        0.022987372716149958,
+        0.0035264816366391686,
+        -0.010933829954767901,
+        -0.0017988049266739648,
+        -0.010917494222382319,
+        -0.0017962147298994477
+      ],
+      "forces_n": {
+        "desk": 1.9861475361646872,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.2510663500662122,
+        0.2722023176341372,
+        -0.022223970016109235
+      ],
+      "object_orientation_cosine": 0.9999999310649392,
+      "object_orientation_margin": 0.019999931064939247,
+      "object_world_m": [
+        2.5489205097470875,
+        1.9000494305489177,
+        0.856908174958587
+      ],
+      "phase": "preinsert",
+      "physics_index": 3584,
+      "robot_root_up_cosine": 0.9973891447531809,
+      "tick": 886,
+      "time_s": 17.92500000000072
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003054997663445285,
+        -0.021466896069046927,
+        -0.008548994167838301,
+        0.007678778703132547,
+        0.0012623836307408963,
+        0.007668468591945434,
+        0.0012619558344122727,
+        -0.0009050891568003508,
+        0.020811067585343,
+        0.003224891192796713,
+        -0.016096795188921414,
+        -0.0025675498226849173,
+        -0.01607154249917537,
+        -0.0025635230222998025
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015507139048206021,
+        0.014306381045663829,
+        0.005733003092112339,
+        -0.0050965907381844205,
+        -0.0008376061449525614,
+        -0.005087935663277364,
+        -0.0008370401884580862,
+        0.00045601194085243685,
+        -0.013912680489673672,
+        -0.0021551446366670558,
+        0.010648153734136715,
+        0.0016995660515115721,
+        0.01063123161644562,
+        0.0016968409940278431
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003054997663445285,
+        -0.021466896069046927,
+        -0.008548994167838301,
+        0.007678778703132547,
+        0.0012623836307408963,
+        0.007668468591945434,
+        0.0012619558344122727,
+        -0.0009050891568003508,
+        0.020811067585343,
+        0.003224891192796713,
+        -0.016096795188921414,
+        -0.0025675498226849173,
+        -0.01607154249917537,
+        -0.0025635230222998025
+      ],
+      "forces_n": {
+        "desk": 2.005258629123596,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.23218118511688515,
+        0.2701039312602229,
+        -0.01621744158375479
+      ],
+      "object_orientation_cosine": 0.9999999194583828,
+      "object_orientation_margin": 0.019999919458382864,
+      "object_world_m": [
+        2.5489139455006478,
+        1.9000550690036275,
+        0.8569092951896583
+      ],
+      "phase": "preinsert",
+      "physics_index": 3951,
+      "robot_root_up_cosine": 0.9994528303147849,
+      "tick": 977,
+      "time_s": 19.760000000000353
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003049978293916592,
+        -0.021468770194507755,
+        -0.008545151336344424,
+        0.007680181109662518,
+        0.0012626523805855962,
+        0.007670656010985298,
+        0.001262349733356348,
+        -0.0009043813516675334,
+        0.020807973488188504,
+        0.0032245107233952494,
+        -0.016106205933402347,
+        -0.0025689210177611255,
+        -0.01608581194477204,
+        -0.0025656488593068854
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015481268316319856,
+        0.014307629706109945,
+        0.005730408020556851,
+        -0.005097350767022615,
+        -0.0008377652913371385,
+        -0.0050894894945730206,
+        -0.0008373228425891912,
+        0.00045561934423310815,
+        -0.01390971140721623,
+        -0.0021547511545040197,
+        0.010653688727075165,
+        0.0017003578724693047,
+        0.010639158433185346,
+        0.0016980086719358977
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003049978293916592,
+        -0.021468770194507755,
+        -0.008545151336344424,
+        0.007680181109662518,
+        0.0012626523805855962,
+        0.007670656010985298,
+        0.001262349733356348,
+        -0.0009043813516675334,
+        0.020807973488188504,
+        0.0032245107233952494,
+        -0.016106205933402347,
+        -0.0025689210177611255,
+        -0.01608581194477204,
+        -0.0025656488593068854
+      ],
+      "forces_n": {
+        "desk": 2.0013733416895527,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.2323166482471195,
+        0.26993042829455766,
+        -0.015901233486384628
+      ],
+      "object_orientation_cosine": 0.9999999198141529,
+      "object_orientation_margin": 0.019999919814152944,
+      "object_world_m": [
+        2.548914170670877,
+        1.9000551757656552,
+        0.8569093012281556
+      ],
+      "phase": "lower",
+      "physics_index": 3952,
+      "robot_root_up_cosine": 0.999446180374632,
+      "tick": 978,
+      "time_s": 19.765000000000352
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003055288950511271,
+        -0.02147724193091363,
+        -0.008565011888685732,
+        0.00763811378687743,
+        0.0012557941070167544,
+        0.007642417166018196,
+        0.0012576161079195724,
+        -0.0009049334456277763,
+        0.020827839216402178,
+        0.003226824237834644,
+        -0.01607562926517792,
+        -0.002564937506342114,
+        -0.01606815476507476,
+        -0.002563690360829617
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015275729947717767,
+        0.014317864190982384,
+        0.005709931108480185,
+        -0.005092655426209789,
+        -0.0008373168037447674,
+        -0.005096373444440062,
+        -0.0008386573027664188,
+        0.0004524600755860574,
+        -0.013886126824763723,
+        -0.0021513635782380745,
+        0.010716728571047716,
+        0.0017098964222585662,
+        0.010712480430880274,
+        0.0017091768044763674
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003055288950511271,
+        -0.02147724193091363,
+        -0.008565011888685732,
+        0.00763811378687743,
+        0.0012557941070167544,
+        0.007642417166018196,
+        0.0012576161079195724,
+        -0.0009049334456277763,
+        0.020827839216402178,
+        0.003226824237834644,
+        -0.01607562926517792,
+        -0.002564937506342114,
+        -0.01606815476507476,
+        -0.002563690360829617
+      ],
+      "forces_n": {
+        "desk": 1.9625726299214672,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.23026539462248322,
+        0.19522967516822112,
+        -0.003751053044294552
+      ],
+      "object_orientation_cosine": 0.9999999180422801,
+      "object_orientation_margin": 0.019999918042280074,
+      "object_world_m": [
+        2.5489127257274617,
+        1.900054494701245,
+        0.8569091945428347
+      ],
+      "phase": "lower",
+      "physics_index": 4151,
+      "robot_root_up_cosine": 0.9981950747045552,
+      "tick": 1027,
+      "time_s": 20.760000000000154
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003055204616665013,
+        -0.02147743568225117,
+        -0.008565047995791518,
+        0.007637494914972726,
+        0.001255694717215206,
+        0.007642783812081183,
+        0.001257662938835226,
+        -0.0009049307099467549,
+        0.020829158376754153,
+        0.0032270624963620462,
+        -0.016073889253285106,
+        -0.0025646368916684174,
+        -0.01606689813379892,
+        -0.002563463330057401
+      ],
+      "actual_finger_qpos_rad": [
+        0.001527571097491256,
+        0.014317904506222104,
+        0.005709939645732758,
+        -0.00509256698174671,
+        -0.0008373010363869966,
+        -0.005096316979900749,
+        -0.0008386462388065811,
+        0.0004524627921639724,
+        -0.013886045225468,
+        -0.002151348624467733,
+        0.010716781517063385,
+        0.0017099067819689457,
+        0.010712518002279658,
+        0.0017091848109081664
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003055204616665013,
+        -0.02147743568225117,
+        -0.008565047995791518,
+        0.007637494914972726,
+        0.001255694717215206,
+        0.007642783812081183,
+        0.001257662938835226,
+        -0.0009049307099467549,
+        0.020829158376754153,
+        0.0032270624963620462,
+        -0.016073889253285106,
+        -0.0025646368916684174,
+        -0.01606689813379892,
+        -0.002563463330057401
+      ],
+      "forces_n": {
+        "desk": 1.9626015061222557,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.23050728216203406,
+        0.19440400050896722,
+        -0.003916663761349706
+      ],
+      "object_orientation_cosine": 0.9999999180022379,
+      "object_orientation_margin": 0.019999918002237882,
+      "object_world_m": [
+        2.5489128169386643,
+        1.9000546246078591,
+        0.8569092278394472
+      ],
+      "phase": "insert",
+      "physics_index": 4152,
+      "robot_root_up_cosine": 0.998230324461812,
+      "tick": 1028,
+      "time_s": 20.765000000000153
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030552532209119033,
+        -0.02147606654536197,
+        -0.008564780532743257,
+        0.007639840865321855,
+        0.0012561085745846196,
+        0.007644622010577087,
+        0.0012580020561302951,
+        -0.0009051054615931175,
+        0.020832603535964802,
+        0.003227694954123943,
+        -0.016070615822243207,
+        -0.002564038330482051,
+        -0.016064256473359084,
+        -0.002562961694071038
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015275941255974584,
+        0.014318036882589983,
+        0.005709992849292828,
+        -0.005092141088444905,
+        -0.0008372029884057326,
+        -0.005095764410411738,
+        -0.0008385311285216717,
+        0.00045253689514573484,
+        -0.013888348628922317,
+        -0.0021517751984265875,
+        0.010713941390799937,
+        0.0017094012363952655,
+        0.010709531545161832,
+        0.0017086592574681722
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030552532209119033,
+        -0.02147606654536197,
+        -0.008564780532743257,
+        0.007639840865321855,
+        0.0012561085745846196,
+        0.007644622010577087,
+        0.0012580020561302951,
+        -0.0009051054615931175,
+        0.020832603535964802,
+        0.003227694954123943,
+        -0.016070615822243207,
+        -0.002564038330482051,
+        -0.016064256473359084,
+        -0.002562961694071038
+      ],
+      "forces_n": {
+        "desk": 1.9624295870231077,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.20754094383537136,
+        0.16510816862017863,
+        0.01337885699163946
+      ],
+      "object_orientation_cosine": 0.9999999200691311,
+      "object_orientation_margin": 0.019999920069131094,
+      "object_world_m": [
+        2.548912978815046,
+        1.90005379863446,
+        0.8569089603726867
+      ],
+      "phase": "insert",
+      "physics_index": 4351,
+      "robot_root_up_cosine": 0.9992175247461429,
+      "tick": 1077,
+      "time_s": 21.759999999999955
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030551968998801665,
+        -0.021476316076213066,
+        -0.008564831956750136,
+        0.00763909528554995,
+        0.0012559826252964716,
+        0.007644606596872259,
+        0.0012579845411834034,
+        -0.000905127395172193,
+        0.020832593773993463,
+        0.003227693297962751,
+        -0.01607069941861196,
+        -0.00256405084456341,
+        -0.01606409488980646,
+        -0.0025629379829224994
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015275882070611168,
+        0.01431802453778893,
+        0.005709989393066536,
+        -0.005092127920824262,
+        -0.0008372026044614162,
+        -0.0050957989357123335,
+        -0.000838537621214597,
+        0.00045252880293058644,
+        -0.0138882800784401,
+        -0.002151763896233042,
+        0.010713930885914009,
+        0.0017094004468677865,
+        0.010709602981488441,
+        0.0017086704991471171
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030551968998801665,
+        -0.021476316076213066,
+        -0.008564831956750136,
+        0.00763909528554995,
+        0.0012559826252964716,
+        0.007644606596872259,
+        0.0012579845411834034,
+        -0.000905127395172193,
+        0.020832593773993463,
+        0.003227693297962751,
+        -0.01607069941861196,
+        -0.00256405084456341,
+        -0.01606409488980646,
+        -0.0025629379829224994
+      ],
+      "forces_n": {
+        "desk": 1.962379579864578,
+        "index": 0.0,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 0.0
+      },
+      "hand_contact": false,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_in_wrist_m": [
+        0.20777101206186355,
+        0.16516686870823433,
+        0.013026558141680515
+      ],
+      "object_orientation_cosine": 0.9999999196615865,
+      "object_orientation_margin": 0.01999991966158654,
+      "object_world_m": [
+        2.548912928176466,
+        1.9000539397002816,
+        0.8569090098734737
+      ],
+      "phase": "close",
+      "physics_index": 4352,
+      "robot_root_up_cosine": 0.9991735764772368,
+      "tick": 1078,
+      "time_s": 21.764999999999954
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003055147270152884,
+        -0.02147588847515307,
+        -0.008564798935737677,
+        0.007638230506161036,
+        0.0012558177110866971,
+        0.007644315011957639,
+        0.0012579063458178063,
+        -0.1378345359768758,
+        -0.11785432447106114,
+        -0.10510185846485082,
+        0.19107851812004142,
+        0.13127767781348523,
+        0.20033117790347907,
+        0.12171229406149887
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015275681096291326,
+        0.014317330540567242,
+        0.005709880134939341,
+        -0.005092233552194896,
+        -0.0008372212508654604,
+        -0.0050963034976576616,
+        -0.0008386155260129242,
+        0.23878249921501205,
+        -0.46689652746155924,
+        -0.5693165710252006,
+        0.6691482843175387,
+        0.6951088486698757,
+        0.606516547534372,
+        0.6641214520701365
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003055147270152884,
+        -0.02147588847515307,
+        -0.008564798935737677,
+        0.007638230506161036,
+        0.0012558177110866971,
+        0.007644315011957639,
+        0.0012579063458178063,
+        -0.1378345359768758,
+        -0.11785432447106114,
+        -0.10510185846485082,
+        0.19107851812004142,
+        0.13127767781348523,
+        0.20033117790347907,
+        0.12171229406149887
+      ],
+      "forces_n": {
+        "desk": 5.46411215420378,
+        "index": 2.725595810517153,
+        "middle": 1.895847589362836,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.338938063628653
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.1698584705273834,
+        -0.5385636443454694,
+        -0.6393816815730669,
+        0.80235071293545,
+        0.7942279942219016,
+        0.7448959775833558,
+        0.7502980400999124
+      ],
+      "object_in_wrist_m": [
+        0.20122824908077533,
+        0.16723403987258903,
+        0.011234387057522811
+      ],
+      "object_orientation_cosine": 0.9988753528465815,
+      "object_orientation_margin": 0.018875352846581483,
+      "object_world_m": [
+        2.548480800997273,
+        1.9037976455255239,
+        0.8581710595560103
+      ],
+      "phase": "close",
+      "physics_index": 4899,
+      "robot_root_up_cosine": 0.9958402361863898,
+      "tick": 1214,
+      "time_s": 24.49999999999941
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030551451381324733,
+        -0.021475894547385525,
+        -0.008564799461753614,
+        0.0076381932992445585,
+        0.0012558124492662555,
+        0.007644282091291492,
+        0.0012579014720654187,
+        -0.12757755976079455,
+        -0.12630388010307314,
+        -0.11279340297533624,
+        0.18118158693594352,
+        0.12233212542543218,
+        0.19267196454808863,
+        0.11348736890175608
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015275663764704143,
+        0.014317312752782736,
+        0.005709877068826131,
+        -0.005092218115136894,
+        -0.0008372191985718594,
+        -0.005096304692404623,
+        -0.0008386159255694435,
+        0.23878222236578797,
+        -0.46631181294287927,
+        -0.569316517922345,
+        0.6696620058735819,
+        0.6958924187288175,
+        0.6066990800234586,
+        0.6645285372686175
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030551451381324733,
+        -0.021475894547385525,
+        -0.008564799461753614,
+        0.0076381932992445585,
+        0.0012558124492662555,
+        0.007644282091291492,
+        0.0012579014720654187,
+        -0.12757755976079455,
+        -0.12630388010307314,
+        -0.11279340297533624,
+        0.18118158693594352,
+        0.12233212542543218,
+        0.19267196454808863,
+        0.11348736890175608
+      ],
+      "forces_n": {
+        "desk": 6.529373910901491,
+        "index": 4.114483456310856,
+        "middle": 1.996302483228049,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.7621653964218815
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.1749866842730544,
+        -0.5436918580911405,
+        -0.6445098953187379,
+        0.79635071293545,
+        0.7882279942219016,
+        0.7399713904909123,
+        0.7453734530074689
+      ],
+      "object_in_wrist_m": [
+        0.20114526129039006,
+        0.16723069713055283,
+        0.01141846459893654
+      ],
+      "object_orientation_cosine": 0.9988217719985953,
+      "object_orientation_margin": 0.01882177199859536,
+      "object_world_m": [
+        2.5485586801179037,
+        1.9036707852156511,
+        0.8582013132808415
+      ],
+      "phase": "force_balance",
+      "physics_index": 4900,
+      "robot_root_up_cosine": 0.9959739230031442,
+      "tick": 1215,
+      "time_s": 24.50499999999941
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003056107894550831,
+        -0.021476618922488463,
+        -0.008565054675946501,
+        0.007638860303127269,
+        0.0012557581251878953,
+        0.007634716290187618,
+        0.0012563279121587255,
+        -0.0984360609615271,
+        -0.1614750982807099,
+        -0.1297424897129552,
+        0.15263406327547993,
+        0.11810397586410523,
+        0.17905472454449567,
+        0.10583906092787969
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015278257651776788,
+        0.014317282828479373,
+        0.005709925076286565,
+        -0.005092397390537034,
+        -0.0008371900976594472,
+        -0.005093692341709946,
+        -0.0008381743230742417,
+        0.23582329301819557,
+        -0.4482101514284416,
+        -0.5696336134867727,
+        0.7254811072566807,
+        0.7389014104567806,
+        0.6150875905931192,
+        0.6693015565439693
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003056107894550831,
+        -0.021476618922488463,
+        -0.008565054675946501,
+        0.007638860303127269,
+        0.0012557581251878953,
+        0.007634716290187618,
+        0.0012563279121587255,
+        -0.0984360609615271,
+        -0.1614750982807099,
+        -0.1297424897129552,
+        0.15263406327547993,
+        0.11810397586410523,
+        0.17905472454449567,
+        0.10583906092787969
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.192670240376829,
+        "middle": 1.216664441348744,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.1454168274780168
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.18660475413529581,
+        -0.5553099279533819,
+        -0.6561279651809793,
+        0.8289593800346363,
+        0.8208366613210879,
+        0.7344574822576264,
+        0.739859544774183
+      ],
+      "object_in_wrist_m": [
+        0.2033497750464456,
+        0.16261690512933868,
+        0.00639609115013609
+      ],
+      "object_orientation_cosine": 0.9998988014625841,
+      "object_orientation_margin": 0.01989880146258416,
+      "object_world_m": [
+        2.5463256085702697,
+        1.9023386927502537,
+        0.85859460287644
+      ],
+      "phase": "force_balance",
+      "physics_index": 5095,
+      "robot_root_up_cosine": 0.9996390637045405,
+      "tick": 1263,
+      "time_s": 25.479999999999215
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030559156241385843,
+        -0.021476015452913323,
+        -0.008564927429869732,
+        0.007638585799247724,
+        0.001255753027952642,
+        0.0076371743625809835,
+        0.0012567295373710468,
+        -0.11005926002683222,
+        -0.15288267009654458,
+        -0.12102431541416638,
+        0.14334615091377084,
+        0.10824826808252623,
+        0.17005616334572995,
+        0.09683963547560813
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015278097059629944,
+        0.014317286480589868,
+        0.005709923382444606,
+        -0.005092364104363567,
+        -0.0008371874576423117,
+        -0.005093699993511182,
+        -0.0008381770783690921,
+        0.23582315654227043,
+        -0.44815194473307823,
+        -0.5696335211561357,
+        0.7255807285521838,
+        0.7392079295998922,
+        0.6150874997243903,
+        0.6693014237340306
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030559156241385843,
+        -0.021476015452913323,
+        -0.008564927429869732,
+        0.007638585799247724,
+        0.001255753027952642,
+        0.0076371743625809835,
+        0.0012567295373710468,
+        -0.11005926002683222,
+        -0.15288267009654458,
+        -0.12102431541416638,
+        0.14334615091377084,
+        0.10824826808252623,
+        0.17005616334572995,
+        0.09683963547560813
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.082503845516075,
+        "middle": 2.0079017998652504,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.120908408202647
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.18079232135757348,
+        -0.5494974951756596,
+        -0.650315532403257,
+        0.8229593800346363,
+        0.8148366613210879,
+        0.7284574822576264,
+        0.733859544774183
+      ],
+      "object_in_wrist_m": [
+        0.2035215932433931,
+        0.16252902630165303,
+        0.006224033248350149
+      ],
+      "object_orientation_cosine": 0.9999063862914208,
+      "object_orientation_margin": 0.01990638629142083,
+      "object_world_m": [
+        2.545803909080073,
+        1.9019496328917203,
+        0.8578728195105623
+      ],
+      "phase": "load_probe",
+      "physics_index": 5096,
+      "robot_root_up_cosine": 0.9996066537687929,
+      "tick": 1264,
+      "time_s": 25.484999999999214
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030553339585267423,
+        -0.021473026657812314,
+        -0.008564369081988406,
+        0.0076392872696764095,
+        0.0012559645594742708,
+        0.007645097085607622,
+        0.001258016385249952,
+        -0.03085245658178148,
+        -0.21806788375766195,
+        -0.17759873590257502,
+        0.1478309043796127,
+        0.1177927388204661,
+        0.21453072984300725,
+        0.14423840433740537
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015276836798507525,
+        0.014315414865288704,
+        0.005709588913604959,
+        -0.0050929092534611545,
+        -0.0008373174376640404,
+        -0.005096496038012011,
+        -0.0008386427333595482,
+        0.23565851813811248,
+        -0.43961735747270053,
+        -0.5713586538987482,
+        0.7496560154096504,
+        0.7617615329003169,
+        0.6198025390280114,
+        0.6720642774789329
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030553339585267423,
+        -0.021473026657812314,
+        -0.008564369081988406,
+        0.0076392872696764095,
+        0.0012559645594742708,
+        0.007645097085607622,
+        0.001258016385249952,
+        -0.03085245658178148,
+        -0.21806788375766195,
+        -0.17759873590257502,
+        0.1478309043796127,
+        0.1177927388204661,
+        0.21453072984300725,
+        0.14423840433740537
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.420765211422544,
+        "middle": 1.0513734516140725,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.078330241716844
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.22023566031986685,
+        -0.5850000000000001,
+        -0.6897588713655504,
+        0.8484150298946715,
+        0.8402923111811231,
+        0.7628213390749529,
+        0.7682234015915095
+      ],
+      "object_in_wrist_m": [
+        0.20662068363405908,
+        0.16321627018058082,
+        0.0023886844623590233
+      ],
+      "object_orientation_cosine": 0.9987975702286536,
+      "object_orientation_margin": 0.018797570228653582,
+      "object_world_m": [
+        2.552445448609024,
+        1.9138809525073253,
+        0.8653907999025893
+      ],
+      "phase": "load_probe",
+      "physics_index": 5459,
+      "robot_root_up_cosine": 0.9996815164233234,
+      "tick": 1354,
+      "time_s": 27.299999999998853
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030553355363507734,
+        -0.021473163644638027,
+        -0.008564390486445198,
+        0.0076392615698882525,
+        0.0012559602694109464,
+        0.007644905676347766,
+        0.001257987170101395,
+        -0.030852945743873674,
+        -0.21807392338153428,
+        -0.1776061270642151,
+        0.14727684615974487,
+        0.11779416112038354,
+        0.21453012372627298,
+        0.14423410965512345
+      ],
+      "actual_finger_qpos_rad": [
+        0.001527658813613966,
+        0.014315288934782004,
+        0.005709568947501298,
+        -0.005092717599369197,
+        -0.0008372890461109479,
+        -0.005096819121300701,
+        -0.0008386913087381788,
+        0.235658641583253,
+        -0.4396171618761829,
+        -0.5713580502895926,
+        0.7496767143921091,
+        0.7617615553580853,
+        0.619802138610006,
+        0.6720646393198189
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030553355363507734,
+        -0.021473163644638027,
+        -0.008564390486445198,
+        0.0076392615698882525,
+        0.0012559602694109464,
+        0.007644905676347766,
+        0.001257987170101395,
+        -0.030852945743873674,
+        -0.21807392338153428,
+        -0.1776061270642151,
+        0.14727684615974487,
+        0.11779416112038354,
+        0.21453012372627298,
+        0.14423410965512345
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.674120424360324,
+        "middle": 1.3503071994389297,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.1447396089447417
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.22023566031986685,
+        -0.5850000000000001,
+        -0.6897588713655504,
+        0.8484150298946715,
+        0.8402923111811231,
+        0.7628213390749529,
+        0.7682234015915095
+      ],
+      "object_in_wrist_m": [
+        0.20654426317371272,
+        0.16328370704739503,
+        0.0025860155913435597
+      ],
+      "object_orientation_cosine": 0.9987579781627446,
+      "object_orientation_margin": 0.018757978162744604,
+      "object_world_m": [
+        2.5530203385078543,
+        1.9143835463634908,
+        0.8655567913761802
+      ],
+      "phase": "lift",
+      "physics_index": 5460,
+      "robot_root_up_cosine": 0.9997049363830594,
+      "tick": 1355,
+      "time_s": 27.304999999998852
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030553469524844516,
+        -0.021474624793361305,
+        -0.008564649724749648,
+        0.0076383724568005774,
+        0.0012557898913858267,
+        0.007642861546493469,
+        0.0012576453760133662,
+        -0.006017811256287185,
+        -0.2255863103754565,
+        -0.20114561719968088,
+        0.11358975196405167,
+        0.09689964408015111,
+        0.2549769590763246,
+        0.18891473256125943
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015275879762198985,
+        0.0143159659124528,
+        0.005709670408423969,
+        -0.005092602464721096,
+        -0.0008372759915219246,
+        -0.005097006939661306,
+        -0.000838722069371786,
+        0.24123883615666916,
+        -0.43458959997832763,
+        -0.5736446023436952,
+        0.7754347907547772,
+        0.7784425253344766,
+        0.6255650017638135,
+        0.6750183027182468
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030553469524844516,
+        -0.021474624793361305,
+        -0.008564649724749648,
+        0.0076383724568005774,
+        0.0012557898913858267,
+        0.007642861546493469,
+        0.0012576453760133662,
+        -0.006017811256287185,
+        -0.2255863103754565,
+        -0.20114561719968088,
+        0.11358975196405167,
+        0.09689964408015111,
+        0.2549769590763246,
+        0.18891473256125943
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.9975233626375912,
+        "middle": 2.1360864638589767,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.9496646638360473
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7077588713655504,
+        0.8511684253580276,
+        0.8430457066444792,
+        0.7955526009601849,
+        0.8009546634767415
+      ],
+      "object_in_wrist_m": [
+        0.20210425938893736,
+        0.17106182038130738,
+        0.006650095063169207
+      ],
+      "object_orientation_cosine": 0.9992049381469105,
+      "object_orientation_margin": 0.01920493814691049,
+      "object_world_m": [
+        2.5401233890673014,
+        1.896435634689419,
+        0.9253652931108551
+      ],
+      "phase": "lift",
+      "physics_index": 5851,
+      "robot_root_up_cosine": 0.9983120140777068,
+      "tick": 1452,
+      "time_s": 29.259999999998463
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003055353349087793,
+        -0.0214746284965886,
+        -0.008564647097165002,
+        0.007638543562100782,
+        0.0012558191523364542,
+        0.007642984053766608,
+        0.0012576676087179609,
+        -0.006017667625271367,
+        -0.2255886889300779,
+        -0.20114794752681256,
+        0.11359058650817666,
+        0.09690008589649686,
+        0.2549772304137815,
+        0.18891364433405516
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015275981366845459,
+        0.014315991052945768,
+        0.0057096756013530064,
+        -0.005092612585835966,
+        -0.0008372760449238366,
+        -0.005096890507341557,
+        -0.0008387033881436594,
+        0.2412392649812284,
+        -0.4345906316851361,
+        -0.5736454783623022,
+        0.7754351386114523,
+        0.7784426993251911,
+        0.6255651419599425,
+        0.6750179622720534
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003055353349087793,
+        -0.0214746284965886,
+        -0.008564647097165002,
+        0.007638543562100782,
+        0.0012558191523364542,
+        0.007642984053766608,
+        0.0012576676087179609,
+        -0.006017667625271367,
+        -0.2255886889300779,
+        -0.20114794752681256,
+        0.11359058650817666,
+        0.09690008589649686,
+        0.2549772304137815,
+        0.18891364433405516
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.93289239247838,
+        "middle": 1.937916804650914,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.9119347440471377
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7077588713655504,
+        0.8511684253580276,
+        0.8430457066444792,
+        0.7955526009601849,
+        0.8009546634767415
+      ],
+      "object_in_wrist_m": [
+        0.20207474150589394,
+        0.17107832582889113,
+        0.006700931507340028
+      ],
+      "object_orientation_cosine": 0.9992279024540567,
+      "object_orientation_margin": 0.0192279024540567,
+      "object_world_m": [
+        2.5403092591414342,
+        1.8962086323698515,
+        0.9256465169249155
+      ],
+      "phase": "loaded_hover",
+      "physics_index": 5852,
+      "robot_root_up_cosine": 0.9983225185507223,
+      "tick": 1453,
+      "time_s": 29.264999999998462
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003055332770048139,
+        -0.021474690246426915,
+        -0.008564600054341637,
+        0.007640312468898954,
+        0.0012561486169488292,
+        0.007645758339615019,
+        0.0012581477288277727,
+        -0.006043295607167342,
+        -0.2272544665023413,
+        -0.20123984697574418,
+        0.113501621317026,
+        0.09656190456097637,
+        0.25428421439006765,
+        0.18688520667430247
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015276637986726704,
+        0.014316587128906193,
+        0.005709758972629127,
+        -0.005093323220550495,
+        -0.000837393065448458,
+        -0.005096906763721205,
+        -0.0008387184876614723,
+        0.2412541172857371,
+        -0.4335185901762252,
+        -0.5735899589104576,
+        0.775491022774292,
+        0.7786617117428254,
+        0.6260291086122554,
+        0.6763730616730014
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003055332770048139,
+        -0.021474690246426915,
+        -0.008564600054341637,
+        0.007640312468898954,
+        0.0012561486169488292,
+        0.007645758339615019,
+        0.0012581477288277727,
+        -0.006043295607167342,
+        -0.2272544665023413,
+        -0.20123984697574418,
+        0.113501621317026,
+        0.09656190456097637,
+        0.25428421439006765,
+        0.18688520667430247
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.001453767998441,
+        "middle": 3.54901135625567,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.8141832910413
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7077588713655504,
+        0.8511684253580276,
+        0.8430457066444792,
+        0.7955526009601849,
+        0.8009546634767415
+      ],
+      "object_in_wrist_m": [
+        0.20323204201938488,
+        0.17076563279590062,
+        0.005475134490312185
+      ],
+      "object_orientation_cosine": 0.9978144786605605,
+      "object_orientation_margin": 0.017814478660560518,
+      "object_world_m": [
+        2.531801140309688,
+        1.8884731579003287,
+        0.9250972108663899
+      ],
+      "phase": "loaded_hover",
+      "physics_index": 6051,
+      "robot_root_up_cosine": 0.9975793532877654,
+      "tick": 1502,
+      "time_s": 30.259999999998264
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030553236024391736,
+        -0.021474755216971397,
+        -0.008564615188795784,
+        0.0076401576487925785,
+        0.0012561200494195363,
+        0.00764555349571655,
+        0.0012581108731330227,
+        -0.006044483654322353,
+        -0.22736850207433554,
+        -0.20124082104215657,
+        0.11349845655094476,
+        0.09655686082299307,
+        0.25428459012977517,
+        0.18688788893363098
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015276625133907478,
+        0.014316606999323486,
+        0.00570976291438616,
+        -0.005093303293417457,
+        -0.0008373891840070732,
+        -0.005096918001750846,
+        -0.0008387193451680409,
+        0.2412545453837237,
+        -0.4334992051511113,
+        -0.5735902912197832,
+        0.775492167885212,
+        0.7786632235401757,
+        0.6260290583902621,
+        0.6763720379002183
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030553236024391736,
+        -0.021474755216971397,
+        -0.008564615188795784,
+        0.0076401576487925785,
+        0.0012561200494195363,
+        0.00764555349571655,
+        0.0012581108731330227,
+        -0.006044483654322353,
+        -0.22736850207433554,
+        -0.20124082104215657,
+        0.11349845655094476,
+        0.09655686082299307,
+        0.25428459012977517,
+        0.18688788893363098
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.936980520463124,
+        "middle": 3.5875081238901574,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.7809684805017145
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7077588713655504,
+        0.8511684253580276,
+        0.8430457066444792,
+        0.7955526009601849,
+        0.8009546634767415
+      ],
+      "object_in_wrist_m": [
+        0.203239926744297,
+        0.17076075379657554,
+        0.005457159051153804
+      ],
+      "object_orientation_cosine": 0.9977980388013512,
+      "object_orientation_margin": 0.017798038801351224,
+      "object_world_m": [
+        2.532037557454893,
+        1.8882105355490992,
+        0.9252306575105136
+      ],
+      "phase": "tuck",
+      "physics_index": 6052,
+      "robot_root_up_cosine": 0.9975675499136138,
+      "tick": 1503,
+      "time_s": 30.264999999998263
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030552663158499786,
+        -0.02147541576759301,
+        -0.008564760674551523,
+        0.007638954435002158,
+        0.0012558933588965374,
+        0.00764392236388619,
+        0.0012578170292531943,
+        -0.006076480302125393,
+        -0.24399191661744693,
+        -0.2622044849247149,
+        0.20023844918496644,
+        0.0933816079973063,
+        0.24954776904555045,
+        0.18382505049614947
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015276070172026554,
+        0.014316515436693397,
+        0.005709755455588449,
+        -0.005092873092867747,
+        -0.0008373175653529965,
+        -0.005096825633104742,
+        -0.0008386958918028964,
+        0.2412726272209708,
+        -0.42495806917171003,
+        -0.5832235648052799,
+        0.7763465024079579,
+        0.7808054899967122,
+        0.6291850007517615,
+        0.6784002874864151
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030552663158499786,
+        -0.02147541576759301,
+        -0.008564760674551523,
+        0.007638954435002158,
+        0.0012558933588965374,
+        0.00764392236388619,
+        0.0012578170292531943,
+        -0.006076480302125393,
+        -0.24399191661744693,
+        -0.2622044849247149,
+        0.20023844918496644,
+        0.0933816079973063,
+        0.24954776904555045,
+        0.18382505049614947
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.522684939470886,
+        "middle": 4.9198563898807866,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.684973912103809
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7641700981478584,
+        0.9098330890445865,
+        0.8430457066444792,
+        0.7955526009601849,
+        0.8009546634767415
+      ],
+      "object_in_wrist_m": [
+        0.204113168371051,
+        0.17046556196182142,
+        0.0037478795363426534
+      ],
+      "object_orientation_cosine": 0.9993475443111101,
+      "object_orientation_margin": 0.019347544311110076,
+      "object_world_m": [
+        2.547885555594228,
+        1.8915036525260611,
+        0.9344109650384659
+      ],
+      "phase": "tuck",
+      "physics_index": 6291,
+      "robot_root_up_cosine": 0.9980529224394771,
+      "tick": 1562,
+      "time_s": 31.459999999998026
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003055283319398571,
+        -0.021475273208125676,
+        -0.00856472852806315,
+        0.007639274316284321,
+        0.0012559522549564046,
+        0.007644175817352213,
+        0.0012578663972728278,
+        -0.006076831877786062,
+        -0.2442900870711057,
+        -0.26343775673836817,
+        0.20028329935418648,
+        0.0933706721977816,
+        0.24954903626629502,
+        0.18382734440393148
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015275954843210686,
+        0.014316500409355337,
+        0.005709747046215247,
+        -0.005092981760957937,
+        -0.0008373403178185065,
+        -0.005096870309254815,
+        -0.0008387084580022004,
+        0.24127242503418941,
+        -0.4247502231099561,
+        -0.5836595642330602,
+        0.7763470288212861,
+        0.7808064951714275,
+        0.6291846264344603,
+        0.6784000747252796
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003055283319398571,
+        -0.021475273208125676,
+        -0.00856472852806315,
+        0.007639274316284321,
+        0.0012559522549564046,
+        0.007644175817352213,
+        0.0012578663972728278,
+        -0.006076831877786062,
+        -0.2442900870711057,
+        -0.26343775673836817,
+        0.20028329935418648,
+        0.0933706721977816,
+        0.24954903626629502,
+        0.18382734440393148
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.510568235751754,
+        "middle": 4.95844529826711,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.4317330488522217
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7652627956122561,
+        0.9098658908892909,
+        0.8430457066444792,
+        0.7955526009601849,
+        0.8009546634767415
+      ],
+      "object_in_wrist_m": [
+        0.20410637571601398,
+        0.17047270505200604,
+        0.0037510769146438445
+      ],
+      "object_orientation_cosine": 0.9993026401397176,
+      "object_orientation_margin": 0.01930264013971761,
+      "object_world_m": [
+        2.54876530555256,
+        1.8915911887982608,
+        0.9350211341691318
+      ],
+      "phase": "carry",
+      "physics_index": 6292,
+      "robot_root_up_cosine": 0.9980842586829509,
+      "tick": 1563,
+      "time_s": 31.464999999998025
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030559266758072843,
+        -0.02147348350383047,
+        -0.008564503746298517,
+        0.007642485257518755,
+        0.0012563875245796277,
+        0.007642500470739933,
+        0.0012575730789344893,
+        -0.006071122657744776,
+        -0.2629419420056132,
+        -0.1840800093753566,
+        0.10073840709610343,
+        0.0857589846915214,
+        0.26609176162833753,
+        0.19835130548686067
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015278480208977163,
+        0.014316296209540965,
+        0.005709740905568476,
+        -0.005094298647182282,
+        -0.0008375134246425378,
+        -0.0050953448908881175,
+        -0.0008384587351010917,
+        0.24127027265165027,
+        -0.4097098971620969,
+        -0.6107163694996887,
+        0.8283757364679446,
+        0.785899993881389,
+        0.6301483433630786,
+        0.6795003251118912
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030559266758072843,
+        -0.02147348350383047,
+        -0.008564503746298517,
+        0.007642485257518755,
+        0.0012563875245796277,
+        0.007642500470739933,
+        0.0012575730789344893,
+        -0.006071122657744776,
+        -0.2629419420056132,
+        -0.1840800093753566,
+        0.10073840709610343,
+        0.0857589846915214,
+        0.26609176162833753,
+        0.19835130548686067
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.715879254087058,
+        "middle": 4.474255184201422,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.0656640910461403
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7334484576241886,
+        0.8979713195468566,
+        0.8430457066444792,
+        0.8075526009601849,
+        0.8129546634767415
+      ],
+      "object_in_wrist_m": [
+        0.20719072438764985,
+        0.17063616321072417,
+        0.0010262551829416508
+      ],
+      "object_orientation_cosine": 0.9969326956061424,
+      "object_orientation_margin": 0.01693269560614241,
+      "object_world_m": [
+        2.927388915282072,
+        1.8955914131085396,
+        0.9230866116895575
+      ],
+      "phase": "carry",
+      "physics_index": 6787,
+      "robot_root_up_cosine": 0.9980873001081412,
+      "tick": 1686,
+      "time_s": 33.93999999999891
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003055783661721673,
+        -0.021473391756265912,
+        -0.008564472568208945,
+        0.007642090567618886,
+        0.001256346137970728,
+        0.00764361134048888,
+        0.0012577543767599017,
+        -0.006071867328699789,
+        -0.26292916872135397,
+        -0.18407948903328034,
+        0.09988883570985663,
+        0.08575459264391509,
+        0.2660929794243233,
+        0.19832733360034208
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015278531019380082,
+        0.014316286392704257,
+        0.005709740760012019,
+        -0.005094338987674153,
+        -0.0008375182160542346,
+        -0.005095223366913579,
+        -0.0008384388799403279,
+        0.24127034695711078,
+        -0.40970958485886566,
+        -0.6107163628172856,
+        0.8286096755003712,
+        0.785898928529894,
+        0.6301488363910911,
+        0.6795853094960495
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003055783661721673,
+        -0.021473391756265912,
+        -0.008564472568208945,
+        0.007642090567618886,
+        0.001256346137970728,
+        0.00764361134048888,
+        0.0012577543767599017,
+        -0.006071867328699789,
+        -0.26292916872135397,
+        -0.18407948903328034,
+        0.09988883570985663,
+        0.08575459264391509,
+        0.2660929794243233,
+        0.19832733360034208
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 5.2766623228398695,
+        "middle": 5.132772287740756,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 2.500321007682815
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7334484576241886,
+        0.8979713195468566,
+        0.8430457066444792,
+        0.8075526009601849,
+        0.8129546634767415
+      ],
+      "object_in_wrist_m": [
+        0.2071910226103349,
+        0.17065049454704298,
+        0.0010296404835641608
+      ],
+      "object_orientation_cosine": 0.9968452748347549,
+      "object_orientation_margin": 0.016845274834754953,
+      "object_world_m": [
+        2.927974789061996,
+        1.8960103414277554,
+        0.921684183702264
+      ],
+      "phase": "target_stop",
+      "physics_index": 6788,
+      "robot_root_up_cosine": 0.9980750386739435,
+      "tick": 1687,
+      "time_s": 33.94499999999891
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030546959157167273,
+        -0.021481558231060245,
+        -0.008565648031365352,
+        0.007639669692550102,
+        0.0012560733512526551,
+        0.007646261117183404,
+        0.0012582270029789114,
+        -0.009286359496167481,
+        -0.26355522510491647,
+        -0.22456398053038878,
+        0.10802260148465143,
+        0.07710772976141639,
+        0.24960333951338884,
+        0.20315494357414327
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015273531229158047,
+        0.014320932859339292,
+        0.005710421311715519,
+        -0.0050929375487242644,
+        -0.0008373495341029096,
+        -0.00509735255672132,
+        -0.0008387886928068694,
+        0.24288051506843128,
+        -0.4093230417558497,
+        -0.6180756279100676,
+        0.8372750142850759,
+        0.7916377829056767,
+        0.6291521281673903,
+        0.6828130645086842
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030546959157167273,
+        -0.021481558231060245,
+        -0.008565648031365352,
+        0.007639669692550102,
+        0.0012560733512526551,
+        0.007646261117183404,
+        0.0012582270029789114,
+        -0.009286359496167481,
+        -0.26355522510491647,
+        -0.22456398053038878,
+        0.10802260148465143,
+        0.07710772976141639,
+        0.24960333951338884,
+        0.20315494357414327
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 7.257319072654012,
+        "middle": 6.007095182239187,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.7697961248708953
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7677588713655503,
+        0.9099579190427632,
+        0.8430457066444792,
+        0.7955526009601849,
+        0.8182526165681527
+      ],
+      "object_in_wrist_m": [
+        0.20931031586845555,
+        0.17130059914098447,
+        0.0024376465238113623
+      ],
+      "object_orientation_cosine": 0.9968896763033652,
+      "object_orientation_margin": 0.016889676303365242,
+      "object_world_m": [
+        3.0824376789340047,
+        1.9307803231321574,
+        0.9252806768770199
+      ],
+      "phase": "target_stop",
+      "physics_index": 7207,
+      "robot_root_up_cosine": 0.9977159995566055,
+      "tick": 1791,
+      "time_s": 36.039999999999985
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003054691586714897,
+        -0.021481470518293407,
+        -0.008565627058891393,
+        0.007639874362002679,
+        0.0012561121073109117,
+        0.007646498411561694,
+        0.0012582705665903026,
+        -0.009286145356070273,
+        -0.2635587405485978,
+        -0.22456747932001303,
+        0.10796503571986175,
+        0.07710650028843133,
+        0.24960389841924732,
+        0.20252726890850226
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015273522111110497,
+        0.014320902062457995,
+        0.005710412872909219,
+        -0.005093057800486972,
+        -0.0008373716371939974,
+        -0.005097472169343236,
+        -0.0008388106782869692,
+        0.24288062710515362,
+        -0.4093208476655662,
+        -0.6180732522393544,
+        0.8373211180249631,
+        0.7916393175856598,
+        0.6291514695650016,
+        0.682812541455571
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003054691586714897,
+        -0.021481470518293407,
+        -0.008565627058891393,
+        0.007639874362002679,
+        0.0012561121073109117,
+        0.007646498411561694,
+        0.0012582705665903026,
+        -0.009286145356070273,
+        -0.2635587405485978,
+        -0.22456747932001303,
+        0.10796503571986175,
+        0.07710650028843133,
+        0.24960389841924732,
+        0.20252726890850226
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 7.323647384851644,
+        "middle": 5.947133786584089,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.6827524752646634
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.23823566031986687,
+        -0.5850000000000001,
+        -0.7677588713655503,
+        0.9099585363395483,
+        0.8430457066444792,
+        0.7955526009601849,
+        0.8178340862707794
+      ],
+      "object_in_wrist_m": [
+        0.20933122193398862,
+        0.17128981084064807,
+        0.0024208520409998513
+      ],
+      "object_orientation_cosine": 0.9968734661610832,
+      "object_orientation_margin": 0.016873466161083206,
+      "object_world_m": [
+        3.082794587940663,
+        1.930672763586841,
+        0.9253800037892539
+      ],
+      "phase": "place",
+      "physics_index": 7208,
+      "robot_root_up_cosine": 0.9977051839241136,
+      "tick": 1792,
+      "time_s": 36.04499999999999
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030540895951428784,
+        -0.021486556639792525,
+        -0.008566349647057483,
+        0.0076405475217404505,
+        0.0012562885188164836,
+        0.007646676611821208,
+        0.001258356894868204,
+        -0.0002054614610081367,
+        -0.2668218240442087,
+        -0.18811088520688862,
+        0.08658384134275804,
+        0.07344812721365215,
+        0.24993641216193696,
+        0.17971611999238
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270170461742535,
+        0.014324123071802095,
+        0.005710860538452323,
+        -0.005093609211565968,
+        -0.0008375141770176174,
+        -0.00509873366054302,
+        -0.0008390483936407675,
+        0.24509709092799326,
+        -0.407099519077938,
+        -0.624613518695272,
+        0.8507932884328873,
+        0.7940754868684582,
+        0.6289509281237678,
+        0.6840658460303407
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030540895951428784,
+        -0.021486556639792525,
+        -0.008566349647057483,
+        0.0076405475217404505,
+        0.0012562885188164836,
+        0.007646676611821208,
+        0.001258356894868204,
+        -0.0002054614610081367,
+        -0.2668218240442087,
+        -0.18811088520688862,
+        0.08658384134275804,
+        0.07344812721365215,
+        0.24993641216193696,
+        0.17971611999238
+      ],
+      "forces_n": {
+        "desk": 3.4263307911701246,
+        "index": 3.7696504144805636,
+        "middle": 0.9739972319785615,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.010787530384307
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24632906767678336,
+        -0.5850000000000001,
+        -0.7503792982651432,
+        0.9085264625167911,
+        0.8430457066444792,
+        0.7955820767945655,
+        0.8038703856179044
+      ],
+      "object_in_wrist_m": [
+        0.20725226761036858,
+        0.17230572693870705,
+        -0.0022355744802051414
+      ],
+      "object_orientation_cosine": 0.9996359406281643,
+      "object_orientation_margin": 0.019635940628164317,
+      "object_world_m": [
+        3.05454121021365,
+        1.8662848096455658,
+        0.8576067721808256
+      ],
+      "phase": "place",
+      "physics_index": 8275,
+      "robot_root_up_cosine": 0.9985630266588631,
+      "tick": 2058,
+      "time_s": 41.38000000000272
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030540966747721783,
+        -0.021486543583209203,
+        -0.00856635293366353,
+        0.007640296422239087,
+        0.0012562448319728915,
+        0.007646924666470716,
+        0.001258389418666337,
+        -0.0007582012703262093,
+        -0.26681611197463656,
+        -0.1875902443587207,
+        0.0865788920168304,
+        0.07344582128520978,
+        0.24993609686246493,
+        0.17971848189325607
+      ],
+      "actual_finger_qpos_rad": [
+        0.001527018669395815,
+        0.014324120696605842,
+        0.00571086006706292,
+        -0.005093615347594421,
+        -0.0008375151459537398,
+        -0.0050987120367183844,
+        -0.0008390452973311126,
+        0.24527364517091452,
+        -0.4071020093830297,
+        -0.6247024777943068,
+        0.8507947406841316,
+        0.7940761664934862,
+        0.6289515675761918,
+        0.684064707704881
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030540966747721783,
+        -0.021486543583209203,
+        -0.00856635293366353,
+        0.007640296422239087,
+        0.0012562448319728915,
+        0.007646924666470716,
+        0.001258389418666337,
+        -0.0007582012703262093,
+        -0.26681611197463656,
+        -0.1875902443587207,
+        0.0865788920168304,
+        0.07344582128520978,
+        0.24993609686246493,
+        0.17971848189325607
+      ],
+      "forces_n": {
+        "desk": 3.1569536536340514,
+        "index": 3.8099359371661192,
+        "middle": 1.0506772676906564,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.2611341794778035
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24632906767678336,
+        -0.5850000000000001,
+        -0.7503792982651432,
+        0.9085264625167911,
+        0.8430457066444792,
+        0.7955820767945655,
+        0.8038703856179044
+      ],
+      "object_in_wrist_m": [
+        0.20717932321998964,
+        0.17235614510647587,
+        -0.0021380006056379943
+      ],
+      "object_orientation_cosine": 0.9996558855404268,
+      "object_orientation_margin": 0.019655885540426854,
+      "object_world_m": [
+        3.0546052659318055,
+        1.8662036863133113,
+        0.8575873581974018
+      ],
+      "phase": "release",
+      "physics_index": 8276,
+      "robot_root_up_cosine": 0.9985619184231515,
+      "tick": 2059,
+      "time_s": 41.38500000000272
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003054088990580758,
+        -0.021485754103764937,
+        -0.008566227706817933,
+        0.0076409118054353775,
+        0.0012563443791127511,
+        0.007649156578922709,
+        0.0012587320746596186,
+        -0.015528380705079689,
+        -0.2658379808761176,
+        -0.17369080952065863,
+        0.08501962633776498,
+        0.07198927044647388,
+        0.24855338138972552,
+        0.178309030679073
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270523784995463,
+        0.014323925499976676,
+        0.00571083159347461,
+        -0.0050938610052988385,
+        -0.0008375508207800171,
+        -0.0050990816293419285,
+        -0.0008391014225585376,
+        0.2510489679553221,
+        -0.4071062992813135,
+        -0.6301412077951639,
+        0.8507971399953905,
+        0.7940775217899616,
+        0.6289585356627541,
+        0.6840652125626576
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003054088990580758,
+        -0.021485754103764937,
+        -0.008566227706817933,
+        0.0076409118054353775,
+        0.0012563443791127511,
+        0.007649156578922709,
+        0.0012587320746596186,
+        -0.015528380705079689,
+        -0.2658379808761176,
+        -0.17369080952065863,
+        0.08501962633776498,
+        0.07198927044647388,
+        0.24855338138972552,
+        0.178309030679073
+      ],
+      "forces_n": {
+        "desk": 3.2788951304533906,
+        "index": 3.9657624455700238,
+        "middle": 1.3547633464350946,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.8637560257842143
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2460437878252802,
+        -0.584322496875,
+        -0.7495102652403398,
+        0.9074742753073889,
+        0.8420693543354716,
+        0.7946606933018778,
+        0.8029394032275606
+      ],
+      "object_in_wrist_m": [
+        0.20459722535749192,
+        0.17378723673306776,
+        8.424766906751997e-05
+      ],
+      "object_orientation_cosine": 0.999873409104195,
+      "object_orientation_margin": 0.019873409104194995,
+      "object_world_m": [
+        3.0569594545297427,
+        1.8643123231583671,
+        0.8573321406863408
+      ],
+      "phase": "release",
+      "physics_index": 8296,
+      "robot_root_up_cosine": 0.9990884890479284,
+      "tick": 2064,
+      "time_s": 41.48500000000277
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003054253267602456,
+        -0.021484630192156254,
+        -0.008566047499488406,
+        0.007641753991739749,
+        0.0012564770763659236,
+        0.007648384059594583,
+        0.0012586239457414638,
+        -0.015026318835994736,
+        -0.265817375841759,
+        -0.17379472082919412,
+        0.08500960131775696,
+        0.07198495143677881,
+        0.24855020611623116,
+        0.17831771472122868
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270608692651508,
+        0.014323862404316615,
+        0.005710821771249606,
+        -0.005093912382951706,
+        -0.0008375586480567515,
+        -0.005099064866596984,
+        -0.0008390991116963861,
+        0.2512674578136971,
+        -0.40710681631428575,
+        -0.6303841098596333,
+        0.8507974811691079,
+        0.7940776801061455,
+        0.6289586668701647,
+        0.6840647495404332
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003054253267602456,
+        -0.021484630192156254,
+        -0.008566047499488406,
+        0.007641753991739749,
+        0.0012564770763659236,
+        0.007648384059594583,
+        0.0012586239457414638,
+        -0.015026318835994736,
+        -0.265817375841759,
+        -0.17379472082919412,
+        0.08500960131775696,
+        0.07198495143677881,
+        0.24855020611623116,
+        0.17831771472122868
+      ],
+      "forces_n": {
+        "desk": 4.425720378060957,
+        "index": 3.8948606874910223,
+        "middle": 1.3413465395871584,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.279292384784377
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2460437878252802,
+        -0.584322496875,
+        -0.7495102652403398,
+        0.9074742753073889,
+        0.8420693543354716,
+        0.7946606933018778,
+        0.8029394032275606
+      ],
+      "object_in_wrist_m": [
+        0.20448827865167407,
+        0.17385369726268962,
+        0.00022330660021549798
+      ],
+      "object_orientation_cosine": 0.9998694043748957,
+      "object_orientation_margin": 0.019869404374895705,
+      "object_world_m": [
+        3.0570705356280645,
+        1.8642327366553382,
+        0.8573365559314008
+      ],
+      "phase": "release",
+      "physics_index": 8297,
+      "robot_root_up_cosine": 0.9991390985486551,
+      "tick": 2064,
+      "time_s": 41.49000000000277
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030542915538423927,
+        -0.021484531693273693,
+        -0.00856603621237434,
+        0.007641896127484903,
+        0.0012564945176198146,
+        0.007648262044996579,
+        0.0012586024503015505,
+        -0.014817137144332942,
+        -0.2658131801816263,
+        -0.1738311917816724,
+        0.08500836773307378,
+        0.07198434502030994,
+        0.2485504154993585,
+        0.17832124097518082
+      ],
+      "actual_finger_qpos_rad": [
+        0.00152706792145894,
+        0.014323799940477859,
+        0.005710812076173949,
+        -0.005093965742519984,
+        -0.0008375667720468173,
+        -0.005099064559576149,
+        -0.0008390992699804933,
+        0.2514462149111956,
+        -0.4071073952394603,
+        -0.6306005415810169,
+        0.8507976778002415,
+        0.7940777684721517,
+        0.6289588255894664,
+        0.6840643813405743
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030542915538423927,
+        -0.021484531693273693,
+        -0.00856603621237434,
+        0.007641896127484903,
+        0.0012564945176198146,
+        0.007648262044996579,
+        0.0012586024503015505,
+        -0.014817137144332942,
+        -0.2658131801816263,
+        -0.1738311917816724,
+        0.08500836773307378,
+        0.07198434502030994,
+        0.2485504154993585,
+        0.17832124097518082
+      ],
+      "forces_n": {
+        "desk": 4.172481636915941,
+        "index": 3.918563194452293,
+        "middle": 1.2819989023792067,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.233219879046365
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2460437878252802,
+        -0.584322496875,
+        -0.7495102652403398,
+        0.9074742753073889,
+        0.8420693543354716,
+        0.7946606933018778,
+        0.8029394032275606
+      ],
+      "object_in_wrist_m": [
+        0.20439150352649516,
+        0.17391430134919406,
+        0.0003582179374301121
+      ],
+      "object_orientation_cosine": 0.999864964835526,
+      "object_orientation_margin": 0.019864964835526022,
+      "object_world_m": [
+        3.0571724292335074,
+        1.8641594385423803,
+        0.8573397284343366
+      ],
+      "phase": "release",
+      "physics_index": 8298,
+      "robot_root_up_cosine": 0.9991836325437845,
+      "tick": 2064,
+      "time_s": 41.495000000002776
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030542768867936644,
+        -0.021484450633941676,
+        -0.008566024212747785,
+        0.007642015805145537,
+        0.001256512637871542,
+        0.007648590698947524,
+        0.0012586520706528825,
+        -0.014379996121801292,
+        -0.2658110739498183,
+        -0.1740359510613128,
+        0.08501096363804861,
+        0.0719856114748562,
+        0.2485496271825841,
+        0.1783198968276569
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270732918028075,
+        0.014323741459338964,
+        0.005710802975271425,
+        -0.005094015715333173,
+        -0.0008375744245114657,
+        -0.005099077371810939,
+        -0.0008391014181746018,
+        0.2515909549596128,
+        -0.40710815125160116,
+        -0.6307885436576885,
+        0.8507979509133429,
+        0.7940778898326005,
+        0.6289589906301715,
+        0.6840639617591568
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030542768867936644,
+        -0.021484450633941676,
+        -0.008566024212747785,
+        0.007642015805145537,
+        0.001256512637871542,
+        0.007648590698947524,
+        0.0012586520706528825,
+        -0.014379996121801292,
+        -0.2658110739498183,
+        -0.1740359510613128,
+        0.08501096363804861,
+        0.0719856114748562,
+        0.2485496271825841,
+        0.1783198968276569
+      ],
+      "forces_n": {
+        "desk": 4.01381304620806,
+        "index": 3.932946767952725,
+        "middle": 1.2085040682203243,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.198334737563755
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2460437878252802,
+        -0.584322496875,
+        -0.7495102652403398,
+        0.9074742753073889,
+        0.8420693543354716,
+        0.7946606933018778,
+        0.8029394032275606
+      ],
+      "object_in_wrist_m": [
+        0.20430235778566344,
+        0.17397104502680286,
+        0.00048962069635096
+      ],
+      "object_orientation_cosine": 0.9998601074518274,
+      "object_orientation_margin": 0.019860107451827425,
+      "object_world_m": [
+        3.057266810980103,
+        1.8640906949774232,
+        0.8573433986662587
+      ],
+      "phase": "release",
+      "physics_index": 8299,
+      "robot_root_up_cosine": 0.9992227697170405,
+      "tick": 2064,
+      "time_s": 41.50000000000278
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030542539904829654,
+        -0.021484442566230534,
+        -0.008566022444856668,
+        0.007642023029263558,
+        0.0012565146860601657,
+        0.007648872302412212,
+        0.0012586950911440719,
+        -0.014389242910649474,
+        -0.26509374481578174,
+        -0.17340842060026296,
+        0.08390224748946462,
+        0.0709577620762975,
+        0.2475800664356615,
+        0.17734227016500964
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270827676703992,
+        0.01432367956220377,
+        0.005710793800578396,
+        -0.0050940682147627234,
+        -0.0008375819444336902,
+        -0.005099037667844769,
+        -0.000839095177217566,
+        0.2516974534032785,
+        -0.4071101238452911,
+        -0.6309453481936346,
+        0.850799186368638,
+        0.7940783974833552,
+        0.6289591590733998,
+        0.6840627129267618
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030542539904829654,
+        -0.021484442566230534,
+        -0.008566022444856668,
+        0.007642023029263558,
+        0.0012565146860601657,
+        0.007648872302412212,
+        0.0012586950911440719,
+        -0.014389242910649474,
+        -0.26509374481578174,
+        -0.17340842060026296,
+        0.08390224748946462,
+        0.0709577620762975,
+        0.2475800664356615,
+        0.17734227016500964
+      ],
+      "forces_n": {
+        "desk": 2.1052193948776914,
+        "index": 3.9609628835830555,
+        "middle": 1.2357253441000686,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.088152509260333
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2458437339884597,
+        -0.583847394624,
+        -0.7489008517468192,
+        0.9067364240810046,
+        0.8413846826894499,
+        0.7940145687966806,
+        0.8022865474502626
+      ],
+      "object_in_wrist_m": [
+        0.20421007052637,
+        0.17402726136805408,
+        0.0006087263931558354
+      ],
+      "object_orientation_cosine": 0.9998551832878783,
+      "object_orientation_margin": 0.019855183287878275,
+      "object_world_m": [
+        3.0573564989092223,
+        1.8640204465879617,
+        0.8573525765485568
+      ],
+      "phase": "release",
+      "physics_index": 8300,
+      "robot_root_up_cosine": 0.99928369377242,
+      "tick": 2065,
+      "time_s": 41.50500000000278
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030543550526926306,
+        -0.02148428140060179,
+        -0.008566007207007002,
+        0.007642152310735096,
+        0.0012565233150950257,
+        0.007647762422443753,
+        0.0012585179466856333,
+        -0.013837407702950612,
+        -0.26506645429426456,
+        -0.17379716461085748,
+        0.08388114746264694,
+        0.0709492747940497,
+        0.24757974572035282,
+        0.1773607284331531
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270912631414918,
+        0.0143236259638313,
+        0.0057107860856409265,
+        -0.005094100594812272,
+        -0.0008375862190604954,
+        -0.005098989432211946,
+        -0.0008390874072334134,
+        0.25177922325885416,
+        -0.4071128703981764,
+        -0.6310792051923596,
+        0.8508008502213225,
+        0.7940790968703777,
+        0.6289593104140937,
+        0.6840609252248795
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030543550526926306,
+        -0.02148428140060179,
+        -0.008566007207007002,
+        0.007642152310735096,
+        0.0012565233150950257,
+        0.007647762422443753,
+        0.0012585179466856333,
+        -0.013837407702950612,
+        -0.26506645429426456,
+        -0.17379716461085748,
+        0.08388114746264694,
+        0.0709492747940497,
+        0.24757974572035282,
+        0.1773607284331531
+      ],
+      "forces_n": {
+        "desk": 2.3475111403733138,
+        "index": 3.9121434429649393,
+        "middle": 1.1205188967991928,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.155461291899635
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2458437339884597,
+        -0.583847394624,
+        -0.7489008517468192,
+        0.9067364240810046,
+        0.8413846826894499,
+        0.7940145687966806,
+        0.8022865474502626
+      ],
+      "object_in_wrist_m": [
+        0.2041183060834826,
+        0.1740813815604943,
+        0.0007165074055771027
+      ],
+      "object_orientation_cosine": 0.9998501890344476,
+      "object_orientation_margin": 0.019850189034447574,
+      "object_world_m": [
+        3.057441802156422,
+        1.8639490623728103,
+        0.8573642071386985
+      ],
+      "phase": "release",
+      "physics_index": 8301,
+      "robot_root_up_cosine": 0.9993334477832827,
+      "tick": 2065,
+      "time_s": 41.51000000000278
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030543524357048387,
+        -0.02148436697829758,
+        -0.008566024829711999,
+        0.007641798493209379,
+        0.0012564648211268463,
+        0.0076475194356614646,
+        0.0012584757111670684,
+        -0.01350637565230252,
+        -0.2650468552810299,
+        -0.17405532985718972,
+        0.08387008373583557,
+        0.07094439098815683,
+        0.24757986076000302,
+        0.17737418737572078
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270968472049177,
+        0.014323579174770196,
+        0.005710779133662046,
+        -0.005094125046965914,
+        -0.0008375896104299599,
+        -0.005098961416948514,
+        -0.0008390829316023647,
+        0.2518333365648195,
+        -0.4071161004854372,
+        -0.6311876710629607,
+        0.8508027554366694,
+        0.7940799006248074,
+        0.628959493818228,
+        0.6840589709940542
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030543524357048387,
+        -0.02148436697829758,
+        -0.008566024829711999,
+        0.007641798493209379,
+        0.0012564648211268463,
+        0.0076475194356614646,
+        0.0012584757111670684,
+        -0.01350637565230252,
+        -0.2650468552810299,
+        -0.17405532985718972,
+        0.08387008373583557,
+        0.07094439098815683,
+        0.24757986076000302,
+        0.17737418737572078
+      ],
+      "forces_n": {
+        "desk": 2.287145716545524,
+        "index": 3.905896921234482,
+        "middle": 1.1039233176785903,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.058837831072418
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2458437339884597,
+        -0.583847394624,
+        -0.7489008517468192,
+        0.9067364240810046,
+        0.8413846826894499,
+        0.7940145687966806,
+        0.8022865474502626
+      ],
+      "object_in_wrist_m": [
+        0.2040296134386532,
+        0.17413336099184767,
+        0.000819625126974149
+      ],
+      "object_orientation_cosine": 0.9998451605431016,
+      "object_orientation_margin": 0.019845160543101592,
+      "object_world_m": [
+        3.0575232230891563,
+        1.8638758580191759,
+        0.8573765912394586
+      ],
+      "phase": "release",
+      "physics_index": 8302,
+      "robot_root_up_cosine": 0.9993757298811037,
+      "tick": 2065,
+      "time_s": 41.515000000002786
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003054305375678352,
+        -0.02148443298093321,
+        -0.008566029660915464,
+        0.007641676613521714,
+        0.0012564522430342285,
+        0.0076478818201541334,
+        0.0012585348847825722,
+        -0.013061471272026299,
+        -0.2650323394626277,
+        -0.17440045361376658,
+        0.0838623986595647,
+        0.07094109800837031,
+        0.2475789443849921,
+        0.177380449300818
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270996671923203,
+        0.014323540170271978,
+        0.0057107730639615484,
+        -0.005094146823052398,
+        -0.0008375929543453182,
+        -0.005098958633682596,
+        -0.0008390825661313212,
+        0.2518595296396178,
+        -0.4071194840500347,
+        -0.6312680573324462,
+        0.8508047426336744,
+        0.7940807404801308,
+        0.6289596487915988,
+        0.6840569695647261
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.003054305375678352,
+        -0.02148443298093321,
+        -0.008566029660915464,
+        0.007641676613521714,
+        0.0012564522430342285,
+        0.0076478818201541334,
+        0.0012585348847825722,
+        -0.013061471272026299,
+        -0.2650323394626277,
+        -0.17440045361376658,
+        0.0838623986595647,
+        0.07094109800837031,
+        0.2475789443849921,
+        0.177380449300818
+      ],
+      "forces_n": {
+        "desk": 2.2483395530806662,
+        "index": 3.928378933314075,
+        "middle": 1.0915573625015509,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 4.038917832072857
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2458437339884597,
+        -0.583847394624,
+        -0.7489008517468192,
+        0.9067364240810046,
+        0.8413846826894499,
+        0.7940145687966806,
+        0.8022865474502626
+      ],
+      "object_in_wrist_m": [
+        0.20394518027814892,
+        0.17418299049438934,
+        0.0009208022916028051
+      ],
+      "object_orientation_cosine": 0.9998400112861837,
+      "object_orientation_margin": 0.019840011286183734,
+      "object_world_m": [
+        3.057601003911338,
+        1.8638017922997039,
+        0.8573893817612794
+      ],
+      "phase": "release",
+      "physics_index": 8303,
+      "robot_root_up_cosine": 0.9994118017657274,
+      "tick": 2065,
+      "time_s": 41.52000000000279
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030542557341326944,
+        -0.021484530165443598,
+        -0.008566038201932372,
+        0.007641655756308271,
+        0.0012564563098251456,
+        0.007648382285205526,
+        0.001258616539776112,
+        -0.013102140061617683,
+        -0.2640504603724988,
+        -0.1735924577137877,
+        0.08234553329930737,
+        0.06953586418396837,
+        0.24625503186619377,
+        0.17604635082678344
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270971941642824,
+        0.014323500825983116,
+        0.005710766314402465,
+        -0.0050941463774050455,
+        -0.0008375936106750877,
+        -0.005098991271293239,
+        -0.0008390880036507724,
+        0.2518725039166462,
+        -0.4071223634769973,
+        -0.6313085122487984,
+        0.8508062836808086,
+        0.7940813883736587,
+        0.6289598973845978,
+        0.6840553489951449
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030542557341326944,
+        -0.021484530165443598,
+        -0.008566038201932372,
+        0.007641655756308271,
+        0.0012564563098251456,
+        0.007648382285205526,
+        0.001258616539776112,
+        -0.013102140061617683,
+        -0.2640504603724988,
+        -0.1735924577137877,
+        0.08234553329930737,
+        0.06953586418396837,
+        0.24625503186619377,
+        0.17604635082678344
+      ],
+      "forces_n": {
+        "desk": 1.364389358266119,
+        "index": 3.947066635182394,
+        "middle": 1.078932906469971,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.7104033620038672
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "object_in_wrist_m": [
+        0.20387476302990115,
+        0.1742251302588489,
+        0.0010117626252991484
+      ],
+      "object_orientation_cosine": 0.9998349974295737,
+      "object_orientation_margin": 0.01983499742957373,
+      "object_world_m": [
+        3.057670538332607,
+        1.8637305527079495,
+        0.857403411266398
+      ],
+      "phase": "release",
+      "physics_index": 8304,
+      "robot_root_up_cosine": 0.9994336124372881,
+      "tick": 2066,
+      "time_s": 41.52500000000279
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030541449277678057,
+        -0.021484464353197456,
+        -0.008566014480422032,
+        0.007641210653160527,
+        0.0012564035426080216,
+        0.007649139659152736,
+        0.0012587407558651816,
+        -0.012863712660276864,
+        -0.264056223984751,
+        -0.1743304024019259,
+        0.08235214472602512,
+        0.06953873157958623,
+        0.2462527865841321,
+        0.17604116448621535
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270937218401929,
+        0.014323467621222871,
+        0.005710760565736662,
+        -0.005094135601868283,
+        -0.0008375926496558287,
+        -0.0050990238791712595,
+        -0.0008390933499624794,
+        0.25187906746114064,
+        -0.4071246255074944,
+        -0.63132904724166,
+        0.8508074574944656,
+        0.7940818777806177,
+        0.628960167677169,
+        0.6840542035191547
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030541449277678057,
+        -0.021484464353197456,
+        -0.008566014480422032,
+        0.007641210653160527,
+        0.0012564035426080216,
+        0.007649139659152736,
+        0.0012587407558651816,
+        -0.012863712660276864,
+        -0.264056223984751,
+        -0.1743304024019259,
+        0.08235214472602512,
+        0.06953873157958623,
+        0.2462527865841321,
+        0.17604116448621535
+      ],
+      "forces_n": {
+        "desk": 1.1413811321983145,
+        "index": 3.877711348707636,
+        "middle": 1.415704289422074,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.758038984237856
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "object_in_wrist_m": [
+        0.20381426034648337,
+        0.17426255704573254,
+        0.0010988340811588584
+      ],
+      "object_orientation_cosine": 0.9998299782738059,
+      "object_orientation_margin": 0.019829978273805948,
+      "object_world_m": [
+        3.0577347570428226,
+        1.863660947047159,
+        0.8574178374999399
+      ],
+      "phase": "release",
+      "physics_index": 8305,
+      "robot_root_up_cosine": 0.9994519272481767,
+      "tick": 2066,
+      "time_s": 41.530000000002794
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030541179971985953,
+        -0.021484537336629392,
+        -0.008566025875288928,
+        0.0076409878920671815,
+        0.0012563697540985607,
+        0.007649187976317298,
+        0.0012587469511778607,
+        -0.01274862509858804,
+        -0.264065178868317,
+        -0.17469799838244449,
+        0.0823577286750821,
+        0.06954116720052718,
+        0.24625194715383136,
+        0.1760333808283813
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015270908132729985,
+        0.014323442761390439,
+        0.005710756292038064,
+        -0.005094122319838762,
+        -0.000837591109240782,
+        -0.005099048537492343,
+        -0.0008390973389113004,
+        0.25188252622980833,
+        -0.4071263607555364,
+        -0.6313395568495844,
+        0.8508083347572813,
+        0.7940822518279108,
+        0.628960475978293,
+        0.6840535201817454
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030541179971985953,
+        -0.021484537336629392,
+        -0.008566025875288928,
+        0.0076409878920671815,
+        0.0012563697540985607,
+        0.007649187976317298,
+        0.0012587469511778607,
+        -0.01274862509858804,
+        -0.264065178868317,
+        -0.17469799838244449,
+        0.0823577286750821,
+        0.06954116720052718,
+        0.24625194715383136,
+        0.1760333808283813
+      ],
+      "forces_n": {
+        "desk": 1.0476076944685104,
+        "index": 3.9847308799702703,
+        "middle": 1.1347973398827884,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.636820965133918
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "object_in_wrist_m": [
+        0.20376175035706603,
+        0.1742963025919609,
+        0.0011844118141593855
+      ],
+      "object_orientation_cosine": 0.9998248319745846,
+      "object_orientation_margin": 0.019824831974584622,
+      "object_world_m": [
+        3.0577953956097312,
+        1.8635929159011488,
+        0.8574319542537635
+      ],
+      "phase": "release",
+      "physics_index": 8306,
+      "robot_root_up_cosine": 0.9994671690906362,
+      "tick": 2066,
+      "time_s": 41.535000000002796
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030541234552021092,
+        -0.021484666945437016,
+        -0.008566048964085136,
+        0.007640917839167716,
+        0.00125635585556024,
+        0.0076490659726601825,
+        0.001258725787343371,
+        -0.012693447119388045,
+        -0.26407311164535563,
+        -0.1748827416693008,
+        0.0823623437976855,
+        0.0695429133229025,
+        0.24625072453109,
+        0.176025163062878
+      ],
+      "actual_finger_qpos_rad": [
+        0.001527088836493752,
+        0.014323425517347192,
+        0.005710753359473725,
+        -0.00509411011137326,
+        -0.0008375895517241663,
+        -0.005099065162922645,
+        -0.0008390999958448869,
+        0.25188444509309676,
+        -0.40712754741682333,
+        -0.6313448635516259,
+        0.8508088610626778,
+        0.7940824748093283,
+        0.6289607922646194,
+        0.6840532359087724
+      ],
+      "desk_supported": true,
+      "diagnostic_breaches": [],
+      "finger_requested_torque_nm": [
+        -0.0030541234552021092,
+        -0.021484666945437016,
+        -0.008566048964085136,
+        0.007640917839167716,
+        0.00125635585556024,
+        0.0076490659726601825,
+        0.001258725787343371,
+        -0.012693447119388045,
+        -0.26407311164535563,
+        -0.1748827416693008,
+        0.0823623437976855,
+        0.0695429133229025,
+        0.24625072453109,
+        0.176025163062878
+      ],
+      "forces_n": {
+        "desk": 0.9405221020964314,
+        "index": 4.0018993262572184,
+        "middle": 1.140737343786296,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.6119868681755567
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "object_in_wrist_m": [
+        0.20371508294910584,
+        0.1743274933074951,
+        0.0012695789186479092
+      ],
+      "object_orientation_cosine": 0.9998195140124404,
+      "object_orientation_margin": 0.01981951401244042,
+      "object_world_m": [
+        3.057852955559302,
+        1.863526297775313,
+        0.8574458935174119
+      ],
+      "phase": "release",
+      "physics_index": 8307,
+      "robot_root_up_cosine": 0.9994800316111573,
+      "tick": 2066,
+      "time_s": 41.5400000000028
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003054138137402576,
+        -0.021484793395155837,
+        -0.00856607138792381,
+        0.00764092099774986,
+        0.0012563531772539335,
+        0.007648930252990005,
+        0.0012587031324390585,
+        -0.012666486738378767,
+        -0.2640823033885263,
+        -0.17497883973389936,
+        0.08236857348797534,
+        0.0695456001682912,
+        0.2462500903975506,
+        0.17601760818360848
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015271173923244394,
+        0.014323353795174524,
+        0.005710742992906917,
+        -0.0050942514251429176,
+        -0.0008376101024925985,
+        -0.005098982146087919,
+        -0.0008390874767127889,
+        0.2518855885663777,
+        -0.4071273825445683,
+        -0.6313463677009232,
+        0.8508092079860672,
+        0.7940825955264376,
+        0.6289611453465217,
+        0.6840538175917728
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [
+        "release_without_measured_table_support"
+      ],
+      "finger_requested_torque_nm": [
+        -0.003054138137402576,
+        -0.021484793395155837,
+        -0.00856607138792381,
+        0.00764092099774986,
+        0.0012563531772539335,
+        0.007648930252990005,
+        0.0012587031324390585,
+        -0.012666486738378767,
+        -0.2640823033885263,
+        -0.17497883973389936,
+        0.08236857348797534,
+        0.0695456001682912,
+        0.2462500903975506,
+        0.17601760818360848
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.217520170223412,
+        "middle": 1.2181731383567123,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.2933341398953435
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "object_in_wrist_m": [
+        0.20368110059944425,
+        0.17435458108804588,
+        0.0013750237250934392
+      ],
+      "object_orientation_cosine": 0.9998110391416098,
+      "object_orientation_margin": 0.019811039141609865,
+      "object_world_m": [
+        3.057891816898444,
+        1.8634396133439288,
+        0.8574799613113363
+      ],
+      "phase": "release",
+      "physics_index": 8308,
+      "robot_root_up_cosine": 0.9995007483762502,
+      "tick": 2067,
+      "time_s": 41.5450000000028
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.003054805901262622,
+        -0.02148359624930844,
+        -0.008565907158024218,
+        0.00764420341310752,
+        0.0012568261691075439,
+        0.007646812882437359,
+        0.0012583808324272239,
+        -0.01265326588479193,
+        -0.2641095813677485,
+        -0.17505263456483494,
+        0.08237164074303442,
+        0.069547464378791,
+        0.24624882486317934,
+        0.17599941653964296
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015271483480566589,
+        0.014323277791863757,
+        0.005710732139684987,
+        -0.0050944074340230905,
+        -0.0008376327126428688,
+        -0.005098903086957472,
+        -0.0008390754643907846,
+        0.25188628552110504,
+        -0.4071268166737218,
+        -0.6313464265807106,
+        0.8508094358620774,
+        0.7940826620306746,
+        0.6289614454753412,
+        0.684054540048392
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [
+        "release_without_measured_table_support"
+      ],
+      "finger_requested_torque_nm": [
+        -0.003054805901262622,
+        -0.02148359624930844,
+        -0.008565907158024218,
+        0.00764420341310752,
+        0.0012568261691075439,
+        0.007646812882437359,
+        0.0012583808324272239,
+        -0.01265326588479193,
+        -0.2641095813677485,
+        -0.17505263456483494,
+        0.08237164074303442,
+        0.069547464378791,
+        0.24624882486317934,
+        0.17599941653964296
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 4.092371387484789,
+        "middle": 0.8036332956370059,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.3608902286627824
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "object_in_wrist_m": [
+        0.20365530786767908,
+        0.17437664349218474,
+        0.0014711149210391613
+      ],
+      "object_orientation_cosine": 0.9997992106410843,
+      "object_orientation_margin": 0.019799210641084364,
+      "object_world_m": [
+        3.057907747598209,
+        1.8633091594957047,
+        0.8575279129780204
+      ],
+      "phase": "release",
+      "physics_index": 8309,
+      "robot_root_up_cosine": 0.9995163982662895,
+      "tick": 2067,
+      "time_s": 41.550000000002804
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.00305491581075771,
+        -0.021483396621580293,
+        -0.008565881145088888,
+        0.007644731328638086,
+        0.001256901271969709,
+        0.007646773447827263,
+        0.001258372950146091,
+        -0.01264572942317347,
+        -0.26411845014584767,
+        -0.1750814516353523,
+        0.0823736798766024,
+        0.06954844887988151,
+        0.24624943373160738,
+        0.17599551738233793
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015271729289111438,
+        0.014323208311051933,
+        0.005710722078984351,
+        -0.0050945357839874,
+        -0.0008376514047266157,
+        -0.005098859161698852,
+        -0.0008390688040425326,
+        0.2518867029328577,
+        -0.4071261440684254,
+        -0.6313458630877916,
+        0.8508095985623644,
+        0.7940827011192014,
+        0.6289616929230378,
+        0.6840552926243801
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [
+        "release_without_measured_table_support"
+      ],
+      "finger_requested_torque_nm": [
+        -0.00305491581075771,
+        -0.021483396621580293,
+        -0.008565881145088888,
+        0.007644731328638086,
+        0.001256901271969709,
+        0.007646773447827263,
+        0.001258372950146091,
+        -0.01264572942317347,
+        -0.26411845014584767,
+        -0.1750814516353523,
+        0.0823736798766024,
+        0.06954844887988151,
+        0.24624943373160738,
+        0.17599551738233793
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.9706452137342305,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.5265753102174706
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "object_in_wrist_m": [
+        0.20363133825427412,
+        0.17439740355348327,
+        0.0015625304214041053
+      ],
+      "object_orientation_cosine": 0.9997839660287584,
+      "object_orientation_margin": 0.019783966028758426,
+      "object_world_m": [
+        3.0579011448697875,
+        1.8631404241726934,
+        0.8575916607720844
+      ],
+      "phase": "release",
+      "physics_index": 8310,
+      "robot_root_up_cosine": 0.9995289536774129,
+      "tick": 2067,
+      "time_s": 41.555000000002806
+    },
+    {
+      "actual_finger_actuator_force_nm": [
+        -0.0030548374749119847,
+        -0.02148342285034142,
+        -0.008565881904463798,
+        0.007644370675267291,
+        0.0012568509487648613,
+        0.007647410237375881,
+        0.0012584699990987587,
+        -0.012640973387185343,
+        -0.2641215937427896,
+        -0.175094744328858,
+        0.08237473934063326,
+        0.06954893856129404,
+        0.24625011618251927,
+        0.17599378613097413
+      ],
+      "actual_finger_qpos_rad": [
+        0.0015271898970063912,
+        0.014323151599617024,
+        0.005710713752740687,
+        -0.005094625773004069,
+        -0.0008376645757644575,
+        -0.005098847411745421,
+        -0.0008390670261470091,
+        0.25189758000067797,
+        -0.4071257497043432,
+        -0.6313455602413999,
+        0.8508096924305937,
+        0.794082721956968,
+        0.6289618941130408,
+        0.6840556924589642
+      ],
+      "desk_supported": false,
+      "diagnostic_breaches": [
+        "release_without_measured_table_support"
+      ],
+      "finger_requested_torque_nm": [
+        -0.0030548374749119847,
+        -0.02148342285034142,
+        -0.008565881904463798,
+        0.007644370675267291,
+        0.0012568509487648613,
+        0.007647410237375881,
+        0.0012584699990987587,
+        -0.012640973387185343,
+        -0.2641215937427896,
+        -0.175094744328858,
+        0.08237473934063326,
+        0.06954893856129404,
+        0.24625011618251927,
+        0.17599378613097413
+      ],
+      "forces_n": {
+        "desk": 0.0,
+        "index": 3.88823243233397,
+        "middle": 0.0,
+        "other": 0.0,
+        "palm": 0.0,
+        "thumb": 3.4707813355700594
+      },
+      "hand_contact": true,
+      "hand_target_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "object_in_wrist_m": [
+        0.20360292711221373,
+        0.174422998778793,
+        0.0016623566133883636
+      ],
+      "object_orientation_cosine": 0.9997659235996778,
+      "object_orientation_margin": 0.01976592359967777,
+      "object_world_m": [
+        3.057869105160443,
+        1.8629471922563157,
+        0.8576719650134462
+      ],
+      "phase": "release",
+      "physics_index": 8311,
+      "robot_root_up_cosine": 0.9995391737395782,
+      "tick": 2067,
+      "time_s": 41.56000000000281
+    }
+  ]
+}

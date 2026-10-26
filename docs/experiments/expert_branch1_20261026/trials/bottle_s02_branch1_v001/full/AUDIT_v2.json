@@ -1,0 +1,55 @@
+{
+  "base_full_independent_audit": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/AUDIT.json",
+    "sha256": "067f4370f0eb2d9265aab52a8ee6e35f25d3284c325d5c4ddaa48ba4e6a27dca",
+    "size_bytes": 1649
+  },
+  "base_gate_replaced": "actual_mixed_and_projected_targets",
+  "content_sha256_excluding_this_field": "4f7dab6f02b72567068697b1f384343312643ff38d02da24483c4452d601f453",
+  "control_passed": false,
+  "executed_control_reconstruction_passed": true,
+  "gates": {
+    "actual_applied_action_history": true,
+    "actual_mixed_and_projected_targets": true,
+    "actual_state_policy_observation": true,
+    "all_recorded_physics_safe": true,
+    "atomic_body_and_hand_frame": true,
+    "bounded_complete_episode": false,
+    "causal_reference": true,
+    "contact_reconstruction": true,
+    "encoder_decoder_bitwise": true,
+    "fresh_original_initialization_no_restored_prefix": true,
+    "no_external_forces": true,
+    "original43motor_pd": true,
+    "original_raw_action_transform": true,
+    "policy_input_archive": true,
+    "projection_adapter_condition_verified_from_frozen_execution_source": true,
+    "sonic_controls_all29_body_joints": true,
+    "state_chain": true,
+    "time_chain": true
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/audit_projection_v2.py",
+    "sha256": "a06a521341f45b4844edd29a77f58ba7bf1cc83fc1f51bd50950afbd192818c7",
+    "size_bytes": 4804
+  },
+  "max_contact_error": 0.0,
+  "max_geometry_error_m": 0.0,
+  "max_pd_error_nm": 1.7763568394002505e-15,
+  "new_physics_steps": 0,
+  "nn_ticks": 2062,
+  "not_continuous_dynamics_reintegration": true,
+  "projection_history_mismatch_ticks": [],
+  "projection_mismatch_ticks": [],
+  "projection_target_maximum_error_rad": 0.0,
+  "projection_ticks": 2062,
+  "reconstruction_basis": "Base audit independently recomputed NN/encoder/decoder, raw transforms, hand/body PD, contact, geometry, state/time chains and policy archive. This supplement independently recomputes all target/projection/history fields using the exact bound always-on adapter. Original base report remains unchanged.",
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/REPORT.json",
+    "sha256": "7f56e82296b82c9cbea09dcfcb98867a14d364828162fec4010b7fc67e783291",
+    "size_bytes": 6798006
+  },
+  "schema": "native-independent-audit-with-projection-supplement/v2",
+  "state_samples": 8288,
+  "task_passed": false
+}

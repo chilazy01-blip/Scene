@@ -18,6 +18,66 @@
 
 **2026-10-25用户明确的后续工作规则（长期有效）**：之后每次修正如有问题，必须寻找造成问题的原因，保留可核对的实际证据，再据证据修正和验证；不得以盲目调参或失败次数代替查因。每轮任务在用户明确的目标与时限内持续推进。本轮特定的六小时/旧资源额度覆盖授权见下节，不自动套用为以后所有任务的默认预算。
 
+## 2026-10-27 分支思路一最终收尾：接口实测完成，新增合格数据 0（最新接续）
+
+用户要求“先保存GitHub断点，再做分支思路一”。实验前断点已推送并远端逐字核对：分支 `checkpoint/expert-before-branch1-20261026`，提交 **2f2791348af1f80adf6dad17876b46e79641b28a**。之后才执行本轮；当前结果分支 `experiment/expert-branch1-20261026`。结果入口为 [分支一实验总结](docs/EXPERT_BRANCH1_TRIAL_20261026.md) 及 [关键证据归档](docs/experiments/expert_branch1_20261026/README.md)。完整本地根 B=`/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1`，Git保存代码/四版实际策略/关键报告/抽样实际图/精确来源索引，不包含完整模型、TRACE、视频或NPZ。结果提交的远端核对收据另存B/GIT_RESULT_PUSH_VERIFICATION.json，避免提交自引用。
+
+**本轮已结束，不恢复旧预算或继续后台试跑。** 六条原初态raw：杯S02回归8536（合格但与旧cup_v004状态/控制逐值完全相同）、瓶S02 V0018288/V0028308/V0038312/V0048340、瓶S03 V0015228，五条瓶均为独立复核后的负例。杯另连续原初态全43ctrl复验8536，误差0/数值警告0；完整视频自动解码、主agent抽样视觉、原八门/姿态/NN-PD-contact-force/NPZ核验齐备。V003/V004最终审计为full/AUDIT_v4.json、partial_delivery_v6；其他正式路径由各FINAL_VERIFICATION绑定。**新增物理55548、承接239138、累计294686，7项预留全结算；新增去重合格0，合格重复回归1。** 单位新增合格成本未定义，不记0。
+
+实际4次Codex设计调用均正常返回，无容量错误；阶段契约、正式feedback_v3、时间对齐spatial_feedback、按模型/case/控制身份检索experience_v2和独立promotion门已真实接入。S02预载保持使最大持物滑移由旧V01041.171mm降为V00115.900mm并完成carry，但完整释放仍失败；不是等预算因果提升证明。V001误将入口角静稳用于持续条件，V002越过误停后桌仅承载.9405N<.8weight，独立力平衡显示剩余载荷回到手；V003暂停开手后仍失去桌接触；V004受限腕回座15tick后物体速度.088445>.08m/s，实际停止，开手进度0。末点仍有手力，不能按复合错误名断言失抓或唯一机械原因。S03仍是close末点全手力0，未被S02释放修复解决。
+
+正式反馈修正右腕坐标标签和模型手地址：左qpos29..35、右43..49，逐值核对原TRACE/独立schema；旧错误版保留，原始完整状态/右手/物理/NPZ未受影响。新观察审计重建engine添加的tick/最后手参考并规范化tuple/list；其首版预热tick误写-1，audit_metadata_v4按冻结engine的-10..-1各4步补证，保留全部旧失败审计，不删除控制/因果门或放宽任务验收。最终负例只有完整任务门仍false，执行重建通过。
+
+原03:40:31 CST/最多120000新增预算未重置，PLAN_v4保留60min QA余量，新试跑最晚02:40:31，V004后停止新增动力学；已完成独立QA/经验更新/去重结账/旧源保护/关键来源核验。B/FINAL_REVIEW、DATASET_MANIFEST、EXPERIENCE_CATALOG_V2、EXPERIENCE_UPDATE_CHECK、FINAL_ARTIFACT_CHECK、SESSION_CLOSEOUT为正式入口；旧NATIVE_ROUND_OUTCOME_SUMMARY是QA未完成时的历史快照，不能覆盖最终报告。没有活动原生/专家/后处理工作。新策略与实际冻结源SHA相同；旧18源和断点33关键证据保护核对。契约守护17项+账本1项及各版实际状态零积分检查通过；全仓旧两个诊断语法错误仍按断点披露。暂存检查有5处已绑定源码末尾空行提示，保持实际SHA不改写，已在ARCHIVE_VALIDATION记录；不是语法或物理门失败。
+
+完整瓶技能检索S02/S03均为空，局部/负例仅供诊断，所有经验禁止自动部署。未训练、未heldout、未更新模型权重、未完成生成器生产反馈接入，不能称有效学习自进化或产量收益。后续若获新一轮任务，应围绕实际腕参考跟踪/瓶盖接触几何与释放负载交接做有限对照，另立预算/根；不要靠抬阈值、反复单例调参或复活本窗口追求成功。
+
+## 2026-10-27 01:31：V003原初态实测已启动，有界暂停开手/支撑重确认（当前运行）
+
+B、Git分支和03:40:31 CST/120000new/prior239138原预算不变。实际第三次Codex已return0，候选`bottle_branch1_v003.py` SHA`2dbdaf1ec66f26edfa690dc1489753eefbeccb16343248eb2056704c447a5933`，源文件/PROPOSAL/INVOCATION已保留。`bottle_s02_branch1_v003`正以prepare_v5(PLAN_v3)/trial_v3/job_v7从原初始化运行，自动QA等待器也已启动；尚无结果，不能选为成功策略。独立零积分实际缺额状态测试确认保持last-issued hand reference、暂停开手进度、原physical start不改、200tick物理释放超时仍生效；历史入口验证在该单元测试中mock，不能当真实恢复证明。原生试验仍需完整验证历史21次入口、current m.tick/time及有界恢复。
+
+当前新物理已结算38896（累计278034），另V003正在占用至12840的保守预留。V002自动QA已全部完成且负例，但其主agent视觉/FINAL、V3 state-order/spatial补充尚待收尾。V003 raw managed session2098、其自动QA session29977；模型服务session70264已完成可收取；其余初始矩阵和V002管理session也需最后确认退出。现场进度看B/trials/*/JOB与full/PROGRESS，不凭旧AGENT猜状态。
+
+最新独立力分解在context/S02_V002_RELEASE_WRENCH_POSE：停点桌竖向.94042N+手向上1.01807N≈1.962N重量，COMoffset0、瞬时qacc_z≈-.01754，表明剩余负载回到手上；不是完全失去桌接触或自由下落。V003只测试参考暂停/原>=.8weight的21次重确认能否恢复，不调低阈值，不改路径/物性/原8门；若未恢复，保留真实失败再按证据决定后续，原时限/physics不重置。正式反馈用feedback_v3及spatial_feedback，当前所有原始状态/独立控制审计和NPZ均使用正确模型地址。
+
+最终收尾尚未做：完整V003实际结果与独立QA、各trial手序/空间反馈、最终经验catalog（草拟builder需改为真实全部bottle trial）、账本/去重/FINAL、文档与AGENT、拷入Git可复核策略/报告、commit/push实验分支并远端核对。实验前GitHub断点2f27913已完成，不应重复备份或误认为实验也已发布。
+
+## 2026-10-27 01:15：V002释放承载份额不足而停，V003有界恢复设计中（最新接续）
+
+B和Git分支同下节，实验前GitHub断点已保存核对。**原deadline03:40:31 CST / 本轮120000new physics / prior239138 / 同一COST不变**。当前四次raw（cup8536、S02V0018288、S03V0015228、S02V0028308）+杯连续复验8536，新增已计**38896**、累计**278034**；尚无新去重合格瓶数据。三条初始矩阵已经全部独立QA/主agent视觉/FINAL完成：杯positive true但精确重复旧数据，两个V001瓶负例。V002负例自动审计/视频等还在后处理，未训练/未heldout。
+
+V002实际Codex428.35s return0，SHA`ec29f8897f5864f893ce47683db4eaec9f6d729161cb83f129d8da560f294ed2`。其ctrl/qpos/qvel前8288steps与V001完全相同，确实越过.angular-entry .25误停点；tick2067因**唯一target_load_bearing谓词不足**（.940522N<.8*1.962N）在8308steps停，仍desk_supported/base_inside/up.9998195/几何均真，原安全全pass。context/S02_V002_LOAD_SHARE_CAUSE.json含全部释放substeps/精确prefix证明，不把首次不足擅自称可恢复瞬态。另独立重建context/S02_V002_RELEASE_WRENCH_POSE.json：末点手向上1.01807N、桌竖向.94042N，物体接近静态，说明部分负载回到手上；只作真实力/姿态证据，不称完整新轨迹。
+
+同一授权下第三次顺序实际Codex调用`expert_repair_v3_01`正在生成`strategies/bottle_branch1_v003.py`/`PROPOSAL_V003.json`，尚未实际验证。设计约束为：只在桌接触/几何安全而承载份额不足时暂停开手，保存最后实际发出的finger reference，实测达到原>=.8weight并连续重确认后才能恢复；不降低任何阈值，不改物性/控制器/参考路径；真实支撑丢失/时序断裂/超时明示失败。单独开手进度时钟可暂停，**原物理release200tick超时、自身start、总3200ticks、全轮deadline不得重置/延长**。PLAN_v3.json与prepare_v5.py新增，不改旧冻结PLAN/源码/报告。V3仍只针对S02，S03的实际close末点全手力0、桌1.94N、腕跟踪误差末11.19mm/max18.43mm，不能声称被释放修正解决。
+
+正式反馈必须用`feedback_v3.py`的实际模型hand_ids地址（左29..35、右43..49、右腕坐标），旧错误版保留不作真值。新`spatial_feedback.py`补时间严格对齐的腕请求/实际/命名手/接触信息，S03已生成。cup/S02V001的V3 state-order cross-check已通过；后续须对每条最终trial补V3、SPATIAL、STATE_ORDER_CHECK并完成独立视觉/FINAL。经验V1追加一条独立核验后的S02局部负例，diagnosis可检索/complete_skill仍拒绝；正式catalog应最后另生成V2，不能把局部改善或待验证候选晋升。
+
+后续：等第三次专家真实返回，核对proposal/source SHA、回顾改变范围和有界hold语义，再用prepare_v5、trial_v3/job_v7（正式feedbackV3）从原初始化实际测试并完整QA，继续原账。root tools/finalize_branch1.py及build_final_experience_catalog.py已草拟，**仍按V002试验列表编写，最终须先按真实后续trial修正/版本化，不能提前运行伪报完成**。最终独立核验/累计成本/跨轮去重/经验更新/文档与AGENT及实验分支Git提交推送仍未完成。旧N全部源码/数据保持冻结。
+
+## 2026-10-27 00:33：分支一首矩阵已执行，杯回归合格；瓶S02释放契约误停，正据证据最小修正（进行中）
+
+B=`/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1`，同一四小时/120000新增physics窗口继续，deadline仍03:40:31 CST，prior239138及活动COST不重置。GitHub实验前断点仍`2f2791348af1f80adf6dad17876b46e79641b28a`，已推送核对；当前Git分支`experiment/expert-branch1-20261026`。
+
+原冻结cup_v004的S02回归8536steps通过原8门/姿态/NN-PD-contact-geometry/force/原初态全43ctrl连续复验（误差0、warning0）/2134帧完整解码/NPZ/主agent18格overview+21格近景查看，FINAL_VERIFICATION positive=true。`CUP_REGRESSION_COMPARISON.json`证实ctrl/qpos_after/qvel_after逐值与旧S02杯完全相同，physical digest `dc32052c9659211dcabeac128a6a4aa9ee180ddfe6a3bcffcc5a937c1377d42b`，新增去重产量0，不把回归重算新数据。
+
+实际Codex第一次设计调用586.46s return0、无需容量重试；候选V001 SHA`2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363`。手指悬停预载冻结tuple、固定下界+可退让.060额外闭合、每tick总.006限速，目标桌支撑21次观测才授权释放。S02原初态8288steps，已完成carry与直立落桌、目标误差8.307mm，maxheldslip15.900mm（旧V010为41.171mm失抓），但release tick2062触发branch1_target_support_lost_during_release，仍0合格瓶数据。实际桌法向3.58349N>weight1.962N、base_inside true/up.99984089/desk_supported true；角速度.2517847rad/s略越新加入口quietness .25，至少该谓词失败，不能称真实支撑丢失。完整证据在context/S02_V001_RELEASE_CAUSE.json；不把关联当唯一物理因果。
+
+S03同冻结V001原初态5228steps，仍mesh_close_timeout，不是S02释放问题；独立QA进行中。为实际已查因的S02误停新增PLAN_v2.json/prepare_v4.py（不改绑定旧PLAN、源码、数据），只做S02最小释放语义修正与验证，原总预算、deadline及COST账不变。真实Codex第二次顺序设计调用进行中，读实测反馈写V002，不直接积分；区分入口静稳与持续承载/几何，不简单抬高.25阈值，也不改旧8门。S03独立抓取问题不在本次释放修正范围；不得宣称同策略两布局成功。
+
+反馈最终应使用新增`feedback_v3.py`（从实际模型hand_ids获取地址）：object_local_m是右腕坐标；左手qpos29..35、右手43..49，与身体交错。V1/V2误把右臂位置标作左手，右手数值、原始完整状态、原物理/独立审计/NPZ未受影响；旧文件/两份CORRECTION证据保留，V3 actual compact hand state已与独立schema及原TRACE逐值核验。不要再用36:50硬切片解释全14手关节。
+
+经验检索V2新增case内容hash/推理输入和继承控制源码指纹，实际3查询通过、改目标/控制器反例拒绝；promotion.py直接读独立FINAL及其证据，历史两杯在原范围eligible、两瓶拒绝。均不自动部署；尚未完成本轮新瓶成功、最终经验更新、全成本收尾和实验分支结果提交，不能称训练/泛化或量产闭环证明。
+
+## 2026-10-26 23:47：GitHub断点已核对，分支思路一已启动（进行中）
+
+用户要求先将当前版本保存GitHub，再执行论文提炼方案的一版尝试。已将原有全部项目改动、旧轮关键报告/策略/文献记录及哈希索引提交到origin新分支`checkpoint/expert-before-branch1-20261026`，提交`2f2791348af1f80adf6dad17876b46e79641b28a`，已用远端`ls-remote`逐字核对。GitHub链接：https://github.com/chilazy01-blip/Scene/commit/2f2791348af1f80adf6dad17876b46e79641b28a 。保留完整本地模型/轨迹/视频路径，未称这些大文件已全部上传。两个原有诊断脚本语法错误已如实存入断点验证说明；原模型权重外链和运行日志已忽略，未改写远端旧分支。
+
+当前Git分支`experiment/expert-branch1-20261026`。新代码`sage/experiments/embodied_expert_branch1_v1/`，新根B=`/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1`，PLAN/AUTHORIZATION已立：四小时至**2026-10-27 03:40:31 CST**，最多新增**120000 physics**（失败/诊断/成功连续复验全计），承接**239138**、累计上限359138，留40min QA headroom。旧轮不复活、旧冻结源码不改。当前杯S02原V004回归已从原初始化启动；瓶S02/S03候选尚未实测。旧杯相同物理内容不可重复算新去重产量。
+
+实现目标为阶段契约、首次可观测异常反馈、严格模型/case/本体/控制/资产/抓区适用范围检索、独立证据晋升门。诊断契约不替代原8门，物性/控制/NoSlip3960切3和姿态门保持。初版反馈把`object_local_m`标签误写成root，经metrics.py实际源码确认它是right-wrist frame；原文件及纠正证据保留，正式反馈采用新增`contracts_v2.py`/`feedback_v2.py`，不改已绑定杯protocol的源码。数值与物理runner未受此标签错误影响。V1包仍保留用于追溯，不能把错误标签传给后续专家。
+
+真实Codex专家服务已在既有授权下单独读相关证据生成一次瓶子候选，设计调用不直接物理积分；容量错误有限重试并保存日志。不默认降低模型或改变服务配置。新接口三项契约/经验测试及原守护迁移测试共17项通过（先前ROS pytest自动插件冲突为0physics工程失败，关闭无关自动插件后通过）。杯回归、瓶候选、实际失败查因和独立审计/force/原初态全43ctrl复验/真实视频/NPZ质量核验尚未完成，不能声明闭环成功或训练收益。按原始实际任务完成或真实时间/physics退出，失败必须留证据再修订。
+
 ## 2026-10-26：用户授权分支思路一，先保存GitHub断点（当前准备）
 
 用户要求把论文提炼方案作为“分支思路一”执行一版尝试，并明确要求试验前将当前版本记录到GitHub。当前先保存代码与文档断点至origin `chilazy01-blip/Scene` 的新checkpoint分支，未启动分支一物理试验；不改写远端既有分支。`docs/checkpoints/20261026_before_expert_branch1/SOURCE_BINDINGS.json`记录当前两杯合格、瓶/书未成功、累计239138及复制元数据的精确哈希。此前原有生成器/其他源改动一并作为当前版本保存，不修正或丢弃。模型/完整轨迹/视频仍在原本地根，GitHub保存代码、关键报告及依赖索引。V011仍未实测，不能因入Git视为通过。

@@ -1,0 +1,23 @@
+{
+  "actual_native_trials": 0,
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v001.py",
+    "sha256": "2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363",
+    "size_bytes": 58784
+  },
+  "content_sha256_excluding_this_field": "809a5cfea0b491d2904a4336a1ef0b125be6a9d7dad4c29f51d48fdb75263b35",
+  "independent_cause_claim": false,
+  "initial_geometry_and_observe_methods_unchanged": {
+    "move": true,
+    "observe": true,
+    "ready_arm": true,
+    "shape_reference": true
+  },
+  "not_qualified": true,
+  "proposal": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL.json",
+    "sha256": "a081bc9ba7cbccdc1144616f035c7218bd41649a8a6135b4041b7cbfeead1d25",
+    "size_bytes": 19168
+  },
+  "scope": "Reference preload intervention plus stricter target-support handoff; no model/acceptance changes"
+}

@@ -1,0 +1,19 @@
+{
+  "affected_field": "actual_finger_qpos_rad only; raw full_qpos, references, torques, force and physical execution remain unchanged",
+  "content_sha256_excluding_this_field": "2360e8370ab9e5c8c7cdbbc2a5685379ed27eb238a4b50708c797cb59cf7a1a3",
+  "corrected": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/feedback_v3.py",
+    "sha256": "19bd2e27e8f8d74c66a5b88687ed02b953df441fe16bdd35f8178e926b798efa",
+    "size_bytes": 4627
+  },
+  "detected": "Actual native hand_ids/model schema: left hand qpos29..35, right hand43..49; hands are interleaved with body joints.",
+  "independent_native_audit_and_export_use_model_hand_ids": true,
+  "new_physics_steps": 0,
+  "official_feedback_version": "v3/model-derived joint addresses",
+  "old_files_retained": true,
+  "superseded": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/feedback_v2.py",
+    "sha256": "367e96f34817679d1b41304db6c540424884e1d7ff87eee0c0207eaad97e09d0",
+    "size_bytes": 4143
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "old": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v4/decoded_review.jpg",
+  "current": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/partial_delivery_v6/decoded_review.jpg",
+  "sha256": "aca0d3cdc4d4c3878f5ab682a7fbf01b1a4f2300bbd92fed34e5974a0dba5687",
+  "new_physics_steps": 0
+}

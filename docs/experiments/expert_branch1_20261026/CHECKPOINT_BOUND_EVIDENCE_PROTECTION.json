@@ -1,0 +1,211 @@
+{
+  "checks": [
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/FINAL_REVIEW.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/FINAL_REVIEW.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/DATASET_MANIFEST.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/DATASET_MANIFEST.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/FINAL_ARTIFACT_CHECK.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/FINAL_ARTIFACT_CHECK.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/ROBOT_DATA_SCHEMA.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/ROBOT_DATA_SCHEMA.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/AUTHORIZATION.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/AUTHORIZATION.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/PLAN.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/PLAN.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/COST_FINAL_SNAPSHOT.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/COST_FINAL_SNAPSHOT.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/TASK_SCOPE_DISCLOSURE.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/TASK_SCOPE_DISCLOSURE.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/CASE_ADMISSION_REGISTRY.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/CASE_ADMISSION_REGISTRY.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/EXPERT_FINAL_RECONCILIATION.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/EXPERT_FINAL_RECONCILIATION.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s02_v004/CASE.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/CASE.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s02_v004/PROTOCOL.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/PROTOCOL.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s02_v004/MEASUREMENTS.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/MEASUREMENTS.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s02_v004/FINAL_VERIFICATION.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/FINAL_VERIFICATION.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s03_v004/CASE.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/CASE.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s03_v004/PROTOCOL.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/PROTOCOL.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s03_v004/MEASUREMENTS.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/MEASUREMENTS.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/cup_s03_v004/FINAL_VERIFICATION.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s03_v004/FINAL_VERIFICATION.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s02_v010/CASE.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/CASE.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s02_v010/PROTOCOL.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/PROTOCOL.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s02_v010/MEASUREMENTS.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/MEASUREMENTS.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s03_v010/CASE.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/CASE.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s03_v010/PROTOCOL.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/PROTOCOL.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s03_v010/MEASUREMENTS.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/MEASUREMENTS.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/generated_grasp/trials/bottle_s03_v010/FINAL_VERIFICATION.json",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/FINAL_VERIFICATION.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/strategies/cup_v004.py",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/cup_v004.py",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/strategies/bottle_v010.py",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/bottle_v010.py",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/strategies/bottle_v011.py",
+      "source": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/bottle_v011.py",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/literature/READING_LOG.json",
+      "source": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/READING_LOG.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/literature/EXPERIENCE_CANDIDATES.json",
+      "source": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/EXPERIENCE_CANDIDATES.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/literature/IMPLEMENTATION_BACKLOG.json",
+      "source": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/IMPLEMENTATION_BACKLOG.json",
+      "source_unchanged": true
+    },
+    {
+      "checkpoint_copy_unchanged": true,
+      "checkpoint_path": "docs/checkpoints/20261026_before_expert_branch1/literature/REVIEW_COMPLETE.json",
+      "source": "/data/wsj/main/scene_runs/literature/expert_trajectory_review_20261026_v1/REVIEW_COMPLETE.json",
+      "source_unchanged": true
+    }
+  ],
+  "content_sha256_excluding_this_field": "aa11d6849527c50510f6431ed3673df47c59b9488c3a51b958fcb61679d3ade5",
+  "files": 33,
+  "index": {
+    "path": "/data/wsj/main/scene/docs/checkpoints/20261026_before_expert_branch1/SOURCE_BINDINGS.json",
+    "sha256": "063d8fa29f278a1d70b6507645192b47175719afdb0148d8d6d53fde2eed37e0",
+    "size_bytes": 13469
+  },
+  "new_physics_steps": 0,
+  "passed": true
+}

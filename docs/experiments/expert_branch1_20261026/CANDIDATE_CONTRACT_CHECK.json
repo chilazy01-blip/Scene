@@ -1,0 +1,25 @@
+{
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v001.py",
+    "sha256": "2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363",
+    "size_bytes": 58784
+  },
+  "checks": [
+    "aggregate_callback_slew_per_tick",
+    "immutable_nonratcheting_signed_floor",
+    "bounded_reversible_extra_closure",
+    "floor_retained_on_unloading_proposal",
+    "21_distinct_support_observations",
+    "support_flicker_revokes_handoff",
+    "unsupported_release_rejected"
+  ],
+  "content_sha256_excluding_this_field": "3bb4caa5442884a3be1d433b40bcdd9369778bc6e05f29a239b24a2936d1a002",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/check_candidate_contracts_v2.py",
+    "sha256": "66aaed611e5947b17084069af2a28b28c66d1566942c0a7d2d73cfc48325b950",
+    "size_bytes": 2933
+  },
+  "new_physics_steps": 0,
+  "passed": true,
+  "scope": "Reference logic only, not dynamics or a qualified trajectory"
+}

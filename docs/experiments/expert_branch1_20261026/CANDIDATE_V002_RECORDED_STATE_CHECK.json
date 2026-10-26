@@ -1,0 +1,80 @@
+{
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v002.py",
+    "sha256": "ec29f8897f5864f893ce47683db4eaec9f6d729161cb83f129d8da560f294ed2",
+    "size_bytes": 63563
+  },
+  "content_sha256_excluding_this_field": "94d471d99e028c0fc99c1979277ac61ee18384228c45f55920677346b4a2eee3",
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/check_v002_actual_state.py",
+    "sha256": "c69c63fd28dfa8837ee3643d23b3b5913e2ea0475fd6409597d59dc8a322a555",
+    "size_bytes": 3505
+  },
+  "interpretation": "Exact recorded physical state for support/geometry. Wrist reached and prior certificate bookkeeping mocked for isolated semantics; not a replay, new trajectory, or entry certification.",
+  "new_physics_steps": 0,
+  "passed": true,
+  "physical_model_unchanged": true,
+  "private_state_unchanged": true,
+  "results": [
+    {
+      "entry_ready": false,
+      "evidence": {
+        "base_inside_target_table": true,
+        "object_axis_cosine": 0.9998408878963002,
+        "object_bottom_above_table_m": 0.0019193621363122748,
+        "planned_error_xy_m": 0.0083072323201788,
+        "ready": false,
+        "target_contact_normal_n": 3.58349286104238,
+        "target_error_xy_m": 0.0083072323201788,
+        "weight_n": 1.9620000000000002
+      },
+      "version": "v001",
+      "wrist_reached_mocked_for_entry_only": true
+    },
+    {
+      "entry_ready": false,
+      "evidence": {
+        "base_inside_target_table": true,
+        "desk_supported": true,
+        "entry_motion_predicates": {
+          "angular_quiet": false,
+          "object_linear_quiet": true,
+          "root_linear_quiet": true,
+          "wrist_reference_reached": true
+        },
+        "entry_ready": false,
+        "failed_entry_motion_predicates": [
+          "angular_quiet"
+        ],
+        "failed_persistent_predicates": [],
+        "object_angular_speed_rad_s": 0.2517847254373631,
+        "object_axis_cosine": 0.9998408878963002,
+        "object_bottom_above_table_m": 0.0019193621363122748,
+        "object_speed_m_s": 0.03237579818990462,
+        "persistent_predicates": {
+          "base_inside_target_table": true,
+          "bottom_height_in_band": true,
+          "desk_supported": true,
+          "object_upright": true,
+          "original_target_in_range": true,
+          "planned_target_in_range": true,
+          "target_load_bearing": true
+        },
+        "persistent_support": true,
+        "planned_error_xy_m": 0.0083072323201788,
+        "ready": false,
+        "root_speed_m_s": 0.030237773597990753,
+        "target_contact_normal_n": 3.58349286104238,
+        "target_error_xy_m": 0.0083072323201788,
+        "weight_n": 1.9620000000000002
+      },
+      "version": "v002",
+      "wrist_reached_mocked_for_entry_only": true
+    }
+  ],
+  "source_report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/REPORT.json",
+    "sha256": "7f56e82296b82c9cbea09dcfcb98867a14d364828162fec4010b7fc67e783291",
+    "size_bytes": 6798006
+  }
+}

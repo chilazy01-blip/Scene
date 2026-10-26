@@ -1,0 +1,709 @@
+{
+  "schema": "active-reference-seating-release-design/v4",
+  "version": "V004",
+  "candidate_path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v004.py",
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v004.py",
+    "sha256": "125c397ece48168614d44f7faabc660514a886be73631f4f5ff891a26034d415",
+    "size_bytes": 84772
+  },
+  "status": "UNTESTED_NATIVE_PHYSICS",
+  "untested": true,
+  "design_only": true,
+  "actual_physics_performed": false,
+  "new_physics_steps": 0,
+  "broker_trials_submitted": 0,
+  "new_outcomes": [],
+  "learning_completed": false,
+  "automatic_deployment_approved": false,
+  "explanation": "Replace the failed passive load-share hold with active world-frame wrist admittance coordinated with the original native opening. Hold actual finger references during initial seating and any support deficit; permit a bounded still-grasped near-table re-seat, with fresh measured support before opening resumes. Preserve original acquisition/carry/place and judge.",
+  "falsifiable_hypothesis": "Small negative-Z reference motion when measured desk vertical load is deficient, with positive-Z object-velocity/bottom-gap feedback and limited lateral drift damping, can transfer load back to the desk. It may fail under SONIC tracking lag or cap/finger hooking; no success is inferred.",
+  "actual_evidence": {
+    "V003_measured_contact_loss": {
+      "policy_request": 2068,
+      "previous_hold_request": 2067,
+      "physically_issued_hold_ticks": 1,
+      "actual_physics_steps": 8312,
+      "extra_steps_beyond_V002": 4,
+      "exact_V002_prefix_samples": 8308,
+      "target_normal_n": 0.0,
+      "desk_supported": false,
+      "hand_contact": true,
+      "gap_m": 0.002070431356604452,
+      "object_axis_cosine": 0.9997659235996778,
+      "goal_xy_error_m": 0.011331510200161906,
+      "speed_m_s": 0.04233858177247896,
+      "interpretation": "Waiting alone at that exact held-reference state did not preserve table contact; no recovery or complete bottle release has been observed."
+    },
+    "V002_independent_balance": {
+      "tick": 2066,
+      "hand_upward_n": 1.0180686953713631,
+      "desk_upward_n": 0.9404226577413721,
+      "weight_n": 1.9620000000000002,
+      "mass_kg": 0.2,
+      "qacc_z_m_s2": -0.017543234436326216,
+      "residual_n": 3.1094918306884267e-16,
+      "maximum_residual_n": 3.552713678800501e-15,
+      "interpretation": "Actual hand takes about half the weight during opening; post-forward state wrench balance is not equated to previous-step finite-difference acceleration."
+    },
+    "V002_wrist_response": {
+      "command_m": [
+        2.9710849840259534,
+        1.8464029464973506,
+        1.114140069997405
+      ],
+      "actual_post_state_m": [
+        2.977797653374295,
+        1.8413058855519775,
+        1.112375145756457
+      ],
+      "command_note": "Actual wrist after last substep; requested wrist for policy command at its beginning (.020s earlier).",
+      "interpretation": "The raw reference was fixed while measured wrist position and reference bias evolved. Does not identify a unique body-tracking versus finger/cap-hooking cause."
+    },
+    "opening_geometry": {
+      "native_right_order": [
+        "right_hand_thumb_0_joint",
+        "right_hand_thumb_1_joint",
+        "right_hand_thumb_2_joint",
+        "right_hand_middle_0_joint",
+        "right_hand_middle_1_joint",
+        "right_hand_index_0_joint",
+        "right_hand_index_1_joint"
+      ],
+      "shape_admission_band_local_z_m": [
+        0.103,
+        0.122
+      ],
+      "payload_collision_radius_m": 0.001,
+      "band_evidence": "Retained shape_reference and actual V003 REPORT shape admission; this is private geometric admission, not a release rollout.",
+      "issued_hold_reference_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.24557039035679154,
+        -0.5831982384930001,
+        -0.7480681794014443,
+        0.9057282607932807,
+        0.8404491813404217,
+        0.7931317363473389,
+        0.8013945177248726
+      ],
+      "progress_at_hold": 7,
+      "nominal_fraction_at_hold": 0.003079934200000001,
+      "interpretation": "All14 references actually held, with only a small initial nominal opening. Normal force magnitudes alone cannot establish downward versus upward payload load; reconstruct current world-frame wrench. Keep native motor order and opening path, use measured vertical wrist feedback, do not guess a cap-unhooking rotation."
+    },
+    "V010_and_V011": "S02 V010 loses all hand contact at1810, slips/rejects1813 with earlier partial role loss; v011 is untested, has a ratcheting floor and a first-contact handoff latch. Retain V003 immutable acquired floor, projection and current evidence rather than importing v011.",
+    "S03": "Both historical V010 and branch1V001 stop at close with mesh_close_timeout; late seating does not fix or qualify that failure."
+  },
+  "applicability": {
+    "intended_intervention": "S02 bottle upper-neck/cap grasp, after the unchanged airborne acquisition/carry/place and21-observation target support entry; active feedback only in public release phase",
+    "runtime_case_guard": {
+      "case_ids": [
+        "S02_bottle",
+        "S03_bottle"
+      ],
+      "object_id": "bottle",
+      "loaded_native_reference_ratio": 0.65,
+      "declared_local_axis": [
+        0,
+        0,
+        1
+      ]
+    },
+    "admitted_model_bindings": {
+      "S02": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+        "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+        "size_bytes": 47744485
+      },
+      "S03": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_bottle/model.xml",
+        "sha256": "5498b72c2a3f21654713696498057188fd93aa5b6a3dfd69248f5be8e58dfeeb",
+        "size_bytes": 47742816
+      }
+    },
+    "case_provenance": {
+      "S02": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/CASE.json",
+        "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+        "size_bytes": 12643
+      },
+      "S03": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/CASE.json",
+        "sha256": "2e6e5e43892a065e0336f6c5b47c08d56691e573857718265a32e47e4847905d",
+        "size_bytes": 12543
+      }
+    },
+    "mass_kg": 0.2,
+    "body_control": "original SONIC29",
+    "hand_control": "original native14 handPD",
+    "scope_limit": "Exact admitted bottle cases/models only; S03 is admitted to the same frozen source for parent comparison, not claimed repaired or paired. No cup/book/other-mass/other-model transfer.",
+    "recovery_geometry": "Still opposing grasp with original wrist-relative slip<=.04m, upright>.985, base inside actual table, original/planned target error<.03m, gap[-.003,.004]m, object speed<.08m/s, angular speed<.5rad/s and root speed<.10m/s."
+  },
+  "changed_methods": [
+    "__init__",
+    "change",
+    "release_event",
+    "stop_release",
+    "observe_release_permission",
+    "update",
+    "update_phase"
+  ],
+  "new_methods": [
+    "active_seating_reference",
+    "measured_release_wrench",
+    "release_secure_grasp"
+  ],
+  "method_source_lines": {
+    "__init__": 42,
+    "change": 95,
+    "begin_hand_reference_tick": 179,
+    "project_hand_reference": 187,
+    "target_support_sample": 226,
+    "release_entry_valid": 295,
+    "release_event": 320,
+    "stop_release": 343,
+    "measured_release_wrench": 351,
+    "release_secure_grasp": 377,
+    "observe_release_permission": 383,
+    "active_seating_reference": 514,
+    "observe_target_handoff": 562,
+    "observe_loaded_contract": 613,
+    "ready_arm": 637,
+    "shape_reference": 791,
+    "force_update": 1041,
+    "normal_control": 1082,
+    "plan": 1117,
+    "move": 1126,
+    "airborne_grip": 1183,
+    "observe": 1221,
+    "update": 1239,
+    "update_phase": 1257
+  },
+  "unchanged_methods": [
+    "begin_hand_reference_tick",
+    "project_hand_reference",
+    "target_support_sample",
+    "release_entry_valid",
+    "observe_target_handoff",
+    "observe_loaded_contract",
+    "ready_arm",
+    "shape_reference",
+    "force_update",
+    "normal_control",
+    "plan",
+    "move",
+    "airborne_grip",
+    "observe"
+  ],
+  "controller_design": {
+    "when": "Only after unchanged place/lower21-current-consecutive-observation entry; first hold native fingers for a new21 qualifying seating observations. Thereafter apply bounded wrist reference feedback while opposing hand contact remains, coordinated with original smooth opening progress.",
+    "coordinates": "World coordinates. Actual mesh bottom comes from payload flex vertices relative to actual admitted table top. XY anchor is the measured bottle origin at entry, not a rewritten goal or slip acceptance anchor.",
+    "z_velocity_equation": "clip(.002*(Fdesk_z-1.2*weight) - .5*max(vobject_z,0) - 1.5*max(bottom_gap-entry_gap_clipped_to_[.001,.002],0), -.006, .002) m/s; if current support insufficient, prohibit positive Z velocity.",
+    "xy_velocity_equation": "limit_norm(-.8*(object_xy-entry_object_xy) - .5*object_velocity_xy, .004) m/s",
+    "update": "One20ms reference interval via retained make_path and inherited synchronize/reference_blocks; at tick t desired(t) is the new bounded endpoint. No new actuation channel, bias reset, IK execution in this invocation, or controller-input binding.",
+    "signs": "Fdesk_z below desired load gives negative world Z to reduce the table gap; excess desk load relieves upward. Positive object-Z motion/increasing bottom gap adds downward correction. XY terms oppose measured drift/velocity to reduce dragging of an upright bottle.",
+    "geometry": "Hold release entry desired wrist orientation; retain original native14 opening curve and hand names. Evidence does not justify a specific wrist unhooking rotation or joint-specific numeric opening sweep.",
+    "limits": {
+      "reference_z_velocity_m_s": [
+        -0.006,
+        0.002
+      ],
+      "reference_xy_speed_m_s": 0.004,
+      "per_tick_z_increment_m": [
+        -0.00012,
+        4e-05
+      ],
+      "per_tick_xy_increment_norm_m": 8e-05,
+      "net_reference_z_offset_m": [
+        -0.006,
+        0.002
+      ],
+      "net_reference_xy_offset_norm_m": 0.004,
+      "cumulative_reference_path_m": 0.012,
+      "actual_wrist_translation_from_entry_m": 0.02,
+      "actual_wrist_rotation_from_entry_rad": 0.1,
+      "inherited_position_bias_change_norm_m": 0.008,
+      "inherited_rotation_bias_change_norm_rad": 0.08,
+      "table_normal_and_vertical_force_max_weight_multiple": 3.0,
+      "finger_role_normal_max_n": 10.0,
+      "secure_thumb_and_opposing_normal_min_n": 0.5,
+      "reseat_attempts_after_initial_seating": 2,
+      "per_hold_limit_ticks": 60,
+      "cumulative_held_reference_ticks": 70,
+      "physical_release_age_limit_ticks": 200,
+      "total_ticks": 3200
+    },
+    "limit_rationale": "Conservative unvalidated design bounds, not identified gains or guaranteed safe physics: 6mm downward travel covers the observed~2.07mm near-table gap without a centimetre-scale search; 4mm lateral reference limit restrains correction rather than transporting the object; slow0.12mm/0.08mm policy increments and path/force/time caps stop excessive or ineffective correction. Force target1.2weight is a modest load margin above the unchanged .8weight gate, not a lower threshold. Table ceiling3weight exceeds the observed~2.8weight entry-history peak while stopping excessive pressing. Parent must verify actual response and geometry.",
+    "finger_curve": "Original release_origin*(1-smooth(progress/100)), projected through unchanged common-origin .006rad/tick and .65 native bounds. Original progress>=115 completion remains; actual support and no hand contact still required."
+  },
+  "support_contracts": {
+    "public_phases": "Unchanged: place -> release -> retract -> settle -> done. preseat_pending/reseat_pending/opening_supported are private control states, not replacement public phases.",
+    "entry": "Unchanged21 distinct current consecutive50Hz observations of7 persistent support/geometry predicates plus4 entry quietness/reached predicates. Retain historical certificate and exact original start.",
+    "opening_permission": "At every new release observation, all original persistent predicates including measured desk support and normal>=.8weight must pass, PLUS freshly reconstructed desk vertical force>=.8weight. Original entry motion predicates are diagnostics during ongoing opening, except the separate stated safety bounds.",
+    "pending": "If current support is insufficient, including actual desk force0, opening is prohibited and exact last physically issued14 references are held. Explicitly log actual_missing_target_contact, actual_desk_supported, current_support_measured and fresh_seating_observation_qualified. Missing/low load is never qualified.",
+    "recovery": "Only current secure opposing grasp and stated measured near-table geometry/motion bounds permit active wrist re-seating. Require21 new consecutive entry-ready samples with current normal and vertical>=.8weight, each<=2.5weight and bottom gap<=.003m. A nonqualified sample resets dwell. All observation freshness/provenance checks remain.",
+    "failure": "Reject stale/misaligned/duplicate-changed support, issued-reference mismatch, missing geometry, original geometry loss, nonfinite wrench, force/pose/motion limits, lost secure grasp during pending, distance/path exhaustion, third reseat attempt, hold60/cumulative70 exhaustion or unrecovered support by physical release age200. Original engine safe/no rejection gates remain active.",
+    "finish": "Current measured support and geometry plus native progress>=115 and no hand contact; then unchanged retract/settle. No historical certificate proves current support or completion."
+  },
+  "fixed_invariants": [
+    "No actual data.qpos/qvel/time/ctrl/applied force writes; no reset/setState/step/step1/step2, teleport, attachments or plant/case/goal/anchor edits.",
+    "Original SONIC29 body and native14 handPD, PD/effort limits, mass/inertia/geometry/material and all original bindings unchanged. .65 native reference bounds, .006rad/tick hand slew and frozen airborne preload envelope unchanged.",
+    "Original NoSlip0->3 at3960; original8 task judge gates, orientation>=.98 and full200physical-sample settle immutable.",
+    "No phase-start reset to buy time. Exact V003 place600/release200/retract250 branches and case settle timeout retained, including all terminal root/object metrics. Existing case files and their timeout fields are untouched.",
+    "No native trials, installation, downloads, training, credentials, external messaging or other agents in this invocation."
+  ],
+  "frame_and_index_notes": [
+    "object_local_m is object in RIGHT WRIST frame; up is robot root; object upright is object_rotation@declared local axis.",
+    "Read hand_ids names. Native right middle joints precede index joints; old.843->.625 was middle distal, not index.",
+    "Scalar contact normal and reconstructed world-Z desk load remain separate measurements; native payload contact sign is positive on participant1, negative on participant0."
+  ],
+  "prior_evidence_references": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/REPAIR_CONTRACT_V4.md",
+      "sha256": "bab59a3c5b4834a9844ed8891dc66e382cd540c44ab0b3bb3880026d8961f44d",
+      "size_bytes": 4364
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/EXPERT_CONTRACT.md",
+      "sha256": "4a710babab1d15954cabbbf5afc23dd580069b57438f4318a115ae5e92dccd1f",
+      "size_bytes": 3025
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V003_CONTACT_LOSS_CAUSE.json",
+      "sha256": "eaa2f8a65d563ab409ecee76863d80fe258f03b73c1cd832bb802637a78807ae",
+      "size_bytes": 123005
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V002_RELEASE_WRENCH_POSE.json",
+      "sha256": "9db849f76e4530076efd5abf3982b3918bb2cdeb6a9c27ba8c36f262d7588ad0",
+      "size_bytes": 12647
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_bottle_diagnosis_retrieval.json",
+      "sha256": "adecf7956ea9da2fa98f3aa66b8810bfa3258b1a1428cc9a351b8ce1749bc5b6",
+      "size_bytes": 8451
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_v010_time_order_diagnosis_v001.json",
+      "sha256": "3f94921d69912dc6dbc4c29d97ead35e9f04dd40103dd909381174c9fc65852b",
+      "size_bytes": 31682
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_s02_v010_PHASE_FEEDBACK.json",
+      "sha256": "6fb1b71761706a7766e38f9e108539e5f2fde5ecb45df10748b17d4be14f6c70",
+      "size_bytes": 177809
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_s03_v010_PHASE_FEEDBACK.json",
+      "sha256": "c19d850f6cb08d899b54a4e40a4d54541435ca9eaf0ec946acfc7165296fa2c1",
+      "size_bytes": 91349
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_s02_v010_PHASE_FEEDBACK_V2.json",
+      "sha256": "ad73a0c8b7e80ab65338282c5fc4d47de7bd1da1ed5283967ef687c8cbddaf6e",
+      "size_bytes": 177909
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_s03_v010_PHASE_FEEDBACK_V2.json",
+      "sha256": "a344cc5f43872bb6b172f12af4545f02a5f30c923aae3128d44635f357b33c51",
+      "size_bytes": 91405
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_v010.py",
+      "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+      "size_bytes": 46225
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/bottle_v011_UNTESTED.py",
+      "sha256": "5917959ba56d2762a5542980aad516c8680281e55ac65d8f7d4cf9b309b0e815",
+      "size_bytes": 47371
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/PARENT_FRAME_CORRECTION.txt",
+      "sha256": "c8bb4ec03b2e4f8b1da0340a596bdc6a1d6405c5958604968f5de1bda5dc4192",
+      "size_bytes": 334
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v001.py",
+      "sha256": "2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363",
+      "size_bytes": 58784
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v002.py",
+      "sha256": "ec29f8897f5864f893ce47683db4eaec9f6d729161cb83f129d8da560f294ed2",
+      "size_bytes": 63563
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v003.py",
+      "sha256": "2dbdaf1ec66f26edfa690dc1489753eefbeccb16343248eb2056704c447a5933",
+      "size_bytes": 73646
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V002.json",
+      "sha256": "fa64c6bca0387c3c732b5e0028a06e00eaf5bdce2f03ba525973c7433e15b5f1",
+      "size_bytes": 47464
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V003.json",
+      "sha256": "5addd6a34fcbc57fab779c40cfe3045210b4bbc66b57e57d3fc7ac4f2d2d6e3e",
+      "size_bytes": 70095
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/S02_V002_FORCE_BALANCE_CHECK.json",
+      "sha256": "5bedaced0e994fd95938239855de033b655fd6d0527c5869660a79145a5bae9d",
+      "size_bytes": 3786
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PLAN.json",
+      "sha256": "e403f1b9dc434796bef27be89e5cc4184cfb93faa8adce1aa023f90680ed0a53",
+      "size_bytes": 2116
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/COST.json",
+      "sha256": "be382ac7bd99119d65b0ba78963ff75e50123dfa248ddc70f80d54f26cb6074e",
+      "size_bytes": 2352
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/PHASE_FEEDBACK_V3.json",
+      "sha256": "9818e6057df446867f73a320c38980c07adff49e97bdeb48d8c28309f4251c04",
+      "size_bytes": 180619
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/REPORT.json",
+      "sha256": "c550f91994f7c1b3da549d0f191ad88f886be0366c28e08d6d4bc7953f0869e7",
+      "size_bytes": 7917635
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/full/REPORT.json",
+      "sha256": "ce299a7a032d7fcad3bd58f4db516e34709af28a12a35b63b15e22e813b2bf7e",
+      "size_bytes": 462903
+    }
+  ],
+  "inspected_reference_interfaces": [
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/contracts.py",
+      "sha256": "7081433ff719df2898461977b31709ee9da4dd211e768457c4e657ff75731fb9",
+      "size_bytes": 3169
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/guard.py",
+      "sha256": "7b1eaf2ac80494b9d67e9892952d9ba1d56d6a1add6539e36f60ab7208af5f6c",
+      "size_bytes": 6056
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/engine.py",
+      "sha256": "e2b15081e412e77e6beb2fb967ef3d745c9592dd20e27aaae214ce7599e024b8",
+      "size_bytes": 21556
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_sonic_body_grasp_v1/task_stand.py",
+      "sha256": "ec215405c50d7cb205e037c440260033abc25cc46d87083282db4c3beac721e8",
+      "size_bytes": 1207
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_sonic_body_grasp_v1/task_probe_wait.py",
+      "sha256": "d9010892dd24399c3f24770b4ad2fd778279b74a86ca134a31e6ebe060066ce2",
+      "size_bytes": 1557
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_sonic_body_grasp_v1/task_body.py",
+      "sha256": "8e6936822873407180840548d662c4a63d50020525957763c7ffeb619b8be994",
+      "size_bytes": 10010
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_object_transport_v1/task_v3.py",
+      "sha256": "b03946ad3dabd0f8581e76811f0b6011aee8b449aaf0fe53f567cd122b576b7a",
+      "size_bytes": 15914
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_object_transport_v1/metrics.py",
+      "sha256": "3cb47e5fcf83b22bca916d936aeabf61c4ce5fc7d7e0aa66708f8fea0c4378c2",
+      "size_bytes": 6506
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_sonic_transport_v1/task_ordered.py",
+      "sha256": "67ffba51be26c08d49ebb14cf31871c00afc5f49c84bbee348b9802f5d7502ec",
+      "size_bytes": 2816
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_sonic_transport_v1/reference_feedback.py",
+      "sha256": "95c05763bb40e18243bc155c27905af071f902de232111b184543f54ad3c49ab",
+      "size_bytes": 810
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_sonic_grasp_feedback_v1/continuous_lift.py",
+      "sha256": "1d51632fbed910e83747e3e80b9138721fe9435aa224b68062658a37de5b6dfa",
+      "size_bytes": 526
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_sonic_command_integration_v1/task_envelope.py",
+      "sha256": "6f8ee386b2100a03828e46b9d0b492035c174bb0e0ac73a5412f62080c30613d",
+      "size_bytes": 4445
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_sonic_loaded_grasp_v1/quality.py",
+      "sha256": "42e780f22f4017f6e85293331cfc5ec0718abeeff1abaf09ebf96e3acb3e77d4",
+      "size_bytes": 3108
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_transport_native_v1/contacts.py",
+      "sha256": "f3d70a2865598c675d5be283b145c556c68db8d00f7347ea5741f1c60883bda8",
+      "size_bytes": 5428
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_native_walk_motion_v2/engine.py",
+      "sha256": "98213864319754d79e78fca54a0199c09e96ef2254d3003d1f17aea2696404f5",
+      "size_bytes": 20462
+    },
+    {
+      "path": "/data/wsj/main/scene/sage/experiments/embodied_carry_v1/grasp.py",
+      "sha256": "7742ac0fb59b688b360fbd5c25778eafebcd05f26a95fdaf64c562111dea6f0c",
+      "size_bytes": 8709
+    }
+  ],
+  "design_verification": {
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/outbox/V004_DESIGN_CHECKS.json",
+      "sha256": "8ccdee0f23fff89be56e8b6c2992ad46ff8fa31832f1aa361ae0fc645f5a165a",
+      "size_bytes": 3176
+    },
+    "implementation": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/outbox/check_v004_design.py",
+      "sha256": "ab77795d6091f70d8a1f728f1d0794927924ec68cd41c726fff6469f64fa2623",
+      "size_bytes": 19887
+    },
+    "checks_passed": 15,
+    "scope": "AST-extracted candidate methods and pure source guard, synthetic arrays/contact-frame stubs only; no native strategy/model imports or physics",
+    "candidate_imported": false,
+    "native_model_loaded": false,
+    "private_kinematic_execution_performed": false,
+    "actual_physics_performed": false,
+    "new_physics_steps": 0,
+    "interpretation": "AST-extracted methods on synthetic arrays/contact stubs; exact unchanged-method/nonrelease-branch checks and extracted native source guard. This is neither a physical trajectory nor evidence that support recovers."
+  },
+  "parent_tests_required": [
+    "Respect original PLAN/COST/deadline: do not reserve or start a new rollout with less than 60 minutes remaining before 03:40:31 CST; no budget or prior239138 reset. This handoff does not start a rollout.",
+    "Bind this exact immutable candidate and existing model/case/assets/protocol/SONIC and hand input schemas. Fresh-original-init S02 first; no restored stopping-state experiment counts as a fresh trajectory.",
+    "Check exact continuous physical prefix through acquisition/carry/place against V003; intervention begins at the release entry. Preserve every old and new failed trial.",
+    "Independent state/plant/case mutation guard and NN/native14 PD/effort/.65/.006 audit. All29 body actuators must remain original SONIC outputs and all43 commands must have causal lineage.",
+    "Inspect the world-frame wrist command including existing feedback.position/rotation, not just raw path. Confirm bounded reference increments and actual wrist/mesh/table geometry; no additional hand/furniture support or cap collision.",
+    "At 200 Hz reconstruct actual payload/table and hand wrenches with contact-side sign; preserve all missing-table-contact samples and diagnostic breaches even during pending re-seating. Verify no low-load or off-table sample qualifies or advances finger opening.",
+    "Verify each low-support interval holds the exact previously issued14 native references, while wrist references may move only inside the recorded bounds. Check current measurements, distinct observation times, fresh21 requalification, attempt/path/hold/phase/total limits and real failure exits.",
+    "Test whether the active negative-Z correction actually restores table load without wedging fingers under the cap, tipping, excessive load, loss of grasp or lateral drag. A held-finger interval or fresh synthetic certificate is not physical recovery evidence.",
+    "Opening completion requires current measured normal support plus current world-Z desk force>=.8weight and all persistent geometry; historical entry alone cannot finish. Retain original task terminal metrics and all8 gates.",
+    "Require full last200 real physical samples supported, hand-free, object speed<.02, root speed<.06, orientation>=.98. The retained51 policy observations do not replace the independent200-sample gate.",
+    "If S02 completes, parent alone performs independent continuous43ctrl original-init replay, independent force/geometry/NN/PD audit, complete real video decode/keyframe review, NPZ/control coverage and dataset lineage/content deduplication, within original headroom.",
+    "S03 close is separately unresolved (V010 and branch1V001 mesh_close_timeout). No paired success unless the same frozen candidate also passes fresh S03 and all independent checks. Do not claim learning/deployment from this design."
+  ],
+  "budget_and_control": {
+    "original_plan": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/PLAN.json",
+      "sha256": "e403f1b9dc434796bef27be89e5cc4184cfb93faa8adce1aa023f90680ed0a53",
+      "size_bytes": 2116
+    },
+    "cost_snapshot": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/COST.json",
+      "sha256": "be382ac7bd99119d65b0ba78963ff75e50123dfa248ddc70f80d54f26cb6074e",
+      "size_bytes": 2352
+    },
+    "prior_native_steps": 239138,
+    "max_new_physics_steps": 120000,
+    "cumulative_native_cap": 359138,
+    "original_deadline_epoch_utc": 1793043631.3818104,
+    "original_deadline_cst": "2026-10-27 03:40:31 CST",
+    "no_new_rollout_with_remaining_seconds_below": 3600,
+    "cost_or_budget_reset": false,
+    "reservations_or_trials_made": false,
+    "headroom": "Parent owns actual cost/headroom reconciliation, all new trials and QA; no new physical samples were added by this design."
+  },
+  "preserved_legacy_proposal": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/outbox/PROPOSAL_V001_ORIGINAL.json",
+    "sha256": "a081bc9ba7cbccdc1144616f035c7218bd41649a8a6135b4041b7cbfeead1d25",
+    "size_bytes": 19168
+  },
+  "preserved_history": "V001/V002/V003 source files, versioned proposals and every old failed trial remain intact. PROPOSAL.json is the current handoff pointer, with its prior V001 bytes archived immutably in outbox/PROPOSAL_V001_ORIGINAL.json.",
+  "limits": [
+    "No native execution or actual recovery outcome. This is one justified bounded feedback design, not a parameter sweep.",
+    "A purely translational wrist correction can increase cap hooking or table compression; force and geometry stops may reject rather than recover.",
+    "SONIC/reference-bias response can lag or couple into rotation/root motion; raw path bounds do not guarantee actual motion, force or safety.",
+    "Re-seating needs secure opposing contact and may become impossible after partial opening; do not reclose/reattach or suppress a lost-grasp failure.",
+    "Extra seating dwell can exhaust the unchanged200tick release window; finite finger projection lag may prevent full release in time.",
+    "50Hz certificates do not prove uninterrupted200Hz support between requests. Parent must inspect all actual samples.",
+    "S03 close remains unresolved; no complete bottle skill, paired success, learning, generalization or deployment claim."
+  ],
+  "immutable_delivery": {
+    "candidate": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v004.py",
+      "sha256": "125c397ece48168614d44f7faabc660514a886be73631f4f5ff891a26034d415",
+      "size_bytes": 84772
+    },
+    "versioned_proposal": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL_V004.json",
+    "current_proposal": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL.json",
+    "preserve_source": "Candidate and versioned proposal become read-only; revisions require new version names and hashes. Never rewrite failed evidence."
+  },
+  "content_sha256_excluding_this_field": "09744acef7c1582182f29854f727d0ccb23120b76e883d88fac5352fef84b85d",
+  "final_handoff": {
+    "immutable_source_sha256": "125c397ece48168614d44f7faabc660514a886be73631f4f5ff891a26034d415",
+    "changed_methods": [
+      "__init__",
+      "change",
+      "release_event",
+      "stop_release",
+      "observe_release_permission",
+      "update",
+      "update_phase"
+    ],
+    "new_methods": [
+      "active_seating_reference",
+      "measured_release_wrench",
+      "release_secure_grasp"
+    ],
+    "exact_applicability": {
+      "intended_intervention": "S02 bottle upper-neck/cap grasp, after the unchanged airborne acquisition/carry/place and21-observation target support entry; active feedback only in public release phase",
+      "runtime_case_guard": {
+        "case_ids": [
+          "S02_bottle",
+          "S03_bottle"
+        ],
+        "object_id": "bottle",
+        "loaded_native_reference_ratio": 0.65,
+        "declared_local_axis": [
+          0,
+          0,
+          1
+        ]
+      },
+      "admitted_model_bindings": {
+        "S02": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+          "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+          "size_bytes": 47744485
+        },
+        "S03": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_bottle/model.xml",
+          "sha256": "5498b72c2a3f21654713696498057188fd93aa5b6a3dfd69248f5be8e58dfeeb",
+          "size_bytes": 47742816
+        }
+      },
+      "case_provenance": {
+        "S02": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/CASE.json",
+          "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+          "size_bytes": 12643
+        },
+        "S03": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/CASE.json",
+          "sha256": "2e6e5e43892a065e0336f6c5b47c08d56691e573857718265a32e47e4847905d",
+          "size_bytes": 12543
+        }
+      },
+      "mass_kg": 0.2,
+      "body_control": "original SONIC29",
+      "hand_control": "original native14 handPD",
+      "scope_limit": "Exact admitted bottle cases/models only; S03 is admitted to the same frozen source for parent comparison, not claimed repaired or paired. No cup/book/other-mass/other-model transfer.",
+      "recovery_geometry": "Still opposing grasp with original wrist-relative slip<=.04m, upright>.985, base inside actual table, original/planned target error<.03m, gap[-.003,.004]m, object speed<.08m/s, angular speed<.5rad/s and root speed<.10m/s."
+    },
+    "actual_evidence": {
+      "V003_measured_contact_loss": {
+        "policy_request": 2068,
+        "previous_hold_request": 2067,
+        "physically_issued_hold_ticks": 1,
+        "actual_physics_steps": 8312,
+        "extra_steps_beyond_V002": 4,
+        "exact_V002_prefix_samples": 8308,
+        "target_normal_n": 0.0,
+        "desk_supported": false,
+        "hand_contact": true,
+        "gap_m": 0.002070431356604452,
+        "object_axis_cosine": 0.9997659235996778,
+        "goal_xy_error_m": 0.011331510200161906,
+        "speed_m_s": 0.04233858177247896,
+        "interpretation": "Waiting alone at that exact held-reference state did not preserve table contact; no recovery or complete bottle release has been observed."
+      },
+      "V002_independent_balance": {
+        "tick": 2066,
+        "hand_upward_n": 1.0180686953713631,
+        "desk_upward_n": 0.9404226577413721,
+        "weight_n": 1.9620000000000002,
+        "mass_kg": 0.2,
+        "qacc_z_m_s2": -0.017543234436326216,
+        "residual_n": 3.1094918306884267e-16,
+        "maximum_residual_n": 3.552713678800501e-15,
+        "interpretation": "Actual hand takes about half the weight during opening; post-forward state wrench balance is not equated to previous-step finite-difference acceleration."
+      },
+      "V002_wrist_response": {
+        "command_m": [
+          2.9710849840259534,
+          1.8464029464973506,
+          1.114140069997405
+        ],
+        "actual_post_state_m": [
+          2.977797653374295,
+          1.8413058855519775,
+          1.112375145756457
+        ],
+        "command_note": "Actual wrist after last substep; requested wrist for policy command at its beginning (.020s earlier).",
+        "interpretation": "The raw reference was fixed while measured wrist position and reference bias evolved. Does not identify a unique body-tracking versus finger/cap-hooking cause."
+      },
+      "opening_geometry": {
+        "native_right_order": [
+          "right_hand_thumb_0_joint",
+          "right_hand_thumb_1_joint",
+          "right_hand_thumb_2_joint",
+          "right_hand_middle_0_joint",
+          "right_hand_middle_1_joint",
+          "right_hand_index_0_joint",
+          "right_hand_index_1_joint"
+        ],
+        "shape_admission_band_local_z_m": [
+          0.103,
+          0.122
+        ],
+        "payload_collision_radius_m": 0.001,
+        "band_evidence": "Retained shape_reference and actual V003 REPORT shape admission; this is private geometric admission, not a release rollout.",
+        "issued_hold_reference_rad": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.24557039035679154,
+          -0.5831982384930001,
+          -0.7480681794014443,
+          0.9057282607932807,
+          0.8404491813404217,
+          0.7931317363473389,
+          0.8013945177248726
+        ],
+        "progress_at_hold": 7,
+        "nominal_fraction_at_hold": 0.003079934200000001,
+        "interpretation": "All14 references actually held, with only a small initial nominal opening. Normal force magnitudes alone cannot establish downward versus upward payload load; reconstruct current world-frame wrench. Keep native motor order and opening path, use measured vertical wrist feedback, do not guess a cap-unhooking rotation."
+      },
+      "V010_and_V011": "S02 V010 loses all hand contact at1810, slips/rejects1813 with earlier partial role loss; v011 is untested, has a ratcheting floor and a first-contact handoff latch. Retain V003 immutable acquired floor, projection and current evidence rather than importing v011.",
+      "S03": "Both historical V010 and branch1V001 stop at close with mesh_close_timeout; late seating does not fix or qualify that failure."
+    },
+    "status": "UNTESTED_NATIVE_PHYSICS; zero integration in this invocation",
+    "why_it_might_still_fail": "Wrist/body tracking, cap hooking, frictional coupling or finger-release lag can defeat bounded translational seating; support loss, pose/force bounds and original physical timeout remain real failure paths. S03 close is independently unresolved.",
+    "parent_verification_requirements": [
+      "Respect original PLAN/COST/deadline: do not reserve or start a new rollout with less than 60 minutes remaining before 03:40:31 CST; no budget or prior239138 reset. This handoff does not start a rollout.",
+      "Bind this exact immutable candidate and existing model/case/assets/protocol/SONIC and hand input schemas. Fresh-original-init S02 first; no restored stopping-state experiment counts as a fresh trajectory.",
+      "Check exact continuous physical prefix through acquisition/carry/place against V003; intervention begins at the release entry. Preserve every old and new failed trial.",
+      "Independent state/plant/case mutation guard and NN/native14 PD/effort/.65/.006 audit. All29 body actuators must remain original SONIC outputs and all43 commands must have causal lineage.",
+      "Inspect the world-frame wrist command including existing feedback.position/rotation, not just raw path. Confirm bounded reference increments and actual wrist/mesh/table geometry; no additional hand/furniture support or cap collision.",
+      "At 200 Hz reconstruct actual payload/table and hand wrenches with contact-side sign; preserve all missing-table-contact samples and diagnostic breaches even during pending re-seating. Verify no low-load or off-table sample qualifies or advances finger opening.",
+      "Verify each low-support interval holds the exact previously issued14 native references, while wrist references may move only inside the recorded bounds. Check current measurements, distinct observation times, fresh21 requalification, attempt/path/hold/phase/total limits and real failure exits.",
+      "Test whether the active negative-Z correction actually restores table load without wedging fingers under the cap, tipping, excessive load, loss of grasp or lateral drag. A held-finger interval or fresh synthetic certificate is not physical recovery evidence.",
+      "Opening completion requires current measured normal support plus current world-Z desk force>=.8weight and all persistent geometry; historical entry alone cannot finish. Retain original task terminal metrics and all8 gates.",
+      "Require full last200 real physical samples supported, hand-free, object speed<.02, root speed<.06, orientation>=.98. The retained51 policy observations do not replace the independent200-sample gate.",
+      "If S02 completes, parent alone performs independent continuous43ctrl original-init replay, independent force/geometry/NN/PD audit, complete real video decode/keyframe review, NPZ/control coverage and dataset lineage/content deduplication, within original headroom.",
+      "S03 close is separately unresolved (V010 and branch1V001 mesh_close_timeout). No paired success unless the same frozen candidate also passes fresh S03 and all independent checks. Do not claim learning/deployment from this design."
+    ]
+  }
+}

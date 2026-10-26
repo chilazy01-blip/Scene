@@ -1,0 +1,23 @@
+{
+  "content_sha256_excluding_this_field": "6b5e1183f7b06c696e767070a56bf9735c0dbd46dc065185f8286c26c165f862",
+  "exact_physical_array_equality": {
+    "ctrl": true,
+    "qpos_after": true,
+    "qvel_after": true
+  },
+  "interpretation": "Independent successful regression; exact duplicate of existing qualified S02 cup data, not new diversity or new unique yield.",
+  "new_episode": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/cup_s02_regression/delivery_v4/episode.npz",
+    "sha256": "3bbd02e3fbe22578da8a0384601485475e760b49e94767f0913a95f004aff6e4",
+    "size_bytes": 25084443
+  },
+  "new_physics_steps": 0,
+  "new_unique_training_episodes": 0,
+  "passed": true,
+  "physical_content_sha256": "dc32052c9659211dcabeac128a6a4aa9ee180ddfe6a3bcffcc5a937c1377d42b",
+  "prior_episode": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/cup_s02_v004/delivery_v4/episode.npz",
+    "sha256": "3bbd02e3fbe22578da8a0384601485475e760b49e94767f0913a95f004aff6e4",
+    "size_bytes": 25084443
+  }
+}

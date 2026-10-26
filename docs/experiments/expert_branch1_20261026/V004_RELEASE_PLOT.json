@@ -1,0 +1,20 @@
+{
+  "content_sha256_excluding_this_field": "576c890035db69e5e47a71b6876388452688ab71485c59e5746a11af5422c959",
+  "image": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/V004_RELEASE_DIAGNOSIS.png",
+    "sha256": "73edf406665c7b058c70769e40d8525b910cfd960e0e32913482b323e2d787ea",
+    "size_bytes": 175473
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/plot_v004_diagnosis.py",
+    "sha256": "38b4f43be5162e8d2a2368cd154b55be0572f671ffca76f12f1ecefd9510a6e9",
+    "size_bytes": 1990
+  },
+  "new_physics_steps": 0,
+  "scope": "Recorded policy-time forces, speed and time-aligned wrist command/actual pose. Expert-added criteria are not new native task acceptance thresholds.",
+  "source": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/FINAL_V004_FAILURE_DIAGNOSIS.json",
+    "sha256": "adcdf24b3ab7b7422719ffce63b434118c288991867eb086f9a9ecf3b766a8e4",
+    "size_bytes": 52216
+  }
+}

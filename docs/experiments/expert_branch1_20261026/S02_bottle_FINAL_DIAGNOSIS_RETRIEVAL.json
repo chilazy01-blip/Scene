@@ -1,0 +1,372 @@
+{
+  "automatic_deployment_approved": false,
+  "content_sha256_excluding_this_field": "21eea6391fe4cb166e1115f4b06701d95f02fa7d86199034e38ef4aee31af469",
+  "matches": [
+    {
+      "allowed_usage": "Diagnostic/planning reference only; never retrieve as a qualified complete manipulation skill.",
+      "automatic_deployment_approved": false,
+      "failure_signature": "V009 lost middle-finger contact during native load probe while references were being adjusted.",
+      "hypothesis_requires_actual_trial": false,
+      "id": "bottle_acquired_preload_during_probe_and_hover",
+      "identity_verified": true,
+      "matching_evidence": [
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/MEASUREMENTS.json",
+            "sha256": "0378e89a45476f78d1870d73fd1444ed5ae5c29554016fcd6f5e15ecd6be15b4",
+            "size_bytes": 43595
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/full/REPORT.json",
+            "sha256": "c73cdccb89f4754418649c7045d329f98e0f8dacd39f8f156d836ea70cf02d82",
+            "size_bytes": 927617
+          },
+          "source_role": "development_validation",
+          "stop_reason": "probe_relative_slip",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/strategy.py",
+            "sha256": "3ac3a79be12ab8632f7bd387bc3757d9324c5d79c6601d8cb0ad76f929cafbde",
+            "size_bytes": 44952
+          },
+          "task_passed": false,
+          "trial": "bottle_s02_v009",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v009/FINAL_VERIFICATION.json",
+            "sha256": "3c96689dae5aa325b7e6709e252287a4aefacb95ebdd73ac7bd7f994ba24a019",
+            "size_bytes": 3667
+          }
+        },
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/MEASUREMENTS.json",
+            "sha256": "0d957317e071cef56925607ae5cf4906745f2a1951370a60991c1a1897c9e425",
+            "size_bytes": 44877
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/full/REPORT.json",
+            "sha256": "2981b704d86c9ee2daeaf7d0d28e86a1f44f927ed0d75b5dfa463d3a151bb80e",
+            "size_bytes": 5970774
+          },
+          "source_role": "development_validation",
+          "stop_reason": "object_slipped",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/strategy.py",
+            "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+            "size_bytes": 46225
+          },
+          "task_passed": false,
+          "trial": "bottle_s02_v010",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+            "sha256": "4e4e01ace975ec9d77b658d280addd0895bef78d74827f9e4485435d5eea288d",
+            "size_bytes": 3531
+          }
+        }
+      ],
+      "proposed_code": null,
+      "purpose": "diagnosis",
+      "repair_intent": "Retain acquired native finger-reference preload through load_probe/lift/loaded_hover.",
+      "scope_limit": "Probe/hover/carry improved in S02; no complete bottle pick/carry/place or transferable success skill.",
+      "status": "project_phase_improvement_only"
+    },
+    {
+      "allowed_usage": "Hypothesis generation and explicitly authorized future guarded validation only.",
+      "automatic_deployment_approved": false,
+      "failure_signature": "S02 V010 lost contact near placement after later motor-reference changes.",
+      "hypothesis_requires_actual_trial": true,
+      "id": "bottle_all_airborne_preload_handoff",
+      "identity_verified": true,
+      "matching_evidence": [
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/MEASUREMENTS.json",
+            "sha256": "0d957317e071cef56925607ae5cf4906745f2a1951370a60991c1a1897c9e425",
+            "size_bytes": 44877
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/full/REPORT.json",
+            "sha256": "2981b704d86c9ee2daeaf7d0d28e86a1f44f927ed0d75b5dfa463d3a151bb80e",
+            "size_bytes": 5970774
+          },
+          "source_role": "development_validation",
+          "stop_reason": "object_slipped",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/strategy.py",
+            "sha256": "cdaf6cd5785cae58c12666b1395bc9995ea807860c04021e6392848016d14bfc",
+            "size_bytes": 46225
+          },
+          "task_passed": false,
+          "trial": "bottle_s02_v010",
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/FINAL_VERIFICATION.json",
+            "sha256": "4e4e01ace975ec9d77b658d280addd0895bef78d74827f9e4485435d5eea288d",
+            "size_bytes": 3531
+          }
+        }
+      ],
+      "proposed_code": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/workbench/strategies/bottle_v011.py",
+        "sha256": "5917959ba56d2762a5542980aad516c8680281e55ac65d8f7d4cf9b309b0e815",
+        "size_bytes": 47371
+      },
+      "purpose": "diagnosis",
+      "repair_intent": "Investigate consistent acquired-preload protection through later airborne callbacks until actual table-support handoff.",
+      "scope_limit": null,
+      "status": "untested_hypothesis"
+    },
+    {
+      "allowed_usage": "Diagnosis and phase planning only; never a qualified complete skill.",
+      "automatic_deployment_approved": false,
+      "failure_signature": "branch1_target_support_lost_during_release",
+      "hypothesis_requires_actual_trial": false,
+      "id": "branch1_bottle_s02_branch1_v001",
+      "identity_verified": true,
+      "matching_evidence": [
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/MEASUREMENTS.json",
+            "sha256": "59e462aac2aaafde97a5ca593908becc25d4bd8337520cc658bc0aaec853a0bb",
+            "size_bytes": 45219
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/full/REPORT.json",
+            "sha256": "7f56e82296b82c9cbea09dcfcb98867a14d364828162fec4010b7fc67e783291",
+            "size_bytes": 6798006
+          },
+          "source_role": "development_validation",
+          "stop_reason": "branch1_target_support_lost_during_release",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/strategy.py",
+            "sha256": "2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363",
+            "size_bytes": 58784
+          },
+          "task_passed": false,
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/FINAL_VERIFICATION.json",
+            "sha256": "e27076483762e9006a73976a8c1a409a45aea2b5c6f20bb340ceb1fb85afdd3f",
+            "size_bytes": 3668
+          }
+        }
+      ],
+      "proposed_code": null,
+      "purpose": "diagnosis",
+      "repair_intent": "Fixed acquired hover preload across airborne phases and separate release-entry quietness from persistent measured support/geometry.",
+      "scope_limit": "Only this exact assumed200g empty-bottle model, upper neck/cap and case/controller identity; no cross-layout/object/generalization proof.",
+      "status": "independently_reviewed_partial_failure"
+    },
+    {
+      "allowed_usage": "Diagnosis and phase planning only; never a qualified complete skill.",
+      "automatic_deployment_approved": false,
+      "failure_signature": "branch1_target_support_lost_during_release",
+      "hypothesis_requires_actual_trial": false,
+      "id": "branch1_bottle_s02_branch1_v002",
+      "identity_verified": true,
+      "matching_evidence": [
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/MEASUREMENTS.json",
+            "sha256": "5dc14d037bdb8c5b29249af5370290a46a59d412bf9c58549c558f9bb6d30c1a",
+            "size_bytes": 45198
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/full/REPORT.json",
+            "sha256": "40734830f1060200095590cceef2dbbb568b784a0855a382e066a398f2ccc128",
+            "size_bytes": 7071430
+          },
+          "source_role": "development_validation",
+          "stop_reason": "branch1_target_support_lost_during_release",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/strategy.py",
+            "sha256": "ec29f8897f5864f893ce47683db4eaec9f6d729161cb83f129d8da560f294ed2",
+            "size_bytes": 63563
+          },
+          "task_passed": false,
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/FINAL_VERIFICATION.json",
+            "sha256": "3ff828752edb291e1c60620b5f862b13d012cd74741646bc833f0a66633030ee",
+            "size_bytes": 3632
+          }
+        }
+      ],
+      "proposed_code": null,
+      "purpose": "diagnosis",
+      "repair_intent": "Fixed acquired hover preload across airborne phases and separate release-entry quietness from persistent measured support/geometry.",
+      "scope_limit": "Only this exact assumed200g empty-bottle model, upper neck/cap and case/controller identity; no cross-layout/object/generalization proof.",
+      "status": "independently_reviewed_partial_failure"
+    },
+    {
+      "allowed_usage": "Diagnosis and phase planning only; never a qualified complete skill.",
+      "automatic_deployment_approved": false,
+      "failure_signature": "branch1_release_target_contact_lost",
+      "hypothesis_requires_actual_trial": false,
+      "id": "branch1_bottle_s02_branch1_v003",
+      "identity_verified": true,
+      "matching_evidence": [
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/MEASUREMENTS.json",
+            "sha256": "4109239f172c0210e22e659132746ea852f7964ddde592d5ee7d3c5a6da78186",
+            "size_bytes": 45206
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/REPORT.json",
+            "sha256": "c550f91994f7c1b3da549d0f191ad88f886be0366c28e08d6d4bc7953f0869e7",
+            "size_bytes": 7917635
+          },
+          "source_role": "development_validation",
+          "stop_reason": "branch1_release_target_contact_lost",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/strategy.py",
+            "sha256": "2dbdaf1ec66f26edfa690dc1489753eefbeccb16343248eb2056704c447a5933",
+            "size_bytes": 73646
+          },
+          "task_passed": false,
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/FINAL_VERIFICATION.json",
+            "sha256": "096a3b8a2e6c425fe56db24ff69df945761753fc8886b0f87c1d1cdb19556e20",
+            "size_bytes": 3605
+          }
+        }
+      ],
+      "proposed_code": null,
+      "purpose": "diagnosis",
+      "repair_intent": "Fixed acquired hover preload across airborne phases and separate release-entry quietness from persistent measured support/geometry.",
+      "scope_limit": "Only this exact assumed200g empty-bottle model, upper neck/cap and case/controller identity; no cross-layout/object/generalization proof.",
+      "status": "independently_reviewed_partial_failure"
+    },
+    {
+      "allowed_usage": "Diagnosis and phase planning only; never a qualified complete skill.",
+      "automatic_deployment_approved": false,
+      "failure_signature": "branch1_release_reseating_unsafe_or_grasp_lost",
+      "hypothesis_requires_actual_trial": false,
+      "id": "branch1_bottle_s02_branch1_v004",
+      "identity_verified": true,
+      "matching_evidence": [
+        {
+          "case_id": "S02_bottle",
+          "dataset_split": "unassigned",
+          "measurements": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/MEASUREMENTS.json",
+            "sha256": "07d00553eed3d589880e30ed68d82c8ca77af9d149cd8dd8c9f3e141334a6563",
+            "size_bytes": 45214
+          },
+          "physical_model": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+            "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+            "size_bytes": 47744485
+          },
+          "report": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/full/REPORT.json",
+            "sha256": "79c0688c8e91bfe83c3cf3687580025f9a570ac13098697a61e311d661155b75",
+            "size_bytes": 9758663
+          },
+          "source_role": "development_validation",
+          "stop_reason": "branch1_release_reseating_unsafe_or_grasp_lost",
+          "strategy": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/strategy.py",
+            "sha256": "125c397ece48168614d44f7faabc660514a886be73631f4f5ff891a26034d415",
+            "size_bytes": 84772
+          },
+          "task_passed": false,
+          "verification": {
+            "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v004/FINAL_VERIFICATION.json",
+            "sha256": "8992452cfa9e1b038d2c3d840c2305783b1e6980a6b80bb3225a33fd227675ba",
+            "size_bytes": 3651
+          }
+        }
+      ],
+      "proposed_code": null,
+      "purpose": "diagnosis",
+      "repair_intent": "Fixed acquired hover preload across airborne phases and separate release-entry quietness from persistent measured support/geometry.",
+      "scope_limit": "Only this exact assumed200g empty-bottle model, upper neck/cap and case/controller identity; no cross-layout/object/generalization proof.",
+      "status": "independently_reviewed_partial_failure"
+    }
+  ],
+  "new_physics_steps": 0,
+  "purpose": "diagnosis",
+  "query": {
+    "body_control": "SONIC29",
+    "case_id": "S02_bottle",
+    "case_sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+    "controller_fingerprint": "42548bce53684e4896b1308be56bbdeca8ae624331baa821c9473adf005821eb",
+    "grasp_region": "upper neck/cap",
+    "hand_control": "original native14handPD",
+    "loaded_reference_ratio": 0.65,
+    "mass_assumption_kg": 0.2,
+    "model_sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+    "object_asset": "living_20260914_glass_bottle",
+    "robot": "G1",
+    "solver_schedule": {
+      "activation_step": 3960,
+      "noslip_iterations": 3
+    }
+  },
+  "rejected": [
+    {
+      "id": "cup_airborne_support_and_settle_window",
+      "reasons": [
+        "scope:object_asset",
+        "exact_model_and_case_not_in_evidence"
+      ]
+    },
+    {
+      "id": "flat_book_bounded_direct_grasp_failures",
+      "reasons": [
+        "scope:object_asset",
+        "scope:mass_assumption_kg",
+        "scope:initial_pose",
+        "scope:left_hand_object_contact_allowed",
+        "exact_model_and_case_not_in_evidence"
+      ]
+    },
+    {
+      "id": "branch1_bottle_s03_branch1_v001",
+      "reasons": [
+        "exact_model_and_case_not_in_evidence"
+      ]
+    }
+  ],
+  "schema": "scoped-retrieval/v2"
+}

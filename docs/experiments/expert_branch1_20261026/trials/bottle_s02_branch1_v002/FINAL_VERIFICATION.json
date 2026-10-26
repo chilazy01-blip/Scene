@@ -1,0 +1,72 @@
+{
+  "all_video_frames_automatically_decoded": 2077,
+  "complete": true,
+  "content_sha256_excluding_this_field": "824666c4238e2730ec76386b0effb59d8852ebf770ee315879d1079288614e22",
+  "dataset_split": "unassigned",
+  "evidence": {
+    "audit": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/full/AUDIT_v2.json",
+      "sha256": "07956e98805df21c66f5f49b6a46278a0a9041bfae1a350949cd2f4c6cf83d0f",
+      "size_bytes": 2594
+    },
+    "delivery": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/partial_delivery_v4/REVIEW.json",
+      "sha256": "c0d29abf9e5f45976f4b81391ed51dd25c33ed1e1905dc8d6223fc63a318f64c",
+      "size_bytes": 11956
+    },
+    "force": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/FORCE_CHECK.json",
+      "sha256": "765c506fc193ad356ef34c2673062bf1762aa4d581344e1506149e97153edce5",
+      "size_bytes": 15629408
+    },
+    "measurements": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/MEASUREMENTS.json",
+      "sha256": "5dc14d037bdb8c5b29249af5370290a46a59d412bf9c58549c558f9bb6d30c1a",
+      "size_bytes": 45198
+    },
+    "report": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/full/REPORT.json",
+      "sha256": "40734830f1060200095590cceef2dbbb568b784a0855a382e066a398f2ccc128",
+      "size_bytes": 7071430
+    },
+    "video": {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/actual_video_v3/MANIFEST.json",
+      "sha256": "faa0376d57075e1c0ac6984c4e6bc2ba18c33e4016d4370c9a115ffce6d2713c",
+      "size_bytes": 6184
+    }
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/tools/verify_completed_v1.py",
+    "sha256": "3cce78cd219fe0359a4885708e8ce6395db753d39727cbaaa0211dc2c52bcbb7",
+    "size_bytes": 4596
+  },
+  "new_physics_steps": 0,
+  "npz_shapes": {},
+  "numerically_quarantined": false,
+  "positive": false,
+  "primary_visual_observations": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 16,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 15,
+    "observations": "Actual held-walk and upright target placement visible; terminal early-release frames still show hand contact. No completed opening/retract/settle, so negative despite upright appearance. Exact earlier physical prefix separately established; last load share requires native force decomposition, not image-only inference.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "reviewed_images": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/partial_delivery_v4/decoded_review.jpg",
+      "sha256": "de61d3ff4a504744f33ab5a617666cdc9ef7429c2ac6be32dfb4136bc5a65db5",
+      "size_bytes": 1144446
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v002/placement_detail/review.jpg",
+      "sha256": "7559fc2a438a2cb5cc6d70a57c70fbe54e1fbc60128857d3d929338321ab8c70",
+      "size_bytes": 823036
+    }
+  ],
+  "source_role": "development_validation",
+  "verified_epoch_utc": 1793036093.916773
+}

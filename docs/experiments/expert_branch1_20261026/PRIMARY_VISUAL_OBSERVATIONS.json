@@ -1,0 +1,69 @@
+{
+  "bottle_s02_branch1_v001": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 16,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 15,
+    "observations": "Actual overview and closeups show neck/cap acquisition, held walking and upright target table placement. Last release-labelled samples still have hand contact; no full release, retract or settled terminal interval. This is a negative trial despite supported appearance. Native force/predicate diagnosis separately determines the semantic premature abort.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "bottle_s02_branch1_v002": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 16,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 15,
+    "observations": "Actual held-walk and upright target placement visible; terminal early-release frames still show hand contact. No completed opening/retract/settle, so negative despite upright appearance. Exact earlier physical prefix separately established; last load share requires native force decomposition, not image-only inference.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "bottle_s02_branch1_v003": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 16,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 15,
+    "observations": "Held-walk and upright target placement visible. Terminal early-release frames remain grasped, no completed opening/retract/settle. The sub-millimetre target support loss is established by native measurements, not resolved visually from these frames. Negative despite near-upright appearance.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "bottle_s03_branch1_v001": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 8,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 6,
+    "observations": "Actual closeups show neck/cap approach and attempted closure, object remains on source table with slight tilt at terminal close. No probe, lift, carry or release is shown/completed. Wide view includes partial leg occlusion by foreground chair; closeups resolve hand/object. Native measured forces and timeout determine this bounded negative, not visual grasp plausibility.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "content_sha256_excluding_this_field": "f9f915e069f5c5d1da65429ff518d74cd90546204b8adadd4c1482d937bc6ac2",
+  "cup_s02_regression": {
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 18,
+    "files": [
+      "delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "hand_object_closeup_panels": 21,
+    "observations": "Actual overview shows approach, grasp, held walking, place, release and settle. Closeups show supported upright cup at end and fingers clearing it. Initial placement tilt recovers. Main camera stays inside room; closeups clarify finger/object contact. Mechanical conclusions additionally rely on independent audit/force/replay; no per-frame manual or fully unoccluded-surface claim.",
+    "sampled_actual_frames_reviewed": true
+  },
+  "bottle_s02_branch1_v004": {
+    "sampled_actual_frames_reviewed": true,
+    "claim_every_frame_manually_reviewed": false,
+    "decoded_overview_panels": 16,
+    "hand_object_closeup_panels": 15,
+    "files": [
+      "partial_delivery_v4/decoded_review.jpg",
+      "placement_detail/review.jpg"
+    ],
+    "observations": "Full-body approach, upper neck/cap contact, lift, carried walk and upright target placement are visible. Hand remains at bottle cap at terminal release frames, with no completed opening, retract or settle. Visual appearance does not resolve submillimetre support or certify speed; measured native evidence determines the negative result."
+  }
+}

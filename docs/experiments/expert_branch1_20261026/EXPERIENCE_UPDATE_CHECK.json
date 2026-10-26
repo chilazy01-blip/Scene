@@ -1,0 +1,31 @@
+{
+  "automatic_deployment_approved": false,
+  "cases": {
+    "S02_bottle": {
+      "complete_skill_ids": [],
+      "diagnosis_ids": [
+        "bottle_acquired_preload_during_probe_and_hover",
+        "bottle_all_airborne_preload_handoff",
+        "branch1_bottle_s02_branch1_v001",
+        "branch1_bottle_s02_branch1_v002",
+        "branch1_bottle_s02_branch1_v003",
+        "branch1_bottle_s02_branch1_v004"
+      ]
+    },
+    "S03_bottle": {
+      "complete_skill_ids": [],
+      "diagnosis_ids": [
+        "bottle_acquired_preload_during_probe_and_hover",
+        "branch1_bottle_s03_branch1_v001"
+      ]
+    }
+  },
+  "catalog": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/EXPERIENCE_CATALOG_V2.json",
+    "sha256": "7637864e068e53d850b2643fc11f26a8f9e3b4280d394247a470e9281fd0a1a2",
+    "size_bytes": 54380
+  },
+  "content_sha256_excluding_this_field": "0522c1d7c7ade9351937b3af81fc6162e4018def8f19bf99c764cd51ac6c6ac9",
+  "new_physics_steps": 0,
+  "passed": true
+}

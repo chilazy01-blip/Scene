@@ -1,0 +1,45 @@
+{
+  "content_sha256_excluding_this_field": "ece85c0f112fc60c8286ff8ea25a77c173f1d4bd8d7446fe496f2c93591c84f8",
+  "control_passed": false,
+  "executed_control_reconstruction_passed": false,
+  "gates": {
+    "actual_applied_action_history": true,
+    "actual_mixed_and_projected_targets": false,
+    "actual_state_policy_observation": true,
+    "all_recorded_physics_safe": true,
+    "atomic_body_and_hand_frame": true,
+    "bounded_complete_episode": false,
+    "causal_observation_metadata": false,
+    "causal_reference": true,
+    "contact_reconstruction": true,
+    "encoder_decoder_bitwise": true,
+    "fresh_original_initialization_no_restored_prefix": true,
+    "no_external_forces": true,
+    "original43motor_pd": true,
+    "original_raw_action_transform": true,
+    "policy_input_archive": true,
+    "sonic_controls_all29_body_joints": true,
+    "state_chain": true,
+    "terminal_expert_stop_reconstructed": true,
+    "time_chain": true
+  },
+  "implementation": {
+    "path": "/data/wsj/main/scene/sage/experiments/embodied_expert_branch1_v1/audit_observations_v3.py",
+    "sha256": "92c86e36ce481c5913b721b97f2c94b25be8cd3f716364ebbae815f5a581cf15",
+    "size_bytes": 17126
+  },
+  "max_contact_error": 0.0,
+  "max_geometry_error_m": 0.0,
+  "max_pd_error_nm": 1.7763568394002505e-15,
+  "new_physics_steps": 0,
+  "nn_ticks": 2068,
+  "not_continuous_dynamics_reintegration": true,
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v003/full/REPORT.json",
+    "sha256": "c550f91994f7c1b3da549d0f191ad88f886be0366c28e08d6d4bc7953f0869e7",
+    "size_bytes": 7917635
+  },
+  "schema": "native-independent-audit-observation-contract/v3",
+  "state_samples": 8312,
+  "task_passed": false
+}

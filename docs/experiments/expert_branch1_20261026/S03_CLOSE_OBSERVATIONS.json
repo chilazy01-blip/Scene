@@ -1,0 +1,23 @@
+{
+  "close_policy_samples": 201,
+  "content_sha256_excluding_this_field": "7da6d99c22830ebf8d00983a3bc5815edf6c5a7a40557fefcb9a46cc6a8fe6dc",
+  "last_desk_supported": true,
+  "last_forces": {
+    "desk": 1.9398385013089379,
+    "index": 0.0,
+    "middle": 0.0,
+    "other": 0.0,
+    "palm": 0.0,
+    "thumb": 0.0
+  },
+  "last_hand_contact": false,
+  "last_opposing": false,
+  "last_tick": 1296,
+  "new_physics_steps": 0,
+  "report": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/full/REPORT.json",
+    "sha256": "ce299a7a032d7fcad3bd58f4db516e34709af28a12a35b63b15e22e813b2bf7e",
+    "size_bytes": 462903
+  },
+  "scope": "Observed close timeout; no global infeasibility claim and no diagnosis that a release-only change fixes acquisition."
+}

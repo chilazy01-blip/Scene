@@ -1,0 +1,1154 @@
+{
+  "schema": "branch-one-release-repair-proposal/v2",
+  "candidate_path": "strategies/bottle_branch1_v002.py",
+  "candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v002.py",
+    "sha256": "ec29f8897f5864f893ce47683db4eaec9f6d729161cb83f129d8da560f294ed2",
+    "size_bytes": 63563
+  },
+  "base_candidate": {
+    "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v001.py",
+    "sha256": "2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363",
+    "size_bytes": 58784
+  },
+  "status": "untested_design_candidate",
+  "untested": true,
+  "new_physics_steps": 0,
+  "broker_trials_submitted": 0,
+  "new_outcomes": null,
+  "native_integration_performed": false,
+  "learning_completed": false,
+  "explanation": [
+    "Minimal falsifiable semantic repair to V001 release qualification. Keep its entire entry conjunction and 21 distinct consecutive policy observations, including the strict angular speed <.25 rad/s requirement. During intentional opening require fresh measured load-bearing target support and geometry, while reporting entry motion/readiness separately.",
+    "The actual V001 S02 stopped at request2062 after8288 physics steps in release. It carried and reached an upright target placement, but did not complete release/settle or pass the original task. Angular speed .25178472543736274 rad/s fails entry quietness despite measured table normal3.58349286104238 N, weight1.962 N and valid base geometry. This establishes a mislabeled predicate failure; it does not establish physical support loss or a unique dynamics cause.",
+    "Preserve all V001 geometry, reference paths, grasp acquisition, hover reference tuple, projection/control methods and release opening law. No initial S03 repair or trajectory/threshold tuning."
+  ],
+  "actual_evidence": {
+    "S02_V001": {
+      "physics_steps": 8288,
+      "last_executed_tick": 2061,
+      "stopping_request_tick": 2062,
+      "facts": {
+        "all_original_physical_samples_safe": true,
+        "base_inside_table": true,
+        "desk_normal_n": 3.58349286104238,
+        "desk_supported": true,
+        "entry_angular_speed_threshold_rad_s": 0.25,
+        "hand_contact": true,
+        "measured_object_angular_speed_rad_s": 0.25178472543736274,
+        "object_axis_cosine": 0.9998408878963002,
+        "object_bottom_above_table_m": 0.0019193621363122748,
+        "object_speed_m_s": 0.03237579818990462,
+        "original_max_held_slip_m": 0.015899739730012127,
+        "root_speed_m_s": 0.030237773597990753,
+        "target_error_m": 0.0083072323201788,
+        "weight_n": 1.9620000000000002
+      },
+      "terminal": {
+        "engineering_error": null,
+        "failed_original_gates": [
+          "complete_continuous_task",
+          "no_rejection",
+          "released_and_settled"
+        ],
+        "original_max_held_slip_m": 0.015899739730012127,
+        "original_task_passed": false,
+        "stage": "release",
+        "stop_reason": "branch1_target_support_lost_during_release"
+      },
+      "release_phase_entry_tick": 2059,
+      "interpretation": "At least the angular quietness predicate fails while measured load-bearing table support and base geometry remain valid. V001 conflates the entry-readiness conjunction with persistent support and labels its failure support_lost. This event is not evidence that the bottle left the table.",
+      "limits": "Not a unique physical cause claim. Reached/other quietness predicates may also matter; the next candidate must report each predicate separately. No threshold increase or independent acceptance relaxation is justified."
+    },
+    "S03_V001_status": {
+      "observed_at_utc": "2026-10-26T16:35:39.423539+00:00",
+      "report_exists": true,
+      "job": {
+        "actions": [
+          {
+            "action": "preview",
+            "log": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/preview.log",
+            "returncode": 0
+          },
+          {
+            "action": "engine",
+            "log": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/engine.log",
+            "returncode": 0
+          },
+          {
+            "action": "measure",
+            "log": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/measure.log",
+            "returncode": 0
+          },
+          {
+            "action": "feedback",
+            "log": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/feedback.log",
+            "returncode": 0
+          }
+        ],
+        "content_sha256_excluding_this_field": "84178419cdaf18e90a8dce01f74f34022ae2e5689d9177853d93902dc32cc0e6",
+        "cup_upright": 0.994555328585057,
+        "engineering_error": null,
+        "expert_events": [
+          {
+            "forces": {
+              "desk": 1.9211643271472423,
+              "index": 0.0,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2751630186331151,
+              -0.5850000000000001,
+              -0.6840000000000005,
+              0.6840000000000005,
+              0.6840000000000005,
+              0.6840000000000005,
+              0.6840000000000005
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1210
+          },
+          {
+            "forces": {
+              "desk": 11.585494310088565,
+              "index": 9.241752347906095,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2751630186331151,
+              -0.5850000000000001,
+              -0.7140000000000005,
+              0.7140000000000005,
+              0.7140000000000005,
+              0.7028906403329995,
+              0.7082861494894808
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1215
+          },
+          {
+            "forces": {
+              "desk": 0.0,
+              "index": 2.931804538609667,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 2.5414524057339385
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2631630186331151,
+              -0.5790000000000001,
+              -0.7200000000000005,
+              0.7440000000000005,
+              0.7440000000000005,
+              0.7328906403329996,
+              0.7382861494894808
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1220
+          },
+          {
+            "forces": {
+              "desk": 0.0,
+              "index": 2.1186096531655085,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 2.0367475746726647
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.23316301863311506,
+              -0.5782620732769571,
+              -0.6900000000000005,
+              0.7740000000000006,
+              0.7740000000000006,
+              0.7516850276219992,
+              0.7570805367784805
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1225
+          },
+          {
+            "forces": {
+              "desk": 0.0,
+              "index": 0.0,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.24592618902131297,
+              -0.5850000000000001,
+              -0.7080000000000005,
+              0.8040000000000006,
+              0.8040000000000006,
+              0.7696850276219992,
+              0.7750805367784805
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1230
+          },
+          {
+            "forces": {
+              "desk": 3.5845557476141328,
+              "index": 0.0,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 1.294058096986698
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.251926189021313,
+              -0.5850000000000001,
+              -0.7140000000000005,
+              0.8340000000000006,
+              0.8340000000000006,
+              0.7996850276219992,
+              0.8050805367784806
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1235
+          },
+          {
+            "forces": {
+              "desk": 1.9366356667226738,
+              "index": 0.0,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.269926189021313,
+              -0.5850000000000001,
+              -0.7320000000000005,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.8176850276219992,
+              0.8230805367784806
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1240
+          },
+          {
+            "forces": {
+              "desk": 2.571491073072486,
+              "index": 0.8435210735542438,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.58798004785633
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2631630186331151,
+              -0.5850000000000001,
+              -0.732676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7964450081263722,
+              0.8018405172828535
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1245
+          },
+          {
+            "forces": {
+              "desk": 3.941722349334003,
+              "index": 2.337292213632782,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.8718247399894892
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2691630186331151,
+              -0.5850000000000001,
+              -0.738676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7664450081263722,
+              0.7718405172828535
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1250
+          },
+          {
+            "forces": {
+              "desk": 3.542630595141916,
+              "index": 2.043984245993905,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.9678852364370704
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2511630186331151,
+              -0.5850000000000001,
+              -0.720676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7604311129531823,
+              0.7658266221096637
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1255
+          },
+          {
+            "forces": {
+              "desk": 5.546081250953707,
+              "index": 3.442246662126511,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2751630186331151,
+              -0.5850000000000001,
+              -0.744676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7424311129531823,
+              0.7478266221096637
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1260
+          },
+          {
+            "forces": {
+              "desk": 5.250713663456274,
+              "index": 3.2708644403484435,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2751630186331151,
+              -0.5850000000000001,
+              -0.744676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7236247071225461,
+              0.7290202162790276
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1265
+          },
+          {
+            "forces": {
+              "desk": 3.4411594534125283,
+              "index": 1.5155125010554689,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2751630186331151,
+              -0.5850000000000001,
+              -0.744676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7536247071225461,
+              0.7590202162790276
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1270
+          },
+          {
+            "forces": {
+              "desk": 1.936092280313274,
+              "index": 0.0,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2751630186331151,
+              -0.5850000000000001,
+              -0.744676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7836247071225462,
+              0.7890202162790276
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1275
+          },
+          {
+            "forces": {
+              "desk": 4.85320289728686,
+              "index": 11.088861364711445,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 1.9642749987824752
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2511630186331151,
+              -0.5849317500365259,
+              -0.720676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7656247071225462,
+              0.7710202162790276
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1280
+          },
+          {
+            "forces": {
+              "desk": 3.8986935695113525,
+              "index": 4.370228696691577,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 1.5400183893772912
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.24516301863311507,
+              -0.5850000000000001,
+              -0.714676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7356247071225461,
+              0.7410202162790276
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1285
+          },
+          {
+            "forces": {
+              "desk": 1.807049132992558,
+              "index": 0.0,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.23793363409063986
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.26741127520921576,
+              -0.5850000000000001,
+              -0.7369244119357327,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7656247071225462,
+              0.7710202162790276
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1290
+          },
+          {
+            "forces": {
+              "desk": 1.9315960165097834,
+              "index": 0.0,
+              "middle": 0.0,
+              "other": 0.0,
+              "palm": 0.0,
+              "thumb": 0.0
+            },
+            "kind": "expert_shape_native_normal_feedback",
+            "reference_rad": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.2751630186331151,
+              -0.5850000000000001,
+              -0.744676155359632,
+              0.8511894832189619,
+              0.8430543844864381,
+              0.7956247071225462,
+              0.8010202162790276
+            ],
+            "targets_n": {
+              "index": 1.9620000000000002,
+              "middle": 1.9620000000000002,
+              "thumb": 1.9620000000000002
+            },
+            "tick": 1295
+          }
+        ],
+        "final_root_speed_margin_m_s": -0.028108894517946417,
+        "goal_error_m": 0.5166120661557078,
+        "measurements": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/MEASUREMENTS.json",
+          "sha256": "50397987d050f47f345d4fe18213f04c37809d2bf00b65f2a87690f0383081ea",
+          "size_bytes": 43060
+        },
+        "new_physics_steps": 5228,
+        "original_task_passed": false,
+        "phases": [
+          {
+            "object_m": [
+              2.4489538375908295,
+              2.3000315127154956,
+              0.8569072476425712
+            ],
+            "root_m": [
+              1.5190815889968796,
+              2.625522918859696,
+              0.7599980202979384
+            ],
+            "stage": "approach",
+            "tick": 225,
+            "time_s": 4.699999999999922
+          },
+          {
+            "object_m": [
+              2.4489492628104617,
+              2.300034202761236,
+              0.8569071574834108
+            ],
+            "root_m": [
+              2.0568030156540056,
+              2.600222010851675,
+              0.7712667847205606
+            ],
+            "stage": "source_stop",
+            "tick": 355,
+            "time_s": 7.299999999999867
+          },
+          {
+            "object_m": [
+              2.448945136802193,
+              2.3000377152554456,
+              0.8569075395849639
+            ],
+            "root_m": [
+              2.1867633964987916,
+              2.6181444949949157,
+              0.7608347759582768
+            ],
+            "stage": "ready_arm",
+            "tick": 446,
+            "time_s": 9.120000000000026
+          },
+          {
+            "object_m": [
+              2.4489202540370223,
+              2.300049104814877,
+              0.8569081517298073
+            ],
+            "root_m": [
+              2.1815842930686307,
+              2.613097866924768,
+              0.7689211559466821
+            ],
+            "stage": "preinsert",
+            "tick": 886,
+            "time_s": 17.92000000000072
+          },
+          {
+            "object_m": [
+              2.448913795397793,
+              2.300055085955612,
+              0.8569092926952233
+            ],
+            "root_m": [
+              2.1926824629972974,
+              2.599070863524292,
+              0.7695351795117694
+            ],
+            "stage": "lower",
+            "tick": 996,
+            "time_s": 20.12000000000028
+          },
+          {
+            "object_m": [
+              2.448912878209663,
+              2.3000545897363445,
+              0.856909227388204
+            ],
+            "root_m": [
+              2.1796306934407745,
+              2.6058159914494086,
+              0.76663091273952
+            ],
+            "stage": "insert",
+            "tick": 1046,
+            "time_s": 21.120000000000083
+          },
+          {
+            "object_m": [
+              2.448912969099716,
+              2.3000540600685704,
+              0.8569090587278969
+            ],
+            "root_m": [
+              2.1891824649785647,
+              2.601352524464131,
+              0.7661276165922106
+            ],
+            "stage": "close",
+            "tick": 1096,
+            "time_s": 22.119999999999884
+          }
+        ],
+        "qualified_candidate": false,
+        "report": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/full/REPORT.json",
+          "sha256": "ce299a7a032d7fcad3bd58f4db516e34709af28a12a35b63b15e22e813b2bf7e",
+          "size_bytes": 462903
+        },
+        "stage": "close",
+        "stage_metrics": {
+          "approach": {
+            "physics_steps": 520,
+            "root_acceleration_max_m_s2": 5.870277085427344,
+            "root_acceleration_rms_m_s2": 1.6938563132655458,
+            "root_speed_max_m_s": 0.49875906810753196,
+            "seconds": 2.6
+          },
+          "close": {
+            "physics_steps": 804,
+            "root_acceleration_max_m_s2": 3.291574262934446,
+            "root_acceleration_rms_m_s2": 0.7888488078312437,
+            "root_speed_max_m_s": 0.10918433830637235,
+            "seconds": 4.0200000000000005
+          },
+          "initial_stand": {
+            "physics_steps": 900,
+            "root_acceleration_max_m_s2": 13.798204231229494,
+            "root_acceleration_rms_m_s2": 0.6894235693648144,
+            "root_speed_max_m_s": 0.16110636707208736,
+            "seconds": 4.5
+          },
+          "insert": {
+            "physics_steps": 200,
+            "root_acceleration_max_m_s2": 1.8253040100331488,
+            "root_acceleration_rms_m_s2": 0.5864118113954128,
+            "root_speed_max_m_s": 0.06823350844346412,
+            "seconds": 1.0
+          },
+          "lower": {
+            "physics_steps": 200,
+            "root_acceleration_max_m_s2": 2.0527922881611724,
+            "root_acceleration_rms_m_s2": 0.585103077621445,
+            "root_speed_max_m_s": 0.08084255022274764,
+            "seconds": 1.0
+          },
+          "preinsert": {
+            "physics_steps": 440,
+            "root_acceleration_max_m_s2": 2.141422437694434,
+            "root_acceleration_rms_m_s2": 0.4494982951994606,
+            "root_speed_max_m_s": 0.06203643670773213,
+            "seconds": 2.2
+          },
+          "ready_arm": {
+            "physics_steps": 1760,
+            "root_acceleration_max_m_s2": 1.5686845736211796,
+            "root_acceleration_rms_m_s2": 0.2898527457106553,
+            "root_speed_max_m_s": 0.06942998502256267,
+            "seconds": 8.8
+          },
+          "source_stop": {
+            "physics_steps": 364,
+            "root_acceleration_max_m_s2": 6.276685127824271,
+            "root_acceleration_rms_m_s2": 1.28004499004451,
+            "root_speed_max_m_s": 0.45860565381581375,
+            "seconds": 1.82
+          },
+          "warmup": {
+            "physics_steps": 40,
+            "root_acceleration_max_m_s2": 10.305903095629338,
+            "root_acceleration_rms_m_s2": 2.5865432732338354,
+            "root_speed_max_m_s": 0.1574698793062749,
+            "seconds": 0.2
+          }
+        },
+        "status": "complete",
+        "stop_reason": "mesh_close_timeout",
+        "trial": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001",
+        "upright_quality_passed": true
+      },
+      "job_binding": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/JOB.json",
+        "sha256": "428e9da0b65435624a270adb99a13d47842c5dde2bd3cfebca90f26ce485ce1c",
+        "size_bytes": 19539
+      },
+      "report_binding": {
+        "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s03_branch1_v001/full/REPORT.json",
+        "sha256": "ce299a7a032d7fcad3bd58f4db516e34709af28a12a35b63b15e22e813b2bf7e",
+        "size_bytes": 462903
+      },
+      "report_scalar_fields": {
+        "active_ticks": 1297,
+        "admission_passed": false,
+        "body_control": "SONIC29 original outputs with legal range projection; no arm override or active body gravity feedforward",
+        "carry_distance_m": 0.0,
+        "content_sha256_excluding_this_field": "037d30cf6fda3cfe056c1f157bbd13c903aefb411fbff6b4834a92c7a65abc62",
+        "dataset_split": "unassigned",
+        "different_control_regime_from_halfclosed_baseline": true,
+        "different_numerical_condition_from_original": true,
+        "error": null,
+        "goal_error_m": 0.5166120661557078,
+        "grasp_test_passed": false,
+        "independent_audit_pending": true,
+        "load_probe_passed": false,
+        "loaded_native_reference_ratio": 0.65,
+        "max_held_slip_m": 0.0,
+        "maximum_target_projection_rad": 0.0,
+        "new_physics_steps": 5228,
+        "object_displacement_xy_m": 0.017166329020545903,
+        "physics_steps": 5228,
+        "projected_ticks": 0,
+        "saturation_policy": "observe persistent saturation; stop for measured physical failure or original bounded stage stall, not saturation alone",
+        "schema": "native-mug-task-report/v1",
+        "slew_limited_ticks": 385,
+        "source_role": "development_validation",
+        "stage": "close",
+        "stop_reason": "mesh_close_timeout",
+        "task_passed": false,
+        "wall_s": 655.6964014251716
+      },
+      "terminal_summary": {
+        "active_ticks": 1297,
+        "physics_steps": 5228,
+        "stage": "close",
+        "stop_reason": "mesh_close_timeout",
+        "task_passed": false,
+        "gates": {
+          "all_physical_safe": true,
+          "carry_both_foot_cycles": false,
+          "complete_continuous_task": false,
+          "goal_error": false,
+          "held_carry_distance": false,
+          "no_rejection": false,
+          "object_transported": false,
+          "released_and_settled": false
+        },
+        "error": null,
+        "load_probe_passed": false,
+        "grasp_test_passed": false,
+        "fresh_original_initialization": true
+      }
+    },
+    "S03_V010_limit": "Historical V010 close timeout is independent. A release-only change cannot claim to solve acquisition or establish paired success.",
+    "feedback_version": "V3 fixes left fullqpos hand mapping; actual V001 right-hand fields and raw physical/audit/export evidence are unaffected.",
+    "S03_V001_limit": "Completed fresh-init V001 S03 stopped in close with mesh_close_timeout after5228 physics steps (1297 active ticks), all_physical_safe=true, no load probe/hover/carry/release completion. The unchanged acquisition path in V002 does not address this failure. Historical V010 close failure is consistent but distinct evidence."
+  },
+  "changed_methods": {
+    "__init__": "Initialize release entry certificate and observation-continuity bookkeeping; version label only otherwise.",
+    "change": "Release may consume only current-tick place/lower readiness after the unchanged >=21-observation dwell. Record first/last observation ticks and entry evidence before changing phase. Phase changes cannot generate measurements.",
+    "target_support_sample": "Keep original thresholds and conjunction for entry; factor seven persistent contact/geometry booleans from four entry motion/reached booleans, report raw scalar values and failed predicate lists.",
+    "observe_target_handoff": "Preserve entry dwell semantics in place. During release freeze entry count/history and retain authorization only when previous authorization, certificate, consecutive observation and current persistent support all hold. Record every place/lower and release observation; duplicate tick calls do not count.",
+    "update": "Use the single current observation. Stop before the original opening law on persistent support/geometry loss, expired observation continuity or missing certificate. Distinguish support loss, observation gap and invalid certificate reasons. Entry-only motion failures remain visible diagnostics during measured supported release."
+  },
+  "entry_contract": {
+    "pre": "Qualified original hover/liftoff, stage=place, place_step=lower.",
+    "support_and_geometry": "All seven persistent predicates below.",
+    "motion_predicates": {
+      "angular_speed_rad_s": "< .25",
+      "object_speed_m_s": "< .04",
+      "root_speed_m_s": "< .06",
+      "wrist_reference": "original reached(tick,data)"
+    },
+    "dwell": "Unchanged >=21 distinct consecutive 50Hz observations spanning at least20 complete intervals (.400s); reset on failed observation or missed tick; duplicate tick does not advance.",
+    "transition": "Original placement stability condition plus handoff certificate, unchanged in update_phase; change additionally requires same-tick ready evidence."
+  },
+  "persistent_release_contract": {
+    "measurement_scope": "Current payload_surface/generated_desk contact pairs and actual flex geometry; stage=release, place_step=lower and qualified liftoff context remain required.",
+    "predicates": {
+      "desk_supported": "measured desk_supported true",
+      "target_load_bearing": "pair-normal sum >= .8*object_weight",
+      "base_inside_target_table": "actual base within actual table top XY bounds with .005m inset",
+      "bottom_height_in_band": "bottom minus table top in [-.003,.006]m",
+      "original_target_in_range": "XY origin distance <.10m",
+      "planned_target_in_range": "XY origin distance <.10m",
+      "object_upright": "world-Z dot(object_rotation @ declared axis) >.985"
+    },
+    "certificate_lifetime": "Issued from fresh place/lower dwell at release transition; entry history retained unchanged. Every subsequent distinct release tick must be exactly the next tick and pass persistent support. Motion/reached no longer recertify or invalidate measured support. No phase change is a sensor observation. Authorization expires on a gap, missing certificate or persistent failure and never auto-reacquires during release.",
+    "failure_response": "Hold the prior hand reference and stop visibly before update_phase can open further; no relatch, fake attachment, anchor reset or dynamic rescue.",
+    "motion_failure_labeling": "Each angular/object/root/reached boolean and raw scalar is reported. These entry-only failures are not labeled support loss while persistent support remains valid.",
+    "continuity_limit": "Policy observation continuity only; no claim of support between physics substeps."
+  },
+  "fixed_invariants": [
+    "Frozen plant, geometry, PD gains/effort/friction, cases, controller, judge and original eight gates; no infrastructure edits.",
+    "NoSlip iterations 0 to 3 at physics step 3960; all29 body actions remain SONIC and hands remain original native14 PD.",
+    "Right-hand references stay between zero and .65*RIGHT_CLOSED in native hand_ids name order; a shared tick origin caps net reference change at .006 rad per policy tick across callbacks and release/retraction.",
+    "No actual data qpos/qvel/time/ctrl writes, external forces, resets, replay state injection or native stepping. Retained private copied-state geometry/IK queries are reference planning only.",
+    "Original slip/acceptance anchors, probe and hover qualification, carry-distance/foot-cycle criteria, physical safety gates, final orientation >=.98 and final quiet-support audit remain binding.",
+    "Preserve V001 immutable hover reference tuple, reversible .060rad extra-closing band, .65 native limits, .006rad/tick net slew and all object/robot/case/physical limits.",
+    "Preserve SONIC29/original native14 PD, NoSlip activation3960, original eight judge gates and final upright/full last200-physics-sample acceptance.",
+    "update_phase AST identical to V001, including .25rad/s placement readiness, original smooth(age/100) release opening law, release/retract timeouts and 51-observation settle logic."
+  ],
+  "applicability": {
+    "case_ids": [
+      "S02_bottle",
+      "S03_bottle"
+    ],
+    "object_asset": "living_20260914_glass_bottle",
+    "grasp_region": "shape-derived upper neck/cap, original bottle local contact band .103 to .122 m",
+    "robot": "official G1 with original native14 hands",
+    "body_control": "SONIC29",
+    "hand_control": "original native14 PD",
+    "loaded_reference_ratio": 0.65,
+    "mass_assumption_kg": 0.2,
+    "observation_access": "privileged native geometry, state and measured contact forces; not vision-only or hardware qualification",
+    "admitted_inputs": {
+      "S02_bottle": {
+        "case": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s02_v010/CASE.json",
+          "sha256": "75a8730a248b8f2812df39dd51ea4eeba88cdc518de02e878ac84b76a156e978",
+          "size_bytes": 12643
+        },
+        "model": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S02_bottle/model.xml",
+          "sha256": "521fa555c0540c8db40195b691e3e1b48252364636112dffe37bec5873564cc6",
+          "size_bytes": 47744485
+        }
+      },
+      "S03_bottle": {
+        "case": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/trials/bottle_s03_v010/CASE.json",
+          "sha256": "2e6e5e43892a065e0336f6c5b47c08d56691e573857718265a32e47e4847905d",
+          "size_bytes": 12543
+        },
+        "model": {
+          "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_generated_grasp_execution_20261026_v1/models_v2/S03_bottle/model.xml",
+          "sha256": "5498b72c2a3f21654713696498057188fd93aa5b6a3dfd69248f5be8e58dfeeb",
+          "size_bytes": 47742816
+        }
+      }
+    },
+    "binding_enforcement": "Runtime rejects other case IDs, objects, orientation axes or reference ratios; parent must enforce exact admitted case/model hashes and initialization."
+  },
+  "prior_evidence_references": [
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/REPAIR_CONTRACT_V2.md",
+      "sha256": "69952f0029df1805a4ced2cd64df516c8c6caa880d33f9b8201668b9d7aa54c7",
+      "size_bytes": 3238
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/EXPERT_CONTRACT.md",
+      "sha256": "4a710babab1d15954cabbbf5afc23dd580069b57438f4318a115ae5e92dccd1f",
+      "size_bytes": 3025
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/S02_V001_RELEASE_CAUSE.json",
+      "sha256": "e2463b912e0228a9779453f98d837d78fb919e90230ba579e60cb6101b70bb8f",
+      "size_bytes": 3527
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/trials/bottle_s02_branch1_v001/PHASE_FEEDBACK_V3.json",
+      "sha256": "2322e4a875188bb8cedc98cbfad98474ee2ed6a25bf35d1c28ec8bd597a99140",
+      "size_bytes": 166094
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/strategies/bottle_branch1_v001.py",
+      "sha256": "2397bbbccebd98d4f92df7d7e79500998a1512d3d6bd0a86a1911515d2dc1363",
+      "size_bytes": 58784
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/PROPOSAL.json",
+      "sha256": "a081bc9ba7cbccdc1144616f035c7218bd41649a8a6135b4041b7cbfeead1d25",
+      "size_bytes": 19168
+    },
+    {
+      "path": "/data/wsj/main/scene_runs/codex_trellis_v2/embodied_expert_branch1_20261026_v1/workbench/context/CANDIDATE_V001_PROVENANCE.json",
+      "sha256": "f13e84996f907df0de697d0d5bbf2cf9db9bc4c2be3567c5551c3394661fec3f",
+      "size_bytes": 1242
+    }
+  ],
+  "historical_evidence_use": {
+    "positive_and_partial": "V001 S02 actual acquisition/carry/placement progress supports preserving the existing geometry and acquired preload; it is not full task success. V010/S02 and cup evidence retain their original limited scopes in preserved V001 proposal.",
+    "hypothesis": "V002 semantics are untested in actual integration. V011 remains a historical untested hypothesis; no adoption of its ratchet or early handoff.",
+    "negative": "Actual fresh-init V001 S03 mesh_close_timeout after5228 physics steps, plus historical V010 close timeout, are counterexamples to a paired-skill claim. Release-only correction does not address acquisition."
+  },
+  "frame_and_index_notes": [
+    "Fullqpos interleaved model-derived hand indices left29..35/right43..49; never assume36..49 for both hands. Native named motors preserved.",
+    "object_local_m is object in right WRIST frame; up is robot root; object posture uses object_rotation @ declared local axis. No frame or original slip-anchor change."
+  ],
+  "design_verification": {
+    "syntax": "passed: ast.parse and in-memory compile",
+    "changed_methods": [
+      "__init__",
+      "change",
+      "target_support_sample",
+      "observe_target_handoff",
+      "update"
+    ],
+    "unchanged_methods": [
+      "begin_hand_reference_tick",
+      "project_hand_reference",
+      "observe_loaded_contract",
+      "ready_arm",
+      "shape_reference",
+      "force_update",
+      "normal_control",
+      "plan",
+      "move",
+      "airborne_grip",
+      "observe",
+      "update_phase"
+    ],
+    "isolated_semantic_checks": [
+      "actual S02 scalar counterexample: angular readiness false, support true (synthetic geometry, not replay)",
+      "strict .25 rad/s entry threshold preserved",
+      "object/root/reached remain entry-only predicates with original thresholds",
+      "21 distinct observations; duplicate callbacks do not count; same-tick fresh certificate consumed",
+      "phase transition does not refresh evidence; quietness/reached failures during supported release do not revoke certificate",
+      "each of seven persistent support/geometry predicates separately stops before opening",
+      "observation gap and missing entry certificate stop with distinct non-support-loss reasons",
+      "insufficient dwell and stale-tick entry certificates rejected",
+      "place dwell resets on gaps and entry predicate failure",
+      "probe support, place align, and unqualified liftoff cannot issue entry dwell"
+    ],
+    "native_integration": false,
+    "actual_physics_performed": false,
+    "candidate_imported": false
+  },
+  "verification_scope": "AST checks plus isolated release bookkeeping/predicate methods using synthetic arrays and a mocked read-only velocity query, never importing/instantiating the full strategy or loading/integrating native models. Counterexample uses actual S02 scalars with synthetic geometry; not a replay or new physical outcome.",
+  "parent_tests_required": [
+    "Freeze V002 SHA and fresh original-init S02 first under the same admitted model/case/controller/judge. Verify identical behavior through entry/certificate versus V001, then see whether release passes request2062 with measured support; do not assume subsequent success.",
+    "Audit each predicate and entry certificate ticks/count. Require .25 strict entry threshold and21 distinct observations; duplicates cannot accrue dwell, missed ticks/failed readiness reset it, pre-place table flicker never unlocks.",
+    "Inspect actual release physics substeps: payload/table normal, base/height/target/posture and all motion values. Quietness/reached failures with valid support must not be labeled support loss. Force a bounded observation-gap/support-loss check only if parent budget permits; any real persistent loss must stop before further opening.",
+    "Audit unchanged named motor floor/.060 band/.65 bounds/.006 per tick, original reference paths and release profile, SONIC29/native14 PD, model/case/physical limits and solver activation3960.",
+    "Keep actual completed V001 S03 mesh_close_timeout visible. Any V002 S03 trial must use this same frozen candidate and exact original initialization under the existing parent plan/budget; unchanged acquisition is expected to remain a limitation. Do not infer paired improvement from an S02 release change.",
+    "Parent independent QA: original-init all43ctrl continuous replay, NN/PD/contact/geometry audit, force reconstruction, full video decode/keyframes, lineage/content deduplication, all original eight gates, upright >=.98 and original full last200-physics-sample settle window. Retain all failures."
+  ],
+  "budget_and_control": {
+    "design_only": true,
+    "writes": "Only workbench candidate and versioned proposal; V001 and evidence preserved.",
+    "parent_execution": "All trials and independent QA are parent-owned; no native integration in this invocation.",
+    "shared_cost_ledger": "SAME B/COST.json; no budget reset.",
+    "prior_physics_steps": 239138,
+    "round_max_new_physics_steps": 120000,
+    "includes": "All V001/cup/followup/replays and QA physics count against the existing round cap.",
+    "same_deadline": "2026-10-27 03:40:31 CST (Asia/Shanghai)"
+  },
+  "limits": [
+    "Untested physical candidate: no new trajectory, successful release/settle, causal learning, completed skill, broad paired improvement or deployment approval.",
+    "Release may now proceed through motion that fails entry quietness; it remains subject to unchanged measured support/geometry checks, physical gates, release timeout and independent final acceptance. Later dynamics can still fail.",
+    "Inherited .8weight, geometry and posture thresholds remain unvalidated. Table/base XY bounding rectangle is not a general support-polygon proof. No new support threshold or motion threshold tuning.",
+    "Certificate carries entry history, not physical attachment or guaranteed future support. Policy samples cannot certify unobserved physics substeps. Lost support stops, with no validated recovery.",
+    "No independent S03 initial geometry/close correction. Actual completed V001 S03 mesh_close_timeout remains an explicit independent failure; no V002 physical outcome or paired improvement inferred."
+  ],
+  "immutable_delivery": {
+    "version": "bottle_branch1_v002",
+    "policy": "Freeze this file/hash for parent original-init followup and QA. Future interventions need a new version after actual evidence."
+  },
+  "preserved_legacy_proposal": {
+    "path": "PROPOSAL.json",
+    "sha256": "a081bc9ba7cbccdc1144616f035c7218bd41649a8a6135b4041b7cbfeead1d25",
+    "reason": "Preserve V001 evidence unchanged; REPAIR_CONTRACT_V2.md explicitly requires the new versioned PROPOSAL_V002.json."
+  },
+  "automatic_deployment_approved": false
+}
